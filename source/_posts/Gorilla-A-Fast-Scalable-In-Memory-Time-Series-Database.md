@@ -1,7 +1,11 @@
 ---
 title: 'Gorilla: A Fast, Scalable, In-Memory Time Series Database'
 date: 2020-02-16 22:46:29
-tags: pwl,tsdb,db
+tags:
+- tsdb
+categories:
+- papers-we-love
+
 ---
 
 # Abstract
