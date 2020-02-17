@@ -52,11 +52,11 @@ categories:
 
 通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&token=4abea3f6-a071-4078-8c2a-8d176fa17f35)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35" style="zoom:40%;" />
 
 相应调用链追踪的树状结构为：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" style="zoom:50%;" />
 
 整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span 称为 root span，root span 的 id 就是 trace id。
 
@@ -66,7 +66,7 @@ categories:
 
 Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&token=1251874d-8189-4591-b246-84cc36a4da34)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34" style="zoom:67%;" />
 
 1. span 数据写入本地日志文件
 2. dapper daemon 从本地日志文件中收集数据
@@ -94,7 +94,7 @@ Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送�
 
 高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&token=3d561901-dede-4f09-b268-87bec6607b54)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54" style="zoom:50%;" />
 
 The experimental errors for these latency and throughput measurements are 2.5% and 0.15% respectively.
 

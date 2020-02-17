@@ -5,6 +5,7 @@ tags:
 - tsdb
 categories:
 - papers-we-love
+mathjax: true
 
 ---
 
@@ -18,7 +19,7 @@ categories:
 Gorilla  以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：
 
 1. delta-of-delta timestamps
-2. XOF'd floating point values
+2. XOR's floating point values
 
 相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。
 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。
@@ -62,7 +63,7 @@ Gorilla 正是为满足以上所有要求而开发的时序数据库，它可以
 
 ODS 是 FB 线上服务监控系统的重要组成部分，它由一个基于 HBash 的时序数据库，数据查询服务以及报警系统共同构成。它的整体架构如下图所示：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M-oozqikIKVYHIizAcT%2F-M-opzgxW6tsJ3uIGn49%2FScreen%20Shot%202020-02-11%20at%2011.22.00%20PM.jpg?alt=media&token=9d1168f7-5c9d-4ea5-8c10-cb7907af4ee3)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M-oozqikIKVYHIizAcT%2F-M-opzgxW6tsJ3uIGn49%2FScreen%20Shot%202020-02-11%20at%2011.22.00%20PM.jpg?alt=media&amp;token=9d1168f7-5c9d-4ea5-8c10-cb7907af4ee3" style="zoom:35%;" />
 
 ODS 的消费者主要由两部分构成：
 
@@ -132,7 +133,7 @@ Gorilla 对压缩算法主要有两个要求：
 
 因此 Gorilla 对时间戳和数据值分别使用不同的压缩算法。在分析具体算法之前，可以看一下算法的整体流程：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M076DRX3KJNR7GR47Aj%2F-M07DY-do-Yx92_9599M%2FScreen%20Shot%202020-02-15%20at%205.41.51%20PM.jpg?alt=media&token=1779e626-cf8b-43ed-ba35-a443b1758d12)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M076DRX3KJNR7GR47Aj%2F-M07DY-do-Yx92_9599M%2FScreen%20Shot%202020-02-15%20at%205.41.51%20PM.jpg?alt=media&amp;token=1779e626-cf8b-43ed-ba35-a443b1758d12" style="zoom:70%;" />
 
 1. 每块数据的开头记录起始时间戳
 2. 第一条样本数据
@@ -150,9 +151,9 @@ Gorilla 对压缩算法主要有两个要求：
 
 完整的算法流程如下：
 
-1. 在每块数据的 header 中记录起始时间 t_{-1}*t*−1 ，通常按照 2 小时对齐，如 02:00:00、04:00:00。用 14 bits 存储第一个时间戳 t_{0}*t*0 (delta)
+1. 在每块数据的 header 中记录起始时间 $t_{-1}$ ，通常按照 2 小时对齐，如 02:00:00、04:00:00。用 14 bits 存储第一个时间戳  $t_{0}$ 与 $t_{-1}$ 间的 delta
 2. 从第二个时间戳开始：
-   1. 计算 delta of delta： D = (t_{n} - t{n-1}) - (t_{n-1} - t_{n-2})*D*=(*t**n*−*t**n*−1)−(*t**n*−1−*t**n*−2) 
+   1. 计算 delta of delta： $D = (t_{n} - t{n-1}) - (t_{n-1} - t_{n-2})$
    2. 如果 D 为 0，则存储 1 bit，'0'
    3. 如果 D 在 [-63, 64] 之间，先存储 2 bits，'10'；然后用 7 bits 存值
    4. 如果 D 在 [-255,256] 之间，先存储 3 bits，'110'；然后用 9 bits 存值
@@ -163,17 +164,17 @@ Gorilla 对压缩算法主要有两个要求：
 
 下图是时序压缩的统计表现：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07Gf2qkHgCGczoDFhC%2F-M07Jvuu5bTaFdwnufQI%2FScreen%20Shot%202020-02-15%20at%206.09.59%20PM.jpg?alt=media&token=1a8cdc06-9295-404d-9e3e-53634e18561e)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07Gf2qkHgCGczoDFhC%2F-M07Jvuu5bTaFdwnufQI%2FScreen%20Shot%202020-02-15%20at%206.09.59%20PM.jpg?alt=media&amp;token=1a8cdc06-9295-404d-9e3e-53634e18561e" />
 
 ### Compressing Values
 
 通过分析 ODS 的数据，Gorilla 团队观察到大部分相邻的时序数据值之间不会有很大的变化。根据 IEEE 754 中定义的浮点数编码格式：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07K1suKwPULdOMb_9q%2F-M07OPpSrop1r-jwCl_Z%2FScreen%20Shot%202020-02-15%20at%206.29.27%20PM.jpg?alt=media&token=cd7b35f6-81bf-4b85-8a84-29327f0045b6)
+![](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07K1suKwPULdOMb_9q%2F-M07OPpSrop1r-jwCl_Z%2FScreen%20Shot%202020-02-15%20at%206.29.27%20PM.jpg?alt=media&token=cd7b35f6-81bf-4b85-8a84-29327f0045b6)
 
 通常相邻的数值之间，sign、exponent 以及 mantissa 前面的一些 bits 不会改变，如下图所示：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UEPzr6ZEJVuKOjle%2FScreen%20Shot%202020-02-15%20at%206.54.50%20PM.jpg?alt=media&token=699c9fbb-f33c-4bf1-a539-d6872b10c63d)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UEPzr6ZEJVuKOjle%2FScreen%20Shot%202020-02-15%20at%206.54.50%20PM.jpg?alt=media&amp;token=699c9fbb-f33c-4bf1-a539-d6872b10c63d" style="zoom:80%;" />
 
 因此利用这个，我们可以通过记录相邻数值的 XOR 中不同的信息来压缩数据。完整的算法流程如下：
 
@@ -185,11 +186,11 @@ Gorilla 对压缩算法主要有两个要求：
 
 具体可参考流程图中的例子，即：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07SzVLLTYUfENBeMgn%2FScreen%20Shot%202020-02-15%20at%206.49.34%20PM.jpg?alt=media&token=4a897e4b-bb92-4e29-ac8e-06adc38bdc49)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07SzVLLTYUfENBeMgn%2FScreen%20Shot%202020-02-15%20at%206.49.34%20PM.jpg?alt=media&amp;token=4a897e4b-bb92-4e29-ac8e-06adc38bdc49" style="zoom:80%;" />
 
 下图展示时序数据值压缩算法的统计表现：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07TTQLtPhUZsi2Gpzf%2FScreen%20Shot%202020-02-15%20at%206.51.02%20PM.jpg?alt=media&token=d7c5768c-6cad-49be-b8f3-4a00392ab124)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07Gf2qkHgCGczoDFhC%2F-M07Jvuu5bTaFdwnufQI%2FScreen%20Shot%202020-02-15%20at%206.09.59%20PM.jpg?alt=media&amp;token=1a8cdc06-9295-404d-9e3e-53634e18561e" style="zoom:80%;" />
 
 1. 59% 的数值只需要 1 bit 即可以存储
 2. 28% 的数值只需要 26.6 bits 即可存储
@@ -197,7 +198,7 @@ Gorilla 对压缩算法主要有两个要求：
 
 这里有一个 trade-off 需要考虑：每个数据块所覆盖的时间跨度。更大的时间跨度可以获得更高的压缩率，然而解压缩所需的资源也越多，具体的统计结果展示如下：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UnFE4ykeRj5apM34%2FScreen%20Shot%202020-02-15%20at%206.57.28%20PM.jpg?alt=media&token=22df1ad9-4bab-4ae0-921d-62fc836d838f)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UnFE4ykeRj5apM34%2FScreen%20Shot%202020-02-15%20at%206.57.28%20PM.jpg?alt=media&amp;token=22df1ad9-4bab-4ae0-921d-62fc836d838f" style="zoom:67%;" />
 
 从图中可以看出在 2 小时之后，继续增大跨度带来压缩率提升的边际收益已经非常小，因此 Gorilla 最终选择 2 小时的时间跨度。
 
@@ -205,7 +206,7 @@ Gorilla 对压缩算法主要有两个要求：
 
 Gorilla 在内存中的数据结构如下图所示：
 
-![img](https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M088TZ5RDvbNwk1f26D%2F-M08GttrMETZGyjoUwc-%2FScreen%20Shot%202020-02-15%20at%2010.36.24%20PM.jpg?alt=media&token=412fc01f-b75b-4b87-8f12-62711629ef83)
+<img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M088TZ5RDvbNwk1f26D%2F-M08GttrMETZGyjoUwc-%2FScreen%20Shot%202020-02-15%20at%2010.36.24%20PM.jpg?alt=media&amp;token=412fc01f-b75b-4b87-8f12-62711629ef83" style="zoom:67%;" />
 
 整个数据结构可以分三层：
 
