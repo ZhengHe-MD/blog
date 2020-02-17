@@ -1,5 +1,5 @@
 ---
-title: 'Gorilla: A Fast, Scalable, In-Memory Time Series Database'
+title: 'Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)'
 date: 2020-02-16 22:46:29
 tags:
 - tsdb
