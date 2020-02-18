@@ -20,29 +20,38 @@
     var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="郑鹤的博客">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ZhengHe">
-<meta property="og:url" content="https://zhenghe-md.github.io/index.html">
+  <meta name="description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）也足以证明其广泛的影响力。  本文主要讨论 3 个话题：  分布式系统中的事件顺序 利用逻辑时钟确定事件全序关系 利用物理时钟确定事件全序关系  事件顺序 生活中，当两个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Time, Clocks, and the Ordering of Events in a Distributed System (1978)">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="郑鹤的博客">
+<meta property="og:description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）也足以证明其广泛的影响力。  本文主要讨论 3 个话题：  分布式系统中的事件顺序 利用逻辑时钟确定事件全序关系 利用物理时钟确定事件全序关系  事件顺序 生活中，当两个">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvXsiCfww2vR_HsaxRb%2F-LvXtSjgJb4u4T-v-7v6%2FScreen%20Shot%202019-12-08%20at%208.25.33%20AM.jpg?alt=media&amp;token=7acfd213-f92a-4947-9d19-18ef4a210bbd">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-Lvu4eqvimh9lsYCSwOn%2F-Lvu5Js4mOdG3LaoBNOC%2FScreen%20Shot%202019-12-12%20at%208.33.00%20PM.jpg?alt=media&amp;token=19c27682-10ba-456f-995c-01fd84d19fb2">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvY86NrseJKxItrGeuz%2F-LvYHQkxbqMHRE_-xrH5%2FScreen%20Shot%202019-12-08%20at%2010.14.43%20AM.jpg?alt=media&amp;token=96d58f5e-7dd6-497c-affd-afe7b7901d00">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvYdJTNwEXlc3KhakUg%2F-LvYiOci227qfZhHw__y%2FScreen%20Shot%202019-12-08%20at%2012.16.53%20PM.jpg?alt=media&amp;token=fafd6d72-7c1a-42ee-8a4c-100f96f3b04a">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvZwQDp2OPS9Qjg8QWc%2F-LvZyIajKslMCwmBCHKp%2FScreen%20Shot%202019-12-08%20at%206.05.56%20PM.jpg?alt=media&amp;token=2b21cfb6-acd7-4db0-bfdd-34f52b62e718">
+<meta property="article:published_time" content="2020-02-17T18:25:14.000Z">
+<meta property="article:modified_time" content="2020-02-18T02:10:07.865Z">
 <meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="distributed system">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvXsiCfww2vR_HsaxRb%2F-LvXtSjgJb4u4T-v-7v6%2FScreen%20Shot%202019-12-08%20at%208.25.33%20AM.jpg?alt=media&amp;token=7acfd213-f92a-4947-9d19-18ef4a210bbd">
 
-<link rel="canonical" href="https://zhenghe-md.github.io/">
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome: true,
-    isPost: false
+    isHome: false,
+    isPost: true
   };
 </script>
 
-  <title>ZhengHe</title>
+  <title>Time, Clocks, and the Ordering of Events in a Distributed System (1978) | ZhengHe</title>
   
 
 
@@ -271,169 +280,10 @@ mjx-container + br {
             
 
   <div class="posts-expand">
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/" class="post-title-link" itemprop="url">LFU Implementation With O(1) Complexity (2010)</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-17 18:27:16" itemprop="dateCreated datePublished" datetime="2020-02-17T18:27:16+00:00">2020-02-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-18 02:10:07" itemprop="dateModified" datetime="2020-02-18T02:10:07+00:00">2020-02-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
-                    <span itemprop="name">papers-we-love</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
       
-          <h1 id="abstract">Abstract</h1>
-<p>缓存置换算法 (Cache Eviction Algorithm) 在操作系统、数据库以及其它系统中被广泛用于缓存置换模块，当缓存空间不足时，它利用局部性原理 (Principle of Locality) 预测未来数据的使用模式，将最不可能被访问的数据清出从而提高缓存命中率。目前已经存在的缓存置换算法包括 MRU (Most Recently Used)、MFU (Most Frequently Used)、LRU (Least Recently Used) 以及 LFU (Least Frequently Used) 等。每个算法都有其各自的适用场景。到目前为止，应用范围最广的是 LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloads)，同时 LRU 拥有 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> 时间复杂度的成熟实现方案。与 LRU 类似，LFU 同样与大多数应用的负载模式相近，但目前 LFU 最佳实现方案的时间复杂度是<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="8.608ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3804.6 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-I-6C"></use></g><g data-mml-node="mi" transform="translate(1450, 0)"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="msub" transform="translate(1935, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-67"></use></g><g data-mml-node="mn" transform="translate(477, -150) scale(0.707)"><use xlink:href="#MJX-TEX-N-32"></use></g></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2815.6, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6E"></use></g></g><g data-mml-node="mo" transform="translate(3415.6, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> ，不如 LRU。本文，我们提出一种同样达到 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> 时间复杂度的 LFU 实现方案，它支持的操作包括插入、访问以及删除。</p>
-<h1 id="introduction">Introduction</h1>
-<p>本文将按顺序介绍：</p>
-<ul>
-<li>LFU 的典型使用场景</li>
-<li>LFU 的接口说明</li>
-<li>目前 LFU 的最佳实现方案</li>
-<li>时间复杂度为<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> 的 LFU 实现方案</li>
-</ul>
-<h1 id="uses-of-lfu">Uses of LFU</h1>
-<p>LFU 的一个典型使用场景就是 HTTP 的缓存代理应用 (caching network proxy application)。它位于网络服务与用户之间，如下图所示：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LtT8ewAV2T9BqtnuARR%2F-LtTA_ECgl4tFvFiT3Ct%2FScreen%20Shot%202019-11-12%20at%201.55.13%20PM.jpg?alt=media&amp;token=52931771-0cc6-44b4-a76a-f9bade6ff75a" style="zoom:50%;"></p>
-<p>它通过将大多数用户可能请求的静态文件放入缓存中，来优化网络利用率，提高服务的响应速度。这种缓存代理需要满足：</p>
-<ol type="1">
-<li>在有限的存储资源中缓存尽可能多的、更可能被重复使用的数据</li>
-<li>实现的成本应该尽可能小，保证代理在高负荷下也能正常工作</li>
-</ol>
-<p>当缓存空间占满时，我们需要尽可能地将那些使用频率最低的资源清理出去 (eviction)，这恰好符合 LFU 的定义。LRU 也许也是一个不错的选择，但在特定场景下，如轮流地访问 (round-robin fashion) 一连串不同的数据导致缓存不断地被置换，LRU 将可能失效。</p>
-<h1 id="dictionary-operations-supported-by-an-lfu-cache">Dictionary Operations Supported by An LFU Cache</h1>
-<p>LFU 的接口如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">type LFU interface {</span><br><span class="line">    // 放入键值数据</span><br><span class="line">    Set(k string, v interface{})</span><br><span class="line">    // 用键查值</span><br><span class="line">    Get(k string) (v interface{}, ok bool)</span><br><span class="line">    // 清出使用频率最低的键值对</span><br><span class="line">    EvictOne(n int)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<h1 id="the-currently-best-known-complexity-of-the-lfu-algorithm">The Currently Best Known Complexity of the LFU algorithm</h1>
-<p>在此论文发布之时，当前的 LFU 最佳实现方案满足：</p>
-<ul>
-<li>Set: <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="7.695ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3401 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-I-6C"></use></g><g data-mml-node="mi" transform="translate(1450, 0)"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="mi" transform="translate(1935, 0)"><use xlink:href="#MJX-TEX-I-67"></use></g><g data-mml-node="mi" transform="translate(2412, 0)"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(3012, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span></li>
-<li>Get: <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="7.695ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3401 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-I-6C"></use></g><g data-mml-node="mi" transform="translate(1450, 0)"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="mi" transform="translate(1935, 0)"><use xlink:href="#MJX-TEX-I-67"></use></g><g data-mml-node="mi" transform="translate(2412, 0)"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(3012, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span></li>
-<li>EvictOne: <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="7.695ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 3401 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-I-6C"></use></g><g data-mml-node="mi" transform="translate(1450, 0)"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="mi" transform="translate(1935, 0)"><use xlink:href="#MJX-TEX-I-67"></use></g><g data-mml-node="mi" transform="translate(2412, 0)"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(3012, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span></li>
-</ul>
-<p>它通过 binomial heap 和 hash table 这两个抽象数据类型 (Abstract Data Type, ADT) 组合实现，它们的具体实现可以是 min-heap 和 hash-map：</p>
-<ul>
-<li>min-heap：以访问次数为值</li>
-<li>hash-map：以缓存的键，如 url 为键，以缓存的数据，如 html 文件为值，建立 hash-map</li>
-</ul>
-<p>hash-map 的时间复杂度可以看作是 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> ，因此整个 LFU 算法的复杂度受制于 min-heap 的时间复杂度。下面我们逐个分析：</p>
-<ul>
-<li>Set：
-<ul>
-<li>放入 hash-map 中</li>
-<li>记录使用频次为 1，插入到 min-heap 中</li>
-</ul></li>
-<li>Get：
-<ul>
-<li>从 hash-map 中取数据</li>
-<li>将 min-heap 中它的使用频次自增 1，然后调整 min heap，使其恢复不变性</li>
-</ul></li>
-<li>Eviction：
-<ul>
-<li>从 min-heap 顶部取出访问频次最小的数据，并调整 min heap，使其恢复不变性</li>
-<li>从 hash-map 中删除相应键值数据</li>
-</ul></li>
-</ul>
-<h1 id="the-proposed-lfu-algorithm">The Proposed LFU Algorithm</h1>
-<p>本文提出的 LFU 通过一个两级 Doubly Linked List 和一个 Hash Map 来实现，其基本结构如下图所示：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-Lv0zTTOwqyAvtbMELtY%2F-Lv0zi3zAaMYdZJA-uIy%2FScreen%20Shot%202019-12-01%20at%2011.05.16%20PM.jpg?alt=media&amp;token=d46c31d9-1d6d-4b95-9a24-aa0a6667d4cd" style="zoom:50%;"></p>
-<p>我们将两级 Doubly Linked List 分为横向和纵向，具体说明如下：</p>
-<ul>
-<li>head 与横向 Doubly Linked List 相连，后者的节点由近及远地、从低到高地存储访问频次数据</li>
-<li>横向 Doubly Linked List 中的每个节点都指向一个纵向 Doubly Linked List</li>
-<li>纵向 Doubly Linked List 中的节点存储的是出现频次相同的元素，且每个节点都维护着一个指向其对应的横向 Doubly Linked List 节点的指针。</li>
-</ul>
-<p>以上图为例：</p>
-<ul>
-<li>元素 x、y 都只被访问 1 次</li>
-<li>元素 z、a 都只被访问 2 次</li>
-<li>元素 b 被访问 5 次</li>
-<li>元素 c 被访问 9 次</li>
-<li>通过键 kx 可以找到位于频度为 1 的纵向 Doubly Linked List 的节点 x，而通过 x 又能访问其对应的横向 Doubly Linked List 的节点 1</li>
-</ul>
-<p>下面我们分析其 3 个核心 API 的算法复杂度。</p>
-<h2 id="set">Set</h2>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cache)</span> <span class="title">Set</span><span class="params">(k <span class="keyword">string</span>, v <span class="keyword">interface</span>{})</span></span> {</span><br><span class="line">    <span class="comment">// 如果没有频率为 1 的纵向 Doubly Linked List，则新建一个，并插入 kv 数据</span></span><br><span class="line">    <span class="comment">// 如果有，直接将 kv 数据插入其中</span></span><br><span class="line">    <span class="keyword">var</span> item *kvItem</span><br><span class="line">    <span class="keyword">if</span> c.horizontalDDL.Len() == <span class="number">0</span> || c.horizontalDDL.first.freq != <span class="number">1</span> {</span><br><span class="line">        node := &amp;DDLNode{</span><br><span class="line">            freq: <span class="number">1</span>,</span><br><span class="line">            verticalDDL: NewDDL(),</span><br><span class="line">        }</span><br><span class="line">        </span><br><span class="line">        item = &amp;kvItem{</span><br><span class="line">            k: k,</span><br><span class="line">            v: v,</span><br><span class="line">            parent: node,</span><br><span class="line">        }</span><br><span class="line">        node.verticalDDL.PushFront(item)</span><br><span class="line">        c.horizontalDDL.PushFront(node)</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        item = &amp;kvItem{</span><br><span class="line">            k: k,</span><br><span class="line">            v: v,</span><br><span class="line">            parent: c.horizontalDDL.first,</span><br><span class="line">        }</span><br><span class="line">        c.horizontalDDL.first.vertialDDL.Push(item)</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 插入 kv 到 Hash Map 中</span></span><br><span class="line">    c.hashMap[k] = item</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>由于 Set 操作只涉及频度为 1 的纵向 Doubly Linked List，因此时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> 。</p>
-<h2 id="get">Get</h2>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cache)</span> <span class="title">Get</span><span class="params">(k <span class="keyword">string</span>)</span> <span class="params">(vv <span class="keyword">interface</span>{}, ok <span class="keyword">bool</span>)</span></span> {</span><br><span class="line">    <span class="comment">// 如果 k 不在 Hash Map 中，则返回</span></span><br><span class="line">    v, ok := c.kv[k]</span><br><span class="line">    <span class="keyword">if</span> !ok {</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果 k 在，则找到其对应的纵向 Doubly Linked List 节点 vNodeK</span></span><br><span class="line">    <span class="comment">// 假设 vNodek 对应的横向 Doubly Linked List 节点 hNodeK 的频率为 freq</span></span><br><span class="line">    <span class="comment">// 将 vNodek 移动到 freq + 1 的纵向 Doubly Linked List 上即可</span></span><br><span class="line">    vNodeK = v</span><br><span class="line">    hNodeK = v.parent</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> hNodeK.next.freq != hNodeK.freq+<span class="number">1</span> {</span><br><span class="line">        node := &amp;DDLNode{</span><br><span class="line">            freq: hNodeK.freq+<span class="number">1</span>,</span><br><span class="line">            verticalDDL: NewDDL(),</span><br><span class="line">        }</span><br><span class="line">        hNodeK.verticalDDL.Remove(vNodeK)</span><br><span class="line">        node.verticalDDL.PushFront(node)</span><br><span class="line">        c.horizontalDDL.InsertAfter(hNodeK, node)</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        hNodeK.verticalDDL.Remove(vNodeK)</span><br><span class="line">        hNodeK.next.vertialDDL.PushFront(vNodeK)</span><br><span class="line">    }</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>Hash Map 访问的时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span> ，更新 Doubly Linked List 只涉及相邻的两个横向节点及其对应的纵向 Doubly Linked List，因此时间复杂度 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span>。因此 Get 的时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span>。</p>
-<h2 id="evictone">EvictOne</h2>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cache)</span> <span class="title">EvictOne</span><span class="params">()</span></span> {</span><br><span class="line">    <span class="comment">// 取出频度最小的纵向 Doubly Linked List</span></span><br><span class="line">    front := c.horizontalDDL.first.vertialDDL.RemoveFront()</span><br><span class="line">    <span class="comment">// 从 Hash Map 中删除其对应的键值对</span></span><br><span class="line">    <span class="built_in">delete</span>(c.kv, front.k)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>EvictOne 时，只需要从频度最小的纵向 Doubly Linked List 上删除任意元素即可，其时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span>；Hash Map 删除的时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span>，因此 EvictOne 的时间复杂度为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4F"></use></g><g data-mml-node="mo" transform="translate(763, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span>。</p>
-<h1 id="参考">参考</h1>
-<ul>
-<li><a href="https://github.com/papers-we-love/papers-we-love/blob/master/caching/a-constant-algorithm-for-implementing-the-lfu-cache-eviction-scheme.pdf" target="_blank" rel="noopener">An O(1) algorithm for implementing the LFU cache eviction scheme</a></li>
-<li><a href="https://github.com/ZhengHe-MD/lfu" target="_blank" rel="noopener">Github: ZhengHe-MD/lfu</a></li>
-</ul>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-4F" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-TEX-I-6C" d="M117 59Q117 26 142 26Q179 26 205 131Q211 151 215 152Q217 153 225 153H229Q238 153 241 153T246 151T248 144Q247 138 245 128T234 90T214 43T183 6T137 -11Q101 -11 70 11T38 85Q38 97 39 102L104 360Q167 615 167 623Q167 626 166 628T162 632T157 634T149 635T141 636T132 637T122 637Q112 637 109 637T101 638T95 641T94 647Q94 649 96 661Q101 680 107 682T179 688Q194 689 213 690T243 693T254 694Q266 694 266 686Q266 675 193 386T118 83Q118 81 118 75T117 65V59Z"></path><path id="MJX-TEX-I-6F" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-TEX-I-67" d="M311 43Q296 30 267 15T206 0Q143 0 105 45T66 160Q66 265 143 353T314 442Q361 442 401 394L404 398Q406 401 409 404T418 412T431 419T447 422Q461 422 470 413T480 394Q480 379 423 152T363 -80Q345 -134 286 -169T151 -205Q10 -205 10 -137Q10 -111 28 -91T74 -71Q89 -71 102 -80T116 -111Q116 -121 114 -130T107 -144T99 -154T92 -162L90 -164H91Q101 -167 151 -167Q189 -167 211 -155Q234 -144 254 -122T282 -75Q288 -56 298 -13Q311 35 311 43ZM384 328L380 339Q377 350 375 354T369 368T359 382T346 393T328 402T306 405Q262 405 221 352Q191 313 171 233T151 117Q151 38 213 38Q269 38 323 108L331 118L384 328Z"></path><path id="MJX-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-TEX-I-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path></defs></svg>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
   
   
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -447,8 +297,7 @@ mjx-container + br {
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/" class="post-title-link" itemprop="url">Time, Clocks, and the Ordering of Events in a Distributed System (1978)</a>
+          Time, Clocks, and the Ordering of Events in a Distributed System (1978)
         </h1>
 
         <div class="post-meta">
@@ -490,7 +339,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="简介">简介</h1>
+        <h1 id="简介">简介</h1>
 <p>本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 <a href="https://en.wikipedia.org/wiki/Dijkstra_Prize" target="_blank" rel="noopener">Dijkstra Prize</a> 的第一篇论文，高达 11692 的引用量（截至 2019/12/08）也足以证明其广泛的影响力。</p>
 <p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvXsiCfww2vR_HsaxRb%2F-LvXtSjgJb4u4T-v-7v6%2FScreen%20Shot%202019-12-08%20at%208.25.33%20AM.jpg?alt=media&amp;token=7acfd213-f92a-4947-9d19-18ef4a210bbd" style="zoom:50%;"></p>
 <p>本文主要讨论 3 个话题：</p>
@@ -635,476 +484,39 @@ mjx-container + br {
 <li><a href="https://github.com/ZhengHe-MD/distributed-system-experiments/tree/master/total_ordering" target="_blank" rel="noopener">Github: ZhengHe-MD/distributed-system-experiments/total_ordering</a></li>
 </ul>
 <svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-45" d="M492 213Q472 213 472 226Q472 230 477 250T482 285Q482 316 461 323T364 330H312Q311 328 277 192T243 52Q243 48 254 48T334 46Q428 46 458 48T518 61Q567 77 599 117T670 248Q680 270 683 272Q690 274 698 274Q718 274 718 261Q613 7 608 2Q605 0 322 0H133Q31 0 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H757Q764 676 764 669Q764 664 751 557T737 447Q735 440 717 440H705Q698 445 698 453L701 476Q704 500 704 528Q704 558 697 578T678 609T643 625T596 632T532 634H485Q397 633 392 631Q388 629 386 622Q385 619 355 499T324 377Q347 376 372 376H398Q464 376 489 391T534 472Q538 488 540 490T557 493Q562 493 565 493T570 492T572 491T574 487T577 483L544 351Q511 218 508 216Q505 213 492 213Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-2192" d="M56 237T56 250T70 270H835Q719 357 692 493Q692 494 692 496T691 499Q691 511 708 511H711Q720 511 723 510T729 506T732 497T735 481T743 456Q765 389 816 336T935 261Q944 258 944 250Q944 244 939 241T915 231T877 212Q836 186 806 152T761 85T740 35T732 4Q730 -6 727 -8T711 -11Q691 -11 691 0Q691 7 696 25Q728 151 835 230H70Q56 237 56 250Z"></path><path id="MJX-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path id="MJX-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-TEX-I-61" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path><path id="MJX-TEX-I-62" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path><path id="MJX-TEX-I-63" d="M34 159Q34 268 120 355T306 442Q362 442 394 418T427 355Q427 326 408 306T360 285Q341 285 330 295T319 325T330 359T352 380T366 386H367Q367 388 361 392T340 400T306 404Q276 404 249 390Q228 381 206 359Q162 315 142 235T121 119Q121 73 147 50Q169 26 205 26H209Q321 26 394 111Q403 121 406 121Q410 121 419 112T429 98T420 83T391 55T346 25T282 0T202 -11Q127 -11 81 37T34 159Z"></path><path id="MJX-TEX-I-50" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path><path id="MJX-TEX-I-69" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-43" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-TEX-N-27E8" d="M333 -232Q332 -239 327 -244T313 -250Q303 -250 296 -240Q293 -233 202 6T110 250T201 494T296 740Q299 745 306 749L309 750Q312 750 313 750Q331 750 333 732Q333 727 243 489Q152 252 152 250T243 11Q333 -227 333 -232Z"></path><path id="MJX-TEX-N-27E9" d="M55 732Q56 739 61 744T75 750Q85 750 92 740Q95 733 186 494T278 250T187 6T92 -240Q85 -250 75 -250Q67 -250 62 -245T55 -232Q55 -227 145 11Q236 248 236 250T145 489Q55 727 55 732Z"></path><path id="MJX-TEX-I-6A" d="M297 596Q297 627 318 644T361 661Q378 661 389 651T403 623Q403 595 384 576T340 557Q322 557 310 567T297 596ZM288 376Q288 405 262 405Q240 405 220 393T185 362T161 325T144 293L137 279Q135 278 121 278H107Q101 284 101 286T105 299Q126 348 164 391T252 441Q253 441 260 441T272 442Q296 441 316 432Q341 418 354 401T367 348V332L318 133Q267 -67 264 -75Q246 -125 194 -164T75 -204Q25 -204 7 -183T-12 -137Q-12 -110 7 -91T53 -71Q70 -71 82 -81T95 -112Q95 -148 63 -167Q69 -168 77 -168Q111 -168 139 -140T182 -74L193 -32Q204 11 219 72T251 197T278 308T289 365Q289 372 288 376Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-3C" d="M694 -11T694 -19T688 -33T678 -40Q671 -40 524 29T234 166L90 235Q83 240 83 250Q83 261 91 266Q664 540 678 540Q681 540 687 534T694 519T687 505Q686 504 417 376L151 250L417 124Q686 -4 687 -5Q694 -11 694 -19Z"></path><path id="MJX-TEX-I-54" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path><path id="MJX-TEX-I-6D" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-N-34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path><path id="MJX-TEX-N-36" d="M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z"></path><path id="MJX-TEX-N-35" d="M164 157Q164 133 148 117T109 101H102Q148 22 224 22Q294 22 326 82Q345 115 345 210Q345 313 318 349Q292 382 260 382H254Q176 382 136 314Q132 307 129 306T114 304Q97 304 95 310Q93 314 93 485V614Q93 664 98 664Q100 666 102 666Q103 666 123 658T178 642T253 634Q324 634 389 662Q397 666 402 666Q410 666 410 648V635Q328 538 205 538Q174 538 149 544L139 546V374Q158 388 169 396T205 412T256 420Q337 420 393 355T449 201Q449 109 385 44T229 -22Q148 -22 99 32T50 154Q50 178 61 192T84 210T107 214Q132 214 148 197T164 157Z"></path><path id="MJX-TEX-N-227A" d="M84 249Q84 262 91 266T117 270Q120 270 126 270T137 269Q388 273 512 333T653 512Q657 539 676 539Q685 538 689 532T694 520V515Q689 469 672 431T626 366T569 320T500 286T435 265T373 249Q379 248 404 242T440 233T477 221T533 199Q681 124 694 -17Q694 -41 674 -41Q658 -41 653 -17Q646 41 613 84T533 154T418 197T284 220T137 229H114Q104 229 98 230T88 235T84 249Z"></path><path id="MJX-TEX-N-2E" d="M78 60Q78 84 95 102T138 120Q162 120 180 104T199 61Q199 36 182 18T139 0T96 17T78 60Z"></path><path id="MJX-TEX-N-21D2" d="M580 514Q580 525 596 525Q601 525 604 525T609 525T613 524T615 523T617 520T619 517T622 512Q659 438 720 381T831 300T927 263Q944 258 944 250T935 239T898 228T840 204Q696 134 622 -12Q618 -21 615 -22T600 -24Q580 -24 580 -17Q580 -13 585 0Q620 69 671 123L681 133H70Q56 140 56 153Q56 168 72 173H725L735 181Q774 211 852 250Q851 251 834 259T789 283T735 319L725 327H72Q56 332 56 347Q56 360 70 367H681L671 377Q638 412 609 458T580 514Z"></path><path id="MJX-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-TEX-I-74" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path id="MJX-TEX-I-6B" d="M121 647Q121 657 125 670T137 683Q138 683 209 688T282 694Q294 694 294 686Q294 679 244 477Q194 279 194 272Q213 282 223 291Q247 309 292 354T362 415Q402 442 438 442Q468 442 485 423T503 369Q503 344 496 327T477 302T456 291T438 288Q418 288 406 299T394 328Q394 353 410 369T442 390L458 393Q446 405 434 405H430Q398 402 367 380T294 316T228 255Q230 254 243 252T267 246T293 238T320 224T342 206T359 180T365 147Q365 130 360 106T354 66Q354 26 381 26Q429 26 459 145Q461 153 479 153H483Q499 153 499 144Q499 139 496 130Q455 -11 378 -11Q333 -11 305 15T277 90Q277 108 280 121T283 145Q283 167 269 183T234 206T200 217T182 220H180Q168 178 159 139T145 81T136 44T129 20T122 7T111 -2Q98 -11 83 -11Q66 -11 57 -1T48 16Q48 26 85 176T158 471L195 616Q196 629 188 632T149 637H144Q134 637 131 637T124 640T121 647Z"></path><path id="MJX-TEX-N-7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path><path id="MJX-TEX-I-64" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-TEX-N-2A7D" d="M674 636Q682 636 688 630T694 615T687 601Q686 600 417 472L151 346L399 228Q687 92 691 87Q694 81 694 76Q694 58 676 56H670L382 192Q92 329 90 331Q83 336 83 348Q84 359 96 365Q104 369 382 500T665 634Q669 636 674 636ZM94 170Q102 172 104 172Q110 171 254 103T535 -30T678 -98Q694 -106 694 -118Q694 -136 676 -138H670L382 -2Q92 135 90 137Q83 142 83 154Q84 164 94 170Z"></path><path id="MJX-TEX-I-3F5" d="M227 -11Q149 -11 95 41T40 174Q40 262 87 322Q121 367 173 396T287 430Q289 431 329 431H367Q382 426 382 411Q382 385 341 385H325H312Q191 385 154 277L150 265H327Q340 256 340 246Q340 228 320 219H138V217Q128 187 128 143Q128 77 160 52T231 26Q258 26 284 36T326 57T343 68Q350 68 354 58T358 39Q358 36 357 35Q354 31 337 21T289 0T227 -11Z"></path><path id="MJX-TEX-N-2223" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path><path id="MJX-TEX-I-3BC" d="M58 -216Q44 -216 34 -208T23 -186Q23 -176 96 116T173 414Q186 442 219 442Q231 441 239 435T249 423T251 413Q251 401 220 279T187 142Q185 131 185 107V99Q185 26 252 26Q261 26 270 27T287 31T302 38T315 45T327 55T338 65T348 77T356 88T365 100L372 110L408 253Q444 395 448 404Q461 431 491 431Q504 431 512 424T523 412T525 402L449 84Q448 79 448 68Q448 43 455 35T476 26Q485 27 496 35Q517 55 537 131Q543 151 547 152Q549 153 557 153H561Q580 153 580 144Q580 138 575 117T555 63T523 13Q510 0 491 -8Q483 -10 467 -10Q446 -10 429 -4T402 11T385 29T376 44T374 51L368 45Q362 39 350 30T324 12T288 -4T246 -11Q199 -11 153 12L129 -85Q108 -167 104 -180T92 -202Q76 -216 58 -216Z"></path><path id="MJX-TEX-N-3E" d="M84 520Q84 528 88 533T96 539L99 540Q106 540 253 471T544 334L687 265Q694 260 694 250T687 235Q685 233 395 96L107 -40H101Q83 -38 83 -20Q83 -19 83 -17Q82 -10 98 -1Q117 9 248 71Q326 108 378 132L626 250L378 368Q90 504 86 509Q84 513 84 520Z"></path><path id="MJX-TEX-N-2F" d="M423 750Q432 750 438 744T444 730Q444 725 271 248T92 -240Q85 -250 75 -250Q68 -250 62 -245T56 -231Q56 -221 230 257T407 740Q411 750 423 750Z"></path><path id="MJX-TEX-N-2032" d="M79 43Q73 43 52 49T30 61Q30 68 85 293T146 528Q161 560 198 560Q218 560 240 545T262 501Q262 496 260 486Q259 479 173 263T84 45T79 43Z"></path></defs></svg>
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/blog/tags/distributed-system/" rel="tag"># distributed system</a>
+          </div>
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/" class="post-title-link" itemprop="url">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-17 18:16:20" itemprop="dateCreated datePublished" datetime="2020-02-17T18:16:20+00:00">2020-02-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-18 02:10:07" itemprop="dateModified" datetime="2020-02-18T02:10:07+00:00">2020-02-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
-                    <span itemprop="name">papers-we-love</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
-<p>本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。</p>
-<h1 id="why-design-goals">Why &amp; Design Goals</h1>
-<p>云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。</p>
-<p>通常这些异常会被监控捕捉，如时延异常、错误日志、程序崩溃，在紧急处理之后，就需要调查案发现场，彻底解决问题。这时候就需要了解每个请求在整个微服务集群内部的行踪。</p>
-<p>这就向分布式追踪系统提出了两点要求：</p>
-<ul>
-<li>处处部署 (ubiquitous deployment)</li>
-<li>持续监控 (continuous monitoring)</li>
-</ul>
-<p>如果部署不完全或者监控有间断，就可能有一小部分历史无法被追踪到，从而影响到问题定位的准确度，使得追踪效果大打折扣。</p>
-<p>据此，我们提出追踪系统的 3 个主要设计目标：</p>
-<ol type="1">
-<li><strong>低成本 (Low overhead)</strong>：对服务的性能影响应该能够忽略不计</li>
-<li><strong>对应用透明 (Application-level transparency)</strong>：应用开发者对追踪系统无感知</li>
-<li><strong>扩展性好 (Scalability)</strong>：支持部署到所有服务的所有实例上</li>
-</ol>
-<p>在此基础上，数据从采集到可以被查询、分析的延迟越小越好，起到的作用也越大、越及时。</p>
-<h1 id="how">How</h1>
-<h2 id="general-approaches">General Approaches</h2>
-<p>分布式追踪的设计方案主要可以分为两类：黑盒法（black-box）和标记法（annotation-based）：</p>
-<h3 id="黑盒法">黑盒法</h3>
-<p>黑盒法无需任何侵入性代码，只通过统计回归等手段来推测服务之间的关系。它的优势在于无需修改代码，缺点在于记录不准确，且需要大量数据才能够推导出服务间的关系。</p>
-<h3 id="标记法">标记法</h3>
-<p>标记法需要为每个请求打标记，并通过一个全局标识符将请求途径的所有服务信息串联，复盘整个链路。标记法记录准确，但它的缺点也很明显，需要将标记代码注入到每个服务中。</p>
-<p>在 Google 内部，几乎所有应用都使用相同的 threading model、control flow 和 RPC systems，因此可以将打标记的工作集中在少量的公共库中，同样能够达到对应用透明的效果。</p>
-<h2 id="data-models">Data Models</h2>
-<p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35" style="zoom:40%;" /></p>
-<p>相应调用链追踪的树状结构为：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" style="zoom:50%;" /></p>
-<p>整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span 称为 root span，root span 的 id 就是 trace id。</p>
-<p>每个 span 都需要记录其开始时间和结束时间，如果应用开发者有记录其它信息的需求，则可以手动增加相应的标记。</p>
-<h2 id="pipeline">Pipeline</h2>
-<p>Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34" style="zoom:67%;" /></p>
-<ol type="1">
-<li>span 数据写入本地日志文件</li>
-<li>dapper daemon 从本地日志文件中收集数据</li>
-<li>dapper collectors 将数据写入 Bigtable 的大区仓库 (regional repositories)</li>
-</ol>
-<p>在 Bigtable 中，每行数据就是一个 trace，且每行可以有任意列，恰好方便存储不定长的 trace/span 数据。Dapper 向开发者提供相应的 API 和 SDK，方便 Google 的开发者能够据此搭建数据分析工具，定制化地辅助线上问题排查。</p>
-<h2 id="overhead">Overhead</h2>
-<p>调用链追踪的主要成本在于：trace generation 和 collection。</p>
-<h3 id="trace-generation">Trace generation</h3>
-<p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176 ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
-<p>在 Dapper 的 runtime library 中，最耗时的操作就是将 trace 信息写入本地磁盘，但考虑到使用批量和异步写入的方式优化，对被跟踪的服务本身的影响就相对削弱了。</p>
-<h3 id="trace-collection">Trace collection</h3>
-<p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3% 的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在 kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
-<p>在实践中，平均每个 span 的大小约为 426 字节，经过计算，在生产环境中 Dapper 占用的网络带宽大约为总量的 0.01%。</p>
-<h3 id="effect-on-production-workloads">Effect on production workloads</h3>
-<p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54" style="zoom:50%;" /></p>
-<p>The experimental errors for these latency and throughput measurements are 2.5% and 0.15% respectively.</p>
-<p>从图中可以发现，尽管调用链追踪带来的性能影响不是很大，但并不能忽略不计，对 trace 数据进行抽样是很有必要的。当抽样率小于 1/16 时，影响范围已经小于误差范围。在实践中，我们设置 1/1024 的抽样率就能收集到足够多的 trace 数据。</p>
-<p>除此之外，使用更低的采样率可以让 trace 数据在本地磁盘存活更长的时间，为整个搜集框架争取更大的灵活度。</p>
-<h3 id="adaptive-sampling">Adaptive Sampling</h3>
-<p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper 的首个生产版本中，采用了统一的采样率 1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
-<p>因此 Dapper 团队正在研发自适应采样率机制，针对不频繁的重要事件能提高采样率。实际被使用的抽样率会被记录在 trace/span 数据中，帮助后期工具分析。</p>
-<h3 id="additional-sampling">Additional Sampling</h3>
-<p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但 Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper 在生产环境中每天将产生 1T 的追踪数据；同时 Dapper 的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升 Dapper collectors、Bigtable 的吞吐量。因此 Dapper 团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
-<p>实现的思路很简单，将每个 trace id 哈希到 [0, 1]，如果哈希值小于给定的抽样系数，则通过；大于则拦截。在实践中，额外的抽样给与 Dapper 团队更强的全局控制力。</p>
-<h1 id="where">Where</h1>
-<h2 id="general-purpose-tools">General-Purpose Tools</h2>
-<h3 id="dapper-depot-api">Dapper Depot API</h3>
-<p>Dapper 向开发者开放一系列 API：</p>
-<ul>
-<li>Access by trace id</li>
-<li>Bulk access</li>
-<li>Indexed access</li>
-</ul>
-<p>在实践中，Dapper 发现 (service_name, host_machine, timestamp) 的联合索引恰好能满足大部分开发者的需求。</p>
-<h3 id="dapper-user-interface">Dapper user interface</h3>
-<p>dapper user interface 可以理解为 APM 系统，方便开发者快速对线上问题做根源分析。交互界面和 user story 详见论文。</p>
-<h2 id="experiences">Experiences</h2>
-<h3 id="using-dapper-during-development">Using Dapper during development</h3>
-<p>Dapper 主要在以下几个方面帮助开发者改进服务：</p>
-<ul>
-<li>Performance：通过调用链示意图发现服务瓶颈</li>
-<li>Correctness：dapper 通过标签帮助开发者发现一些本该访问 master 节点的请求访问了 replicas</li>
-<li>Understanding：dapper 帮助开发者理解自身系统的依赖，增进对复杂系统的理解，为架构层面优化提供依据</li>
-<li>Testing：开发者可以通过观察调用链信息测试系统的行为是否符合预期</li>
-</ul>
-<h3 id="addressing-long-tail-latency">Addressing long tail latency</h3>
-<p>Google 内部的一位工程师利用 Dapper 提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
-<h3 id="inferring-service-dependencies">Inferring service dependencies</h3>
-<p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。 Google 的 "Service Dependencies" 项目正是利用 Dapper 的近期数据来推断依赖关系。</p>
-<h3 id="network-usage-of-different-services">Network usage of different services</h3>
-<p>在发现网络带宽使用异常时，Dapper 可以辅助开发者锁定到具体的请求。</p>
-<h3 id="layered-and-shared-storage-systems">Layered and Shared Storage Systems</h3>
-<p>一些公共服务通常很难知道其调用方及各自调用量，Dapper 帮助这些公共服务的维护者更好地了解它们。</p>
-<h1 id="references">References</h1>
-<p><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf" target="_blank" rel="noopener">Dapper</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
         
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" class="post-title-link" itemprop="url">Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-16 22:46:29" itemprop="dateCreated datePublished" datetime="2020-02-16T22:46:29+00:00">2020-02-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-02-18 02:10:07" itemprop="dateModified" datetime="2020-02-18T02:10:07+00:00">2020-02-18</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
-                    <span itemprop="name">papers-we-love</span>
-                  </a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="abstract">Abstract</h1>
-<p>在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是 Facebook 内部孵化的内存时序数据库，Gorilla。Facebook 团队发现：</p>
-<ol type="1">
-<li>监控系统的用户主要关注的是数据的聚合分析，而不是单个数据点</li>
-<li>对于线上问题的根源分析来说，最近的数据比过去的数据更有价值</li>
-</ol>
-<p>Gorilla 以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：</p>
-<ol type="1">
-<li>delta-of-delta timestamps</li>
-<li>XOR's floating point values</li>
-</ol>
-<p>相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。</p>
-<h1 id="introduction">Introduction</h1>
-<p>以下是 FB 内部对时序数据库的要求：</p>
-<h2 id="write-dominate">Write Dominate</h2>
-<p>对时序数据库的首要限制就是必须一直能够写入数据，即写数据的高可用。因为 FB 内部的服务集群每秒将产生 1 千万个采样数据点。相较之下，读数据比写数据要求通常要低好几个数量级，因为数据的消费者是一些运维、开发使用的控制面板以及自动化报警系统，它们的请求频率低且通常只关注部分时序数据。由于用户关注的往往是整组时序数据的聚合结果，而不是单个数据点，因此传统数据库中的 ACID 保证也并不是时序数据库的核心要求，即便在极端情况下，丢弃少量数据也不会影响核心用途。</p>
-<h2 id="state-transition">State Transition</h2>
-<p>FB 内部希望能够及时发现一些系统的状态转移事件，如：</p>
-<ul>
-<li>服务新版本发布</li>
-<li>服务配置修改</li>
-<li>网络切换</li>
-<li>...</li>
-</ul>
-<p>因此要求时序数据库能支持对较短的时间窗口内的采样数据进行细粒度的聚合。具备在十秒级内展示捕获到的状态转移事件能够帮助自动化工具快速发现问题，阻止其发生扩散。</p>
-<h2 id="high-availability">High Availability</h2>
-<p>即便当不同 DC 之间发生网络分区，DC 内部的服务也应当能够将实时监控的数据写入到 DC 内部的时序数据库，也能够从中读取数据。</p>
-<h2 id="fault-tolerance">Fault Tolerance</h2>
-<p>如果能够将数据复制到多个区域 (regions)，就可以在单个 DC 或整个地理区域发生问题时也能正常运作。</p>
-<p>Gorilla 正是为满足以上所有要求而开发的时序数据库，它可以被理解成是时序数据的 write-through cache，由于数据都在内存中，Gorilla 几乎可以在 10 毫秒级别内处理大部分请求。通过对 FB 内部已经投入使用很长时间的 Operational Data Store (ODS，基于 HBase 的时序数据库解决方案）的研究，发现超过 85% 的数据查询只涉及到过去 26 小时内产生的数据，通过进一步的调研发现，如果使用内存数据库来代替磁盘（disk-based）数据库，就能够达到用户对响应时间的要求。</p>
-<p>在 2015 年春，FB 内部的监控系统共产生超过 20 亿组时间序列，每秒产生 1200 万个，每天 1 万亿个数据点。假设每个采样点需要 16 字节来存储，就意味着一天需要 16 TB 内存。Gorilla 团队通过基于 XOR 的浮点数压缩算法将每个采样点所需字节数降到 1.37，将内存总需求量缩小将近 12 倍。</p>
-<p>针对可用性要求，Gorilla 团队在不同区域、DC 中部署多个 Gorilla 实例，实例时间相互同步数据，但不保证一致性。数据的读取请求将被转发到最近的 Gorilla 实例。</p>
-<h1 id="background-requirements">Background &amp; Requirements</h1>
-<h2 id="ods">ODS</h2>
-<p>ODS 是 FB 线上服务监控系统的重要组成部分，它由一个基于 HBash 的时序数据库，数据查询服务以及报警系统共同构成。它的整体架构如下图所示：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M-oozqikIKVYHIizAcT%2F-M-opzgxW6tsJ3uIGn49%2FScreen%20Shot%202020-02-11%20at%2011.22.00%20PM.jpg?alt=media&amp;token=9d1168f7-5c9d-4ea5-8c10-cb7907af4ee3" style="zoom:35%;"></p>
-<p>ODS 的消费者主要由两部分构成：</p>
-<ol type="1">
-<li>便于开发人员分析问题的可交互图表系统</li>
-<li>自动化报警系统</li>
-</ol>
-<p>在 2013 年初，FB 的监控团队意识到基于 HBase 的时序数据库无法处理未来的读负载，尽管图标分析时数据查询的延迟还可以容忍，但达到几秒钟的查询 90th 分位点已经阻塞了自动化报警的正常运作。在眼下其它现成方案都无法满足要求的情况下，监控团队开始将关注点转向缓存解决方案。尽管 ODS 就使用了简单的 read-through cache，但这种方案只是缓存多张图表中共同的时序数据，但每当图表查询最新的数据时，依然还会出现 cache miss，这时候数据读取就击穿到了 HBase。监控团队也考虑过使用 Memcache 作为 write-through cache，但每次写入大量最新数据会对 memcache 引入很大的流量，最终这个方案也被否决了。监控团队需要更加高效的解决方案。</p>
-<h2 id="gorilla-requirements">Gorilla Requirements</h2>
-<p>以下是对新的解决方案的要求陈述：</p>
-<ul>
-<li>20 亿组不同的时序数据，每组时序数据用一个唯一的字符串标识</li>
-<li>每分钟 7 亿个数据采样点</li>
-<li>保存 26 小时的全量数据</li>
-<li>数据读取在 1ms 内完成</li>
-<li>支持最小采样间隔为 15s</li>
-<li>两个复制节点来支持容错，即使有一个节点挂掉也能够继续处理读请求</li>
-<li>能够快速扫描所有内存数据</li>
-<li>支持每年 2 倍的增长</li>
-</ul>
-<h1 id="comparison-with-tsdb-systems">Comparison With TSDB Systems</h1>
-<p>由于 Gorilla 的设计是将所有数据放在内存中，因此它的内存数据结构与其它的时序数据库有所不同。也得益于这样的设计，开发者也可以将 Gorilla 看作是基于磁盘的时序数据库的 write-through cache。</p>
-<h2 id="opentsdb">OpenTSDB</h2>
-<p>OpenTSDB 是继续 HBase 的时序数据库解决方案，它与 ODS 的 HBase 存储层很相似。两个系统的表结构设计非常相似，也采用了类似的优化、横向扩容的解决方案。但前面也提到，基于磁盘的解决方案很难支持快速查询的需求。</p>
-<p>ODS 的 HBase 存储层会刻意降低旧数据的采样精度，从而节省总体空间占用；OpenTSDB 则会保存数据的完全精度。牺牲旧数据的精度，能够带来更快的旧数据查询速度以及空间的节省，FB 团队认为这是值得的。</p>
-<p>OpenTSDB 标识时序数据的数据模型相比 Gorilla 更加丰富，每组时序数据可以标记任意组键值数据，即所谓的标签 (tags)。Gorilla 只通过一个字符串来标记时序数据，它依赖于上层工中从去抽取标识时序数据的信息。</p>
-<h2 id="whisper-graphite">Whisper (Graphite)</h2>
-<p>Graphite 以 Whisper format 将时序数据存储在本地磁盘上。Whisper format 期望时序数据的采样区间是稳定的，如果采样区间发生抖动，Graphite 就无能为力了。相较之下，如果时序数据的采样区间是稳定的，Gorilla 能够更高效地存储数据，Gorilla 也能处理区间不稳定的情况。在 Graphite 中，每组时序数据都存在一个独立的文件中，新的样本点会覆盖超过一定时间的旧数据；Gorilla 也很类似，但区别在于它将数据存储在内存中。由于 Graphite 是基于磁盘的时序数据库，同样不满足 FB 内部的需求。</p>
-<h2 id="influxdb">InfluxDB</h2>
-<p>InfluxDB 的数据模型表达力比 OpenTSDB 更加丰富，时序中的每一个样本都可以拥有完整元数据，但这种做法也导致它的数据存储需要占用更多的磁盘空间。InfluxDB 也支持集群部署，横向扩容，运维团队无需管理 HBase/Hadoop 集群。在 FB 中已经有专门的团队负责运维 HBase 集群，因此对于 ODS 团队来说这并不是一个痛点。与其它系统类似，InfluxDB 也将数据存储在磁盘中，其查询效率要远低于内存数据库。</p>
-<h1 id="gorilla-architecture">Gorilla Architecture</h1>
-<p>在 Gorilla 中，每条时序样本数据都由一个三元组构成：</p>
-<ul>
-<li>string key：用于标识所属的时序</li>
-<li>timestamp (int64)：时间戳</li>
-<li>value (float64)：样本值</li>
-</ul>
-<p>Gorilla 采用一种新的时序压缩算法，将存储每条时序样本数据所需的空间由之前的 16 字节降到了平均 1.37 个字节。</p>
-<p>通过将每组时序数据通过 string key 分片到某个的 Gorilla 服务，就能比较容易地实现横向扩容。在 Gorilla 正式上线 18 个月后，存储 26 小时的数据约需要 1.3TB 内存，每个集群需要 20 台机器。在论文写作时，每个集群已经需要 80 台机器。</p>
-<p>Gorilla 通过同时将时序数据写入两台位于不同 regions 的机器中，来抵御单点故障、网络分区、甚至整个 DC 故障。一旦发现故障，所有的读请求将被转发到备选 region 中的服务上，保证用户对故障无明显感知。</p>
-<h2 id="time-series-compression">Time Series Compression</h2>
-<p>Gorilla 对压缩算法主要有两个要求：</p>
-<ul>
-<li>流式压缩：无需读取完整数据</li>
-<li>无损压缩：不能损失数据精度</li>
-</ul>
-<p>对比连续的样本数据分析，能够观察到：</p>
-<ul>
-<li>连续的时间戳之间间隔通常为常数，如 15 秒</li>
-<li>连续的数据值之间的二进制编码差别较小</li>
-</ul>
-<p>因此 Gorilla 对时间戳和数据值分别使用不同的压缩算法。在分析具体算法之前，可以看一下算法的整体流程：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M076DRX3KJNR7GR47Aj%2F-M07DY-do-Yx92_9599M%2FScreen%20Shot%202020-02-15%20at%205.41.51%20PM.jpg?alt=media&amp;token=1779e626-cf8b-43ed-ba35-a443b1758d12" style="zoom:70%;"></p>
-<ol type="1">
-<li>每块数据的开头记录起始时间戳</li>
-<li>第一条样本数据
-<ul>
-<li>时间戳存储与起始时间戳的差值</li>
-<li>数据值按原值存储</li>
-</ul></li>
-<li>从第二条样本数据开始
-<ul>
-<li>时间戳存储 delta of delta</li>
-<li>数据值按差值存储</li>
-</ul></li>
-</ol>
-<h3 id="compressing-time-stamps">Compressing Time Stamps</h3>
-<p>通过分析 ODS 中的时序数据，Gorilla 团队观察到大多数时序样本都是按固定区间到达服务，如 60 秒。尽管偶尔会出现 1 秒钟的延迟或提早，总体上时间窗口是稳定的。</p>
-<p>假设连续时间戳的 delta 为：60, 60, 59, 61，那么 delta of delta 就是：0, -1, 2，于是通过起始时间、第一条数据与起始时间的 delta，以及剩下所有样本点的 delta of delta，就能够存储完整的数据。</p>
-<p>完整的算法流程如下：</p>
-<ol type="1">
-<li>在每块数据的 header 中记录起始时间 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.471ex" xmlns="http://www.w3.org/2000/svg" width="2.974ex" height="1.887ex" role="img" focusable="false" viewBox="0 -626 1314.7 834" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(778, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></g></g></svg></mjx-container></span> ，通常按照 2 小时对齐，如 02:00:00、04:00:00。用 14 bits 存储第一个时间戳 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex" xmlns="http://www.w3.org/2000/svg" width="1.73ex" height="1.791ex" role="img" focusable="false" viewBox="0 -626 764.6 791.6" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><use xlink:href="#MJX-TEX-N-30"></use></g></g></g></g></g></svg></mjx-container></span> 与 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.471ex" xmlns="http://www.w3.org/2000/svg" width="2.974ex" height="1.887ex" role="img" focusable="false" viewBox="0 -626 1314.7 834" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mo"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(778, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></g></g></svg></mjx-container></span> 间的 delta</li>
-<li>从第二个时间戳开始：
-<ol type="1">
-<li>计算 delta of delta： <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex" xmlns="http://www.w3.org/2000/svg" width="32.537ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 14381.5 1000" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g><g data-mml-node="mo" transform="translate(1105.8, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mo" transform="translate(2161.6, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="msub" transform="translate(2550.6, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6E"></use></g></g></g><g data-mml-node="mo" transform="translate(3608, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(4608.3, 0)"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(4969.3, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(822.2, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(1822.4, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g><g data-mml-node="mo" transform="translate(7291.7, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(7902.9, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mo" transform="translate(8903.2, 0)"><use xlink:href="#MJX-TEX-N-28"></use></g><g data-mml-node="msub" transform="translate(9292.2, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(600, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(1378, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g><g data-mml-node="mo" transform="translate(11253.3, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="msub" transform="translate(12253.5, 0)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="TeXAtom" transform="translate(361, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mo" transform="translate(600, 0)"><use xlink:href="#MJX-TEX-N-2212"></use></g><g data-mml-node="mn" transform="translate(1378, 0)"><use xlink:href="#MJX-TEX-N-32"></use></g></g></g><g data-mml-node="mo" transform="translate(13992.5, 0)"><use xlink:href="#MJX-TEX-N-29"></use></g></g></g></svg></mjx-container></span></li>
-<li>如果 D 为 0，则存储 1 bit，'0'</li>
-<li>如果 D 在 [-63, 64] 之间，先存储 2 bits，'10'；然后用 7 bits 存值</li>
-<li>如果 D 在 [-255,256] 之间，先存储 3 bits，'110'；然后用 9 bits 存值</li>
-<li>如果 D 在 [-2047,2048] 之间，先存储 4 bits，'1110'；然后用 12 bits 存值</li>
-<li>如果超出以上区间，先存储 4 bits，'1111'；然后用 32 bits 存值</li>
-</ol></li>
-</ol>
-<p>算法中为 D 选择的区间在真实数据能够获得最大的压缩率。一个时序数据可能随时出现数据点丢失，于是可能出现这样的 delta 序列：60, 60, 121, 59，这时候 delta of delta 就是：0, 61, -62，这时候就需要存储 10 bits 数据。</p>
-<p>下图是时序压缩的统计表现：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07Gf2qkHgCGczoDFhC%2F-M07Jvuu5bTaFdwnufQI%2FScreen%20Shot%202020-02-15%20at%206.09.59%20PM.jpg?alt=media&amp;token=1a8cdc06-9295-404d-9e3e-53634e18561e"></p>
-<h3 id="compressing-values">Compressing Values</h3>
-<p>通过分析 ODS 的数据，Gorilla 团队观察到大部分相邻的时序数据值之间不会有很大的变化。根据 IEEE 754 中定义的浮点数编码格式：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07K1suKwPULdOMb_9q%2F-M07OPpSrop1r-jwCl_Z%2FScreen%20Shot%202020-02-15%20at%206.29.27%20PM.jpg?alt=media&amp;token=cd7b35f6-81bf-4b85-8a84-29327f0045b6"></p>
-<p>通常相邻的数值之间，sign、exponent 以及 mantissa 前面的一些 bits 不会改变，如下图所示：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UEPzr6ZEJVuKOjle%2FScreen%20Shot%202020-02-15%20at%206.54.50%20PM.jpg?alt=media&amp;token=699c9fbb-f33c-4bf1-a539-d6872b10c63d" style="zoom:80%;"></p>
-<p>因此利用这个，我们可以通过记录相邻数值的 XOR 中不同的信息来压缩数据。完整的算法流程如下：</p>
-<ol type="1">
-<li>第一个数值无压缩存储</li>
-<li>如果与上一个数值 XOR 的结果为 0，即数值未发生改变，则存储 1 bit，'0'</li>
-<li>如果与上一个数值 XOR 的结果不为 0，则先存储 1 bit，'1'
-<ul>
-<li>(Control bit '0')：如果当前 XOR 的区间在前一个 XOR 区间里面，那么可以复用前一个 XOR 区间的位置信息，只存储区间内部的 XOR 的值</li>
-<li>(Control bit '1')：如果当前 XOR 的区间不在前一个 XOR 区间里面，则先利用 5 bits 存储前缀 0 的数量，再利用 6 bits 存储区间的长度，最后存储区间内部 XOR 的值</li>
-</ul></li>
-</ol>
-<p>具体可参考流程图中的例子，即：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07SzVLLTYUfENBeMgn%2FScreen%20Shot%202020-02-15%20at%206.49.34%20PM.jpg?alt=media&amp;token=4a897e4b-bb92-4e29-ac8e-06adc38bdc49" style="zoom:80%;"></p>
-<p>下图展示时序数据值压缩算法的统计表现：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07Gf2qkHgCGczoDFhC%2F-M07Jvuu5bTaFdwnufQI%2FScreen%20Shot%202020-02-15%20at%206.09.59%20PM.jpg?alt=media&amp;token=1a8cdc06-9295-404d-9e3e-53634e18561e" style="zoom:80%;"></p>
-<ol type="1">
-<li>59% 的数值只需要 1 bit 即可以存储</li>
-<li>28% 的数值只需要 26.6 bits 即可存储</li>
-<li>13% 的数值需要 39.6 bits 可以存储</li>
-</ol>
-<p>这里有一个 trade-off 需要考虑：每个数据块所覆盖的时间跨度。更大的时间跨度可以获得更高的压缩率，然而解压缩所需的资源也越多，具体的统计结果展示如下：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M07PpEaRw_f_QmKV5ux%2F-M07UnFE4ykeRj5apM34%2FScreen%20Shot%202020-02-15%20at%206.57.28%20PM.jpg?alt=media&amp;token=22df1ad9-4bab-4ae0-921d-62fc836d838f" style="zoom:67%;"></p>
-<p>从图中可以看出在 2 小时之后，继续增大跨度带来压缩率提升的边际收益已经非常小，因此 Gorilla 最终选择 2 小时的时间跨度。</p>
-<h2 id="in-memory-data-structures">In-memory Data Structures</h2>
-<p>Gorilla 在内存中的数据结构如下图所示：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-M088TZ5RDvbNwk1f26D%2F-M08GttrMETZGyjoUwc-%2FScreen%20Shot%202020-02-15%20at%2010.36.24%20PM.jpg?alt=media&amp;token=412fc01f-b75b-4b87-8f12-62711629ef83" style="zoom:67%;"></p>
-<p>整个数据结构可以分三层：</p>
-<ol type="1">
-<li>ShardMap</li>
-<li>TSmap</li>
-<li>TS</li>
-</ol>
-<h3 id="shardmap">ShardMap</h3>
-<p>每个 Gorilla 节点上都维护着一个 ShardMap，后者负责将时序名称的哈希值映射到相应的 TSmap 上。如果 ShardMap 上对应的指针为空，则目标时序数据不在当前的节点 (分片) 上。由于系统中分片的数量是常数，且预期数量级在 3 位数内，因此存储 ShardMap 的成本很低。ShardMap 的并发访问通过一个 read-write spin lock 来控制。</p>
-<h3 id="tsmap">TSmap</h3>
-<p>TSmap 是时序数据的索引。它由以下两部分构成：</p>
-<ol type="1">
-<li>所有 TS 的指针构成的向量，标记为 vector</li>
-<li>将时序名称的哈希值映射到 TS 指针的字典，标记为 map</li>
-</ol>
-<p>vector 用于快速扫描所有数据；map 用于满足稳定、快速的查询请求。TSmap 的并发控制通过一个 read-write spin lock 实现。扫描完整数据时，只需要复制 vector，后者是由一批指针构成，速度很快，critical section 很小；删除数据时，通过 tombstoned 标记删除，被动回收。</p>
-<h3 id="ts">TS</h3>
-<p>每组时序数据都由一系列数据块构成，每个数据块保存 2 小时的数据，最新的数据块还处于打开状态，上面维持着最近的数据。最新的数据块中只能往后追加数据，一旦时间满 2 小时，数据块就会被关闭，已经关闭的数据块在被清出内存之前不允许再被修改。</p>
-<p>读取数据时，查询所涉及的所有数据块将被复制一份，直接返回给 RPC 客户端，数据的解压缩过程由客户端完成。</p>
-<h2 id="on-disk-structures">On Disk Structures</h2>
-<p>Gorilla 的设计目标之一就是能抵御单点故障，因此 Gorilla 同样需要通过持久化存储做故障恢复。Gorilla 选择的持久化存储是 GlusterFS，后者是兼容 POSIX 标准的分布式文件系统，默认 3 备份。其它分布式文件系统，如 HDFS 也可以使用。Gorilla 团队也考虑使用单机 MySQL 或者 RocksDB，但最终没有选择，原因是 Gorilla 并不需要使用查询语言支持。</p>
-<p>一个 Gorilla 节点会维持多个分片的数据，于是它会为每个分片建立一个文件夹。每个文件夹中包含四类文件：</p>
-<ol type="1">
-<li>Key Lists</li>
-<li>Append-only Logs</li>
-<li>Complete Block Files</li>
-<li>Checkpoint Files</li>
-</ol>
-<h3 id="key-lists">Key Lists</h3>
-<p>Key Lists 实际上就是时序名称到 integer identifier 的映射，后者是时序在 TSmap vector 中的偏移值。Gorilla 会周期性地更新 Key Lists 数据。</p>
-<h3 id="append-only-logs">Append-only Logs</h3>
-<p>当所有时序数据的样本点流向 Gorilla 节点时，Gorilla 会将他们压缩后的数据交织地写入日志文件中。但这里的日志文件并不是 WAL，Gorilla 也并没有打算提供 ACID 支持，当日志数据在内存中满 64 KB 后会被追加到 GlusterFS 中相应的日志文件中。故障发生时，将有可能出现少量数据丢失，但为了提高写吞吐，这个牺牲还算值得。</p>
-<h3 id="complete-block-files">Complete Block Files</h3>
-<p>每隔 2 小时，Gorilla 会将数据块压缩后复制到 GlusterFS 中。每当一块数据持久化完成后，Gorilla 就会创建一个 checkpoint 文件，同时删除相应的日志文件。checkpoint 文件被用来标识数据块持久化成功与否。故障恢复时，Gorilla 会通过 checkpoint 和日志文件载入之前的数据。</p>
-<h2 id="handling-failures">Handling Failures</h2>
-<p>在容错方面，Gorilla 优先支持以下场景：</p>
-<ul>
-<li>单点故障，如果是临时故障则客户端完全无感知，常用于新版发布</li>
-<li>大范围、区域性故障：如 region 范围的网络分区</li>
-</ul>
-<h3 id="high-availability-1">High Availability</h3>
-<p>Gorilla 通过在两个不同区域的 DC 维护两台独立的实例保障服务的可用性。同一组时序数据写入时，会被发送给这两台独立的实例上，但不保证两次写操作的原子性。当一个区域故障时，读请求将被尝试发送到另一个区域。如果该区域的故障持续超过 1 分钟，读请求将不再发送给它，直到该区域中的实例数据已经正常写入 26 小时为止。</p>
-<p>在每个区域内部，一种基于 Paxos 的 ShardManager 用于维护分片与节点之间的关系。当一个节点发生故障时，ShardManager 会将它维护的分片重新分配给集群内部的其它节点。分片转移通常能够在 30 秒内完成，在分片转移的过程中，写入数据的客户端将缓存待写入的数据，并且最多缓存最近 1 分钟的数据。当客户端发现分片转移操作执行完时，客户端会立即掏空缓存，将数据写入到节点中。如果分片转移速度太慢，读请求可以被手动或自动地转发到另一个区域。</p>
-<p>当新的分片被分配给一个节点时，该节点需要从 GlusterFS 中读入所有数据。通常加载和预处理这些数据需要 5 分钟。当该节点正在恢复数据时，新写入的时序样本数据会被放入一个待处理队列。在老节点发生故障后，新节点加载分片数据完毕之前，读请求可能会读到部分数据，并打上标记。如果客户端发现数据被标记为部分数据，会再次请求另一个区域中的数据，如果数据完整则返回后者，失败则返回两组部分数据。</p>
-<p>最后，FB 仍然使用 HBase TSDB 来存储长期数据，工程师仍然可以通过它来分析过去的时序数据。</p>
-<h1 id="new-tools-on-gorilla">New Tools on Gorilla</h1>
-<p>由于 Gorilla 的数据存放在内存中，这样让更多的实时分析成为可能。</p>
-<ul>
-<li>相关性分析引擎，主要用于快速发现相关性很高的时序数据，从而辅助根源分析</li>
-<li>监控绘图</li>
-<li>聚合分析</li>
-</ul>
-<h1 id="experience">Experience</h1>
-<h2 id="lesson-learned">Lesson Learned</h2>
-<ul>
-<li><p>Prioritize recent data over historical data</p></li>
-<li><p>Read latency matters</p></li>
-<li><p>High availability trumps resource efficiency</p></li>
-</ul>
-<h1 id="references">References</h1>
-<p><a href="http://www.vldb.org/pvldb/vol8/p1816-teller.pdf" target="_blank" rel="noopener">gorilla paper</a></p>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-74" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path id="MJX-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-TEX-I-44" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-TEX-I-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path></defs></svg>
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/" rel="prev" title="Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)">
+      <i class="fa fa-chevron-left"></i> Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/" rel="next" title="LFU Implementation With O(1) Complexity (2010)">
+      LFU Implementation With O(1) Complexity (2010) <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
 
   </div>
-
-  
-
 
 
           </div>
@@ -1155,6 +567,7 @@ mjx-container + br {
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#事件顺序"><span class="nav-number">2.</span> <span class="nav-text">事件顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式系统"><span class="nav-number">2.1.</span> <span class="nav-text">分布式系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏序"><span class="nav-number">3.</span> <span class="nav-text">偏序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#逻辑时钟"><span class="nav-number">4.</span> <span class="nav-text">逻辑时钟</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#全序"><span class="nav-number">5.</span> <span class="nav-text">全序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#场景举例"><span class="nav-number">5.1.</span> <span class="nav-text">场景举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#证明"><span class="nav-number">5.1.1.</span> <span class="nav-text">证明</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#外部事件"><span class="nav-number">6.</span> <span class="nav-text">外部事件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#物理时钟"><span class="nav-number">7.</span> <span class="nav-text">物理时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#容忍外部事件的全序"><span class="nav-number">7.1.</span> <span class="nav-text">容忍外部事件的全序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

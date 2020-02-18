@@ -24,19 +24,19 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)">
 <meta property="og:url" content="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/index.html">
-<meta property="og:site_name" content="郑鹤的博客">
+<meta property="og:site_name" content="ZhengHe">
 <meta property="og:description" content="早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。 本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&token=1251874d-8189-4591-b246-84cc36a4da34">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&token=3d561901-dede-4f09-b268-87bec6607b54">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34">
+<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54">
 <meta property="article:published_time" content="2020-02-17T18:16:20.000Z">
-<meta property="article:modified_time" content="2020-02-17T10:23:46.968Z">
+<meta property="article:modified_time" content="2020-02-18T02:10:07.865Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="tracing">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
+<meta name="twitter:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
 
 <link rel="canonical" href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/">
 
@@ -50,7 +50,7 @@
   };
 </script>
 
-  <title>Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010) | 郑鹤的博客</title>
+  <title>Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010) | ZhengHe</title>
   
 
 
@@ -81,7 +81,124 @@
   </style>
 </noscript>
 
-</head>
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="container use-motion">
@@ -102,7 +219,7 @@
     <div>
       <a href="/blog/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">郑鹤的博客</span>
+        <span class="site-title">ZhengHe</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -169,13 +286,13 @@
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="">
+      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="郑鹤的博客">
+      <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -188,10 +305,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-02-17 18:16:20 / 修改时间：10:23:46" itemprop="dateCreated datePublished" datetime="2020-02-17T18:16:20+00:00">2020-02-17</time>
+              <time title="创建时间：2020-02-17 18:16:20" itemprop="dateCreated datePublished" datetime="2020-02-17T18:16:20+00:00">2020-02-17</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-18 02:10:07" itemprop="dateModified" datetime="2020-02-18T02:10:07+00:00">2020-02-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -217,7 +340,8 @@
       
         <p>早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
 <p>本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。</p>
-<h1 id="Why-amp-Design-Goals"><a href="#Why-amp-Design-Goals" class="headerlink" title="Why &amp; Design Goals"></a>Why &amp; Design Goals</h1><p>云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。</p>
+<h1 id="why-design-goals">Why &amp; Design Goals</h1>
+<p>云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。</p>
 <p>通常这些异常会被监控捕捉，如时延异常、错误日志、程序崩溃，在紧急处理之后，就需要调查案发现场，彻底解决问题。这时候就需要了解每个请求在整个微服务集群内部的行踪。</p>
 <p>这就向分布式追踪系统提出了两点要求：</p>
 <ul>
@@ -226,64 +350,87 @@
 </ul>
 <p>如果部署不完全或者监控有间断，就可能有一小部分历史无法被追踪到，从而影响到问题定位的准确度，使得追踪效果大打折扣。</p>
 <p>据此，我们提出追踪系统的 3 个主要设计目标：</p>
-<ol>
+<ol type="1">
 <li><strong>低成本 (Low overhead)</strong>：对服务的性能影响应该能够忽略不计</li>
 <li><strong>对应用透明 (Application-level transparency)</strong>：应用开发者对追踪系统无感知</li>
 <li><strong>扩展性好 (Scalability)</strong>：支持部署到所有服务的所有实例上</li>
 </ol>
 <p>在此基础上，数据从采集到可以被查询、分析的延迟越小越好，起到的作用也越大、越及时。</p>
-<h1 id="How"><a href="#How" class="headerlink" title="How"></a>How</h1><h2 id="General-Approaches"><a href="#General-Approaches" class="headerlink" title="General Approaches"></a>General Approaches</h2><p>分布式追踪的设计方案主要可以分为两类：黑盒法（black-box）和标记法（annotation-based）：</p>
-<h3 id="黑盒法"><a href="#黑盒法" class="headerlink" title="黑盒法"></a>黑盒法</h3><p>黑盒法无需任何侵入性代码，只通过统计回归等手段来推测服务之间的关系。它的优势在于无需修改代码，缺点在于记录不准确，且需要大量数据才能够推导出服务间的关系。</p>
-<h3 id="标记法"><a href="#标记法" class="headerlink" title="标记法"></a>标记法</h3><p>标记法需要为每个请求打标记，并通过一个全局标识符将请求途径的所有服务信息串联，复盘整个链路。标记法记录准确，但它的缺点也很明显，需要将标记代码注入到每个服务中。</p>
+<h1 id="how">How</h1>
+<h2 id="general-approaches">General Approaches</h2>
+<p>分布式追踪的设计方案主要可以分为两类：黑盒法（black-box）和标记法（annotation-based）：</p>
+<h3 id="黑盒法">黑盒法</h3>
+<p>黑盒法无需任何侵入性代码，只通过统计回归等手段来推测服务之间的关系。它的优势在于无需修改代码，缺点在于记录不准确，且需要大量数据才能够推导出服务间的关系。</p>
+<h3 id="标记法">标记法</h3>
+<p>标记法需要为每个请求打标记，并通过一个全局标识符将请求途径的所有服务信息串联，复盘整个链路。标记法记录准确，但它的缺点也很明显，需要将标记代码注入到每个服务中。</p>
 <p>在 Google 内部，几乎所有应用都使用相同的 threading model、control flow 和 RPC systems，因此可以将打标记的工作集中在少量的公共库中，同样能够达到对应用透明的效果。</p>
-<h2 id="Data-Models"><a href="#Data-Models" class="headerlink" title="Data Models"></a>Data Models</h2><p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&token=4abea3f6-a071-4078-8c2a-8d176fa17f35" alt="img"></p>
+<h2 id="data-models">Data Models</h2>
+<p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：</p>
+<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35" style="zoom:40%;" /></p>
 <p>相应调用链追踪的树状结构为：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" alt="img"></p>
+<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" style="zoom:50%;" /></p>
 <p>整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span 称为 root span，root span 的 id 就是 trace id。</p>
 <p>每个 span 都需要记录其开始时间和结束时间，如果应用开发者有记录其它信息的需求，则可以手动增加相应的标记。</p>
-<h2 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h2><p>Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&token=1251874d-8189-4591-b246-84cc36a4da34" alt="img"></p>
-<ol>
+<h2 id="pipeline">Pipeline</h2>
+<p>Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：</p>
+<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34" style="zoom:67%;" /></p>
+<ol type="1">
 <li>span 数据写入本地日志文件</li>
 <li>dapper daemon 从本地日志文件中收集数据</li>
 <li>dapper collectors 将数据写入 Bigtable 的大区仓库 (regional repositories)</li>
 </ol>
 <p>在 Bigtable 中，每行数据就是一个 trace，且每行可以有任意列，恰好方便存储不定长的 trace/span 数据。Dapper 向开发者提供相应的 API 和 SDK，方便 Google 的开发者能够据此搭建数据分析工具，定制化地辅助线上问题排查。</p>
-<h2 id="Overhead"><a href="#Overhead" class="headerlink" title="Overhead"></a>Overhead</h2><p>调用链追踪的主要成本在于：trace generation 和 collection。</p>
-<h3 id="Trace-generation"><a href="#Trace-generation" class="headerlink" title="Trace generation"></a>Trace generation</h3><p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176 ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
+<h2 id="overhead">Overhead</h2>
+<p>调用链追踪的主要成本在于：trace generation 和 collection。</p>
+<h3 id="trace-generation">Trace generation</h3>
+<p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176 ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
 <p>在 Dapper 的 runtime library 中，最耗时的操作就是将 trace 信息写入本地磁盘，但考虑到使用批量和异步写入的方式优化，对被跟踪的服务本身的影响就相对削弱了。</p>
-<h3 id="Trace-collection"><a href="#Trace-collection" class="headerlink" title="Trace collection"></a>Trace collection</h3><p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3% 的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在 kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
+<h3 id="trace-collection">Trace collection</h3>
+<p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3% 的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在 kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
 <p>在实践中，平均每个 span 的大小约为 426 字节，经过计算，在生产环境中 Dapper 占用的网络带宽大约为总量的 0.01%。</p>
-<h3 id="Effect-on-production-workloads"><a href="#Effect-on-production-workloads" class="headerlink" title="Effect on production workloads"></a>Effect on production workloads</h3><p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&token=3d561901-dede-4f09-b268-87bec6607b54" alt="img"></p>
+<h3 id="effect-on-production-workloads">Effect on production workloads</h3>
+<p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
+<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54" style="zoom:50%;" /></p>
 <p>The experimental errors for these latency and throughput measurements are 2.5% and 0.15% respectively.</p>
 <p>从图中可以发现，尽管调用链追踪带来的性能影响不是很大，但并不能忽略不计，对 trace 数据进行抽样是很有必要的。当抽样率小于 1/16 时，影响范围已经小于误差范围。在实践中，我们设置 1/1024 的抽样率就能收集到足够多的 trace 数据。</p>
 <p>除此之外，使用更低的采样率可以让 trace 数据在本地磁盘存活更长的时间，为整个搜集框架争取更大的灵活度。</p>
-<h3 id="Adaptive-Sampling"><a href="#Adaptive-Sampling" class="headerlink" title="Adaptive Sampling"></a>Adaptive Sampling</h3><p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper 的首个生产版本中，采用了统一的采样率 1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
+<h3 id="adaptive-sampling">Adaptive Sampling</h3>
+<p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper 的首个生产版本中，采用了统一的采样率 1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
 <p>因此 Dapper 团队正在研发自适应采样率机制，针对不频繁的重要事件能提高采样率。实际被使用的抽样率会被记录在 trace/span 数据中，帮助后期工具分析。</p>
-<h3 id="Additional-Sampling"><a href="#Additional-Sampling" class="headerlink" title="Additional Sampling"></a>Additional Sampling</h3><p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但 Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper 在生产环境中每天将产生 1T 的追踪数据；同时 Dapper 的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升 Dapper collectors、Bigtable 的吞吐量。因此 Dapper 团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
+<h3 id="additional-sampling">Additional Sampling</h3>
+<p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但 Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper 在生产环境中每天将产生 1T 的追踪数据；同时 Dapper 的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升 Dapper collectors、Bigtable 的吞吐量。因此 Dapper 团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
 <p>实现的思路很简单，将每个 trace id 哈希到 [0, 1]，如果哈希值小于给定的抽样系数，则通过；大于则拦截。在实践中，额外的抽样给与 Dapper 团队更强的全局控制力。</p>
-<h1 id="Where"><a href="#Where" class="headerlink" title="Where"></a>Where</h1><h2 id="General-Purpose-Tools"><a href="#General-Purpose-Tools" class="headerlink" title="General-Purpose Tools"></a>General-Purpose Tools</h2><h3 id="Dapper-Depot-API"><a href="#Dapper-Depot-API" class="headerlink" title="Dapper Depot API"></a>Dapper Depot API</h3><p>Dapper 向开发者开放一系列 API：</p>
+<h1 id="where">Where</h1>
+<h2 id="general-purpose-tools">General-Purpose Tools</h2>
+<h3 id="dapper-depot-api">Dapper Depot API</h3>
+<p>Dapper 向开发者开放一系列 API：</p>
 <ul>
 <li>Access by trace id</li>
 <li>Bulk access</li>
 <li>Indexed access</li>
 </ul>
 <p>在实践中，Dapper 发现 (service_name, host_machine, timestamp) 的联合索引恰好能满足大部分开发者的需求。</p>
-<h3 id="Dapper-user-interface"><a href="#Dapper-user-interface" class="headerlink" title="Dapper user interface"></a>Dapper user interface</h3><p>dapper user interface 可以理解为 APM 系统，方便开发者快速对线上问题做根源分析。交互界面和 user story 详见论文。</p>
-<h2 id="Experiences"><a href="#Experiences" class="headerlink" title="Experiences"></a>Experiences</h2><h3 id="Using-Dapper-during-development"><a href="#Using-Dapper-during-development" class="headerlink" title="Using Dapper during development"></a>Using Dapper during development</h3><p>Dapper 主要在以下几个方面帮助开发者改进服务：</p>
+<h3 id="dapper-user-interface">Dapper user interface</h3>
+<p>dapper user interface 可以理解为 APM 系统，方便开发者快速对线上问题做根源分析。交互界面和 user story 详见论文。</p>
+<h2 id="experiences">Experiences</h2>
+<h3 id="using-dapper-during-development">Using Dapper during development</h3>
+<p>Dapper 主要在以下几个方面帮助开发者改进服务：</p>
 <ul>
 <li>Performance：通过调用链示意图发现服务瓶颈</li>
 <li>Correctness：dapper 通过标签帮助开发者发现一些本该访问 master 节点的请求访问了 replicas</li>
 <li>Understanding：dapper 帮助开发者理解自身系统的依赖，增进对复杂系统的理解，为架构层面优化提供依据</li>
 <li>Testing：开发者可以通过观察调用链信息测试系统的行为是否符合预期</li>
 </ul>
-<h3 id="Addressing-long-tail-latency"><a href="#Addressing-long-tail-latency" class="headerlink" title="Addressing long tail latency"></a>Addressing long tail latency</h3><p>Google 内部的一位工程师利用 Dapper 提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
-<h3 id="Inferring-service-dependencies"><a href="#Inferring-service-dependencies" class="headerlink" title="Inferring service dependencies"></a>Inferring service dependencies</h3><p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。 Google 的 “Service Dependencies” 项目正是利用 Dapper 的近期数据来推断依赖关系。</p>
-<h3 id="Network-usage-of-different-services"><a href="#Network-usage-of-different-services" class="headerlink" title="Network usage of different services"></a>Network usage of different services</h3><p>在发现网络带宽使用异常时，Dapper 可以辅助开发者锁定到具体的请求。</p>
-<h3 id="Layered-and-Shared-Storage-Systems"><a href="#Layered-and-Shared-Storage-Systems" class="headerlink" title="Layered and Shared Storage Systems"></a>Layered and Shared Storage Systems</h3><p>一些公共服务通常很难知道其调用方及各自调用量，Dapper 帮助这些公共服务的维护者更好地了解它们。</p>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf" target="_blank" rel="noopener">Dapper</a></p>
+<h3 id="addressing-long-tail-latency">Addressing long tail latency</h3>
+<p>Google 内部的一位工程师利用 Dapper 提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
+<h3 id="inferring-service-dependencies">Inferring service dependencies</h3>
+<p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。 Google 的 "Service Dependencies" 项目正是利用 Dapper 的近期数据来推断依赖关系。</p>
+<h3 id="network-usage-of-different-services">Network usage of different services</h3>
+<p>在发现网络带宽使用异常时，Dapper 可以辅助开发者锁定到具体的请求。</p>
+<h3 id="layered-and-shared-storage-systems">Layered and Shared Storage Systems</h3>
+<p>一些公共服务通常很难知道其调用方及各自调用量，Dapper 帮助这些公共服务的维护者更好地了解它们。</p>
+<h1 id="references">References</h1>
+<p><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf" target="_blank" rel="noopener">Dapper</a></p>
 
     </div>
 
@@ -305,7 +452,10 @@
     <a href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" rel="prev" title="Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)">
       <i class="fa fa-chevron-left"></i> Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/" rel="next" title="Time, Clocks, and the Ordering of Events in a Distributed System (1978)">
+      Time, Clocks, and the Ordering of Events in a Distributed System (1978) <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -365,21 +515,23 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Why-amp-Design-Goals"><span class="nav-number">1.</span> <span class="nav-text">Why &amp; Design Goals</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#How"><span class="nav-number">2.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#General-Approaches"><span class="nav-number">2.1.</span> <span class="nav-text">General Approaches</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#黑盒法"><span class="nav-number">2.1.1.</span> <span class="nav-text">黑盒法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标记法"><span class="nav-number">2.1.2.</span> <span class="nav-text">标记法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Models"><span class="nav-number">2.2.</span> <span class="nav-text">Data Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pipeline"><span class="nav-number">2.3.</span> <span class="nav-text">Pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Overhead"><span class="nav-number">2.4.</span> <span class="nav-text">Overhead</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Trace-generation"><span class="nav-number">2.4.1.</span> <span class="nav-text">Trace generation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Trace-collection"><span class="nav-number">2.4.2.</span> <span class="nav-text">Trace collection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Effect-on-production-workloads"><span class="nav-number">2.4.3.</span> <span class="nav-text">Effect on production workloads</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adaptive-Sampling"><span class="nav-number">2.4.4.</span> <span class="nav-text">Adaptive Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Additional-Sampling"><span class="nav-number">2.4.5.</span> <span class="nav-text">Additional Sampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Where"><span class="nav-number">3.</span> <span class="nav-text">Where</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#General-Purpose-Tools"><span class="nav-number">3.1.</span> <span class="nav-text">General-Purpose Tools</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dapper-Depot-API"><span class="nav-number">3.1.1.</span> <span class="nav-text">Dapper Depot API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dapper-user-interface"><span class="nav-number">3.1.2.</span> <span class="nav-text">Dapper user interface</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Experiences"><span class="nav-number">3.2.</span> <span class="nav-text">Experiences</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-Dapper-during-development"><span class="nav-number">3.2.1.</span> <span class="nav-text">Using Dapper during development</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Addressing-long-tail-latency"><span class="nav-number">3.2.2.</span> <span class="nav-text">Addressing long tail latency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inferring-service-dependencies"><span class="nav-number">3.2.3.</span> <span class="nav-text">Inferring service dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Network-usage-of-different-services"><span class="nav-number">3.2.4.</span> <span class="nav-text">Network usage of different services</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Layered-and-Shared-Storage-Systems"><span class="nav-number">3.2.5.</span> <span class="nav-text">Layered and Shared Storage Systems</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#why-design-goals"><span class="nav-number">1.</span> <span class="nav-text">Why &amp; Design Goals</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how"><span class="nav-number">2.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#general-approaches"><span class="nav-number">2.1.</span> <span class="nav-text">General Approaches</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#黑盒法"><span class="nav-number">2.1.1.</span> <span class="nav-text">黑盒法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标记法"><span class="nav-number">2.1.2.</span> <span class="nav-text">标记法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#data-models"><span class="nav-number">2.2.</span> <span class="nav-text">Data Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipeline"><span class="nav-number">2.3.</span> <span class="nav-text">Pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#overhead"><span class="nav-number">2.4.</span> <span class="nav-text">Overhead</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-generation"><span class="nav-number">2.4.1.</span> <span class="nav-text">Trace generation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-collection"><span class="nav-number">2.4.2.</span> <span class="nav-text">Trace collection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#effect-on-production-workloads"><span class="nav-number">2.4.3.</span> <span class="nav-text">Effect on production workloads</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adaptive-sampling"><span class="nav-number">2.4.4.</span> <span class="nav-text">Adaptive Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#additional-sampling"><span class="nav-number">2.4.5.</span> <span class="nav-text">Additional Sampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#where"><span class="nav-number">3.</span> <span class="nav-text">Where</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#general-purpose-tools"><span class="nav-number">3.1.</span> <span class="nav-text">General-Purpose Tools</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dapper-depot-api"><span class="nav-number">3.1.1.</span> <span class="nav-text">Dapper Depot API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dapper-user-interface"><span class="nav-number">3.1.2.</span> <span class="nav-text">Dapper user interface</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiences"><span class="nav-number">3.2.</span> <span class="nav-text">Experiences</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#using-dapper-during-development"><span class="nav-number">3.2.1.</span> <span class="nav-text">Using Dapper during development</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addressing-long-tail-latency"><span class="nav-number">3.2.2.</span> <span class="nav-text">Addressing long tail latency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inferring-service-dependencies"><span class="nav-number">3.2.3.</span> <span class="nav-text">Inferring service dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#network-usage-of-different-services"><span class="nav-number">3.2.4.</span> <span class="nav-text">Network usage of different services</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#layered-and-shared-storage-systems"><span class="nav-number">3.2.5.</span> <span class="nav-text">Layered and Shared Storage Systems</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
   <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description"></div>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -392,11 +544,19 @@
       <div class="site-state-item site-state-tags">
             <a href="/blog/tags/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -475,6 +635,8 @@
 
 
 
+
+  
 
   
 
