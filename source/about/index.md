@@ -3,9 +3,10 @@ title: 自我介绍
 date: 2020-02-16 23:14:34
 ---
 
-take a few courses,
-read a few papers,
-write a few codes,
-run a few miles.
+* 听点网课
+* 看点论文
+* 写点代码
+* 跑点小步
 
+目前就职于读我科技，是技术中台质量工程组的负责人，欢迎加入我们
 
