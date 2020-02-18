@@ -3,11 +3,9 @@ title: 自我介绍
 date: 2020-02-16 23:14:34
 ---
 
-
-
-喜欢 CS 领域的理论与实践。
-
-现在在伴鱼少儿英语的技术中台，欢迎联系、加入我司。
-
+take a few courses,
+read a few papers,
+write a few codes,
+run a few miles.
 
 
