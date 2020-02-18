@@ -8,7 +8,7 @@ branches:
     - master # build master branch only
 addons:
   apt_packages:
-    - pandoc
+    - pandoc-2.2
 script:
   - hexo generate # generate static files
 deploy:
