@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在计算机系统设计实践中，我们常常会遇到下图所示架构：  为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在同级 Cache 之间 (Cache Coherence) 和上下级 Cache 之间。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cache Policies">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="在计算机系统设计实践中，我们常常会遇到下图所示架构：  为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在同级 Cache 之间 (Cache Coherence) 和上下级 Cache 之间。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/coherence.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/single-core-cache-architecture.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/cache-block-and-cache-line.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/cache-line-with-dirty-bit.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/multicore-share-cache.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/multicore-private-cache.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence-op-1.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence-op-2.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/msi.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/directory.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/directory-based.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-read-through.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-write-behind.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-write-behind-variant.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-1.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-2.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-3.jpg">
+<meta property="article:published_time" content="2020-02-19T23:17:10.000Z">
+<meta property="article:modified_time" content="2020-02-23T09:47:08.419Z">
+<meta property="article:author" content="ZhengHe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/coherence.jpg">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Cache Policies | ZhengHe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style></head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Cache Policies
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-19 23:17:10" itemprop="dateCreated datePublished" datetime="2020-02-19T23:17:10+00:00">2020-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-23 09:47:08" itemprop="dateModified" datetime="2020-02-23T09:47:08+00:00">2020-02-23</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
+                    <span itemprop="name">system design</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在计算机系统设计实践中，我们常常会遇到下图所示架构：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/coherence.jpg" width="400px"></p>
+<p>为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在<strong>同级 Cache 之间 (Cache Coherence) </strong>和<strong>上下级 Cache 之间</strong>。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：<strong>在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量大大提高</strong>。</p>
+<p>本文将探讨三个场景：</p>
+<ol type="1">
+<li>Cache Policy In Single-core Processor</li>
+<li>Cache Coherence in Multi-core Processor</li>
+<li>Cache Policy in Cache/DB Architecture</li>
+</ol>
+<h1 id="cache-policy-in-single-core-processor">Cache Policy in Single-core Processor</h1>
+<p>在单核 CPU 中，只有一套 Cache，因此只要确保写入 Cache 中的数据也写入到 Memory 即可。</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/single-core-cache-architecture.jpg" width="450px"></p>
+<p>补充一些概念定义：数据在 Cache 与 Memory 之间移动的最小单位通常在 32 - 128 字节之间，Memory 中对应的最小单位数据称为 Cache Block，Cache 中与单个 Cache Block 对应的存储空间称为 Cache Line，在 Cache 中除了存储 Block 数据，还需要存储 Block 对应的唯一标识 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> (Tag)，以及一个用于标记 Cache Line 是否有数据的有效位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span>。完整对应关系如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/cache-block-and-cache-line.jpg" width="450px"></p>
+<p>单核处理器下的 Cache Policy 要解决的问题可以被概括为：</p>
+<blockquote>
+<p>CPU 从 Cache 中读到的数据必须是最近写入的数据</p>
+</blockquote>
+<p>要满足定义，最简单的方式就是 Write-Through，即每次写入 Cache 时，也将数据写到 Memory 中。当之前写入的某数据 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g></g></g></svg></mjx-container></span> 在某时刻被置换后，可以保证再次读入的数据是最近写入的数据。这里有个很明显的改进空间：只需要在数据 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g></g></g></svg></mjx-container></span> 被置换前将其写入 Memory 即可。为此我们可以为每个 Cache Line 增加一个脏位 (Dirty Bit)，即：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/cache-line-with-dirty-bit.jpg" width="450px"></p>
+<p>当其被写入时置为 1；当其被置换时，如果脏位为 1，则写出到 Memory，否则直接丢弃即可。以上所述的 Cache Policy 就是 Write-Back Policy，也是目前在单核处理器中被广泛采用的 Cache Policy。</p>
+<h1 id="cache-coherence-in-multi-core-processor">Cache Coherence in Multi-core Processor</h1>
+<p>‌在多核 CPU 中，如果这些核共用一套缓存，由于单套 Cache 的吞吐跟不上，无法达到最佳性能。</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/multicore-share-cache.jpg" width="600px"></p>
+<p>这时候就需要在每个核上再加一级私有缓存：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/multicore-private-cache.jpg" width="520px"></p>
+<p>假设在一个 4 核处理器中，内存地址 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="4.075ex" height="1.62ex" role="img" focusable="false" viewBox="0 -716 1801 716" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4D"></use></g><g data-mml-node="mi" transform="translate(1051, 0)"><use xlink:href="#MJX-TEX-I-41"></use></g></g></g></svg></mjx-container></span> 处最开始存储着整数 0，这时每个核都需要完成一个 read-modify-write 的操作，如下所示：</p>
+<table>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Core 0</th>
+<th>Core 1</th>
+<th>Core 2</th>
+<th>Core 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LW Reg &lt;= A<br>Reg ++<br>SW Reg =&gt; A</td>
+<td>LW Reg &lt;= A<br>Reg ++<br>SW Reg =&gt; A</td>
+<td>LW Reg &lt;= A<br>Reg ++<br>SW Reg =&gt; A</td>
+<td>LW Reg &lt;= A<br>Reg ++<br>SW Reg =&gt; A</td>
+</tr>
+</tbody>
+</table>
+<p>如果不加任何协议，当 4 个核都完成相应的操作后，内存地址 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="4.075ex" height="1.62ex" role="img" focusable="false" viewBox="0 -716 1801 716" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4D"></use></g><g data-mml-node="mi" transform="translate(1051, 0)"><use xlink:href="#MJX-TEX-I-41"></use></g></g></g></svg></mjx-container></span> 处可能存储着 1、2、3、4 中的任意值，这将影响并行计算的正确性。要保证并行计算的正确性，就必须保证每个核私有缓存之间的<strong>数据一致</strong>且永远是<strong>最新版本</strong>，可以想象，多核处理器上的各核之间必须遵守某种数据读写协议，才可能在获得多核计算力的同时维持计算的正确性，我们称这种数据读写协议为 Cache Coherence Protocols。</p>
+<blockquote>
+<p>Cache Coherence 的要求：</p>
+<ol type="1">
+<li>从内存地址 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="4.305ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 1903 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4D"></use></g><g data-mml-node="mi" transform="translate(1051, 0)"><use xlink:href="#MJX-TEX-I-58"></use></g></g></g></svg></mjx-container></span> 将数据 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g></g></g></svg></mjx-container></span> 读入到核 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="2.851ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 1260 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-43"></use></g><g data-mml-node="mn" transform="translate(760, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span> 的 Cache 中，在其它核没有写入数据到 MX 的情况下，读入的数据 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g></g></g></svg></mjx-container></span> 必须是 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="2.851ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 1260 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-43"></use></g><g data-mml-node="mn" transform="translate(760, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span> 最近写入的数据值。(单核 CPU 的 Cache Coherence 定义)</li>
+<li>如果 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="2.851ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 1260 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-43"></use></g><g data-mml-node="mn" transform="translate(760, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span> 写入数据到 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="4.305ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 1903 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4D"></use></g><g data-mml-node="mi" transform="translate(1051, 0)"><use xlink:href="#MJX-TEX-I-58"></use></g></g></g></svg></mjx-container></span> 中，经过足够长的一段时间后，在其它核没有写入数据的情况下，<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="2.851ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 1260 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-43"></use></g><g data-mml-node="mn" transform="translate(760, 0)"><use xlink:href="#MJX-TEX-N-32"></use></g></g></g></svg></mjx-container></span> 必须能够读入 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="2.851ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 1260 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-43"></use></g><g data-mml-node="mn" transform="translate(760, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span> 写入的数据值。</li>
+<li>针对地址 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="4.305ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 1903 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-4D"></use></g><g data-mml-node="mi" transform="translate(1051, 0)"><use xlink:href="#MJX-TEX-I-58"></use></g></g></g></svg></mjx-container></span> 中的来自于各个核的写入操作必须被序列化，即在每个核眼中，数据的写入顺序相同。</li>
+</ol>
+</blockquote>
+<h2 id="how-to-get-coherence">How To Get Coherence</h2>
+<p>要在多核 CPU 中实现 Cache Coherence，需要解决的根本问题是：<strong>让每个读操作在执行前能够获得所有最近的写操作历史</strong>。</p>
+<p><strong>从写操作传递信息的内容出发</strong>，可以将 Cache Coherence Protocols 划分为两类：<strong>Write-Update</strong> 和 <strong>Write-Invalidate</strong>。Write-Update 就是在写入数据时，将所有其它同级 Cache 中相同的 Cache Line 更新成最新数据；Write-Invalidate 就是在写入数据时，将所有其它同级 Cache 中相同的 Cache Line 标记为不合法。</p>
+<p><strong>从写操作传递信息的方式出发</strong>，可以将 Cache Coherence Protocols 划分为两类：<strong>Snooping</strong> 和 <strong>Directory</strong>。Snooping 将写数据的信息通过共享总线 (Shared Bus) 广播给其它同级 Cache，同时保证写操作的顺序一致；Directory 在内存中为每个 Cache Line 标记额外的元信息，每个 Cache Line 的读写控制分而自治，将写数据的信息通过点对点的方式传递。</p>
+<p>任何一种 Cache Coherence Protocol 基本都可以从这两个维度被归类为以下四类：</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Write-Update</th>
+<th>Write-Invalidate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Snooping</strong></td>
+<td>Write-Update Snooping</td>
+<td>Write-Invalidate Snooping</td>
+</tr>
+<tr class="even">
+<td><strong>Directory</strong></td>
+<td>Write-Update Directory</td>
+<td>Write-Invalidate Directory</td>
+</tr>
+</tbody>
+</table>
+<h3 id="write-update-snooping-example">Write-Update Snooping Example</h3>
+<p>Cache 中的每条 Cache Line，除了记录数据本身，额外使用 1 bit 标记 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 是否有效，以及若干 bits 用于存储 Cache Block 的唯一标识 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span>。多个核内部的 Cache 通过一条共享总线与 Memory 相连，如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence.jpg" width="650px"></p>
+<ul>
+<li>读取数据时，如果 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 在 Cache 中的标记位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 0，即触发 Cache Miss，Cache 会向 Memory 发起读请求；同时其它核的 Cache 会在总线上监听信息，但它们并不关心读请求，因此这个过程没有其它事情发生；如果目标 Block 在 Cache 中的标记位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 1，则直接返回。</li>
+<li>写入数据时，Cache 会将写请求通过总线发送到 Memory 中，并将 Memory Block 中 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 对应 Cache Line 中的数据更新；同时，其它核的 Cache 会在总线上监听信息，如果发现内部也存有标识符为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 的 Memory Block，则将其对应的 Cache Line 更新。</li>
+<li>如果多个核同时发送针对 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 的写请求，这时只有一个核可以获得总线的使用权，当整个 Write-Update 完整过程执行完毕后，其它核才能继续争夺总线的使用权。这也保证了 Cache Coherence 定义中的第三条。</li>
+</ul>
+<h4 id="optimization-1-memory-writes">Optimization #1: Memory Writes</h4>
+<p>在原始的 Write-Update Snooping Example 中，我们采用 Write-Through 的方式，每当某个 Cache Line 写入数据时，都同时写穿到 Memory 中。本身 Memory 距离较远，读写数据时间长，就容易成为瓶颈，因此如果能够尽量使用类似 Write-Back 的策略，将数据保留在 Cache 中，用脏位 (dirty bit) 标记，等到其需要被替换时，再写入 Memory 中，就能优化该协议的整体性能。</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence-op-1.jpg" width="650px"></p>
+<ul>
+<li>读取数据时，如果 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 在 Cache 中的标记为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 0，即触发 Cache Miss，Cache 会向 Memory 发起读请求；如果其它核的 Cache 已经拥有 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 对应的数据，则会<strong>截获该请求</strong>，直接将自己的数据传输给请求方，减少读穿。</li>
+<li>写入数据时，Cache 会首先将自身 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 对应的数据更新，并且将脏位置为 1；然后将写数据的信息传入共享总线，这时其它核的 Cache 会同时监听到该消息。如果另一个核的 Cache 内部有相同的 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span>，若它的脏位为 1，则会将数据先写入 Memory，然后将 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 更新到刚监听到的值，同时将脏位置为 0；若它的脏位为 0，则会直接修改数据。</li>
+<li>如果 Cache 已满，被迫清出，则通过缓存置换算法选出 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="2.313ex" height="1.717ex" role="img" focusable="false" viewBox="0 -759 1022.5 759" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g><g data-mml-node="mo" transform="translate(778, 363) scale(0.707)"><use xlink:href="#MJX-TEX-N-2032"></use></g></g></g></g></svg></mjx-container></span>。若 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="2.313ex" height="1.717ex" role="img" focusable="false" viewBox="0 -759 1022.5 759" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g><g data-mml-node="mo" transform="translate(778, 363) scale(0.707)"><use xlink:href="#MJX-TEX-N-2032"></use></g></g></g></g></svg></mjx-container></span> 的脏位为 1，则先将数据写出到缓存。</li>
+</ul>
+<p>总而言之：以上修改<strong>减少了读穿和写穿的频率</strong>，从而提高整体性能。</p>
+<h4 id="optimization-2-bus-writes">Optimization #2: Bus Writes</h4>
+<p>尽管增加 Opmization #1能减少读写 Memory 的资源消耗，但每次写数据时，依然要将信息发送到共享总线。大多数情况下，某 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 对应的数据只有单个核会访问，因此如果能够提前识别其它核的 Cache 是否拥有该数据，避免向总线写入数据，就可以进一步提高整体性能。正因为此，我们可以尝试再加入一个共享标记位 (Shared Bit)，用于标记目标 Cache Line 是否同时存在于其它核的 Cache 中，如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence-op-2.jpg" width="650px"></p>
+<ul>
+<li>读取数据时，如果发现其它 Cache 已经拥有 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 对应的数据，则二者都将共享标记位置为 1。</li>
+<li>写入数据时，如果共享标记位为 1，则将写信息发送到共享总线；如果共享标记位为 0，则直接修改本地 Cache Line 的值即可，并将脏位标记为 1，无需广播。</li>
+</ul>
+<h3 id="write-invalidate-snooping-example">Write-Invalidate Snooping Example</h3>
+<p>利用 Write-Update Snooping Example + Dirty Bit + Shared Bit 的结构，我们来看 Write-Invalidate Snooping 的工作模式。</p>
+<ul>
+<li>读取数据时，与 Write-Update Snooping 类似，<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 0 时触发 Cache Miss；<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 1 时直接读取本地缓存。</li>
+<li>写入数据时，若 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 的共享标记位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.459ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 645 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g></g></g></svg></mjx-container></span> 为 0，则指写入本地缓存；若共享标记位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.459ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 645 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g></g></g></svg></mjx-container></span> 为 1，则写入本地缓存的同时将写入信息发送到共享总线，其它拥有 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 的 Cache 将有效位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 置为 0 即可。由于 Write-Invalidate 不需要更新其它 Cache 中的数据，因此发送到总线中的信息只需包含 Cache Line 的标识符 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 即可。</li>
+</ul>
+<p>与 Write-Update Snooping 不同，Write-Invalidatie Snooping 每次写入数据后，Cache 中 Cache Line <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span> 的共享标记位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.459ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 645 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g></g></g></svg></mjx-container></span> 总是为 0，只有一个 Cache 中其对应的有效位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.74ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 769 705" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-56"></use></g></g></g></svg></mjx-container></span> 为 1，即全局只有一个 Cache 拥有有效数据。</p>
+<h4 id="update-v.s.-invalidate-coherence">Update V.S. Invalidate Coherence</h4>
+<p>Update 与 Invalidate 究竟二者谁更优异？这需要实际运行模式的检验，考虑以下 3 种常见场景：</p>
+<table>
+<colgroup>
+<col style="width: 28%">
+<col style="width: 31%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>场景</th>
+<th>Update</th>
+<th>Invalidate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>瞬间针对同一个地址大量更新数据</td>
+<td>❌ 每次写入都需要更新其它 Cache (<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex" xmlns="http://www.w3.org/2000/svg" width="5.608ex" height="1.781ex" role="img" focusable="false" viewBox="0 -705 2478.6 787" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g><g data-mml-node="mo" transform="translate(922.8, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1978.6, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span>)</td>
+<td>✅ 第一次写入之后就不需要再更新</td>
+</tr>
+<tr class="even">
+<td>在同一个 Cache Line 上更新不同部分 (Words)</td>
+<td>❌ 每个 WORD 写入都需要更新其它 Cache (<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.186ex" xmlns="http://www.w3.org/2000/svg" width="5.608ex" height="1.781ex" role="img" focusable="false" viewBox="0 -705 2478.6 787" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g><g data-mml-node="mo" transform="translate(922.8, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1978.6, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span>)</td>
+<td>✅ 第一次写入之后就不需要再更新</td>
+</tr>
+<tr class="odd">
+<td>生产者/消费者</td>
+<td>✅ 生产者修改完数据后，直接更新消费者的数据</td>
+<td>❌ 每次生产完数据都需要 Invalidate；每次消费都会发生 Cache Miss，更多的总线吞吐</td>
+</tr>
+</tbody>
+</table>
+<p>尽管二者看起来各有千秋，<strong>在实践中普遍被采用的还是 Invalidate Coherence</strong>。原因在于：在多核 CPU 的运行时中，一个最频繁的操作就是将一个 Thread 从一个核移动到另一个核上运行。分析一下这种场景：</p>
+<table>
+<thead>
+<tr class="header">
+<th>场景</th>
+<th>Update</th>
+<th>Invalidate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>线程转移</td>
+<td>❌ 线程在新的核上，总是需要更新旧核缓存</td>
+<td>✅ 第一次写入之后，旧核中的缓存全部失效</td>
+</tr>
+</tbody>
+</table>
+<h4 id="msi-coherence">MSI Coherence</h4>
+<p>在 Write-Invalide Snooping Example 中，我们在每个 Cache Line 上使用了 3 个标记位：有效位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.593ex" height="1.532ex" role="img" focusable="false" viewBox="0 -677 704 677" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-54"></use></g></g></g></svg></mjx-container></span>、脏位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: 0" xmlns="http://www.w3.org/2000/svg" width="1.873ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 828 683" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-44"></use></g></g></g></svg></mjx-container></span> 和共享位 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="1.459ex" height="1.645ex" role="img" focusable="false" viewBox="0 -705 645 727" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-53"></use></g></g></g></svg></mjx-container></span>，一共可以表示 8 个状态。每个 Cache Line 真的需要 8 个状态吗？我们发现实际上每个 Cache Line 只需 3 个状态就足够实现 Write-Invalide Snooping Protocol：</p>
+<ul>
+<li>MODIFIED：修改且独占</li>
+<li>SHARED：共享</li>
+<li>INVALID：无效</li>
+</ul>
+<p>其状态机如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/msi.jpg" width="500px"></p>
+<p>表示 3 个状态只需要 2 bits，这种更简单的 Write-Invalid Snooping Protocol 被称为 MSI。尽管 MSI 能达到目的，但它在多个场景下仍存在效率问题，因此也有相应的改进版本 MOSI、MOESI 被提出，这里不再赘述。</p>
+<h3 id="directory-protocols">Directory Protocols</h3>
+<p>由于 Snooping 依赖基于共享总线的广播和监听，当 CPU 核数大于 8 个以后，共享总线就需要处理更多信号，解决更多冲突，成为瓶颈。因此<strong>抛弃广播网络、拥抱点对点网络通信是获得扩展性的前提</strong>。失去广播网络后，如何保证对同一个 Block 的写入顺序在各 CPU 核中保持一致，又重新成为难题。</p>
+<p>Directory Protocols 正是为解决上述问题而被提出。要序列化对同一个 Block 的数据写入顺序，就必须将这些写入操作集中到一个节点上，但这并未要求对不同 Block 的写操作集中到一个节点上。于是我们可以<strong>将不同 Block 的控制权分散到不同分片中</strong>，这里的分片就是所谓的 Directory，每个 Directory 中包含若干个 Block 的控制信息。每个 Block 在 Directory 中记录的信息包含两个部分：</p>
+<ul>
+<li>Dirty Bit：是否被修改且未写回 Memory</li>
+<li>Sharing Vector：哪些 Cache 拥有该 Block Data</li>
+</ul>
+<p>假设 CPU 中有 4 个核，每个核拥有私有 Cache，可以为每个 Block 记录 5 bits 信息：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/directory.jpg" width="500px"></p>
+<p>这时整个架构如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/directory-based.jpg" width="500px"></p>
+<p>这种分片的思想也是解决分布式系统横向扩展性的利器，值得深思。</p>
+<h1 id="cache-policy-in-cachedb-architecture">Cache Policy in Cache/DB Architecture</h1>
+<p>‌在 Web APP 开发中，通过引入缓存中间件 (redis/memcache) 来减少数据库的读吞吐是十分常见的做法，这时服务架构通常如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache.jpg" width="600px"></p>
+<p>如何从 Cache 和 DB 读取、写入数据就是 Cache/DB Architecture 下的 Cache Policy。与单核 CPU 中的 Cache Policy 不同，由于 Web APP 通常会部署在多个实例上，实践中几乎总是有多个进程在并行地增删改查数据。这时 Web APP 中不同进程写 Cache、写 DB 的顺序可以用 "一切皆有可能" 来概括。如果要保证二者之间数据的绝对一致，则必须要有分布式事务的支持，但无论是实现难度，还是分布式事务下的写吞吐量下降，都不是开发者所期望的。因此在 Cache/DB Architecture 中，我们对 Cache Policy 的要求可以概括为：</p>
+<blockquote>
+<p>最终一致性：在写入 DB 之后，经过足够长的时间后总能访问到最近写入的数据</p>
+</blockquote>
+<h2 id="data-inconsistency">Data Inconsistency</h2>
+<p>经过简单分析，我们可以找到很多出现数据不一致的场景。</p>
+<ul>
+<li>场景 1：假设写入数据时，先写 DB 后写 Cache：如果写 DB 成功，写 Cache 失败，那么 Cache 中就会继续保存着过时的数据。</li>
+<li>场景 2：假设写入数据时，先写 DB 后写 Cache：如果有两个进程 A、B 同时执行写数据操作，有可能出现 A 写 DB、B 写 DB、B 写 Cache、A 写 Cache 的执行顺序，那么 Cache 中就会继续保存着过时的数据</li>
+<li>...</li>
+</ul>
+<h2 id="cache-policies">Cache Policies</h2>
+<h3 id="policy-1cache-expiry">Policy 1：Cache Expiry</h3>
+<p>要实现 Cache/DB 中数据的最终一致，最简单的方式莫过于通过在 Cache 中为缓存数据设置过期时间，在经过这段时间后，会自动再次从数据库中重新加载数据，这样就能达到最终一致性。</p>
+<p>这个方案的缺点也很明显，假如过期时间设置为 30 分钟，那么 Web APP 就需要容忍 30 分钟的数据不一致，这对很多服务来说几乎是无法接受的。当然，开发者可以把过期时间设短一些，但设得越短，读击穿到 DB 的频率也就越高，就和 Cache/DB Architecture 的初衷背道而驰。</p>
+<h3 id="policy-2-cache-aside">Policy 2: Cache Aside</h3>
+<p>Cache Aside 的读写逻辑如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>操作</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>读取</td>
+<td>Cache Hit: 直接返回缓存数据<br>Cache Miss：从 DB 中加载数据到缓存，并返回</td>
+</tr>
+<tr class="even">
+<td>写入</td>
+<td>写入 DB<br>将 Cache 中对应的数据删除</td>
+</tr>
+</tbody>
+</table>
+<p>这种方法适用于大多数场景，它通常也是实践中的标准做法。当然，这种做法也并非完美：</p>
+<ul>
+<li>假设有两个进程 A、B：A 写入 DB，B 读取数据，A 删除 Cache 中对应的数据，这时 B 读到了过时数据</li>
+<li>假设有两个进程 A、B：B 从 DB 读取数据到内存，但未写入 Cache，A 写入 DB 并删除 Cache 中对应的数据，B 将内存中的数据写入 Cache，过时数据会一直存在于 Cache 中直到过期</li>
+<li>A 写入 DB 后被杀死，过时数据会一直存在于 Cache 中直到过期</li>
+<li>...</li>
+</ul>
+<p>上述做法也可以被称为 Write-Invalidate，即写入 DB 之后将 Cache 中对应的数据置为失效状态。<strong>为什么不使用类似 Write-Update 的做法</strong>？这样还能够节省一次 DB 与 Cache 之间的网络 I/O。写入 DB 后直接写入 Cache 的做法存在一个致命的场景：A、B 进程同时写入数据，其执行顺序如下：</p>
+<ol type="1">
+<li>A 写入 DB</li>
+<li>B 写入 DB</li>
+<li>B 写入 Cache</li>
+<li>A 写入 Cache</li>
+</ol>
+<p>好家伙，这下好了...</p>
+<h3 id="policy-3-read-through">Policy 3: Read Through</h3>
+<p>Read Through 的读写逻辑如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>操作</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>读取</td>
+<td>服务只管从 Cache 中读取数据，如果出现 Cache Miss，由 Cache 负责从 DB 中加载数据</td>
+</tr>
+<tr class="even">
+<td>写入</td>
+<td>未指定</td>
+</tr>
+</tbody>
+</table>
+<p>这时候服务架构如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-read-through.jpg" width="450px"></p>
+<p>Read Through 的核心问题在于 Cache 需要支持逻辑嵌入，然而一般这种做法会导致运维、部署都不方便。</p>
+<h3 id="policy-4-write-through">Policy 4: Write Through</h3>
+<p>Write Through 与 Read Through 类似，就是在写入时由 Cache 层负责写入 DB 中。这种方案的问题主要包括：</p>
+<ul>
+<li>Cache 需要支持逻辑嵌入，导致运维、部署不方便</li>
+<li>通常持久性 (Durability) 不在 Cache 的设计目标中，因此在写入 DB 之前，数据有可能发生丢失</li>
+</ul>
+<h3 id="poilicy-5-double-delete">Poilicy 5: Double Delete</h3>
+<p>Double Delete 的读写逻辑如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>操作</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>读取</td>
+<td>Cache Hit：直接返回<br>Cache Miss：从 DB 中加载数据</td>
+</tr>
+<tr class="even">
+<td>写入</td>
+<td>将 Cache 中对应的数据删除<br>写入 DB<br>等一小段时间，如 500ms<br>再次将 Cache 中对应的数据删除</td>
+</tr>
+</tbody>
+</table>
+<p>其实它可以被理解成是 Cache Aside 的改进版，通过一段时间后的二次删除，避免因为并行问题导致 Cache 中的过时数据覆盖新写入数据的情况。</p>
+<h3 id="policy-6write-behind">Policy 6：Write Behind</h3>
+<p>Write Behind 的读写逻辑如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>操作</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>读取</td>
+<td>从 Cache 中读取数据</td>
+</tr>
+<tr class="even">
+<td>写入</td>
+<td>将数据写入 Cache<br>Cache 将写入操作记录投递到 MQ 中<br>异步进程消费 MQ 最终将数据写入 DB 中</td>
+</tr>
+</tbody>
+</table>
+<p>这时候服务的架构如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-write-behind.jpg" width="600px"></p>
+<p>这种做法可以极大地提高读写吞吐量，但缺点也比较明显：</p>
+<ul>
+<li>Cache 需要支持逻辑嵌入，导致运维、部署不方便</li>
+<li>使用的 MQ 必须是 FIFO 队列，否则将导致数据写入 DB 的顺序错误</li>
+</ul>
+<p>Write Behind 还有一种变体，就是将写入的顺序调换：</p>
+<table>
+<thead>
+<tr class="header">
+<th>操作</th>
+<th>逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>读取</td>
+<td>从 Cache 中读取数据</td>
+</tr>
+<tr class="even">
+<td>写入</td>
+<td>将数据写入 DB<br>DB 将写入操作记录投递到 MQ 中<br>异步进程消费 MQ 最终将数据写入 Cache 中</td>
+</tr>
+</tbody>
+</table>
+<p>这时候服务的架构如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-write-behind-variant.jpg" width="600px"></p>
+<p>相较于原版 Write Behind，由于 DB 在复制的过程中已经实现了类似的 MQ，因此只需要开发解析复制日志的 DB 中间件，伪装成 Slave 节点，即可实现相应流程。整个架构中无需引入额外的 MQ，减少部署、运维成本。</p>
+<h2 id="connections">Connections</h2>
+<p>本节，我们从连接数的角度观察一下 Cache/DB Architecture 中不同 Cache Policies 的架构。假设各上游服务与下游服务建立的连接池为固定大小 N。</p>
+<p>考虑服务会被部署多个副本，在 Cache Expiry、Cache Aside 以及 Double Delete 中，架构中各节点间的连接状态如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-1.jpg" width="600px"></p>
+<p>每个服务实例都需要与 DB、Cache 建立 N 个连接，由于其它服务也需要访问相同的 DB、Cache 集群，这时候就会出现极高的连接数。</p>
+<p>在 Read-Through、Wright-Through 以及 Write-Behind 中，架构中各节点的连接状态如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-2.jpg" width="600px"></p>
+<p>每个服务实例都需要与 Cache 建立 N 个链接，Cache 与 MQ、MQ 与 DB 之间都只需要建立 N 个链接。</p>
+<p>在 Write-Behind 的变体中，解析复制日志的中间件只需要与数据库建立 1 个链接即可，如下图所示：</p>
+<p><img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-3.jpg" width="600px"></p>
+<h2 id="summary">Summary</h2>
+<p>本小节列举了多种 Cache Policies，通常最常用的并不是设计最复杂的，具体场景需要具体分析，也许最简单的做法就能满足需求。Less code, less bugs : )。</p>
+<h1 id="references">References‌</h1>
+<ul>
+<li><a href="https://classroom.udacity.com/courses/ud007" target="_blank" rel="noopener">Georgia Tech - HPCA: Lesson 15 &amp; 24</a></li>
+<li><a href="https://www.sciencedirect.com/topics/engineering/cache-coherence" target="_blank" rel="noopener">SienceDirect: Cache Coherence</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Directory-based_cache_coherence" target="_blank" rel="noopener">Wikipedia: Directory-based cache coherence</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Directory-based_coherence#Directory_Node" target="_blank" rel="noopener">Wikipedia: Directory-based coherence</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Consistency_model" target="_blank" rel="noopener">Wikipedia: Consistency Model</a></li>
+<li><a href="https://medium.com/@TechExpertise/cache-coherence-problem-and-approaches-a18cdd48ee0e" target="_blank" rel="noopener">Medium: Cache Coherence Problem and Approaches</a></li>
+<li><a href="http://www.cs.utah.edu/~rajeev/cs7820/pres/7968-07.pdf" target="_blank" rel="noopener">cs.utah.edu: Directory-Based Cache Coherence</a></li>
+<li><a href="http://wiki.expertiza.ncsu.edu/index.php/CSC/ECE_506_Spring_2012/8a_cj" target="_blank" rel="noopener">CSC/ECE 506 Sprint 2012/8a cj</a></li>
+<li><a href="https://akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">What Every Programmer Should Know About Memory</a></li>
+<li><a href="https://www.cs.cmu.edu/afs/cs/academic/class/15418-s12/www/lectures/12_directorycoherence.pdf" target="_blank" rel="noopener">CMU: Directory-Based Coherence I</a></li>
+<li><a href="https://www.cs.cmu.edu/afs/cs/academic/class/15418-s12/www/lectures/13_directorycoherence2.pdf" target="_blank" rel="noopener">CMU: Directory-Based Coherence II</a></li>
+<li><a href="http://www.inf.ed.ac.uk/teaching/courses/pa/Notes/lecture06-directory.pdf" target="_blank" rel="noopener">CS4 /MSc Parallel Architectures</a></li>
+<li><a href="https://yunpengn.github.io/blog/2019/05/04/consistent-redis-sql/" target="_blank" rel="noopener">Consistency between Redis Cache and SQL Database</a></li>
+<li><a href="https://docs.oracle.com/cd/E13924_01/coh.340/e13819/readthrough.htm" target="_blank" rel="noopener">Read-Through, Write-Through, Write-Behind Caching and Refresh-Ahead</a></li>
+<li><a href="https://www.nginx.com/blog/nginx-high-performance-caching/" target="_blank" rel="noopener">High-Performance Caching with NGINX and NGINX Plus</a></li>
+<li><a href="http://simongui.github.io/2016/12/02/improving-cache-consistency.html" target="_blank" rel="noopener">Improving cache consistentcy</a></li>
+<li><a href="https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf" target="_blank" rel="noopener">Scaling Memcache at Facebook</a></li>
+</ul>
+<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-54" d="M40 437Q21 437 21 445Q21 450 37 501T71 602L88 651Q93 669 101 677H569H659Q691 677 697 676T704 667Q704 661 687 553T668 444Q668 437 649 437Q640 437 637 437T631 442L629 445Q629 451 635 490T641 551Q641 586 628 604T573 629Q568 630 515 631Q469 631 457 630T439 622Q438 621 368 343T298 60Q298 48 386 46Q418 46 427 45T436 36Q436 31 433 22Q429 4 424 1L422 0Q419 0 415 0Q410 0 363 1T228 2Q99 2 64 0H49Q43 6 43 9T45 27Q49 40 55 46H83H94Q174 46 189 55Q190 56 191 56Q196 59 201 76T241 233Q258 301 269 344Q339 619 339 625Q339 630 310 630H279Q212 630 191 624Q146 614 121 583T67 467Q60 445 57 441T43 437H40Z"></path><path id="MJX-TEX-I-56" d="M52 648Q52 670 65 683H76Q118 680 181 680Q299 680 320 683H330Q336 677 336 674T334 656Q329 641 325 637H304Q282 635 274 635Q245 630 242 620Q242 618 271 369T301 118L374 235Q447 352 520 471T595 594Q599 601 599 609Q599 633 555 637Q537 637 537 648Q537 649 539 661Q542 675 545 679T558 683Q560 683 570 683T604 682T668 681Q737 681 755 683H762Q769 676 769 672Q769 655 760 640Q757 637 743 637Q730 636 719 635T698 630T682 623T670 615T660 608T652 599T645 592L452 282Q272 -9 266 -16Q263 -18 259 -21L241 -22H234Q216 -22 216 -15Q213 -9 177 305Q139 623 138 626Q133 637 76 637H59Q52 642 52 648Z"></path><path id="MJX-TEX-I-44" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"></path><path id="MJX-TEX-I-4D" d="M289 629Q289 635 232 637Q208 637 201 638T194 648Q194 649 196 659Q197 662 198 666T199 671T201 676T203 679T207 681T212 683T220 683T232 684Q238 684 262 684T307 683Q386 683 398 683T414 678Q415 674 451 396L487 117L510 154Q534 190 574 254T662 394Q837 673 839 675Q840 676 842 678T846 681L852 683H948Q965 683 988 683T1017 684Q1051 684 1051 673Q1051 668 1048 656T1045 643Q1041 637 1008 637Q968 636 957 634T939 623Q936 618 867 340T797 59Q797 55 798 54T805 50T822 48T855 46H886Q892 37 892 35Q892 19 885 5Q880 0 869 0Q864 0 828 1T736 2Q675 2 644 2T609 1Q592 1 592 11Q592 13 594 25Q598 41 602 43T625 46Q652 46 685 49Q699 52 704 61Q706 65 742 207T813 490T848 631L654 322Q458 10 453 5Q451 4 449 3Q444 0 433 0Q418 0 415 7Q413 11 374 317L335 624L267 354Q200 88 200 79Q206 46 272 46H282Q288 41 289 37T286 19Q282 3 278 1Q274 0 267 0Q265 0 255 0T221 1T157 2Q127 2 95 1T58 0Q43 0 39 2T35 11Q35 13 38 25T43 40Q45 46 65 46Q135 46 154 86Q158 92 223 354T289 629Z"></path><path id="MJX-TEX-I-41" d="M208 74Q208 50 254 46Q272 46 272 35Q272 34 270 22Q267 8 264 4T251 0Q249 0 239 0T205 1T141 2Q70 2 50 0H42Q35 7 35 11Q37 38 48 46H62Q132 49 164 96Q170 102 345 401T523 704Q530 716 547 716H555H572Q578 707 578 706L606 383Q634 60 636 57Q641 46 701 46Q726 46 726 36Q726 34 723 22Q720 7 718 4T704 0Q701 0 690 0T651 1T578 2Q484 2 455 0H443Q437 6 437 9T439 27Q443 40 445 43L449 46H469Q523 49 533 63L521 213H283L249 155Q208 86 208 74ZM516 260Q516 271 504 416T490 562L463 519Q447 492 400 412L310 260L413 259Q516 259 516 260Z"></path><path id="MJX-TEX-I-58" d="M42 0H40Q26 0 26 11Q26 15 29 27Q33 41 36 43T55 46Q141 49 190 98Q200 108 306 224T411 342Q302 620 297 625Q288 636 234 637H206Q200 643 200 645T202 664Q206 677 212 683H226Q260 681 347 681Q380 681 408 681T453 682T473 682Q490 682 490 671Q490 670 488 658Q484 643 481 640T465 637Q434 634 411 620L488 426L541 485Q646 598 646 610Q646 628 622 635Q617 635 609 637Q594 637 594 648Q594 650 596 664Q600 677 606 683H618Q619 683 643 683T697 681T738 680Q828 680 837 683H845Q852 676 852 672Q850 647 840 637H824Q790 636 763 628T722 611T698 593L687 584Q687 585 592 480L505 384Q505 383 536 304T601 142T638 56Q648 47 699 46Q734 46 734 37Q734 35 732 23Q728 7 725 4T711 1Q708 1 678 1T589 2Q528 2 496 2T461 1Q444 1 444 10Q444 11 446 25Q448 35 450 39T455 44T464 46T480 47T506 54Q523 62 523 64Q522 64 476 181L429 299Q241 95 236 84Q232 76 232 72Q232 53 261 47Q262 47 267 47T273 46Q276 46 277 46T280 45T283 42T284 35Q284 26 282 19Q279 6 276 4T261 1Q258 1 243 1T201 2T142 2Q64 2 42 0Z"></path><path id="MJX-TEX-I-43" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-TEX-N-2032" d="M79 43Q73 43 52 49T30 61Q30 68 85 293T146 528Q161 560 198 560Q218 560 240 545T262 501Q262 496 260 486Q259 479 173 263T84 45T79 43Z"></path><path id="MJX-TEX-I-53" d="M308 24Q367 24 416 76T466 197Q466 260 414 284Q308 311 278 321T236 341Q176 383 176 462Q176 523 208 573T273 648Q302 673 343 688T407 704H418H425Q521 704 564 640Q565 640 577 653T603 682T623 704Q624 704 627 704T632 705Q645 705 645 698T617 577T585 459T569 456Q549 456 549 465Q549 471 550 475Q550 478 551 494T553 520Q553 554 544 579T526 616T501 641Q465 662 419 662Q362 662 313 616T263 510Q263 480 278 458T319 427Q323 425 389 408T456 390Q490 379 522 342T554 242Q554 216 546 186Q541 164 528 137T492 78T426 18T332 -20Q320 -22 298 -22Q199 -22 144 33L134 44L106 13Q83 -14 78 -18T65 -22Q52 -22 52 -14Q52 -11 110 221Q112 227 130 227H143Q149 221 149 216Q149 214 148 207T144 186T142 153Q144 114 160 87T203 47T255 29T308 24Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path></defs></svg>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/" rel="prev" title="Consistent Hashing and Random Trees (1997)">
+      <i class="fa fa-chevron-left"></i> Consistent Hashing and Random Trees (1997)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cache-policy-in-single-core-processor"><span class="nav-number">1.</span> <span class="nav-text">Cache Policy in Single-core Processor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cache-coherence-in-multi-core-processor"><span class="nav-number">2.</span> <span class="nav-text">Cache Coherence in Multi-core Processor</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#how-to-get-coherence"><span class="nav-number">2.1.</span> <span class="nav-text">How To Get Coherence</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#write-update-snooping-example"><span class="nav-number">2.1.1.</span> <span class="nav-text">Write-Update Snooping Example</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#optimization-1-memory-writes"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">Optimization #1: Memory Writes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#optimization-2-bus-writes"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">Optimization #2: Bus Writes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write-invalidate-snooping-example"><span class="nav-number">2.1.2.</span> <span class="nav-text">Write-Invalidate Snooping Example</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#update-v.s.-invalidate-coherence"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">Update V.S. Invalidate Coherence</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#msi-coherence"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">MSI Coherence</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#directory-protocols"><span class="nav-number">2.1.3.</span> <span class="nav-text">Directory Protocols</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cache-policy-in-cachedb-architecture"><span class="nav-number">3.</span> <span class="nav-text">Cache Policy in Cache&#x2F;DB Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#data-inconsistency"><span class="nav-number">3.1.</span> <span class="nav-text">Data Inconsistency</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cache-policies"><span class="nav-number">3.2.</span> <span class="nav-text">Cache Policies</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-1cache-expiry"><span class="nav-number">3.2.1.</span> <span class="nav-text">Policy 1：Cache Expiry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-2-cache-aside"><span class="nav-number">3.2.2.</span> <span class="nav-text">Policy 2: Cache Aside</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-3-read-through"><span class="nav-number">3.2.3.</span> <span class="nav-text">Policy 3: Read Through</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-4-write-through"><span class="nav-number">3.2.4.</span> <span class="nav-text">Policy 4: Write Through</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poilicy-5-double-delete"><span class="nav-number">3.2.5.</span> <span class="nav-text">Poilicy 5: Double Delete</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#policy-6write-behind"><span class="nav-number">3.2.6.</span> <span class="nav-text">Policy 6：Write Behind</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#connections"><span class="nav-number">3.3.</span> <span class="nav-text">Connections</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#summary"><span class="nav-number">3.4.</span> <span class="nav-text">Summary</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">4.</span> <span class="nav-text">References‌</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
