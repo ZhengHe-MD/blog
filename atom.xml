@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ZhengHe</title>
+  <icon>https://zhenghe-md.github.io/icon.png</icon>
+  
+  <link href="/blog/atom.xml" rel="self"/>
+  
+  <link href="https://zhenghe-md.github.io/"/>
+  <updated>2020-02-24T15:00:16.187Z</updated>
+  <id>https://zhenghe-md.github.io/</id>
+  
+  <author>
+    <name>ZhengHe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Cache Policies</title>
+    <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
+    <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
+    <published>2020-02-19T23:17:10.000Z</published>
+    <updated>2020-02-24T15:00:16.187Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在计算机系统设计实践中，我们常常会遇到下图所示架构：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/coherence.jpg&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="system design" scheme="https://zhenghe-md.github.io/categories/system-design/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Consistent Hashing and Random Trees (1997)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
+    <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
+    <published>2020-02-18T17:33:21.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;论文作者的贡献主要包含两部分：Consistent Hashing 和 Random Trees。Consistent Hashing 主要用于解决分布式哈希表 (Distributed Hash Table, DHT) 的桶增减带来的重新哈希问题；Random
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="data structures &amp; algorithms" scheme="https://zhenghe-md.github.io/tags/data-structures-algorithms/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Dynamic Hash Tables (1988)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
+    <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
+    <published>2020-02-18T12:36:49.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;摘要&quot;&gt;摘要&lt;/h1&gt;
+&lt;p&gt;Linear Hashing 和 Spiral Storage 是两种动态哈希算法。这两种算法最初都是为了优化外部存储 (secondary/external storage)
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="data structures &amp; algorithms" scheme="https://zhenghe-md.github.io/tags/data-structures-algorithms/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LFU Implementation With O(1) Complexity (2010)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
+    <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
+    <published>2020-02-17T18:27:16.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
+&lt;p&gt;缓存置换算法 (Cache Eviction Algorithm) 在操作系统、数据库以及其它系统中被广泛用于缓存置换模块，当缓存空间不足时，它利用局部性原理 (Principle of Locality)
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="data structures &amp; algorithms" scheme="https://zhenghe-md.github.io/tags/data-structures-algorithms/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Time, Clocks, and the Ordering of Events in a Distributed System (1978)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
+    <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
+    <published>2020-02-17T18:25:14.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;简介&quot;&gt;简介&lt;/h1&gt;
+&lt;p&gt;本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 &lt;a href=&quot;https://en.wikipedia.org/wiki/Dijkstra_Prize&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="distributed system" scheme="https://zhenghe-md.github.io/tags/distributed-system/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
+    <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
+    <published>2020-02-17T18:16:20.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="tracing" scheme="https://zhenghe-md.github.io/tags/tracing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)</title>
+    <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
+    <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
+    <published>2020-02-16T22:46:29.000Z</published>
+    <updated>2020-02-24T15:00:16.191Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
+&lt;p&gt;在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="tsdb" scheme="https://zhenghe-md.github.io/tags/tsdb/"/>
+    
+  </entry>
+  
+</feed>
