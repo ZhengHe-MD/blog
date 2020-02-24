@@ -173,7 +173,7 @@ Directory Protocols 正是为解决上述问题而被提出。要序列化对同
 
 <img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache.jpg" width="600px">
 
-如何从 Cache 和 DB 读取、写入数据就是 Cache/DB Architecture 下的 Cache Policy。与单核 CPU 中的 Cache Policy 不同，由于 Web APP 通常会部署在多个实例上，实践中几乎总是有多个进程在并行地增删改查数据。这时 Web APP 中不同进程写 Cache、写 DB 的顺序可以用 "一切皆有可能" 来概括。如果要保证二者之间数据的绝对一致，则必须要有分布式事务的支持，但无论是实现难度，还是分布式事务下的写吞吐量下降，都不是开发者所期望的。因此在 Cache/DB Architecture 中，我们对 Cache Policy 的要求可以概括为：
+如何从 Cache 和 DB 读取、写入数据就是 Cache/DB Architecture 下的 Cache Policy。与单核 CPU 中的 Cache Policy 不同，由于 Web APP 通常会部署在多个实例上，实践中几乎总是有多个进程在并行地增删改查数据。这时 Web APP 中不同进程写 Cache、写 DB 的顺序可以用 "一切皆有可能" 来概括。如果要保证二者之间数据的绝对一致，则必须要有分布式事务的支持，但无论是实现难度，还是分布式事务下的写性能下降，都不是开发者所期望的。因此在 Cache/DB Architecture 中，我们对 Cache Policy 的要求可以概括为：
 
 > 最终一致性：在写入 DB 之后，经过足够长的时间后总能访问到最近写入的数据
 
