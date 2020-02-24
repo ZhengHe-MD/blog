@@ -298,7 +298,7 @@ Write Behind 还有一种变体，就是将写入的顺序调换：
 
 每个服务实例都需要与 Cache 建立 N 个链接，Cache 与 MQ、MQ 与 DB 之间都只需要建立 N 个链接。
 
-在 Write-Behind 的变体中，解析复制日志的中间件只需要与数据库建立 1 个链接即可，如下图所示：
+在 Write-Behind 的变体中，解析复制日志的中间件只需要与数据库建立 1 个连接即可，如下图所示：
 
 <img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-3.jpg" width="600px">
 
