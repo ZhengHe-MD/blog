@@ -11,7 +11,7 @@ mathjax:
 
 <img src="/blog/2020/02/19/Cache-Policies/coherence.jpg" width="400px">
 
-为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在**同级 Cache 之间 (Cache Coherence) **和**上下级 Cache 之间**。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：**在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量大大提高**。
+为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在**同级 Cache 之间 (Cache Coherence) **和**上下级 Cache 之间**。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：**在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量提高、时延减少**。
 
 本文将探讨三个场景：
 
@@ -47,7 +47,7 @@ mathjax:
 
 这时候就需要在每个核上再加一级私有缓存：
 
-<img src="/blog/2020/02/19/Cache-Policies/multicore-private-cache.jpg" width="520px">
+<img src="/blog/2020/02/19/Cache-Policies/multicore-private-cache.jpg" width="400px">
 
 假设在一个 4 核处理器中，内存地址 $MA$ 处最开始存储着整数 0，这时每个核都需要完成一个 read-modify-write 的操作，如下所示：
 
@@ -169,7 +169,7 @@ Directory Protocols 正是为解决上述问题而被提出。要序列化对同
 
 # Cache Policy in Cache/DB Architecture
 
-‌在 Web APP 开发中，通过引入缓存中间件 (redis/memcache) 来减少数据库的读吞吐是十分常见的做法，这时服务架构通常如下图所示：
+‌在 Web APP 开发中，通过引入缓存中间件 (redis/memcache) 来减少数据库压力是十分常见的做法，这时服务架构通常如下图所示：
 
 <img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache.jpg" width="600px">
 
@@ -305,6 +305,8 @@ Write Behind 还有一种变体，就是将写入的顺序调换：
 ## Summary
 
 本小节列举了多种 Cache Policies，通常最常用的并不是设计最复杂的，具体场景需要具体分析，也许最简单的做法就能满足需求。Less code, less bugs : )。
+
+**转载请注明出处！**
 
 # References‌
 
