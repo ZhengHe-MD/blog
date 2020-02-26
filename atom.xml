@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-02-26T15:58:04.969Z</updated>
+  <updated>2020-02-26T16:00:05.264Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
@@ -29,9 +29,7 @@
       
         
         
-          &lt;h1 id=&quot;background&quot;&gt;Background&lt;/h1&gt;
-&lt;p&gt;数据库中的各种奇技淫巧，实际上都来自于内存与磁盘的读写模式和性能区别。&lt;/p&gt;
-&lt;p&gt;&lt;img
+          &lt;p&gt;本文转自我个人的 &lt;a href=&quot;https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores&quot;
         
       
     
@@ -48,7 +46,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-02-26T15:58:04.965Z</updated>
+    <updated>2020-02-26T16:00:05.256Z</updated>
     
     <summary type="html">
     
@@ -74,7 +72,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
@@ -101,7 +99,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
@@ -129,7 +127,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
@@ -157,7 +155,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-02-26T15:58:04.977Z</updated>
+    <updated>2020-02-26T16:00:05.272Z</updated>
     
     <summary type="html">
     
@@ -185,7 +183,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
@@ -212,7 +210,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-02-26T15:58:04.969Z</updated>
+    <updated>2020-02-26T16:00:05.264Z</updated>
     
     <summary type="html">
     
