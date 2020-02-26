@@ -6,6 +6,8 @@ categories:
 - system design
 ---
 
+本文转自我个人的 [gitbook](https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores)。
+
 # Background
 
 数据库中的各种奇技淫巧，实际上都来自于内存与磁盘的读写模式和性能区别。
