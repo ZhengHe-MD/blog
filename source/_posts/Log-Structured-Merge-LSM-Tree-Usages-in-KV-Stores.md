@@ -2,8 +2,11 @@
 title: Log Structured Merge (LSM) Tree & Usages in KV Stores
 date: 2020-02-26 23:23:03
 tags:
+- kv
 categories:
 - system design
+mathjax:
+- true
 ---
 
 本文转自我个人的 [gitbook](https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores)。
