@@ -3,6 +3,7 @@ title: Log Structured Merge (LSM) Tree & Usages in KV Stores
 date: 2020-02-26 23:23:03
 tags:
 - kv
+- data structures & algorithms
 categories:
 - system design
 mathjax:
