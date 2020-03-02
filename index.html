@@ -307,7 +307,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -346,9 +346,10 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库 (Time Series Database, TSDB) 中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。</p>
+          <p>Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。</p>
+<p>时序数据库是 Promtheus 监控平台的一部分，在了解其存储层的演化过程之前，我们需要先了解时序数据库及其要解决的根本问题。</p>
 <h1 id="tsdb">TSDB</h1>
-<p>时序数据库负责存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。时序 (Time Series) 指的是某个变量随时间变化的所有历史，而样本 (Sample) 指的是历史中该变量的瞬时值：</p>
+<p><strong>时序数据库 (Time Series Database, TSDB)</strong> 是数据库大家庭中的一员，专门存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。<strong>时序 (Time Series)</strong> 指的是某个变量随时间变化的所有历史，而<strong>样本 (Sample)</strong> 指的是历史中该变量的瞬时值：</p>
 <p><img src="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/ts-sample.jpg" width="500px"></p>
 <p>每个样本由<strong>时序标识</strong>、<strong>时间戳</strong>和<strong>数值</strong> 3 部分构成，其所属的时序就由一系列样本构成。由于时间是连续的，我们不可能、也没有必要记录时序在每个时刻的数值，因此<strong>采样间隔</strong> (Interval) 也是时序的重要组成部分。采样间隔越小、样本总量越大、捕获细节越多；采样间隔越大、样本总量越小、遗漏细节越多。以服务器机器监控为例，通常采样间隔为 15 秒。</p>
 <p>数据的高效查询离不开索引，对于时序数据而言，唯一的、天然的索引就是时间 (戳)。因此通常时序数据库的存储层相比于关系型数据库要简单得多。仔细思考，你可能会发现时序数据在某种程度上就是键值数据的一个子集，因此键值数据库天然地可以作为时序数据的载体。通常一个时序数据库能容纳百万量级以上的时序数据，要从其中搜索到其中少量的几个时序也非易事，因此对时序本身建立高效的索引也很重要。</p>
@@ -593,7 +594,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -901,7 +902,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1364,7 +1365,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1547,7 +1548,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1705,7 +1706,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1878,7 +1879,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2111,7 +2112,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2293,7 +2294,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 10:59:24" itemprop="dateModified" datetime="2020-03-02T10:59:24+00:00">2020-03-02</time>
+                <time title="修改时间：2020-03-02 14:53:30" itemprop="dateModified" datetime="2020-03-02T14:53:30+00:00">2020-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
