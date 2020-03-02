@@ -249,7 +249,7 @@ $ tree ./data
 
 直接删除在边界之外的 block 文件夹即可。如果边界在某个 block 之内，则暂时将它留存，知道边界超出为止。当然，在 Compaction 中，我们会将旧的 blocks 合并成更大的 block；在 Retention 时，我们又希望能够粒度更小。所以 Compaction 与 Retention 的策略之间存在着一定的互斥关系。Prometheus 的系统参数可以对单个 block 的大小作出限制，来寻找二者之间的平衡。
 
-看到这里，相信你已经发现了，**这他妈的不就是 LSM Tree 吗？**因崔思婷。每个 block 就是按时间排序的 SSTable，内存中的 block 就是 MemTable。
+看到这里，相信你已经发现了，**这不就是 [LSM Tree](/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/) 吗？**每个 block 就是按时间排序的 SSTable，内存中的 block 就是 MemTable。
 
 ### Compression
 
