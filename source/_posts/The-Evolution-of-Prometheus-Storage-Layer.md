@@ -66,7 +66,7 @@ Prometheus 是为云原生环境中的数据监控而生，在其设计过程中
 api_http_requests_total{path="/users",status=200,method="GET",instance="10.111.201.26"}
 ```
 
-该时序的名字为 some_metric_total，标签为 instance、job，只有时序名字和标签键值完全相同的时序才是同一个时序。事实上，时序名字就是一个隐藏标签：
+该时序的名字为 api_http_requests_total，标签为 path、status、method 和 instance，只有时序名字和标签键值完全相同的时序才是同一个时序。事实上，时序名字就是一个隐藏标签：
 
 ```
 {__name__="api_http_requests_total",path="/users",status=200,method="GET",instance="10.111.201.26"}
