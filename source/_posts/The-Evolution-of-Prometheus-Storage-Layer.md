@@ -131,7 +131,7 @@ Prometheus 和 Gorilla 中的每个样本值都是 float64 类型。Gorilla 利�
 * 如果可能的话，使用整型 (8/16/32 位) 存储，否则用 float32，最后实在不行就直接存储 float64
 * 如果数值增长得很规律，则不使用额外的空间存储
 
-以上做法给 Prometheus V1 带来了 3.3 bytes/sample 的压缩能力。相比于为完全存储于内存中的 Gorilla 相比，这样的压缩能力对于 Prometheus 已经够用，但在 V3 中，Prometheus 也融合了 Gorilla 采用的压缩技术。
+以上做法给 Prometheus V1 带来了 3.3 bytes/sample 的压缩能力。相比于为完全存储于内存中的 Gorilla 相比，这样的压缩能力对于 Prometheus 已经够用，但在 V2 中，Prometheus 也融合了 Gorilla 采用的压缩技术。
 
 ### Chunk Encoding
 
