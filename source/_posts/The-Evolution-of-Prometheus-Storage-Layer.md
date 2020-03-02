@@ -7,11 +7,13 @@ categories:
 - system design
 ---
 
-Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库 (Time Series Database, TSDB) 中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。
+Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。
+
+时序数据库是 Promtheus 监控平台的一部分，在了解其存储层的演化过程之前，我们需要先了解时序数据库及其要解决的根本问题。
 
 # TSDB
 
-时序数据库负责存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。时序 (Time Series) 指的是某个变量随时间变化的所有历史，而样本 (Sample) 指的是历史中该变量的瞬时值：
+**时序数据库 (Time Series Database, TSDB)** 是数据库大家庭中的一员，专门存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。**时序 (Time Series)** 指的是某个变量随时间变化的所有历史，而**样本 (Sample)** 指的是历史中该变量的瞬时值：
 
 <img src="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/ts-sample.jpg" width="500px">
 
