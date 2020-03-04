@@ -258,7 +258,7 @@ $ tree ./data
 第三代存储引擎融合了 Gorilla 的 XOR float encoding 方案，将压缩能力提升到 1-2 bytes/sample。具体方案可以概括为：按顺序采用以下第一条适用的策略
 
 1. Zero encoding：如果完全可预测，则无需额外空间
-2. Integer double-delta encoding：如果是整型，可以利用 double-delta 原理，将不等的前后间隔分成 6/13/20/33 bits 几种，来优化空间适用
+2. Integer double-delta encoding：如果是整型，可以利用 double-delta 原理，将不等的前后间隔分成 6/13/20/33 bits 几种，来优化空间使用
 3. XOR float encoding：参考 [Gorilla](/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/)
 4. Direct encoding：直接存 float64
 
