@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-03-10T02:04:36.063Z</updated>
+  <updated>2020-03-15T04:19:41.876Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-03-10T02:04:36.063Z</updated>
+    <updated>2020-03-15T04:19:41.876Z</updated>
     
     <summary type="html">
     
@@ -29,7 +29,7 @@
       
         
         
-          &lt;p&gt;本文介绍 FB 基础团队以 memcached 为基本单元，构建服务于全世界的缓存层的最佳实践，全文递进式地分别讲述&lt;strong&gt;单集群 (Single Front-end Cluster)&lt;/strong&gt;、&lt;strong&gt;多集群 (Multiple
+          &lt;p&gt;本文介绍 FB 团队基于 memcached 构建大型、统一缓存层的最佳实践。全文递进式地讲述&lt;strong&gt;单集群 (Single Front-end Cluster)&lt;/strong&gt;、&lt;strong&gt;多集群 (Multiple Front-end
         
       
     
@@ -52,7 +52,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-03-10T02:04:36.067Z</updated>
+    <updated>2020-03-15T04:19:41.880Z</updated>
     
     <summary type="html">
     
@@ -79,7 +79,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
@@ -108,7 +108,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-03-10T02:04:36.051Z</updated>
+    <updated>2020-03-15T04:19:41.864Z</updated>
     
     <summary type="html">
     
@@ -134,7 +134,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
@@ -161,7 +161,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
@@ -189,7 +189,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
@@ -217,7 +217,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-03-10T02:04:36.071Z</updated>
+    <updated>2020-03-15T04:19:41.884Z</updated>
     
     <summary type="html">
     
@@ -245,7 +245,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
@@ -272,7 +272,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-03-10T02:04:36.055Z</updated>
+    <updated>2020-03-15T04:19:41.868Z</updated>
     
     <summary type="html">
     
