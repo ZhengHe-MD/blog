@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-03-15T04:19:41.876Z</updated>
+  <updated>2020-03-19T15:27:48.919Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -17,11 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Kafka: a Distributed Messaging System for Log Processing (2011)</title>
+    <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
+    <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
+    <published>2020-03-15T19:05:46.000Z</published>
+    <updated>2020-03-19T15:27:48.919Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;em&gt;论文引用量：744 (截止至 2020-03-15)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于
+        
+      
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/categories/papers-we-love/"/>
+    
+    
+      <category term="kafka" scheme="https://zhenghe-md.github.io/tags/kafka/"/>
+    
+      <category term="mq" scheme="https://zhenghe-md.github.io/tags/mq/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Scaling Memcache at Facebook (2013)</title>
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-03-15T04:19:41.876Z</updated>
+    <updated>2020-03-19T15:27:48.927Z</updated>
     
     <summary type="html">
     
@@ -52,7 +82,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-03-15T04:19:41.880Z</updated>
+    <updated>2020-03-19T15:27:48.935Z</updated>
     
     <summary type="html">
     
@@ -79,7 +109,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     
@@ -108,7 +138,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-03-15T04:19:41.864Z</updated>
+    <updated>2020-03-19T15:27:48.915Z</updated>
     
     <summary type="html">
     
@@ -134,7 +164,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     
@@ -161,7 +191,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     
@@ -189,7 +219,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     
@@ -217,7 +247,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-03-15T04:19:41.884Z</updated>
+    <updated>2020-03-19T15:27:48.939Z</updated>
     
     <summary type="html">
     
@@ -245,7 +275,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     
@@ -272,7 +302,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-03-15T04:19:41.868Z</updated>
+    <updated>2020-03-19T15:27:48.919Z</updated>
     
     <summary type="html">
     

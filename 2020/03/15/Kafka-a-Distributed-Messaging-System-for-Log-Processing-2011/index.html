@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文引用量：744 (截止至 2020-03-15) Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka: a Distributed Messaging System for Log Processing (2011)">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="论文引用量：744 (截止至 2020-03-15) Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/pub-sub-topology.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-architecture.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-partition.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-log.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/replication-with-factor-of-2.jpg">
+<meta property="article:published_time" content="2020-03-15T19:05:46.000Z">
+<meta property="article:modified_time" content="2020-03-19T15:27:48.919Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="kafka">
+<meta property="article:tag" content="mq">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Kafka: a Distributed Messaging System for Log Processing (2011) | ZhengHe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka: a Distributed Messaging System for Log Processing (2011)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-15 19:05:46" itemprop="dateCreated datePublished" datetime="2020-03-15T19:05:46+00:00">2020-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-19 15:27:48" itemprop="dateModified" datetime="2020-03-19T15:27:48+00:00">2020-03-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
+                    <span itemprop="name">papers-we-love</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><em>论文引用量：744 (截止至 2020-03-15)</em></p>
+<p>Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于 NetDB workshop，如今原文的三位作者，Jay Kreps、Neha Narkhede 以及 Jun Rao 一同离开 LinkedIn，创立 <a href="https://www.confluent.io/" target="_blank" rel="noopener">Confluent.io</a>，提供基于 Kafka 的企业级 Event Streaming Platform 服务。</p>
+<p>除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication。</p>
+<h2 id="introduction">Introduction</h2>
+<p>在规模较大的互联网公司中，每天都会产生大量的日志数据，如：</p>
+<ul>
+<li>用户事件：登录、访问、点击、分享、评论、搜索</li>
+<li>性能指标：时延、错误、QPS</li>
+<li>机器指标：CPU、Memory、Network、Disk Utilication</li>
+</ul>
+<p>这些日志数据常常被用于离线分析，帮助公司了解用户、产品，帮助开发者了解系统、服务。在初期，每当 LinkedIn 内部有服务需要使用这些日志数据时，研发人员就需要写新的数据传输脚本或在线传输逻辑，久而久之，内部服务的拓扑图就出现了类似完全图的形状：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg" width="600px"></p>
+<p>显然这种拓扑图对分布式系统很不友好，不仅可能造成网络资源浪费，维护成本也极高。有 DRY 精神的工程师肯定无法忍受这样的架构，这时就需要有一个服务能将日志数据的消费和生产隔离：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/pub-sub-topology.jpg" width="600px"></p>
+<p>最近 (2011)，对日志数据的使用趋势在改变，这些日志被逐步用于实时地改善在线服务的一些功能，如：搜索相关性、推荐算法、网络安全等。由于日志数据的体量超过实际数据好几个数量级，实时使用这些数据对数据系统本身也是新的挑战。</p>
+<p>综上所述，我们可以总结 Kafka 的核心设计要求：</p>
+<ol type="1">
+<li>Publish/Subscribe</li>
+<li>Large throughput</li>
+<li>Delays in a few seconds</li>
+</ol>
+<p>也许你已经察觉，Kafka 是介于日志系统与消息系统之间的存在，因此你将在其内部的概念和设计中窥见二者的影子。</p>
+<h2 id="kafka-architecture-and-design-principles">Kafka Architecture and Design Principles</h2>
+<h3 id="overview">Overview</h3>
+<p>在介绍 Kafka 的架构和设计原则之前，先了解几个概念：</p>
+<ul>
+<li>Topic：单个类型的日志 (消息) 流</li>
+<li>Producer：负责将消息发布到 topic 中</li>
+<li>Broker：被发布的消息将被持久化到一个集群中，broker 是集群中的单个实例</li>
+<li>Consumer：按需订阅 topic，主动从 brokers 中拉取数据</li>
+<li>Message：字节数组，支持任意的序列化/反序列化方案</li>
+</ul>
+<p>整体架构如下图所示：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-architecture.jpg" width="400px"></p>
+<p>producer 将消息发布到 broker 中的某个 topic 上，每个 topic 被划分成多个 partition，存储在不同的 broker 上。consumer 订阅某个 topic 后，就可以从 broker 中消费消息。如果没有 producer 发布新的消息，consumer 将阻塞等待而不会停止。多个 consumer 可以组成一个 consumer group，通常 topic 中的每条消息只会被 consumer group 中的单个 consumer 消费，而不同 consumer group 将消费到 topic 中的所有消息。</p>
+<p>producer 可以在没有 consumer 订阅时发布消息，consumer 也可以在没有 producer 发布消息时消费消息 (阻塞等待)，二者之间相互隔离。通过将 topic 数据分片，Kafka 天然地获得了横向扩展性，也在设计上为高吞吐打下基础。</p>
+<h3 id="efficienty-on-a-single-partition">Efficienty on a Single Partition</h3>
+<p>本节介绍 LinkedIn 团队在提高系统整体性能上做出的 3 个设计决策。</p>
+<h5 id="simple-storage">Simple Storage</h5>
+<p>Kafka 的 storage layout 设计得很简洁：每个 partition 是一个逻辑日志文件，如下图所示：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-partition.jpg" width="500px"></p>
+<p>producer 不断地往 partition 的尾部追加消息，与此同时不同的 consumer 可以从日志文件中的任意位置开始消费数据。每个逻辑日志文件在物理上由一组大小基本相同（如 1GB）的 segments 文件构成，示例如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">topic-0-partition-0</span><br><span class="line">|-- 00000000000000000000.index</span><br><span class="line">|-- 00000000000000000000.log</span><br><span class="line">|-- 00000000000000000000.timeindex</span><br><span class="line">|-- 00000000000014517018.index</span><br><span class="line">|-- 00000000000014517018.log</span><br><span class="line">|-- 00000000000014517018.timeindex</span><br><span class="line">|-- 00000000000030706778.index</span><br><span class="line">|-- 00000000000030706778.log</span><br><span class="line">|-- 00000000000030706778.timeindex</span><br><span class="line">|-- ...</span><br><span class="line">`-- leader-epoch-checkpoint</span><br></pre></td></tr></table></figure>
+<p>每个 segment 文件以其中第一条消息的 offset 命名：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-log.jpg" width="400px"></p>
+<p>每当 producer 生产一条消息到 kafka 中，相应的 broker 就将消息追加到当前最新的 segment 文件末尾中。为了提升文件 I/O 效率，新追加的数据只有在达到一定大小或经过一定时间后才会批量落盘，而只有在数据正式落盘后，consumers 才有可能消费到相应数据。Kafka 存储在 segment 中的消息没有显式 id，但每条消息可以用其 offset 来标识，实际上 offset 扮演了索引和 id 双重角色。</p>
+<p>尽管每个 topic 会被分成多个 partition (配置中指定)，一个 consumer 永远只会从一个 partition 中顺序读取消息。consumer ack 一个 offset 就意味着它已经成功消费所有在那之前的消息。从实现层面上看：</p>
+<ol type="1">
+<li>consumer 先向相应的 broker 发送异步的数据拉取请求，参数包括下一条消息的 offset 和想要获取的字节数</li>
+<li>每个 broker 在内存中将每个 segment 的起始 offset 排好序。broker 收到数据拉取请求后，快速定位目标 segment 文件，通过相应的 index 文件可以快速找到目标数据，读取后返回给 consumer</li>
+<li>consumer 收到消息后，计算下一条消息的 offset 用于下一次数据拉取请求</li>
+</ol>
+<p>将每个 partition 分成大小相同的 segments 文件对于 retention policy 非常友好，每次清理过期数据时直接删除文件即可。</p>
+<h5 id="efficient-transfer">Efficient Transfer</h5>
+<p>Kafka 的 producer 可以在一次发布请求中发送多条消息，consumer 同样可以在一次拉取请求中获取多条消息。尽管表面上看来 producer 在一条一条生产 (单条生产 API)，consumer 在一条一条消费，但通常为了提高效率，Kafka 的 sdk 会批量地处理数据。除此之外，producer 在发送消息前，数据会被压缩，consumer 接收到消息后，数据才会被解压，因此整个过程中不仅节约了带宽，也节约了持久化存储空间。</p>
+<p>Kafka 的存储层不会显式地在内存中缓存日志数据，而是将相应的工作交给文件系统的 page cache，其主要好处在于避免 double buffering，同时在 broker 进程重启时不需要预热 cache，这个设计决定也让 kafka 团队减少对内存垃圾收集等方面的关注。在大多数情况下，consumer 不会滞后 producer 太多，这意味着它们访问的数据有时间局部性，而这与操作系统 cache policy 的优化目标相符。</p>
+<p>通常数据从 segment 文件传输到客户端 socket 需要 4 个步骤：</p>
+<ol type="1">
+<li>将数据从文件中读入 OS 的 page cache</li>
+<li>将数据从 page cache 中复制到应用层缓存</li>
+<li>将应用层缓存中的数据复制到 kernel buffer</li>
+<li>将 kernel buffer 中的数据写出到客户端 socket</li>
+</ol>
+<p>整个过程包含 4 次数据复制和 2 次系统调用。在 Linux/Unix 系统中存在一个 sendfile API，它能够直接将持久化存储中的文件数据传输到 socket 上，直接省略了 2、3 两步，节省 2 次数据复制和 1 次系统调用，Kafka 团队利用该系统调用进一步优化了数据传输效率。</p>
+<h5 id="stateless-broker">Stateless Broker</h5>
+<p>与其它消息系统不同，Kafka broker 并不会记录 consumer 消费的 offset，因此可以认为 Kafka broker 没有状态。该设计决定降低了 Kafka broker 本身的复杂度和成本。那么 Kafka 如何清理消息？考虑到多个 consumers 的消费进度不一样，如果要动态控制就会过于繁琐。最终 Kafka 使用的方案是只保留过去 7 天 (配置) 的数据，如果 consumers 来不及消费就只能承受数据丢失的损失。</p>
+<p>这种设计还有一个副作用，consumer 在必要的时候可以重新消费数据。只要 consumer 愿意，在拉取数据时修改 offset 即可，在一些 ETL 场景下这种功能大有用武之地。如果 Kafka 没有选择让 consumer 拉取数据，而是让 broker 推送数据到 consumer，那么这种功能将很难实现。</p>
+<h3 id="distributed-coordination">Distributed Coordination</h3>
+<p>在协调 producer 与 consumer 之间的交互行为上，Kafka 团队做了两个设计决定。</p>
+<blockquote>
+<p>决定 1：Kafka 中的并行最小单元是 partition</p>
+</blockquote>
+<p>这意味着在任意时刻，一个 partition 内部的数据只能被 consumer group 中的某个特定 consumer 消费。如果我们允许 consumer group 中的多个 consumer 同时消费一个 partition，那么系统就需要引入锁机制和各个 consumer 的消费状态信息。将并行的最小单元限制成 partition，可以极大地减少代码逻辑和维护成本，不同 consumer 之间只需要在发生数据 rebalance 的时候协调消费行为，大部分情况下则无需考虑其它 consumer 的行为。因此如果想让数据真正均匀地分配给 consumer group 中的不同 consumers，用户可以在配置 topic 的时候设定多个 partition。</p>
+<blockquote>
+<p>决定 2：没有 master 节点</p>
+</blockquote>
+<p>Kafka 中没有 master 节点，因此也就不需要考虑 master 故障的问题。实际上，Kafka 将全局共享的少量数据交付给 Zookeeper 保管，后者的主要职责包括：</p>
+<ol type="1">
+<li>检测 brokers 和 consumers 的增减，即注册与发现</li>
+<li>brokers 与 consumers 变化时触发数据 rebalance</li>
+<li>维护消费关系，即 xx consumer 消费 xx partition；记录消费进度，即保存 offset；</li>
+</ol>
+<p>当 broker 或者 consumer 启动时，二者的信息将被分别存储在 Zookeeper 的 broker registry 和 consumer registry 中。broker registry 包含 broker 的 host、port、以及其中存储的 topics 和 partitions 集合信息，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 路径：/brokers/ids/[brokerId]</span></span><br><span class="line">{</span><br><span class="line">  <span class="attr">"version"</span>:<span class="number">3</span>,</span><br><span class="line">  <span class="attr">"host"</span>:<span class="string">"localhost"</span>,</span><br><span class="line">  <span class="attr">"port"</span>:<span class="number">9092</span>,</span><br><span class="line">  <span class="attr">"jmx_port"</span>:<span class="number">9999</span>,</span><br><span class="line">  <span class="attr">"timestamp"</span>:<span class="string">"2233345666"</span>,</span><br><span class="line">  <span class="attr">"endpoints"</span>: [<span class="string">"PLAINTEXT://host1:9092"</span>, <span class="string">"SSL://host1:9093"</span>],</span><br><span class="line">  <span class="comment">// This will be used in rack aware replication assignment for fault tolerance</span></span><br><span class="line">  <span class="attr">"rack"</span>: <span class="string">"us-east-1c"</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 路径：/brokers/topics/[topic]</span></span><br><span class="line">{</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="comment">// a map from partition id to replica list</span></span><br><span class="line">  <span class="attr">"partitions"</span>: {</span><br><span class="line">    <span class="attr">"0"</span>: [<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>],</span><br><span class="line">    <span class="attr">"1"</span>: [<span class="number">2</span>, <span class="number">5</span>, <span class="number">3</span>]</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>consumer registry 包含 consumer 的所属的 consumer group 及其订阅的 topics 信息，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 路径：/consumers/[groupId]/ids/[consumerId]</span></span><br><span class="line">{</span><br><span class="line">  <span class="attr">"version"</span>: <span class="number">1</span>,</span><br><span class="line">  <span class="attr">"pattern"</span>: <span class="string">"static"</span>,</span><br><span class="line">  <span class="attr">"subscription"</span>: {<span class="attr">"topic1"</span>: <span class="number">1</span>, <span class="attr">"topic2"</span>: <span class="number">2</span>}</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>每个 consumer group 都有一个 ownership registry，用来记录某 consumer 正在消费的 partition 信息，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 路径：/consumers/[groupId]/owners/[topic]/[partitionId] -&gt; string (consumerId)</span></span><br></pre></td></tr></table></figure>
+<p>每个 consumer group 还有一个 offset registry，用来记录 consumer 消费 partition 的 offset 信息，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 路径：/consumers/[groupId]/offsets/[topic]/[partitionId] -&gt; long (offset)</span></span><br></pre></td></tr></table></figure>
+<p>这些路径中，broker registry、consumer registry 以及 ownership registry 都是临时 (ephemeral) 路径，而 offset registry 是持久化 (persistent) 路径。如果 broker 发生故障，所有存储于它之上的 partitions 都会从 broker registry 中删除；如果 consumer 发生故障，所有它拥有的 partition 信息也将被删除。每个 consumer 都会监听 broker registry 和 consumer registry 的变化，一旦 broker set 和 consumer group 发生变化，它们能立即做出相应改变。</p>
+<p>在 consumer 启动或从 watcher 中接收到 broker/consumer 的变化信息时，consumer 会启动一个 rebalance 进程来重新确定它将消费的 partitions。其算法如下面的伪代码所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// rebalance: 针对某个 topic，为 consumer 重新分配 partitions</span></span><br><span class="line"><span class="comment">// c =&gt; consumer</span></span><br><span class="line"><span class="comment">// g =&gt; consumer group that c belongs to</span></span><br><span class="line"><span class="comment">// j =&gt; consumer c's index in consumer group g</span></span><br><span class="line"><span class="comment">// t =&gt; topic</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">rebalance</span><span class="params">(c, g, j, t)</span></span> {</span><br><span class="line">  <span class="comment">// 从 ownership registry 中将自己拥有的 partitions 删除</span></span><br><span class="line">  remove_partitions_from_ownership_registry(c)</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 从 Zookeeper 中获得 brokers 和 consumers 信息</span></span><br><span class="line">  brokers := read_brokers_registry()</span><br><span class="line">  consumers := read_consumers_registry()</span><br><span class="line">  <span class="comment">// 找到 brokers 中所有与 topic t 相关的 partitions</span></span><br><span class="line">  p_t = get_all_partitions(brokers, t)</span><br><span class="line">  <span class="comment">// 找到同属于 group g 的其它所有订阅 topic t 的 consumers </span></span><br><span class="line">  c_t = get_all_consumers(g, t)</span><br><span class="line">  </span><br><span class="line">  sort(p_t)</span><br><span class="line">  sort(c_t)</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 将固定位置的若干 partitions 分配给 consumer c</span></span><br><span class="line">  N = <span class="built_in">len</span>(p_t) / <span class="built_in">len</span>(c_t)</span><br><span class="line">  <span class="keyword">for</span> i := j*N; i &lt; (j+<span class="number">1</span>)*N; i++ {</span><br><span class="line">    p := p_t[i]</span><br><span class="line">    set_owner(c, p)</span><br><span class="line">    set_offset(c, p, offset)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> {</span><br><span class="line">      <span class="comment">// start pulling data</span></span><br><span class="line">    }()</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>当 consumer group 中存在多个 consumers 时，它们收到 broker/consumer 变化通知的时间点可能不一样，因此有可能先得到的某个 consumer 会尝试去获取已经有 owner 的 partition，因为后者尚未接到通知。当这种情况发生时，前者会放弃自己拥有的所有 partitions，等待一小段时间后再次执行 rebalance 的逻辑。在实践中通常经过少量的重试后就能够进入稳定状态。</p>
+<p>当新的 consumer 创建时，offset registry 中尚未有任何记录，consumers 可以选择从最小或最大 offset 开始消费，Kafka 的 API 提供这方面支持。</p>
+<h3 id="dilivery-guarantees">Dilivery Guarantees</h3>
+<h4 id="at-least-once-delivery">At-least-once Delivery</h4>
+<p>在论文发表时，Kafka 只提供 at-leat-once delivery 的保证，但在大多数情况下，消息只会被每个 consumer group 消费一次。然而，当某个 consumer 进程意外崩溃时，同一个 consumer group 的其它 consumers 将可能消费到重复消息。如果实际应用场景需要保证 exactly-once 的语义，那么该应用必须自己利用 offset (作为 id) 或其它信息构建去重逻辑。</p>
+<p>Kafka 保证从单个 partition 读取的消息顺序，但在 topic 级别上不保证任何顺序。为了避免日志数据被破坏，Kafka 在日志中的每条消息上都存储了 CRC，如果 broker 出现 I/O error，Kafka 将自动运行恢复程序，将与 CRC 不一致的消息删除。同时，CRC 也可以在应用层上检查是否有网络传输错误。</p>
+<h4 id="exactly-once-delivery">Exactly-once Delivery</h4>
+<p>自 0.11.0.0 版本后，Kafka 开始提供 exactly-once delivery 的保证。从 producer 生产消息到 consumer 消费消息，在顺利的情况下每条消息只会被消费一次。但云原生环境下任何事情都可能发生：</p>
+<ol type="1">
+<li>broker 故障：高可用性和持久性都是 Kafka 设计目标，通过阅读 replication 一节，就能知道一个大小为 f 的 Kafka 集群能够容忍 f-1 个 broker 发生故障。</li>
+<li>producer-to-broker RPC 调用失败：producer 向 broker 发送消息后，收到 ack 才能确认消息发送成功。但没有收到 ack 并不意味着 broker 没有成功将消息写入本地日志文件，中间的任何环节都有可能出错。而对于 producer 来说，没有收到 ack 只能重试，如果在此之前消息已经成功写入，Kafka 上就可能出现重复数据，相应地 consumer 就会消费两次相同的数据。</li>
+<li>client 故障：producer 和 consumer 本身也可能发生故障。在 broker 看来，producer 可能忽然失联，或是因为网络分区 (使后者成为 zombie producer)，或是因为 producer 崩溃。此时如果另一个 producer 进程以相同的身份注册到 Kafka，就可能出现两个 producer (网络分区恢复) 以相同的身份发送数据，为了正确性，Kafka 要能够识别 zombie producer。对 consumer 来说也是如此，在 consumer 发生故障时，让新的/其余 consumer 从上个 consumer 消费结束的位置开始继续消费。这意味着所有 consumer 消费的 offset 信息都必须与实际消费的结果保持一致。</li>
+</ol>
+<p>解决了 broker、consumer、producer 各自内部故障，以及 broker/consumer、broker/producer 之间的通信故障，才使真正提供 exactly-once delivery 支持称为可能。需要注意的是，exactly-once delivery 本身并不是仅 Kafka 团队本身就能实现，用户完全可以再消费消息之后重新设置 offset 重新消费，因此完整的 exactly-once delivery 语义支持是双方共同努力的结果，以下的特性仅是 Kafka 一方所做的努力，使用方需要充分了解并正确使用才能最终实现 exactly-once delivery。</p>
+<h5 id="idempotence-exactly-once-in-order-semantics-per-partition">Idempotence: Exactly-once in order semantics per partition</h5>
+<p>如果能够让 producer-to-broker RPC 请求满足幂等性，就可以解决 Kafka 收到重复数据的问题。解决方案和 tcp 利用 sequence number 去重的逻辑类似，只要 producer 为每条消息带上一个递增的 sequence number，Kafka 就能够根据 sequence number 去重。</p>
+<h5 id="transactions-aomic-writes-across-multiple-partitions">Transactions: Aomic writes across multiple partitions</h5>
+<p>Kafka 的 Transactions API 支持 2PC 协议，producer 能够批量地发送消息到不同 partitions 上，同时保证所有消息及 offset 信息写入的原子性，这里不详细展开，详情可见这篇博客 <a href="https://www.confluent.io/blog/transactions-apache-kafka/" target="_blank" rel="noopener">Transactions in Apache Kafka</a>。</p>
+<h4 id="replication">Replication</h4>
+<p>如果一个 broker 崩溃，存储在上面的数据将不可用，要提高服务的可用性和持久性，就需要引入 replication。从 0.8 版本开始，Kafka 已经支持集群内部数据复制的功能。</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/replication-with-factor-of-2.jpg" width="600px"></p>
+<p>如上图所示，从用户的角度来看 replication：根据 replication factor (如 2) 的设置，每个 topic 的每个 partition 将拥有若干个 replicas，其中有一个是 leader，负责处理所有读写请求，剩下的是 replicas，留作备用。replication 主要解决的两个问题是：</p>
+<ol type="1">
+<li>Replica Assignment</li>
+<li>Data Replication</li>
+</ol>
+<h5 id="replica-assignment">Replica Assignment</h5>
+<p>Replica Assignment 的目的很简单：<strong>将 replicas 均匀地分布到不同的 broker 上</strong>，步骤如下：</p>
+<ol type="1">
+<li>随机选择某个 broker 为起点，使用 round-robin 的方式将 partition 分配给不同的 broker，这些 broker 将成为相应 partition 的 leader</li>
+<li>针对每个 partition，将其 replicas 渐进地（<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -1.236ex" xmlns="http://www.w3.org/2000/svg" width="16.519ex" height="3.023ex" role="img" focusable="false" viewBox="0 -789.7 7301.2 1336.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="mi" transform="translate(485, 0)"><use xlink:href="#MJX-TEX-I-66"></use></g><g data-mml-node="mi" transform="translate(1035, 0)"><use xlink:href="#MJX-TEX-I-66"></use></g><g data-mml-node="mi" transform="translate(1585, 0)"><use xlink:href="#MJX-TEX-I-73"></use></g><g data-mml-node="mi" transform="translate(2054, 0)"><use xlink:href="#MJX-TEX-I-65"></use></g><g data-mml-node="mi" transform="translate(2520, 0)"><use xlink:href="#MJX-TEX-I-74"></use></g><g data-mml-node="mo" transform="translate(3158.8, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mfrac" transform="translate(4214.6, 0)"><g data-mml-node="msub" transform="translate(400.3, 477.2) scale(0.707)"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-70"></use></g><g data-mml-node="mi" transform="translate(503, -150) scale(0.707)"><use xlink:href="#MJX-TEX-I-69"></use></g></g><g data-mml-node="mrow" transform="translate(220, -370) scale(0.707)"><g data-mml-node="mo"><use xlink:href="#MJX-TEX-N-7C"></use></g><g data-mml-node="mi" transform="translate(278, 0)"><use xlink:href="#MJX-TEX-I-50"></use></g><g data-mml-node="mo" transform="translate(1029, 0)"><use xlink:href="#MJX-TEX-N-7C"></use></g></g><rect width="1124.2" height="60" x="120" y="220"></rect></g><g data-mml-node="mo" transform="translate(5801, 0)"><use xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="mn" transform="translate(6801.2, 0)"><use xlink:href="#MJX-TEX-N-31"></use></g></g></g></svg></mjx-container></span>）平移分配到 leader broker 之后的 brokers 中。</li>
+</ol>
+<p>假设有 5 个 broker (broker0-4)，10 个 partition (p0-9)，假设选择 borker0 为起点：</p>
+<p>根据公式， p0-p4 的 replica 平移 offset = 1；p5-p9 的 replica 平移 offset = 2，具体分配如下：</p>
+<table>
+<thead>
+<tr class="header">
+<th>broker0</th>
+<th>broker1</th>
+<th>broker2</th>
+<th>broker3</th>
+<th>broker4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>p0</td>
+<td>p1</td>
+<td>p2</td>
+<td>p3</td>
+<td>p4</td>
+</tr>
+<tr class="even">
+<td>p5</td>
+<td>p6</td>
+<td>p7</td>
+<td>p8</td>
+<td>p9</td>
+</tr>
+<tr class="odd">
+<td>-</td>
+<td>p0</td>
+<td>p1</td>
+<td>p2</td>
+<td>p3</td>
+</tr>
+<tr class="even">
+<td>p4</td>
+<td></td>
+<td>p5</td>
+<td>p6</td>
+<td>p7</td>
+</tr>
+<tr class="odd">
+<td>p8</td>
+<td>p9</td>
+<td>p0</td>
+<td>p1</td>
+<td>p2</td>
+</tr>
+<tr class="even">
+<td>p3</td>
+<td>p4</td>
+<td></td>
+<td>p5</td>
+<td>p6</td>
+</tr>
+<tr class="odd">
+<td>p7</td>
+<td>p8</td>
+<td>p9</td>
+<td>-</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>(NOTE：这里不理解为什么偏移量要递增，不过源码确实是这么实现，保持 offset = 1 理论上更平衡)</p>
+<h5 id="data-replication">Data Replication</h5>
+<p>数据复制通常有两种策略：primary-backup replication 和 qorum-based replication。无论选择哪种策略，总是有一个 replica 需要承担 leader 的角色，剩下的 replica 则为 follower。所有写操作首先经过 leader，再由 leader 传播给 followers。</p>
+<p>在 primary-backup 策略中，leader 在返回响应给 client 之前，必须等待数据写入所有 replica 中。如果有一个 replica 发生故障，leader 就会将它从 group 中剔除，并将数据写入剩下的 replicas 中。发生故障的 replica 在恢复后可以请求同步数据，当他与大家保持同步后可以重新回到 group 中。如果 group 中有 f 个 replicas，primary-backup 策略可以容忍 f-1 个 replica 发生故障。</p>
+<p>在 qorum-based 策略中，leader 在返回响应给 client 之前，只需等待数据写入大多数 replica 中，任何 replica 发生故障都不会引起整个 replica group 的大小变化。如果 group 中有 2f+1 个 replicas，quorum-based 策略可以容忍 f 个 replica 发生故障，如果 leader 发生故障，则至少需要 f+1 个 replicas 来选举新的 leader。</p>
+<p>我们简单对比一下二者的特点：</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>primary-backup</th>
+<th>quorum-based</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>write latency</td>
+<td>bad (latency in any replica can contribute)</td>
+<td>good</td>
+</tr>
+<tr class="even">
+<td>fault tolerance</td>
+<td>good</td>
+<td>bad</td>
+</tr>
+</tbody>
+</table>
+<p>鉴于通常数据复制的最佳实践是 3 个备份，Kafka 团队最终选择 primary-backup 复制策略。</p>
+<p><em>Writes</em></p>
+<p>producer 想要发布消息到某 partition 上时，先从 Zookeeper 上获取 partition leader，然后直接将消息发送给后者。leader 将消息写入本地日志。partition followers 通过 socket channel 不断地从 leader 处获取最新的消息，获取消息的顺序与 leader 的保持一致。follower 将消息写入本地日志后，回复 ack 给 leader。一旦 leader 获得所有 ISR (In Sync Replicas) 的回复后，该消息才正式提交 (committed)，leader 提高 HW (high watermark) 后将 ack 返回给 producer。为了提升性能，每个 follower 在将消息写入内存后就返回 ack 给 leader，因此对于 commited message，Kafka 只保证这条消息写入多所有 replicas 的内存中。(Kafka 0.8.0)</p>
+<p><em>Reads</em></p>
+<p>consumer 读数据时，只会从 partition leader 上读取，最多能读到 HW 所在的位置。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><p><a href="http://notes.stephenholiday.com/Kafka.pdf" target="_blank" rel="noopener">The original paper "Kafka: a Distributed Messaging System for Log Processing (2011)"</a></p></li>
+<li><p><a href="https://www.confluent.io/wp-content/uploads/confluent-kafka-definitive-guide-complete.pdf" target="_blank" rel="noopener">Kafka: The Definitive Guide</a></p></li>
+<li><p><a href="https://www.confluent.io/online-talks/apache-kafka-past-present-future-on-demand/" target="_blank" rel="noopener">Confluent: Apache Kafka: Past, Present and Future</a></p></li>
+<li><p><a href="https://kafka.apache.org/" target="_blank" rel="noopener">Apache: Kafka Official Site</a></p></li>
+<li><p><a href="https://www.youtube.com/watch?v=JalUUBKdcA0&amp;t=1s" target="_blank" rel="noopener">Youtube Finematics: Apache Kafka Explained (Comprehensive Overview)</a></p></li>
+<li><p><a href="https://www.youtube.com/watch?v=1vLMuWsfMcA&amp;t=1681s" target="_blank" rel="noopener">Youtube jeeconf: Lessons Learned from Kafka in production</a></p></li>
+<li><p><a href="https://en.wikipedia.org/wiki/Apache_Kafka" target="_blank" rel="noopener">Wikipedia: Apache Kafka</a></p></li>
+<li><p><a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+data+structures+in+Zookeeper" target="_blank" rel="noopener">Confluence: Kafka data structures in Zookeeper</a></p></li>
+<li><p><a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Replication" target="_blank" rel="noopener">Confluence: Kafka Replication</a></p></li>
+<li><p><a href="https://cwiki.apache.org/confluence/display/KAFKA/Kafka+papers+and+presentations" target="_blank" rel="noopener">Confluence: Kafka papers and presentations</a></p></li>
+<li><p><a href="https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/" target="_blank" rel="noopener">Confluence: Exactly-once Semantics are Possible: Here's How Kafka Does it</a></p></li>
+<li><p><a href="https://www.confluent.io/blog/transactions-apache-kafka/" target="_blank" rel="noopener">Confluence: Transactions in Apache Kafka</a></p></li>
+<li><p><a href="https://ddcode.net/2019/06/22/talking-about-kafkas-partition-allocation/" target="_blank" rel="noopener">talking-about-kafkas-partition-allocation</a></p></li>
+<li><p><a href="https://github.com/apache/kafka/blob/6dc6f6a60ddf7a70c394c147fbed579749d2abcc/core/src/main/scala/kafka/admin/AdminUtils.scala#L32" target="_blank" rel="noopener">Github: Apache/Kafka-AdminUtils-assignReplicasToBrokers</a></p></li>
+<li><p><a href="https://medium.com/@andy.bryant/processing-guarantees-in-kafka-12dd2e30be0e" target="_blank" rel="noopener">Medium: Processing guarantees in Kafka</a></p></li>
+<li><p><a href="https://medium.com/@durgaswaroop/a-practical-introduction-to-kafka-storage-internals-d5b544f6925f" target="_blank" rel="noopener">Medium: A Practical Introduction to Kafka Storage Internals</a></p></li>
+</ul>
+<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-6F" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-TEX-I-66" d="M118 -162Q120 -162 124 -164T135 -167T147 -168Q160 -168 171 -155T187 -126Q197 -99 221 27T267 267T289 382V385H242Q195 385 192 387Q188 390 188 397L195 425Q197 430 203 430T250 431Q298 431 298 432Q298 434 307 482T319 540Q356 705 465 705Q502 703 526 683T550 630Q550 594 529 578T487 561Q443 561 443 603Q443 622 454 636T478 657L487 662Q471 668 457 668Q445 668 434 658T419 630Q412 601 403 552T387 469T380 433Q380 431 435 431Q480 431 487 430T498 424Q499 420 496 407T491 391Q489 386 482 386T428 385H372L349 263Q301 15 282 -47Q255 -132 212 -173Q175 -205 139 -205Q107 -205 81 -186T55 -132Q55 -95 76 -78T118 -61Q162 -61 162 -103Q162 -122 151 -136T127 -157L118 -162Z"></path><path id="MJX-TEX-I-73" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path><path id="MJX-TEX-I-65" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-TEX-I-74" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-I-70" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path id="MJX-TEX-I-69" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-N-7C" d="M139 -249H137Q125 -249 119 -235V251L120 737Q130 750 139 750Q152 750 159 735V-235Q151 -249 141 -249H139Z"></path><path id="MJX-TEX-I-50" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path></defs></svg>
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/kafka/" rel="tag"># kafka</a>
+              <a href="/blog/tags/mq/" rel="tag"># mq</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/" rel="prev" title="Scaling Memcache at Facebook (2013)">
+      <i class="fa fa-chevron-left"></i> Scaling Memcache at Facebook (2013)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kafka-architecture-and-design-principles"><span class="nav-number">2.</span> <span class="nav-text">Kafka Architecture and Design Principles</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">2.1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#efficienty-on-a-single-partition"><span class="nav-number">2.2.</span> <span class="nav-text">Efficienty on a Single Partition</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#simple-storage"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">Simple Storage</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#efficient-transfer"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">Efficient Transfer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#stateless-broker"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">Stateless Broker</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#distributed-coordination"><span class="nav-number">2.3.</span> <span class="nav-text">Distributed Coordination</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dilivery-guarantees"><span class="nav-number">2.4.</span> <span class="nav-text">Dilivery Guarantees</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#at-least-once-delivery"><span class="nav-number">2.4.1.</span> <span class="nav-text">At-least-once Delivery</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exactly-once-delivery"><span class="nav-number">2.4.2.</span> <span class="nav-text">Exactly-once Delivery</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#idempotence-exactly-once-in-order-semantics-per-partition"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">Idempotence: Exactly-once in order semantics per partition</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#transactions-aomic-writes-across-multiple-partitions"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">Transactions: Aomic writes across multiple partitions</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#replication"><span class="nav-number">2.4.3.</span> <span class="nav-text">Replication</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#replica-assignment"><span class="nav-number">2.4.3.1.</span> <span class="nav-text">Replica Assignment</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#data-replication"><span class="nav-number">2.4.3.2.</span> <span class="nav-text">Data Replication</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/";
+    this.page.identifier = "2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/";
+    this.page.title = "Kafka: a Distributed Messaging System for Log Processing (2011)";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
