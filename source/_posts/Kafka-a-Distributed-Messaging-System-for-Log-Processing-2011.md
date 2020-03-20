@@ -257,6 +257,8 @@ Kafka 保证从单个 partition 读取的消息顺序，但在 topic 级别上�
 
 Kafka 的 Transactions API 支持 2PC 协议，producer 能够批量地发送消息到不同 partitions 上，同时保证所有消息及 offset 信息写入的原子性，这里不详细展开，详情可见这篇博客 [Transactions in Apache Kafka](https://www.confluent.io/blog/transactions-apache-kafka/)。
 
+如何利用二者实现完整的 exactly-once delivery，可以参考这篇博客 [Processing guarantees in Kafka](https://medium.com/@andy.bryant/processing-guarantees-in-kafka-12dd2e30be0e)。
+
 #### Replication
 
 如果一个 broker 崩溃，存储在上面的数据将不可用，要提高服务的可用性和持久性，就需要引入 replication。从 0.8 版本开始，Kafka 已经支持集群内部数据复制的功能。
