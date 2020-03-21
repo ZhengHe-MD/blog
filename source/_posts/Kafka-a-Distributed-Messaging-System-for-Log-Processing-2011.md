@@ -14,7 +14,7 @@ mathjax:
 
 Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于 NetDB workshop，如今原文的三位作者，Jay Kreps、Neha Narkhede 以及 Jun Rao 一同离开 LinkedIn，创立 [Confluent.io](https://www.confluent.io/)，提供基于 Kafka 的企业级 Event Streaming Platform 服务。
 
-除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication。
+除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication，exactly-once delivery 等。
 
 ## Introduction
 
@@ -28,11 +28,11 @@ Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联�
 
 <img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg" width="600px">
 
-显然这种拓扑图对分布式系统很不友好，不仅可能造成网络资源浪费，维护成本也极高。有 DRY 精神的工程师肯定无法忍受这样的架构，这时就需要有一个服务能将日志数据的消费和生产隔离：
+这种拓扑图对分布式系统很不友好，不仅可能造成网络资源浪费，维护成本也极高。有 DRY 精神的工程师肯定无法忍受这样的架构，这时就需要有一个服务能将日志数据的消费和生产隔离：
 
 <img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/pub-sub-topology.jpg" width="600px">
 
-最近 (2011)，对日志数据的使用趋势在改变，这些日志被逐步用于实时地改善在线服务的一些功能，如：搜索相关性、推荐算法、网络安全等。由于日志数据的体量超过实际数据好几个数量级，实时使用这些数据对数据系统本身也是新的挑战。
+最近 (2011 年)，对日志数据的使用趋势在改变，这些日志被逐步用于实时地改善在线服务的一些功能，如：搜索相关性、推荐算法、网络安全等。由于日志数据的体量超过实际数据好几个数量级，实时或准实时地使用这些数据对日志系统本身也是不小的挑战。
 
 综上所述，我们可以总结 Kafka 的核心设计要求：
 
@@ -40,7 +40,7 @@ Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联�
 2. Large throughput
 3. Delays in a few seconds
 
-也许你已经察觉，Kafka 是介于日志系统与消息系统之间的存在，因此你将在其内部的概念和设计中窥见二者的影子。
+也许你已经察觉，Kafka 是介于日志系统与消息系统之间的存在，你将在其内部概念和设计中窥见二者的影子。
 
 ## Kafka Architecture and Design Principles
 
@@ -93,11 +93,11 @@ topic-0-partition-0
 
 <img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-log.jpg" width="400px">
 
-每当 producer 生产一条消息到 kafka 中，相应的 broker 就将消息追加到当前最新的 segment 文件末尾中。为了提升文件 I/O 效率，新追加的数据只有在达到一定大小或经过一定时间后才会批量落盘，而只有在数据正式落盘后，consumers 才有可能消费到相应数据。Kafka 存储在 segment 中的消息没有显式 id，但每条消息可以用其 offset 来标识，实际上 offset 扮演了索引和 id 双重角色。
+每当 producer 生产一条消息到 kafka 中，相应的 broker 就将消息追加到当前最新的 segment 文件末尾中。为了提升文件 I/O 效率，新追加的数据只有在达到一定大小或经过一定时间后才会批量落盘，而只有在数据正式落盘后，consumers 才有可能消费到相应数据。segment 中的消息没有显式 id，但每条消息可以用其 offset 来唯一标识，因此实际上 offset 扮演了索引和 id 双重角色。
 
 尽管每个 topic 会被分成多个 partition (配置中指定)，一个 consumer 永远只会从一个 partition 中顺序读取消息。consumer ack 一个 offset 就意味着它已经成功消费所有在那之前的消息。从实现层面上看：
 
-1. consumer 先向相应的 broker 发送异步的数据拉取请求，参数包括下一条消息的 offset 和想要获取的字节数
+1. consumer 先向相应的 broker 发送异步的数据拉取请求，参数包括下一条消息的 offset 和想要获取的数据量
 2. 每个 broker 在内存中将每个 segment 的起始 offset 排好序。broker 收到数据拉取请求后，快速定位目标 segment 文件，通过相应的 index 文件可以快速找到目标数据，读取后返回给 consumer
 3. consumer 收到消息后，计算下一条消息的 offset 用于下一次数据拉取请求
 
@@ -116,7 +116,7 @@ Kafka 的存储层不会显式地在内存中缓存日志数据，而是将相�
 3. 将应用层缓存中的数据复制到 kernel buffer
 4. 将 kernel buffer 中的数据写出到客户端 socket
 
-整个过程包含 4 次数据复制和 2 次系统调用。在 Linux/Unix 系统中存在一个 sendfile API，它能够直接将持久化存储中的文件数据传输到 socket 上，直接省略了 2、3 两步，节省 2 次数据复制和 1 次系统调用，Kafka 团队利用该系统调用进一步优化了数据传输效率。
+整个过程包含 4 次数据复制和 2 次系统调用。在 Linux/Unix 系统中存在一个 sendfile API，它能够直接将持久化存储中的文件数据传输到 socket 上，直接省略了 2、3 两步，节省 2 次数据复制和 1 次系统调用，利用该系统调用 Kafka 进一步优化了数据传输效率。
 
 ##### Stateless Broker
 
@@ -130,11 +130,13 @@ Kafka 的存储层不会显式地在内存中缓存日志数据，而是将相�
 
 > 决定 1：Kafka 中的并行最小单元是 partition
 
-这意味着在任意时刻，一个 partition 内部的数据只能被 consumer group 中的某个特定 consumer 消费。如果我们允许 consumer group 中的多个 consumer 同时消费一个 partition，那么系统就需要引入锁机制和各个 consumer 的消费状态信息。将并行的最小单元限制成 partition，可以极大地减少代码逻辑和维护成本，不同 consumer 之间只需要在发生数据 rebalance 的时候协调消费行为，大部分情况下则无需考虑其它 consumer 的行为。因此如果想让数据真正均匀地分配给 consumer group 中的不同 consumers，用户可以在配置 topic 的时候设定多个 partition。
+这意味着在任意时刻，一个 partition 内部的数据只能被 consumer group 中的某个特定 consumer 消费。如果我们允许 consumer group 中的多个 consumer 同时消费一个 partition，那么系统就需要引入锁机制和各个 consumer 的消费状态信息。将并行的最小单元限制成 partition，可以极大地减少代码逻辑和维护成本，不同 consumer 之间只需要在发生数据 rebalance 的时候协调消费行为，大部分情况下则无需考虑其它 consumer 的行为。因此如果想让数据更均匀地分配给 consumer group 中的不同 consumers，用户可以在配置 topic 的时候设定更大的 partition 数量。
+
+举例如下：假设某 consumer group 有 3 个 consumers，如果一个 topic 被分成 4 个 partition，那么 consumer group 内部的分配方式为 [2, 1, 1]；如果一个 topic 被分成 14 个 partition，那么 consumer group 内部的分配方式为 [5, 4, 4]，可以看出后者的分配比前者更均匀。
 
 > 决定 2：没有 master 节点
 
-Kafka 中没有 master 节点，因此也就不需要考虑 master 故障的问题。实际上，Kafka 将全局共享的少量数据交付给 Zookeeper 保管，后者的主要职责包括：
+Kafka 是将全局共享的数据托付给 Zookeeper 保管，因此 brokers 中不存在 master 节点的概念，因此无需考虑 master 故障的问题。Zookeeper 承担的主要职责包括但不局限于：
 
 1. 检测 brokers 和 consumers 的增减，即注册与发现
 2. brokers 与 consumers 变化时触发数据 rebalance
@@ -229,25 +231,25 @@ func rebalance(c, g, j, t) {
 
 当 consumer group 中存在多个 consumers 时，它们收到 broker/consumer 变化通知的时间点可能不一样，因此有可能先得到的某个 consumer 会尝试去获取已经有 owner 的 partition，因为后者尚未接到通知。当这种情况发生时，前者会放弃自己拥有的所有 partitions，等待一小段时间后再次执行 rebalance 的逻辑。在实践中通常经过少量的重试后就能够进入稳定状态。
 
-当新的 consumer 创建时，offset registry 中尚未有任何记录，consumers 可以选择从最小或最大 offset 开始消费，Kafka 的 API 提供这方面支持。
+当新的 consumer 创建时，offset registry 中尚未有任何记录，consumers 可以选择从最小或最大 offset 开始消费，Kafka 的 SDK 提供相应支持。
 
-### Dilivery Guarantees
+### Delivery Guarantees
 
 #### At-least-once Delivery
 
-在论文发表时，Kafka 只提供 at-leat-once delivery 的保证，但在大多数情况下，消息只会被每个 consumer group 消费一次。然而，当某个 consumer 进程意外崩溃时，同一个 consumer group 的其它 consumers 将可能消费到重复消息。如果实际应用场景需要保证 exactly-once 的语义，那么该应用必须自己利用 offset (作为 id) 或其它信息构建去重逻辑。
+在论文发表时，Kafka 只能提供 at-leat-once delivery 的保证。在大多数情况下，消息只会被每个 consumer group 消费一次。然而，当某个 consumer 进程意外崩溃时，同一个 consumer group 的其它 consumers 将可能消费到重复消息。如果实际应用场景需要保证 exactly-once 的语义，那么该应用必须自己利用 offset (作为 id) 或其它信息构建去重逻辑。
 
 Kafka 保证从单个 partition 读取的消息顺序，但在 topic 级别上不保证任何顺序。为了避免日志数据被破坏，Kafka 在日志中的每条消息上都存储了 CRC，如果 broker 出现 I/O error，Kafka 将自动运行恢复程序，将与 CRC 不一致的消息删除。同时，CRC 也可以在应用层上检查是否有网络传输错误。
 
 #### Exactly-once Delivery
 
-自 0.11.0.0 版本后，Kafka 开始提供 exactly-once delivery 的保证。从 producer 生产消息到 consumer 消费消息，在顺利的情况下每条消息只会被消费一次。但云原生环境下任何事情都可能发生：
+自 0.11.0.0 版本后，Kafka 开始提供 exactly-once delivery 的支持。从 producer 生产消息到 consumer 消费消息，在顺利的情况下每条消息只会被消费一次。但云原生环境下任何事情都可能发生：
 
 1. broker 故障：高可用性和持久性都是 Kafka 设计目标，通过阅读 replication 一节，就能知道一个大小为 f 的 Kafka 集群能够容忍 f-1 个 broker 发生故障。
 2. producer-to-broker RPC 调用失败：producer 向 broker 发送消息后，收到 ack 才能确认消息发送成功。但没有收到 ack 并不意味着 broker 没有成功将消息写入本地日志文件，中间的任何环节都有可能出错。而对于 producer 来说，没有收到 ack 只能重试，如果在此之前消息已经成功写入，Kafka 上就可能出现重复数据，相应地 consumer 就会消费两次相同的数据。
 3. client 故障：producer 和 consumer 本身也可能发生故障。在 broker 看来，producer 可能忽然失联，或是因为网络分区 (使后者成为 zombie producer)，或是因为 producer 崩溃。此时如果另一个 producer 进程以相同的身份注册到 Kafka，就可能出现两个 producer (网络分区恢复) 以相同的身份发送数据，为了正确性，Kafka 要能够识别 zombie producer。对 consumer 来说也是如此，在 consumer 发生故障时，让新的/其余 consumer 从上个 consumer 消费结束的位置开始继续消费。这意味着所有 consumer 消费的 offset 信息都必须与实际消费的结果保持一致。
 
-解决了 broker、consumer、producer 各自内部故障，以及 broker/consumer、broker/producer 之间的通信故障，才使真正提供 exactly-once delivery 支持称为可能。需要注意的是，exactly-once delivery 本身并不是仅 Kafka 团队本身就能实现，用户完全可以再消费消息之后重新设置 offset 重新消费，因此完整的 exactly-once delivery 语义支持是双方共同努力的结果，以下的特性仅是 Kafka 一方所做的努力，使用方需要充分了解并正确使用才能最终实现 exactly-once delivery。
+解决了 broker、consumer、producer 各自内部故障，以及 broker/consumer、broker/producer 之间的通信故障，才使真正提供 exactly-once delivery 支持称为可能。需要注意的是，exactly-once delivery 本身并不是仅 Kafka 本身就能实现，用户完全可以重复生产或重复消费，因此完整的 exactly-once delivery 语义支持是双方共同努力的结果，以下的特性仅是 Kafka 一方所做的努力，使用方需要充分了解并正确使用才能最终实现 exactly-once delivery。
 
 ##### Idempotence: Exactly-once in order semantics per partition
 
@@ -265,7 +267,7 @@ Kafka 的 Transactions API 支持 2PC 协议，producer 能够批量地发送消
 
 <img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/replication-with-factor-of-2.jpg" width="600px">
 
-如上图所示，从用户的角度来看 replication：根据 replication factor (如 2) 的设置，每个 topic 的每个 partition 将拥有若干个 replicas，其中有一个是 leader，负责处理所有读写请求，剩下的是 replicas，留作备用。replication 主要解决的两个问题是：
+如上图所示，从用户的角度来看 replication：根据 replication factor 的设置，每个 topic 的每个 partition 将拥有若干个 replicas，其中有一个是 leader，负责处理所有读写请求，剩下的是 replicas，留作备用。replication 模块主要解决的两个问题是：
 
 1. Replica Assignment
 2. Data Replication
@@ -305,14 +307,14 @@ Replica Assignment 的目的很简单：**将 replicas 均匀地分布到不同�
 
 |                 | primary-backup                              | quorum-based |
 | --------------- | ------------------------------------------- | ------------ |
-| write latency   | bad (latency in any replica can contribute) | good         |
+| write latency   | 延迟高：任意 replica 延迟都能使整体延迟上升 | good         |
 | fault tolerance | good                                        | bad          |
 
 鉴于通常数据复制的最佳实践是 3 个备份，Kafka 团队最终选择 primary-backup 复制策略。
 
 *Writes*
 
-producer 想要发布消息到某 partition 上时，先从 Zookeeper 上获取 partition leader，然后直接将消息发送给后者。leader 将消息写入本地日志。partition followers 通过 socket channel 不断地从 leader 处获取最新的消息，获取消息的顺序与 leader 的保持一致。follower 将消息写入本地日志后，回复 ack 给 leader。一旦 leader 获得所有 ISR (In Sync Replicas) 的回复后，该消息才正式提交 (committed)，leader 提高 HW (high watermark) 后将 ack 返回给 producer。为了提升性能，每个 follower 在将消息写入内存后就返回 ack 给 leader，因此对于 commited message，Kafka 只保证这条消息写入多所有 replicas 的内存中。(Kafka 0.8.0)
+producer 想要发布消息到某 partition 上时，先从 Zookeeper 上获取 partition leader，然后直接将消息发送给后者。leader 将消息写入本地日志。partition followers 通过 socket channel 不断地从 leader 处获取最新的消息，获取消息的顺序与 leader 的保持一致。follower 将消息写入本地日志后，回复 ack 给 leader。一旦 leader 获得所有 ISR (In Sync Replicas) 的回复后，该消息才正式提交 (committed)，leader 提高 HW (high watermark) 后将 ack 返回给 producer。为了提升性能，每个 follower 在将消息写入内存后就返回 ack 给 leader，因此对于 commited message，Kafka 只保证这条消息写入多所有 replicas 的内存中。Kafka 团队认为通过 replication 提供的持久化保证比消息落盘的保证更强，也能在性能和持久性上取得更好的平衡，当然用户也可以开启 fsync，保证消息落盘后才认为是正式提交。
 
 *Reads*
 
