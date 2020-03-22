@@ -6,7 +6,7 @@ categories:
 - system design
 ---
 
-提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“
+提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？”
 
 因此我决定深究这个话题。
 
@@ -19,7 +19,7 @@ categories:
 
 以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：
 
-<img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="600px">
+<img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="680px">
 
 # Solutions
 
@@ -36,14 +36,14 @@ categories:
 侧重效率解决方案的设计要求可以概括如下：
 
 * **High Efficiency**：抢锁、释放锁操作高效 (这里暂不设定具体的 QPS)
-* **Weak Safety**：在绝大多数时刻，只有一个 client 可以拥有锁
+* **Weak Safety**：在绝大多数时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁
 * **Liveness**
   * Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去
   * Basic Fault tolerance/Availability：有简单的容错机制，能抵御小型故障，保持锁服务可用性
 
 ### Implementation: Single Redis Instance
 
-如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案，你也可以[阅读原文](https://redis.io/topics/distlock)。
+如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案缩略版，你也可以[阅读原文](https://redis.io/topics/distlock)。
 
 ##### Lock/Unlock
 
@@ -52,7 +52,7 @@ categories:
 SET resource_name my_random_value NX PX 30000
 ```
 
-resource_name 是分布式锁的 id，它的唯一保证只有一个 client 可以获取锁；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free，my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：
+resource_name 是分布式锁的 id，它的唯一可以保证只有一个 client 可以 SET 成功；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free；my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：
 
 ```lua
 -- Unlock.lua
@@ -63,7 +63,7 @@ else
 end
 ```
 
-释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一保证释放锁 (unlock) 操作的安全性，保证锁不会被误释放或恶意释放，一种误释放的场景如下图所示：
+释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一可以保证释放锁 (unlock) 操作的安全性，锁不会被误释放、获取、恶意释放。一种误释放的场景如下图所示：
 
 <img src="/blog/2020/03/22/Distributed-Locking/random-value.jpg" width="600px">
 
@@ -76,7 +76,7 @@ end
 
 ##### Fault Tolerance & Availability
 
-如果光有单实例，实例挂了以后锁服务不可用，为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上，有一定的容错能力。但为了效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 [WAIT](https://redis.io/commands/wait) 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。
+如果只有单实例，挂了以后锁服务就立即不可用。为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上。但为了执行效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 [WAIT](https://redis.io/commands/wait) 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。
 
 ## For Correctness
 
@@ -107,7 +107,7 @@ end
 2. client 2 获取锁成功，执行任务，并成功写入结果到 storage 中
 3. client 1 GC 结束后，执行任务，并成功写入结果到 storage 中
 
-同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局依然感人肺腑。
+同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局感人肺腑。
 
 但如果 lock service 能和 storage 配合起来，就能解决更新丢失问题：
 
@@ -117,7 +117,7 @@ end
 2. client 2 获取锁成功，同时获得单调自增 token = 34，执行任务，并成功写入 storage
 3. client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token 比最新写入的 token 小，拒绝执行
 
-从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案必要条件。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。
+从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案**必要条件**。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。
 
 # Redlock & Debate
 
