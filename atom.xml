@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-03-22T15:44:37.804Z</updated>
+  <updated>2020-03-22T15:56:50.620Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.620Z</updated>
     
     <summary type="html">
     
@@ -29,7 +29,7 @@
       
         
         
-          &lt;p&gt;提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync
+          &lt;p&gt;提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync
         
       
     
@@ -46,7 +46,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.624Z</updated>
     
     <summary type="html">
     
@@ -76,7 +76,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-03-22T15:44:37.816Z</updated>
+    <updated>2020-03-22T15:56:50.632Z</updated>
     
     <summary type="html">
     
@@ -107,7 +107,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-03-22T15:44:37.820Z</updated>
+    <updated>2020-03-22T15:56:50.640Z</updated>
     
     <summary type="html">
     
@@ -134,7 +134,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-03-22T15:44:37.808Z</updated>
+    <updated>2020-03-22T15:56:50.624Z</updated>
     
     <summary type="html">
     
@@ -163,7 +163,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-03-22T15:44:37.800Z</updated>
+    <updated>2020-03-22T15:56:50.616Z</updated>
     
     <summary type="html">
     
@@ -189,7 +189,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.620Z</updated>
     
     <summary type="html">
     
@@ -216,7 +216,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.624Z</updated>
     
     <summary type="html">
     
@@ -244,7 +244,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-03-22T15:44:37.808Z</updated>
+    <updated>2020-03-22T15:56:50.624Z</updated>
     
     <summary type="html">
     
@@ -272,7 +272,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-03-22T15:44:37.824Z</updated>
+    <updated>2020-03-22T15:56:50.644Z</updated>
     
     <summary type="html">
     
@@ -300,7 +300,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.620Z</updated>
     
     <summary type="html">
     
@@ -327,7 +327,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-03-22T15:44:37.804Z</updated>
+    <updated>2020-03-22T15:56:50.624Z</updated>
     
     <summary type="html">
     

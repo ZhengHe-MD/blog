@@ -301,7 +301,7 @@ mjx-container + br {
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-03-22 14:26:51 / 修改时间：15:44:37" itemprop="dateCreated datePublished" datetime="2020-03-22T14:26:51+00:00">2020-03-22</time>
+              <time title="创建时间：2020-03-22 14:26:51 / 修改时间：15:56:50" itemprop="dateCreated datePublished" datetime="2020-03-22T14:26:51+00:00">2020-03-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -340,7 +340,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“</p>
+          <p>提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？”</p>
 <p>因此我决定深究这个话题。</p>
 <h1 id="efficiency-correctness">Efficiency &amp; Correctness</h1>
 <p>在单机/实例中，如果只希望单个任务被执行一次，使用本地环境提供的 Lock 原语即可实现；但在云原生环境下，服务通常会被横向扩展到物理隔离的多个实例中，这时候就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：</p>
@@ -349,7 +349,7 @@ mjx-container + br {
 <li>正确性 (Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。</li>
 </ul>
 <p>以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：</p>
-<p><img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="600px"></p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="680px"></p>
 <h1 id="solutions">Solutions</h1>
 <p>在进入分布式锁解决方案之前，必须要明确：<strong>分布式锁只是某个特定业务需求解决方案的一部分</strong>，业务功能的真正实现是<strong>业务服务</strong>、<strong>分布式锁</strong>、<strong>存储服务</strong>以及<strong>其它有关各方</strong>共同努力的结果。</p>
 <p>本节分别讨论<strong>侧重效率</strong>和<strong>侧重正确性</strong>的两类解决方案，并给出相应的实现思路。</p>
@@ -359,7 +359,7 @@ mjx-container + br {
 <p>侧重效率解决方案的设计要求可以概括如下：</p>
 <ul>
 <li><strong>High Efficiency</strong>：抢锁、释放锁操作高效 (这里暂不设定具体的 QPS)</li>
-<li><strong>Weak Safety</strong>：在绝大多数时刻，只有一个 client 可以拥有锁</li>
+<li><strong>Weak Safety</strong>：在绝大多数时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁</li>
 <li><strong>Liveness</strong>
 <ul>
 <li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
@@ -367,12 +367,12 @@ mjx-container + br {
 </ul></li>
 </ul>
 <h3 id="implementation-single-redis-instance">Implementation: Single Redis Instance</h3>
-<p>如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案，你也可以<a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">阅读原文</a>。</p>
+<p>如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案缩略版，你也可以<a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">阅读原文</a>。</p>
 <h5 id="lockunlock">Lock/Unlock</h5>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Lock</span></span><br><span class="line">SET resource_name my_random_value NX PX <span class="number">30000</span></span><br></pre></td></tr></table></figure>
-<p>resource_name 是分布式锁的 id，它的唯一保证只有一个 client 可以获取锁；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free，my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
+<p>resource_name 是分布式锁的 id，它的唯一可以保证只有一个 client 可以 SET 成功；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free；my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Unlock.lua</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">"get"</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">"del"</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一保证释放锁 (unlock) 操作的安全性，保证锁不会被误释放或恶意释放，一种误释放的场景如下图所示：</p>
+<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一可以保证释放锁 (unlock) 操作的安全性，锁不会被误释放、获取、恶意释放。一种误释放的场景如下图所示：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/random-value.jpg" width="600px"></p>
 <ol type="1">
 <li>client 1 获取锁成功。因为某种原因，如网络延迟、GC 导致 client 1 执行任务时间超过 TTL</li>
@@ -382,7 +382,7 @@ mjx-container + br {
 </ol>
 <p>此时，client 2 和 3 都认为自己取锁成功，违背了 Week Safety。</p>
 <h5 id="fault-tolerance-availability">Fault Tolerance &amp; Availability</h5>
-<p>如果光有单实例，实例挂了以后锁服务不可用，为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上，有一定的容错能力。但为了效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 <a href="https://redis.io/commands/wait" target="_blank" rel="noopener">WAIT</a> 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。</p>
+<p>如果只有单实例，挂了以后锁服务就立即不可用。为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上。但为了执行效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 <a href="https://redis.io/commands/wait" target="_blank" rel="noopener">WAIT</a> 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。</p>
 <h2 id="for-correctness">For Correctness</h2>
 <p>如果任务的执行不具备幂等性，且系统可能因为任务重复执行陷入麻烦，开发者就必须考虑侧重正确性的解决方案。</p>
 <h3 id="design-requirements-1">Design Requirements</h3>
@@ -406,7 +406,7 @@ mjx-container + br {
 <li>client 2 获取锁成功，执行任务，并成功写入结果到 storage 中</li>
 <li>client 1 GC 结束后，执行任务，并成功写入结果到 storage 中</li>
 </ol>
-<p>同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局依然感人肺腑。</p>
+<p>同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局感人肺腑。</p>
 <p>但如果 lock service 能和 storage 配合起来，就能解决更新丢失问题：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/fencing-token.jpg" width="680px"></p>
 <ol type="1">
@@ -414,7 +414,7 @@ mjx-container + br {
 <li>client 2 获取锁成功，同时获得单调自增 token = 34，执行任务，并成功写入 storage</li>
 <li>client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token 比最新写入的 token 小，拒绝执行</li>
 </ol>
-<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案必要条件。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。</p>
+<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案<strong>必要条件</strong>。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。</p>
 <h1 id="redlock-debate">Redlock &amp; Debate</h1>
 <p>(TODO, Martin Kleppman with Antirez)</p>
 <h1 id="back-to-the-question">Back to the Question</h1>
@@ -478,7 +478,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -809,7 +809,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1052,7 +1052,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1339,7 +1339,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1647,7 +1647,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2110,7 +2110,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2293,7 +2293,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2451,7 +2451,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2624,7 +2624,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:56:50" itemprop="dateModified" datetime="2020-03-22T15:56:50+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
