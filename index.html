@@ -276,6 +276,177 @@ mjx-container + br {
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/2020/03/22/Distributed-Locking/" class="post-title-link" itemprop="url">Distributed Locking</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-22 14:26:51 / 修改时间：15:44:37" itemprop="dateCreated datePublished" datetime="2020-03-22T14:26:51+00:00">2020-03-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
+                    <span itemprop="name">system design</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/22/Distributed-Locking/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/22/Distributed-Locking/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“</p>
+<p>因此我决定深究这个话题。</p>
+<h1 id="efficiency-correctness">Efficiency &amp; Correctness</h1>
+<p>在单机/实例中，如果只希望单个任务被执行一次，使用本地环境提供的 Lock 原语即可实现；但在云原生环境下，服务通常会被横向扩展到物理隔离的多个实例中，这时候就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：</p>
+<ul>
+<li>效率 (Efficiency)：为了避免一个任务被执行多次，每个执行方在任务启动时先抢锁，在绝大多数情况下能避免重复工作。即便在极其偶然的情况下，分布式锁服务故障导致同一时刻有两个执行方抢到锁，使得某个任务被执行两次，总体看来依然无伤大雅。</li>
+<li>正确性 (Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。</li>
+</ul>
+<p>以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="600px"></p>
+<h1 id="solutions">Solutions</h1>
+<p>在进入分布式锁解决方案之前，必须要明确：<strong>分布式锁只是某个特定业务需求解决方案的一部分</strong>，业务功能的真正实现是<strong>业务服务</strong>、<strong>分布式锁</strong>、<strong>存储服务</strong>以及<strong>其它有关各方</strong>共同努力的结果。</p>
+<p>本节分别讨论<strong>侧重效率</strong>和<strong>侧重正确性</strong>的两类解决方案，并给出相应的实现思路。</p>
+<h2 id="for-efficiency">For Efficiency</h2>
+<p>如果任务的执行具备幂等性，或即使少量任务重复执行对整体功能没有影响，开发者就可以选择侧重效率的解决方案。</p>
+<h3 id="design-requirements">Design Requirements</h3>
+<p>侧重效率解决方案的设计要求可以概括如下：</p>
+<ul>
+<li><strong>High Efficiency</strong>：抢锁、释放锁操作高效 (这里暂不设定具体的 QPS)</li>
+<li><strong>Weak Safety</strong>：在绝大多数时刻，只有一个 client 可以拥有锁</li>
+<li><strong>Liveness</strong>
+<ul>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
+<li>Basic Fault tolerance/Availability：有简单的容错机制，能抵御小型故障，保持锁服务可用性</li>
+</ul></li>
+</ul>
+<h3 id="implementation-single-redis-instance">Implementation: Single Redis Instance</h3>
+<p>如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案，你也可以<a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">阅读原文</a>。</p>
+<h5 id="lockunlock">Lock/Unlock</h5>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Lock</span></span><br><span class="line">SET resource_name my_random_value NX PX <span class="number">30000</span></span><br></pre></td></tr></table></figure>
+<p>resource_name 是分布式锁的 id，它的唯一保证只有一个 client 可以获取锁；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free，my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Unlock.lua</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">"get"</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">"del"</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一保证释放锁 (unlock) 操作的安全性，保证锁不会被误释放或恶意释放，一种误释放的场景如下图所示：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/random-value.jpg" width="600px"></p>
+<ol type="1">
+<li>client 1 获取锁成功。因为某种原因，如网络延迟、GC 导致 client 1 执行任务时间超过 TTL</li>
+<li>client 2 获取锁成功</li>
+<li>client 1 完成任务，执行释放锁操作，此时如果没有 my_random_value，client 2 获取的锁将被误释放</li>
+<li>client 3 获取锁成功</li>
+</ol>
+<p>此时，client 2 和 3 都认为自己取锁成功，违背了 Week Safety。</p>
+<h5 id="fault-tolerance-availability">Fault Tolerance &amp; Availability</h5>
+<p>如果光有单实例，实例挂了以后锁服务不可用，为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上，有一定的容错能力。但为了效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 <a href="https://redis.io/commands/wait" target="_blank" rel="noopener">WAIT</a> 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。</p>
+<h2 id="for-correctness">For Correctness</h2>
+<p>如果任务的执行不具备幂等性，且系统可能因为任务重复执行陷入麻烦，开发者就必须考虑侧重正确性的解决方案。</p>
+<h3 id="design-requirements-1">Design Requirements</h3>
+<p>侧重正确性解决方案的设计要求概括如下：</p>
+<ul>
+<li>Strong Safety: 在任意时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁</li>
+<li>Liveness
+<ul>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
+<li>Strong Fault Tolerance &amp; Availability：高容错、高可用</li>
+</ul></li>
+</ul>
+<h3 id="implementation-concensus-service">Implementation: Concensus Service</h3>
+<p>在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版 redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure (SPOF) 就意味着失去 Single Source of Truth (SSOT)。在多实例环境下要实现 Strong Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped Replication、Zab 以及 Paxos，这些算法在 asynchronous model with unreliable failure detectors (翻译成人话就是<strong>算法的正确性不依赖系统中任何事件发生时间</strong>) 的故障模型下，依然能在一定故障 (少于半数节点故障) 存在的情况下保证系统对一些信息达成共识。</p>
+<p>本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service 的讨论，感兴趣的可以自行阅读 Martin Kleppman DDIA 一书的 Consistency &amp; Consensus 一节，这里我们可以直接假设它的存在。</p>
+<h3 id="the-whole-story">The Whole Story</h3>
+<p>理想状况下，开发者利用侧重正确性解决方案的最终目的是：<strong>在任何情况下每个任务仅被执行一次</strong>。仅靠侧重正确性的分布式锁方案还不够。考虑这样一个场景：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/exactly-once.jpg" width="680px"></p>
+<ol type="1">
+<li>client 1 获取锁成功，但不巧遇到了 stop-the-world GC 暂停，导致锁过期</li>
+<li>client 2 获取锁成功，执行任务，并成功写入结果到 storage 中</li>
+<li>client 1 GC 结束后，执行任务，并成功写入结果到 storage 中</li>
+</ol>
+<p>同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局依然感人肺腑。</p>
+<p>但如果 lock service 能和 storage 配合起来，就能解决更新丢失问题：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/fencing-token.jpg" width="680px"></p>
+<ol type="1">
+<li>client 1 获取锁成功，同时获得单调自增 token = 33，遇到 stop-the-world GC 暂停，导致锁过期</li>
+<li>client 2 获取锁成功，同时获得单调自增 token = 34，执行任务，并成功写入 storage</li>
+<li>client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token 比最新写入的 token 小，拒绝执行</li>
+</ol>
+<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案必要条件。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。</p>
+<h1 id="redlock-debate">Redlock &amp; Debate</h1>
+<p>(TODO, Martin Kleppman with Antirez)</p>
+<h1 id="back-to-the-question">Back to the Question</h1>
+<p>回到本文开篇的问题。</p>
+<p>问：“如果某个 client 拿着锁执行任务时，redis 挂了怎么办？”</p>
+<p>答："看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开 fsync 、使用 WAIT 命令可以有限地增加容错能力和可用性，但因为没有共识算法的支持，分布式锁的正确性仍然无法保证。如果不能接受，就采用侧重正确性的分布式锁方案，但请务必关注具体业务场景的完整解决方案。“</p>
+<h1 id="references">References</h1>
+<ul>
+<li><p><a href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener">Martin Kleppmann: How to do distributed locking</a></p></li>
+<li><p><a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">redis: Distributed locks with Redis</a></p></li>
+<li><p><a href="http://antirez.com/news/101" target="_blank" rel="noopener">Is Redlock safe?</a></p></li>
+<li><p><a href="http://courses.csail.mit.edu/6.852/08/papers/CT96-JACM.pdf" target="_blank" rel="noopener">Unreliable Failure Detectors for Reliable Distributed Systems</a></p></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -307,7 +478,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -638,7 +809,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -881,7 +1052,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1168,7 +1339,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1476,7 +1647,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1939,7 +2110,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2122,7 +2293,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2280,7 +2451,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2453,7 +2624,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
+                <time title="修改时间：2020-03-22 15:44:37" itemprop="dateModified" datetime="2020-03-22T15:44:37+00:00">2020-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -2651,188 +2822,6 @@ mjx-container + br {
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/" class="post-title-link" itemprop="url">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-17 18:16:20" itemprop="dateCreated datePublished" datetime="2020-02-17T18:16:20+00:00">2020-02-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-22 02:55:01" itemprop="dateModified" datetime="2020-03-22T02:55:01+00:00">2020-03-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
-                    <span itemprop="name">papers-we-love</span>
-                  </a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
-<p>本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。</p>
-<h1 id="why-design-goals">Why &amp; Design Goals</h1>
-<p>云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。</p>
-<p>通常这些异常会被监控捕捉，如时延异常、错误日志、程序崩溃，在紧急处理之后，就需要调查案发现场，彻底解决问题。这时候就需要了解每个请求在整个微服务集群内部的行踪。</p>
-<p>这就向分布式追踪系统提出了两点要求：</p>
-<ul>
-<li>处处部署 (ubiquitous deployment)</li>
-<li>持续监控 (continuous monitoring)</li>
-</ul>
-<p>如果部署不完全或者监控有间断，就可能有一小部分历史无法被追踪到，从而影响到问题定位的准确度，使得追踪效果大打折扣。</p>
-<p>据此，我们提出追踪系统的 3 个主要设计目标：</p>
-<ol type="1">
-<li><strong>低成本 (Low overhead)</strong>：对服务的性能影响应该能够忽略不计</li>
-<li><strong>对应用透明 (Application-level transparency)</strong>：应用开发者对追踪系统无感知</li>
-<li><strong>扩展性好 (Scalability)</strong>：支持部署到所有服务的所有实例上</li>
-</ol>
-<p>在此基础上，数据从采集到可以被查询、分析的延迟越小越好，起到的作用也越大、越及时。</p>
-<h1 id="how">How</h1>
-<h2 id="general-approaches">General Approaches</h2>
-<p>分布式追踪的设计方案主要可以分为两类：黑盒法（black-box）和标记法（annotation-based）：</p>
-<h3 id="黑盒法">黑盒法</h3>
-<p>黑盒法无需任何侵入性代码，只通过统计回归等手段来推测服务之间的关系。它的优势在于无需修改代码，缺点在于记录不准确，且需要大量数据才能够推导出服务间的关系。</p>
-<h3 id="标记法">标记法</h3>
-<p>标记法需要为每个请求打标记，并通过一个全局标识符将请求途径的所有服务信息串联，复盘整个链路。标记法记录准确，但它的缺点也很明显，需要将标记代码注入到每个服务中。</p>
-<p>在 Google 内部，几乎所有应用都使用相同的 threading model、control flow 和 RPC systems，因此可以将打标记的工作集中在少量的公共库中，同样能够达到对应用透明的效果。</p>
-<h2 id="data-models">Data Models</h2>
-<p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35" style="zoom:40%;" /></p>
-<p>相应调用链追踪的树状结构为：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" style="zoom:50%;" /></p>
-<p>整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span 称为 root span，root span 的 id 就是 trace id。</p>
-<p>每个 span 都需要记录其开始时间和结束时间，如果应用开发者有记录其它信息的需求，则可以手动增加相应的标记。</p>
-<h2 id="pipeline">Pipeline</h2>
-<p>Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34" style="zoom:67%;" /></p>
-<ol type="1">
-<li>span 数据写入本地日志文件</li>
-<li>dapper daemon 从本地日志文件中收集数据</li>
-<li>dapper collectors 将数据写入 Bigtable 的大区仓库 (regional repositories)</li>
-</ol>
-<p>在 Bigtable 中，每行数据就是一个 trace，且每行可以有任意列，恰好方便存储不定长的 trace/span 数据。Dapper 向开发者提供相应的 API 和 SDK，方便 Google 的开发者能够据此搭建数据分析工具，定制化地辅助线上问题排查。</p>
-<h2 id="overhead">Overhead</h2>
-<p>调用链追踪的主要成本在于：trace generation 和 collection。</p>
-<h3 id="trace-generation">Trace generation</h3>
-<p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176 ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
-<p>在 Dapper 的 runtime library 中，最耗时的操作就是将 trace 信息写入本地磁盘，但考虑到使用批量和异步写入的方式优化，对被跟踪的服务本身的影响就相对削弱了。</p>
-<h3 id="trace-collection">Trace collection</h3>
-<p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3% 的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在 kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
-<p>在实践中，平均每个 span 的大小约为 426 字节，经过计算，在生产环境中 Dapper 占用的网络带宽大约为总量的 0.01%。</p>
-<h3 id="effect-on-production-workloads">Effect on production workloads</h3>
-<p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
-<p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54" style="zoom:50%;" /></p>
-<p>The experimental errors for these latency and throughput measurements are 2.5% and 0.15% respectively.</p>
-<p>从图中可以发现，尽管调用链追踪带来的性能影响不是很大，但并不能忽略不计，对 trace 数据进行抽样是很有必要的。当抽样率小于 1/16 时，影响范围已经小于误差范围。在实践中，我们设置 1/1024 的抽样率就能收集到足够多的 trace 数据。</p>
-<p>除此之外，使用更低的采样率可以让 trace 数据在本地磁盘存活更长的时间，为整个搜集框架争取更大的灵活度。</p>
-<h3 id="adaptive-sampling">Adaptive Sampling</h3>
-<p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper 的首个生产版本中，采用了统一的采样率 1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
-<p>因此 Dapper 团队正在研发自适应采样率机制，针对不频繁的重要事件能提高采样率。实际被使用的抽样率会被记录在 trace/span 数据中，帮助后期工具分析。</p>
-<h3 id="additional-sampling">Additional Sampling</h3>
-<p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但 Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper 在生产环境中每天将产生 1T 的追踪数据；同时 Dapper 的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升 Dapper collectors、Bigtable 的吞吐量。因此 Dapper 团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
-<p>实现的思路很简单，将每个 trace id 哈希到 [0, 1]，如果哈希值小于给定的抽样系数，则通过；大于则拦截。在实践中，额外的抽样给与 Dapper 团队更强的全局控制力。</p>
-<h1 id="where">Where</h1>
-<h2 id="general-purpose-tools">General-Purpose Tools</h2>
-<h3 id="dapper-depot-api">Dapper Depot API</h3>
-<p>Dapper 向开发者开放一系列 API：</p>
-<ul>
-<li>Access by trace id</li>
-<li>Bulk access</li>
-<li>Indexed access</li>
-</ul>
-<p>在实践中，Dapper 发现 (service_name, host_machine, timestamp) 的联合索引恰好能满足大部分开发者的需求。</p>
-<h3 id="dapper-user-interface">Dapper user interface</h3>
-<p>dapper user interface 可以理解为 APM 系统，方便开发者快速对线上问题做根源分析。交互界面和 user story 详见论文。</p>
-<h2 id="experiences">Experiences</h2>
-<h3 id="using-dapper-during-development">Using Dapper during development</h3>
-<p>Dapper 主要在以下几个方面帮助开发者改进服务：</p>
-<ul>
-<li>Performance：通过调用链示意图发现服务瓶颈</li>
-<li>Correctness：dapper 通过标签帮助开发者发现一些本该访问 master 节点的请求访问了 replicas</li>
-<li>Understanding：dapper 帮助开发者理解自身系统的依赖，增进对复杂系统的理解，为架构层面优化提供依据</li>
-<li>Testing：开发者可以通过观察调用链信息测试系统的行为是否符合预期</li>
-</ul>
-<h3 id="addressing-long-tail-latency">Addressing long tail latency</h3>
-<p>Google 内部的一位工程师利用 Dapper 提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
-<h3 id="inferring-service-dependencies">Inferring service dependencies</h3>
-<p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。 Google 的 "Service Dependencies" 项目正是利用 Dapper 的近期数据来推断依赖关系。</p>
-<h3 id="network-usage-of-different-services">Network usage of different services</h3>
-<p>在发现网络带宽使用异常时，Dapper 可以辅助开发者锁定到具体的请求。</p>
-<h3 id="layered-and-shared-storage-systems">Layered and Shared Storage Systems</h3>
-<p>一些公共服务通常很难知道其调用方及各自调用量，Dapper 帮助这些公共服务的维护者更好地了解它们。</p>
-<h1 id="references">References</h1>
-<p><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf" target="_blank" rel="noopener">Dapper</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2905,7 +2894,7 @@ mjx-container + br {
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“ 因此我决定深究这个话题。 Efficiency &amp; Correctness 在单机&#x2F;实例中，如果只希望单个任务被执行一次，使用本地">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Distributed Locking">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“ 因此我决定深究这个话题。 Efficiency &amp; Correctness 在单机&#x2F;实例中，如果只希望单个任务被执行一次，使用本地">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/random-value.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/exactly-once.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/fencing-token.jpg">
+<meta property="article:published_time" content="2020-03-22T14:26:51.000Z">
+<meta property="article:modified_time" content="2020-03-22T15:44:37.804Z">
+<meta property="article:author" content="ZhengHe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Distributed Locking | ZhengHe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Distributed Locking
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-03-22 14:26:51 / 修改时间：15:44:37" itemprop="dateCreated datePublished" datetime="2020-03-22T14:26:51+00:00">2020-03-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
+                    <span itemprop="name">system design</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/22/Distributed-Locking/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/22/Distributed-Locking/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：”如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？“</p>
+<p>因此我决定深究这个话题。</p>
+<h1 id="efficiency-correctness">Efficiency &amp; Correctness</h1>
+<p>在单机/实例中，如果只希望单个任务被执行一次，使用本地环境提供的 Lock 原语即可实现；但在云原生环境下，服务通常会被横向扩展到物理隔离的多个实例中，这时候就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：</p>
+<ul>
+<li>效率 (Efficiency)：为了避免一个任务被执行多次，每个执行方在任务启动时先抢锁，在绝大多数情况下能避免重复工作。即便在极其偶然的情况下，分布式锁服务故障导致同一时刻有两个执行方抢到锁，使得某个任务被执行两次，总体看来依然无伤大雅。</li>
+<li>正确性 (Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。</li>
+</ul>
+<p>以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="600px"></p>
+<h1 id="solutions">Solutions</h1>
+<p>在进入分布式锁解决方案之前，必须要明确：<strong>分布式锁只是某个特定业务需求解决方案的一部分</strong>，业务功能的真正实现是<strong>业务服务</strong>、<strong>分布式锁</strong>、<strong>存储服务</strong>以及<strong>其它有关各方</strong>共同努力的结果。</p>
+<p>本节分别讨论<strong>侧重效率</strong>和<strong>侧重正确性</strong>的两类解决方案，并给出相应的实现思路。</p>
+<h2 id="for-efficiency">For Efficiency</h2>
+<p>如果任务的执行具备幂等性，或即使少量任务重复执行对整体功能没有影响，开发者就可以选择侧重效率的解决方案。</p>
+<h3 id="design-requirements">Design Requirements</h3>
+<p>侧重效率解决方案的设计要求可以概括如下：</p>
+<ul>
+<li><strong>High Efficiency</strong>：抢锁、释放锁操作高效 (这里暂不设定具体的 QPS)</li>
+<li><strong>Weak Safety</strong>：在绝大多数时刻，只有一个 client 可以拥有锁</li>
+<li><strong>Liveness</strong>
+<ul>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
+<li>Basic Fault tolerance/Availability：有简单的容错机制，能抵御小型故障，保持锁服务可用性</li>
+</ul></li>
+</ul>
+<h3 id="implementation-single-redis-instance">Implementation: Single Redis Instance</h3>
+<p>如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案，你也可以<a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">阅读原文</a>。</p>
+<h5 id="lockunlock">Lock/Unlock</h5>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Lock</span></span><br><span class="line">SET resource_name my_random_value NX PX <span class="number">30000</span></span><br></pre></td></tr></table></figure>
+<p>resource_name 是分布式锁的 id，它的唯一保证只有一个 client 可以获取锁；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free，my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Unlock.lua</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">"get"</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">"del"</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一保证释放锁 (unlock) 操作的安全性，保证锁不会被误释放或恶意释放，一种误释放的场景如下图所示：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/random-value.jpg" width="600px"></p>
+<ol type="1">
+<li>client 1 获取锁成功。因为某种原因，如网络延迟、GC 导致 client 1 执行任务时间超过 TTL</li>
+<li>client 2 获取锁成功</li>
+<li>client 1 完成任务，执行释放锁操作，此时如果没有 my_random_value，client 2 获取的锁将被误释放</li>
+<li>client 3 获取锁成功</li>
+</ol>
+<p>此时，client 2 和 3 都认为自己取锁成功，违背了 Week Safety。</p>
+<h5 id="fault-tolerance-availability">Fault Tolerance &amp; Availability</h5>
+<p>如果光有单实例，实例挂了以后锁服务不可用，为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上，有一定的容错能力。但为了效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 <a href="https://redis.io/commands/wait" target="_blank" rel="noopener">WAIT</a> 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。</p>
+<h2 id="for-correctness">For Correctness</h2>
+<p>如果任务的执行不具备幂等性，且系统可能因为任务重复执行陷入麻烦，开发者就必须考虑侧重正确性的解决方案。</p>
+<h3 id="design-requirements-1">Design Requirements</h3>
+<p>侧重正确性解决方案的设计要求概括如下：</p>
+<ul>
+<li>Strong Safety: 在任意时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁</li>
+<li>Liveness
+<ul>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
+<li>Strong Fault Tolerance &amp; Availability：高容错、高可用</li>
+</ul></li>
+</ul>
+<h3 id="implementation-concensus-service">Implementation: Concensus Service</h3>
+<p>在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版 redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure (SPOF) 就意味着失去 Single Source of Truth (SSOT)。在多实例环境下要实现 Strong Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped Replication、Zab 以及 Paxos，这些算法在 asynchronous model with unreliable failure detectors (翻译成人话就是<strong>算法的正确性不依赖系统中任何事件发生时间</strong>) 的故障模型下，依然能在一定故障 (少于半数节点故障) 存在的情况下保证系统对一些信息达成共识。</p>
+<p>本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service 的讨论，感兴趣的可以自行阅读 Martin Kleppman DDIA 一书的 Consistency &amp; Consensus 一节，这里我们可以直接假设它的存在。</p>
+<h3 id="the-whole-story">The Whole Story</h3>
+<p>理想状况下，开发者利用侧重正确性解决方案的最终目的是：<strong>在任何情况下每个任务仅被执行一次</strong>。仅靠侧重正确性的分布式锁方案还不够。考虑这样一个场景：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/exactly-once.jpg" width="680px"></p>
+<ol type="1">
+<li>client 1 获取锁成功，但不巧遇到了 stop-the-world GC 暂停，导致锁过期</li>
+<li>client 2 获取锁成功，执行任务，并成功写入结果到 storage 中</li>
+<li>client 1 GC 结束后，执行任务，并成功写入结果到 storage 中</li>
+</ol>
+<p>同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局依然感人肺腑。</p>
+<p>但如果 lock service 能和 storage 配合起来，就能解决更新丢失问题：</p>
+<p><img src="/blog/2020/03/22/Distributed-Locking/fencing-token.jpg" width="680px"></p>
+<ol type="1">
+<li>client 1 获取锁成功，同时获得单调自增 token = 33，遇到 stop-the-world GC 暂停，导致锁过期</li>
+<li>client 2 获取锁成功，同时获得单调自增 token = 34，执行任务，并成功写入 storage</li>
+<li>client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token 比最新写入的 token 小，拒绝执行</li>
+</ol>
+<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案必要条件。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。</p>
+<h1 id="redlock-debate">Redlock &amp; Debate</h1>
+<p>(TODO, Martin Kleppman with Antirez)</p>
+<h1 id="back-to-the-question">Back to the Question</h1>
+<p>回到本文开篇的问题。</p>
+<p>问：“如果某个 client 拿着锁执行任务时，redis 挂了怎么办？”</p>
+<p>答："看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开 fsync 、使用 WAIT 命令可以有限地增加容错能力和可用性，但因为没有共识算法的支持，分布式锁的正确性仍然无法保证。如果不能接受，就采用侧重正确性的分布式锁方案，但请务必关注具体业务场景的完整解决方案。“</p>
+<h1 id="references">References</h1>
+<ul>
+<li><p><a href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html" target="_blank" rel="noopener">Martin Kleppmann: How to do distributed locking</a></p></li>
+<li><p><a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">redis: Distributed locks with Redis</a></p></li>
+<li><p><a href="http://antirez.com/news/101" target="_blank" rel="noopener">Is Redlock safe?</a></p></li>
+<li><p><a href="http://courses.csail.mit.edu/6.852/08/papers/CT96-JACM.pdf" target="_blank" rel="noopener">Unreliable Failure Detectors for Reliable Distributed Systems</a></p></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" rel="prev" title="Kafka: a Distributed Messaging System for Log Processing (2011)">
+      <i class="fa fa-chevron-left"></i> Kafka: a Distributed Messaging System for Log Processing (2011)
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#efficiency-correctness"><span class="nav-number">1.</span> <span class="nav-text">Efficiency &amp; Correctness</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#solutions"><span class="nav-number">2.</span> <span class="nav-text">Solutions</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#for-efficiency"><span class="nav-number">2.1.</span> <span class="nav-text">For Efficiency</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#design-requirements"><span class="nav-number">2.1.1.</span> <span class="nav-text">Design Requirements</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implementation-single-redis-instance"><span class="nav-number">2.1.2.</span> <span class="nav-text">Implementation: Single Redis Instance</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#lockunlock"><span class="nav-number">2.1.2.0.1.</span> <span class="nav-text">Lock&#x2F;Unlock</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fault-tolerance-availability"><span class="nav-number">2.1.2.0.2.</span> <span class="nav-text">Fault Tolerance &amp; Availability</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#for-correctness"><span class="nav-number">2.2.</span> <span class="nav-text">For Correctness</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#design-requirements-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">Design Requirements</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implementation-concensus-service"><span class="nav-number">2.2.2.</span> <span class="nav-text">Implementation: Concensus Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#the-whole-story"><span class="nav-number">2.2.3.</span> <span class="nav-text">The Whole Story</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#redlock-debate"><span class="nav-number">3.</span> <span class="nav-text">Redlock &amp; Debate</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#back-to-the-question"><span class="nav-number">4.</span> <span class="nav-text">Back to the Question</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/";
+    this.page.identifier = "2020/03/22/Distributed-Locking/";
+    this.page.title = "Distributed Locking";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
