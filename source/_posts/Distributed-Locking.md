@@ -2,6 +2,7 @@
 title: Distributed Locking
 date: 2020-03-22 14:26:51
 tags:
+- redis
 categories:
 - system design
 ---
@@ -9,6 +10,8 @@ categories:
 提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？”
 
 因此我决定深究这个话题。
+
+*备注：本文中，因为信息源使用的术语不同，Correctness 与 Safety 分别翻译成正确性和安全性，实际上二者在分布式锁话题的范畴中意思相同。*
 
 # Efficiency & Correctness
 
@@ -39,7 +42,7 @@ categories:
 * **Weak Safety**：在绝大多数时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁
 * **Liveness**
   * Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去
-  * Basic Fault tolerance/Availability：有简单的容错机制，能抵御小型故障，保持锁服务可用性
+  * No Fault tolerance/Availability：不需要容错机制，不需要高可用保证
 
 ### Implementation: Single Redis Instance
 
@@ -76,7 +79,7 @@ end
 
 ##### Fault Tolerance & Availability
 
-如果只有单实例，挂了以后锁服务就立即不可用。为了提高容错率，一种简单的办法是利用主从做故障转移。master 节点挂掉后，slave 节点顶上。但为了执行效率，redis 的 replication 是异步的，如果 master 在接收加锁请求并回复 ack 给 client 后，同步数据到 slave 之前崩溃，此时虽然服务可用，但其它 client 可以立即取锁成功，违背了 Week Safety。即便使用 [WAIT](https://redis.io/commands/wait) 命令，等待所有 replicas 返回 ack 或者超时，也只能在一定程度上提高安全性，毕竟 WAIT 命令没有分布式共识算法在其后支持，同时这也是在牺牲效率来换取安全性。
+如果只有单实例，挂了以后锁服务就立即不可用。如果实例故障后立即重启，则锁可能立即被抢走，锁的安全性无法保证。
 
 ## For Correctness
 
@@ -93,9 +96,9 @@ end
 
 ### Implementation: Concensus Service
 
-在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版 redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure (SPOF) 就意味着失去 Single Source of Truth (SSOT)。在多实例环境下要实现 Strong Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped Replication、Zab 以及 Paxos，这些算法在 asynchronous model with unreliable failure detectors (翻译成人话就是**算法的正确性不依赖系统中任何事件发生时间**) 的故障模型下，依然能在一定故障 (少于半数节点故障) 存在的情况下保证系统对一些信息达成共识。
+在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版 redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure (SPOF) 就意味着失去 Single Source of Truth (SSOT)，详细讨论见 Redlock & Debate 一节。在多实例环境下要实现 Strong Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped Replication、Zab 以及 Paxos，这些算法在 asynchronous model with unreliable failure detectors (翻译成人话就是**算法的正确性不依赖系统中任何事件发生时间**) 的故障模型下，依然能在一定故障 (少于半数节点故障) 存在的情况下保证系统对一些信息达成共识。
 
-本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service 的讨论，感兴趣的可以自行阅读 Martin Kleppman DDIA 一书的 Consistency & Consensus 一节，这里我们可以直接假设它的存在。
+本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service 的讨论，感兴趣的可以阅读 DDIA 的 Consistency & Consensus 一节，或者翻阅相关论文。
 
 ### The Whole Story
 
@@ -121,7 +124,48 @@ end
 
 # Redlock & Debate
 
-(TODO, Martin Kleppman with Antirez)
+单实例 redis 架构上的明显缺陷就是存在单点故障 (SPOF)，即如果节点挂了锁也就丢了，节点重启后就会有别的 client 抢锁成功，从而出现两个 client 同时拥有锁，且锁都未过期的情况。我们可以做什么来改变这点？
+
+## Master/Slave
+
+既然存在单点故障，那就增加节点吧！利用 master/slave 的部署形式，master 挂了就将 slave 升级为 master。但 master 到 slave 的数据同步是异步执行的，这以为着 race condition 可能出现：
+
+1. client A 从 master 上获取锁
+2. master 在将 kv 同步到 slave 之前故障
+3. slave 称为 master
+4. client B 从新的 master 上获取锁，此时 A、B 都拥有锁
+
+如果 master 已经将 kv 同步到 slave，则 fail-over 能够有效避免 SPOF 遇到的问题，因此综合考虑 master/slave 能够在某种程度上提高锁服务的容错能力。
+
+也许我们可以使用  [WAIT](https://redis.io/commands/wait) 命令，WAIT 的语义是等待所有 replicas 返回 ack，或者超时，而并非实现共识。master 与 slave 之间的数据同步可能刚好遇到长时间的网络故障导致 WAIT 超时，因此使用 WAIT 同样可以提高锁服务的容错能力，但额外的等待时间会降低锁服务的效率，可能得不偿失。
+
+## Redlock
+
+Redlock 是 redis 的核心工程师 Salvatore Sanfilippo (antirez) 提出的基于多个 redis master 的分布式锁方案。假设整个系统中存在有 N (奇数，以 5 为例) 个相互独立的 master 节点，它们之间没有直接通信行为，一个 client 想要成功获取分布式锁，需要执行以下步骤：(详情请阅读 [原文](https://redis.io/topics/distlock))
+
+1. 计算当前时间，精确到毫秒
+2. 顺序地向 N 个节点发送取锁请求 (单实例解决方案中的 Lock)，N 个请求使用相同的 key 和 random value。每个请求的超时时间应该远远小于锁的过期时间，如 5~50 milliseconds 之于 10 seconds。如果遇到某个节点宕机或者请求超时后，client 会立即跳过该节点向下一个节点发送请求。
+3. 当且仅当 client 获得超过半数节点的 ack 后，同时取锁消耗的时间（利用步骤 1 的时间与当前时间对比）小于锁的过期时间，就认为取锁成功。
+4. 如果取锁成功，那么锁的**实际超时时间 (vt)**为原始超时时间与取锁消耗时间的差值，即经过 vt 后，其它的 client 就有可能取锁成功。
+5. 如果 client 未获得超过半数节点的 ack，则它会尝试向每个节点发送释放锁的请求。
+
+##### Asynchronous
+
+这个算法是否依赖于时钟同步？答案是**一定程度上依赖**。如果 N 个进程之间的墙上时钟的差值大到相对于锁的过期时间无法忽略的程度，那么 Redlock 就会失效，导致 2 个 clients 同时获得所的 race condition 仍然有可能出现。总之：Redlock 要求每个进程所处机器的时钟漂移很小，相对于锁的过期时间可以忽略。
+
+##### Retry
+
+取锁的过程可能出现 split brain，导致谁都抢不到锁，这时候如果所有 clients 都立即重试，split brain 很可能再次出现。解决方案也比较简单，使用随机退后的策略即可。
+
+## Debate
+
+Redlock 问世后，引起了 Martin Kleppman 的 [异议](http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html )，而后 Salvatore Sanfilippo 又写了一篇 [文章](http://antirez.com/news/101) 反驳，可谓是理论与实践之间的一次碰撞，详情可点击链接查看原文，这里给出我的总结：
+
+回到本文开头中的坐标系，Redlock 实际上是用效率换取正确性的一种分布式锁方案，它与其它方案之间的关系大致如下图所示：
+
+<img src="/blog/2020/03/22/Distributed-Locking/redlock-in-coord.jpg" width="400px">
+
+它不能保证分布式锁的 safety 性质。在实践中，我们通常要么就侧重效率，做好幂等，放弃要求锁服务绝对正确；要么就要求锁服务能保证绝对正确，牺牲效率，很难说服自己去使用一种折衷的解决方案。
 
 # Back to the Question
 
@@ -129,7 +173,7 @@ end
 
 问：“如果某个 client 拿着锁执行任务时，redis 挂了怎么办？”
 
-答："看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开 fsync 、使用 WAIT 命令可以有限地增加容错能力和可用性，但因为没有共识算法的支持，分布式锁的正确性仍然无法保证。如果不能接受，就采用侧重正确性的分布式锁方案，但请务必关注具体业务场景的完整解决方案。“
+答："看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开 fsync 、使用 WAIT 命令、实现 Redlock，都可以有限地增加锁服务的容错能力和可用性，但因为没有共识算法的支持，分布式锁的绝对正确仍然无法保证。如果不能牺牲正确性，就采用基于共识算法的分布式锁服务，但**请务必关注具体业务场景的完整解决方案**。“
 
 # References
 
