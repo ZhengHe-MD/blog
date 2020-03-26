@@ -52,13 +52,14 @@ Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联�
 * Producer：负责将消息发布到 topic 中
 * Broker：被发布的消息将被持久化到一个集群中，broker 是集群中的单个实例
 * Consumer：按需订阅 topic，主动从 brokers 中拉取数据
+* Conumser Group: 消费组，由一个或多个 consumer 构成，是订阅 topic 的最小单位
 * Message：字节数组，支持任意的序列化/反序列化方案
 
 整体架构如下图所示：
 
 <img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-architecture.jpg" width="400px">
 
-producer 将消息发布到 broker 中的某个 topic 上，每个 topic 被划分成多个 partition，存储在不同的 broker 上。consumer 订阅某个 topic 后，就可以从 broker 中消费消息。如果没有 producer 发布新的消息，consumer 将阻塞等待而不会停止。多个 consumer 可以组成一个 consumer group，通常 topic 中的每条消息只会被 consumer group 中的单个 consumer 消费，而不同 consumer group 将消费到 topic 中的所有消息。
+producer 将消息发布到 broker 中的某个 topic 上，每个 topic 被划分成多个 partition，存储在不同的 broker 上。consumer group 中的 consumer 订阅某个 topic 后，就可以从 broker 中消费消息。如果没有 producer 发布新的消息，consumer 将阻塞等待而不会停止。topic 中的单条消息只会被 consumer group 中的单个 consumer 消费，而不同 consumer group 将消费到同一个 topic 中的所有消息。
 
 producer 可以在没有 consumer 订阅时发布消息，consumer 也可以在没有 producer 发布消息时消费消息 (阻塞等待)，二者之间相互隔离。通过将 topic 数据分片，Kafka 天然地获得了横向扩展性，也在设计上为高吞吐打下基础。
 
@@ -95,7 +96,7 @@ topic-0-partition-0
 
 每当 producer 生产一条消息到 kafka 中，相应的 broker 就将消息追加到当前最新的 segment 文件末尾中。为了提升文件 I/O 效率，新追加的数据只有在达到一定大小或经过一定时间后才会批量落盘，而只有在数据正式落盘后，consumers 才有可能消费到相应数据。segment 中的消息没有显式 id，但每条消息可以用其 offset 来唯一标识，因此实际上 offset 扮演了索引和 id 双重角色。
 
-尽管每个 topic 会被分成多个 partition (配置中指定)，一个 consumer 永远只会从一个 partition 中顺序读取消息。consumer ack 一个 offset 就意味着它已经成功消费所有在那之前的消息。从实现层面上看：
+尽管每个 topic 会被分成多个 partition (配置中指定)，在同一个 consumer group 内部，一个 partition 只会被一个 consumer 消费。consumer ack 一个 offset 就意味着它已经成功消费所有在那之前的消息。从实现层面上看：
 
 1. consumer 先向相应的 broker 发送异步的数据拉取请求，参数包括下一条消息的 offset 和想要获取的数据量
 2. 每个 broker 在内存中将每个 segment 的起始 offset 排好序。broker 收到数据拉取请求后，快速定位目标 segment 文件，通过相应的 index 文件可以快速找到目标数据，读取后返回给 consumer
