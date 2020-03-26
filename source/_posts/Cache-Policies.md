@@ -95,7 +95,7 @@ Cache 中的每条 Cache Line，除了记录数据本身，额外使用 1 bit �
 <img src="/blog/2020/02/19/Cache-Policies/write-update-snooping-coherence-op-1.jpg" width="650px">
 
 * 读取数据时，如果 Cache Line $T$ 在 Cache 中的标记为 $V$ 为 0，即触发 Cache Miss，Cache 会向 Memory 发起读请求；如果其它核的 Cache 已经拥有 $T$ 对应的数据，则会**截获该请求**，直接将自己的数据传输给请求方，减少读穿。
-* 写入数据时，Cache 会首先将自身 $T$ 对应的数据更新，并且将脏位置为 1；然后将写数据的信息传入共享总线，这时其它核的 Cache 会同时监听到该消息。如果另一个核的 Cache 内部有相同的 Cache Line $T$，若它的脏位为 1，则会将数据先写入 Memory，然后将 $T$ 更新到刚监听到的值，同时将脏位置为 0；若它的脏位为 0，则会直接修改数据。
+* 写入数据时，Cache 会首先将自身 $T$ 对应的数据更新，并且将脏位置为 1；然后将写数据的信息传入共享总线，这时其它核的 Cache 会同时监听到该消息。如果另一个核的 Cache 内部有相同的 Cache Line $T$，若它的脏位为 1，则会将 $T$ 更新成为刚刚监听到的值，同时将脏位置为 0；若它的脏位为 0，则会直接修改数据。
 * 如果 Cache 已满，被迫清出，则通过缓存置换算法选出 Cache Line $T'$。若 $T'$ 的脏位为 1，则先将数据写出到缓存。
 
 总而言之：以上修改**减少了读穿和写穿的频率**，从而提高整体性能。
@@ -114,7 +114,7 @@ Cache 中的每条 Cache Line，除了记录数据本身，额外使用 1 bit �
 利用 Write-Update Snooping Example + Dirty Bit + Shared Bit 的结构，我们来看 Write-Invalidate Snooping 的工作模式。
 
 * 读取数据时，与 Write-Update Snooping 类似，$V$ 为 0 时触发 Cache Miss；$V$ 为 1 时直接读取本地缓存。
-* 写入数据时，若 Cache Line $T$ 的共享标记位 $S$ 为 0，则指写入本地缓存；若共享标记位 $S$ 为 1，则写入本地缓存的同时将写入信息发送到共享总线，其它拥有 $T$ 的 Cache 将有效位 $V$ 置为 0 即可。由于 Write-Invalidate 不需要更新其它 Cache 中的数据，因此发送到总线中的信息只需包含 Cache Line 的标识符 $T$ 即可。
+* 写入数据时，若 Cache Line $T$ 的共享标记位 $S$ 为 0，则只写入本地缓存；若共享标记位 $S$ 为 1，则写入本地缓存的同时将写入信息发送到共享总线，其它拥有 $T$ 的 Cache 将有效位 $V$ 置为 0 即可。由于 Write-Invalidate 不需要更新其它 Cache 中的数据，因此发送到总线中的信息只需包含 Cache Line 的标识符 $T$ 即可。
 
 与 Write-Update Snooping 不同，Write-Invalidatie Snooping 每次写入数据后，Cache 中 Cache Line $T$ 的共享标记位 $S$ 总是为 0，只有一个 Cache 中其对应的有效位 $V$ 为 1，即全局只有一个 Cache 拥有有效数据。
 
