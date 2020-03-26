@@ -57,7 +57,7 @@ Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联�
 
 整体架构如下图所示：
 
-<img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-architecture.jpg" width="400px">
+<img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/kafka-architecture.jpg" width="600px">
 
 producer 将消息发布到 broker 中的某个 topic 上，每个 topic 被划分成多个 partition，存储在不同的 broker 上。consumer group 中的 consumer 订阅某个 topic 后，就可以从 broker 中消费消息。如果没有 producer 发布新的消息，consumer 将阻塞等待而不会停止。topic 中的单条消息只会被 consumer group 中的单个 consumer 消费，而不同 consumer group 将消费到同一个 topic 中的所有消息。
 
