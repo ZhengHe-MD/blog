@@ -211,7 +211,7 @@ P1、P2 分别表示某系统中两个不同的进程/线程，图中的圆圈�
 
 根据第 5 点：在 $P_i$ 获得资源的之前，已经收到所有其它进程的时间戳大于 $T_m$ 的消息。如果有任意其它进程 $P_j$ 的请求 **"$T_n$: $P_j$ 请求使用资源"** 中的时间戳 $T_n < T_m$ ，那么 $P_j$ 就无法获得资源，即 $P_j$ 在更早的时间点就发送了资源请求。
 
-我利用这个 [项目](https://github.com/ZhengHe-MD/distributed-system-experiments/tree/master/total_ordering) 验证了这个方案，有兴趣不放一看。
+我利用这个 [项目](https://github.com/ZhengHe-MD/distributed-system-experiments/tree/master/total_ordering) 验证了这个方案，有兴趣不妨一看。
 
 ### 方案对比
 
