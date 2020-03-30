@@ -57,7 +57,7 @@ Hello
 World
 ```
 
-那么不论这台计算机上发生什么事情，只要 `fmt.Println("Hello")` 发生在 `fmt.Println("World")` 之前，这段程序就是正确的。假设计算机上只有一个 CPU，根据冯诺依曼计算机的工作原理，PC 寄存器会先指向 `fmt.Println("Hello")` 的指令地址，执行完以后再移向 `fmt.Println("World")`，所以二者的先后顺序能够被保证。
+那么不论这台计算机上发生什么事情，只要 `fmt.Println("Hello")` 发生在 `fmt.Println("World")` 之前，这段程序就是正确的。根据冯诺依曼计算机的工作原理，PC 寄存器会先指向 `fmt.Println("Hello")` 的指令地址，执行完以后再移向 `fmt.Println("World")`，所以二者的先后顺序能够被保证。
 
 再看下面这段代码：
 
