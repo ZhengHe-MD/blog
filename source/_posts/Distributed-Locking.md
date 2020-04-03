@@ -75,7 +75,7 @@ end
 3. client 1 完成任务，执行释放锁操作，此时如果没有 my_random_value，client 2 获取的锁将被误释放
 4. client 3 获取锁成功
 
-此时，client 2 和 3 都认为自己取锁成功，违背了 Week Safety。
+此时，client 2 和 3 都认为自己取锁成功，违背了 safety。
 
 ##### Fault Tolerance & Availability
 
@@ -149,9 +149,16 @@ Redlock 是 redis 的核心工程师 Salvatore Sanfilippo (antirez) 提出的基
 4. 如果取锁成功，那么锁的**实际超时时间 (vt)**为原始超时时间与取锁消耗时间的差值，即经过 vt 后，其它的 client 就有可能取锁成功。
 5. 如果 client 未获得超过半数节点的 ack，则它会尝试向每个节点发送释放锁的请求。
 
+为什么要按顺序取锁，而不并发取锁？**并发取锁更容易触发脑裂 (split brain) **。
+
 ##### Asynchronous
 
-这个算法是否依赖于时钟同步？答案是**一定程度上依赖**。如果 N 个进程之间的墙上时钟的差值大到相对于锁的过期时间无法忽略的程度，那么 Redlock 就会失效，导致 2 个 clients 同时获得所的 race condition 仍然有可能出现。总之：Redlock 要求每个进程所处机器的时钟漂移很小，相对于锁的过期时间可以忽略。
+这个算法是否依赖于时钟同步？答案是**一定程度上依赖**。首先 client 上的时钟漂移可能导致 TTL 计算不准确，其次有一种极端场景：
+
+1. client 1 从 A、B、C 节点上分别取锁成功，D、E 访问超时
+2. C 节点上的时钟发生漂移，导致锁过期
+3. client 2 从 C、D、E 节点上分别取锁成功，A、B 访问超时
+4. client 1 和 client 2 都认为自己取锁成功，违背了 safety 要求
 
 ##### Retry
 
@@ -163,7 +170,7 @@ Redlock 问世后，引起了 Martin Kleppman 的 [异议](http://martin.kleppma
 
 回到本文开头中的坐标系，Redlock 实际上是用效率换取正确性的一种分布式锁方案，它与其它方案之间的关系大致如下图所示：
 
-<img src="/blog/2020/03/22/Distributed-Locking/redlock-in-coord.jpg" width="400px">
+<img src="/blog/2020/03/22/Distributed-Locking/redlock-in-coord-1.jpg" width="400px">
 
 它不能保证分布式锁的 safety 性质。在实践中，我们通常要么就侧重效率，做好幂等，放弃要求锁服务绝对正确；要么就要求锁服务能保证绝对正确，牺牲效率，很难说服自己去使用一种折衷的解决方案。
 
