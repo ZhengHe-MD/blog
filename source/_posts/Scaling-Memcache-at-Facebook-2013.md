@@ -11,28 +11,28 @@ mathjax:
 - true
 ---
 
-本文介绍 FB 团队基于 memcached 构建大型、统一缓存层的最佳实践。全文递进式地讲述**单集群 (Single Front-end Cluster)**、**多集群 (Multiple Front-end Clusters)**、**多区域 (Multiple Regions)** 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意将 memcached 替换成 redis、boltDB、levelDB 等其它键值数据库。
+本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 **单集群 (Single Front-end Cluster)**、**多集群 (Multiple Front-end Clusters)**、**多区域 (Multiple Regions)** 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 redis、boltDB、levelDB 等其它服务作为缓存单元。
 
 在下文中，需要注意两个词语的区别：
 
-* memcached：memcached 源码、运行时，即单机版
-* memcache：基于 memcached 的分布式缓存解决方案，即分布式版
+* memcached：指 memcached 源码或运行时，即单机版
+* memcache：指基于 memcached 构建的分布式缓存系统，即分布式版
 
 # Background
 
-FB 的整体业务呈现出明显的读多写少的特点，其读请求量比写请求量高出 **2** 个数量级，大部分互联网公司的读写流量都有此特点。因此增加缓存层可以显著提高业务稳定性，保护 DB。
+与大部分互联网公司的读写流量特点类似，FB 的整体业务呈现出明显读多写少的特点，其读请求量比写请求量高出若 **2** 个数量级 (数据来自于 [slides](https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf))，因此增加缓存层可以显著提高业务稳定性，保护 DB。
 
 ## Pre-memcache
 
-在使用缓存层之前，FB 的 Web Server 直接访问数据库，通过**数据分片**和**一主多从**的方式来扛住读写流量：
+在使用缓存层之前，FB 的 Web Server 直接访问数据库，通过 **数据分片** 和 **一主多从** 的方式来扛住读写流量：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg" width="500px">
 
-随着用户数数量飙升，单纯靠数据库来抗压成本高，效率低。
+但随着用户数数量飙升，单纯靠数据库来抗压成本高，效率低。
 
 ## Design Requirements
 
-系统设计的第一步，就是要明白系统的要求。FB 缓存层的设计要求包括：
+系统设计的第一步，就是要明白系统的要求。FB 缓存层的设计要求可以概括为：
 
 1. 数据读 QPS 为 10亿
 2. 支持多区域
@@ -48,7 +48,7 @@ memcache 的 cache policy 可以用 2 个词概括：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/demand-filled-look-aside-cache.jpg" width="500px">
 
-如上图所示：demand-filled look-aside 指**读数据时**，web werver 先尝试从 memcache 中读数据，若读取失败则从持久化存储或其它后端服务中获取数据，并填充到 memcache 中；**写数据时**，先更新数据库，然后将 memcache 中相应的数据删除。采用 write-invalide 的主要原因有两个：
+如上图所示：demand-filled look-aside 指**读数据时**，web server 先尝试从 memcache 中读数据，若读取失败则从持久化存储中获取数据填充到 memcache 中；**写数据时**，先更新数据库，然后将 memcache 中相应的数据删除。采用 write-invalide 的主要原因有两个：
 
 1. 删除操作幂等，当任何异常发生时可以重试
 2. write-invalidate 与 demand-filled 在语义上是天作之合
@@ -57,7 +57,7 @@ memcache 的 cache policy 可以用 2 个词概括：
 
 # In a Cluster: Latency and Load
 
-本节，我们考虑在一个集群内部部署上千个 memcached 服务遇到的挑战和相应的解决方案。在这个规模上，系统优化的主要精力集中在如何减少获取缓存数据的时延 (latency)，抵抗 cache miss 时造成的负载压力 (load)。
+本节探讨在一个集群内部部署上千个 memcached 服务遇到的挑战和相应的解决方案。在这个规模上，系统优化的主要精力集中在如何减少获取缓存数据的时延 (latency)，抵抗 cache miss 时造成的负载压力 (load)。
 
 ## Scale-out
 
@@ -80,13 +80,13 @@ memcache 的 cache policy 可以用 2 个词概括：
 
 ##### Parallel Requests and Batching
 
-面对这些问题，应用层上至少可以做一件事：parallel requests and batching。由于每个请求可能需要在同一个 memcached server 上取多条数据，那么我们可以在 web server 的逻辑中减少 RTT 次数，将可以一起取的数据通过一次 RTT 一并取出，就能显著减少时延。
+面对这些问题，应用层上至少可以做一件事：parallel requests and batching。由于每个请求可能需要在同一个 memcached server 上取多条数据，那么我们可以在 web server 的逻辑中减少 RTT 次数，将可以一起取的数据通过一次 RTT 一并取出，减少时延。
 
 ##### Client-server Communication
 
-在缓存层上，FB 的主要思路就是将控制逻辑集中到 memcache client 上。FB 将 memcache client 分成两部分：sdk 与 proxy，后者被称为 mcrouter。mcrouter 向外暴露与 memcached 相同的接口，在 web server 与 memcached server 之间增加一层抽象。
+在缓存层上，FB 的主要思路就是将控制逻辑集中到 memcache client 上。memcache client 分成两部分：sdk 与 proxy，后者被称为 mcrouter。mcrouter 向外暴露与 memcached 相同的接口，在 web server 与 memcached server 之间增加一层抽象。
 
-由于读多写少，且读数据对错误的容忍度高，因此 memcache client 使用 UDP 与 memcached server 通信，因为 UDP 没有连接的概念，通常处理读请求时都是由 sdk 与 memcached server 之间直接通信。sdk 使用 UDP 通信时，一旦发现丢包或者顺序错误，就会报错，而不尝试解决错误。在服务高峰下，有 025% 的读请求被抛弃。
+由于读多写少，且读数据对错误的容忍度高，因此 memcache client 使用 UDP 与 memcached server 通信，因为 UDP 没有连接的概念，通常处理读请求时都是由 sdk 与 memcached server 之间直接通信。sdk 使用 UDP 通信时，一旦发现丢包或者顺序错误，就会报错，而不尝试解决错误。在论文发表当时，FB 的服务高峰期中，只有约 0.25% 的读请求被抛弃。
 
 处理写请求时，memcache sdk 使用 TCP 与部署在该宿主机上 mcrouter 通信。如此一来，每个 web server 就只需要与单个 mcrouter 建立连接，由后者来保持与不同 memcached server 之间的连接，从而大大减少维持 TCP 连接、处理网络 I/O 所需的 CPU 与内存资源，这种做法通常被称为 connection coalescing。
 
@@ -96,15 +96,17 @@ memcache 的 cache policy 可以用 2 个词概括：
 
 ##### Incast Congestion
 
-为解决 incast congestion 问题，memcache clients 也实现了流量控制逻辑。类似于 TCP 的 congestion control，client 的滑动窗口会根据网络拥堵状况自动扩容和缩容。与 TCP 不同的是，来自于同一个 web server 的请求都会被放入同一个滑动窗口中。下图显示了 window size 对请求时延的影响：
+为解决 incast congestion 问题，memcache clients 也实现了拥塞控制逻辑。类似于 TCP 的 congestion control，client 的滑动窗口会根据网络拥堵状况自动扩容和缩容。与 TCP 不同的是，来自于同一个 web server 的请求都会被放入同一个滑动窗口中。
+
+下图展示的是 window size 对请求时延的影响：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/sliding-window-size.jpg" width="500px">
 
-window size 太小时，许多请求都在排队；window size 太大时，可能出现网络拥堵。因此动态地找到其中的 sweet spot 就是 congestion control 的主要目标。
+window size 太小时，许多请求都在排队；window size 太大时，可能出现网络拥堵。因此动态地找到其中的 sweet spot 就是拥塞控制的主要目标。
 
 ## Reducing Load
 
-我们使用 memcache 来减少请求直接访问 DB 的次数，但出现 cache miss 时，DB 依赖会承受负载压力，有时候一个热点甚至可能造成瞬间高压。
+使用 memcache 可以减少请求直接访问 DB 的次数，但出现 cache miss 时，DB 依然会承受负载压力，一条热点数据可能造成瞬间高压。
 
 ### Leases
 
@@ -130,7 +132,7 @@ look-aside cache policy 下可能发生数据不一致：
 此时，在 d 过期或者被删除之前，数据库与缓存内的数据将保持不一致的状态。引入 leases 可以解决这个问题：
 
 * 每次出现 cache miss 时返回一个 lease id，每个 lease id 都只针对单条数据
-* 当数据被删除时，之前发出的 lease id 失效
+* 当数据被删除 (write-invalidate) 时，之前发出的 lease id 失效
 * 写入数据时，sdk 会将上次收到的 lease id 带上，memcached server 如果发现 lease id 失效，则拒绝执行
 
 ##### Thundering Herds
@@ -153,7 +155,7 @@ look-aside cache policy 的另一个问题是可能引发瞬间高压：
 
 可以看出，缓存层存储的所有数据中，更新频率高的占大头。这时候就有可能出现更新频率高的数据将更新频率低的数据从缓存中挤出的现象。
 
-为了解决这种问题，FB 团队将一个集群内部的 memcached 实例分成不同的 pools：
+为了解决这种问题，FB 将一个集群内部的 memcached 实例分成不同的 pools：
 
 * default(wildcard) pool：默认 pool 用来存储大部分数据
 * small pool：存储访问频率高但 cache miss 的成本不高的数据
@@ -168,7 +170,7 @@ look-aside cache policy 的另一个问题是可能引发瞬间高压：
 
 ## Handling Failures
 
-在云原生环境中，memcached server 同样可能遭遇网络失联或者自身宕机。如果整个数据中心出现大面积问题，FB 通常会将用户请求直接转移到另一个集群；如果只是少数几个 server 因为网络原因失联，则依赖于一种自动恢复机制，通常恢复需要几分钟时间，但几分钟就有可能将 DB 和后台服务击垮。为此， FB 团队专门用少量的机器配置一个小的 memcache 集群，称为 Gutter。当集群内部少量的 server 发生故障时，memcached client 会将请求先转发到 Gutter 中。可以理解为 Gutter 是备胎，平时不工作。
+在云原生环境中，memcached server 同样可能遭遇网络失联或者自身宕机。如果整个数据中心出现大面积问题，FB 会将用户请求直接转移到另一个数据中心；如果只是少数几个 server 因为网络原因失联，则依赖于一种自动恢复机制，通常恢复需要几分钟时间，但几分钟就有可能将 DB 和后台服务击垮。为此， FB 团队专门用少量的机器配置一个小的 memcache 集群，称为 Gutter。当集群内部少量的 server 发生故障时，memcached client 会将请求先转发到 Gutter 中。可以理解为 Gutter 是备胎，平时不工作。
 
 Gutter 与普通的 rehash 不同，后者将失联机器的负载转嫁到了剩余的 server 上，可能造成雪崩效应/链式反应。
 
@@ -195,23 +197,25 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcsqueal-invalidations-fanout.jpg" width="500px">
 
-从架构图中，不难看出 fanout 问题再次出现，大量的跨集群通信数据同样可能将网络打垮。解决方案也不难想到：**分而治之**：
+从架构图中，不难看出 fanout 问题再次出现，大量的跨集群通信数据同样可能将网络打垮。解决方案也不难想到，即**分而治之**：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcrouter.jpg" width="500px">
 
+一个区域内部部署多个 memcache 集群能够给我们带来诸多好处，除了缓解热点问题、网络拥堵问题，还能让运维人员方便地下线单个节点、集群，而不至于使得 cash miss rate 忽然增大。
+
 ## Regional Pools
 
-一个区域内部部署多个 memcache 集群能够给我们带来诸多好处，除了缓解热点问题、网络拥堵问题，还能让运维人员方便地下线单个节点、集群，而不至于使得 cash miss rate 忽然增大。但是并非所有数据都需要在一个区域中储存多份？比如一些访问频率低的数据。因此 FB 团队在单个区域内单独划分一个 pool 用来存储一些访问率低的数据。
+是否所有数据都需要在一个区域中储存多份？如果一些数据访问频率很低，存一份就足够了。基于该思路，FB 会在单个区域内单独划分一个 pool 用来存储一些访问率低的数据。
 
 ## Cold Cluster Warmup
 
-上线新的 memcache 集群时，如果不预热可能会出现大量 cache miss。因此 FB 团队构建了一个 Cold Cluster Warmup 系统，可以让新的集群在发生 cache miss 时先从已经加载好数据的集群中获取数据，而不是从持久化存储中，如此一来，集群下线和上线都能够通过复制机制得到保障。
+上线新的 memcache 集群时，如果不预热可能会出现大量 cache miss。因此 FB 团队构建了一个 Cold Cluster Warmup 系统，可以让新的集群在发生 cache miss 时先从已经加载好数据的集群中获取数据，而不是从持久化存储中，如此一来，集群上线就能够变得更加平滑。
 
 # Across Regions: Consistency
 
 随着 FB 的服务推广到世界各地，将 web servers 推进到离用户最近的地方能够给用户带来更好的体验；将 FB 的数据中心同步到不同区域 (region)，也能帮助提高 FB 服务的容灾能力；在新的区域可能在各方面产生规模经济效应。因此 memcache 服务也需要能够被部署到多个区域。
 
-利用 MySQL 的复制机制，FB 将一个区域设置为 master 区域，而其它区域为只读区域，负责从 master 中同步数据。如此一来，web servers 处理读请求时只需要访问本地的 DB 或缓存服务即可：
+利用 MySQL 的复制机制，FB 将一个区域设置为 master 区域，而其它区域为只读区域，负责从 master 中同步数据。web servers 处理读请求时只需要访问本地的 DB 或缓存服务即可：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/geographically-distributed-clusters.jpg" width="500px">
 
@@ -236,6 +240,8 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 3. 将 d 从 memcache 中删除 ($r_{d}$ 不删除)
 4. 等待 master DB 将数据同步到本地 replica DB 中，并且在 SQL 语句中埋入 $r_{d}$ 的信息
 5. 本地 replica DB 通过 mcsqueal 解析 SQL 语句中，删除 remote marker $r_{d}$
+
+remote marker 机制实际上是在**强行等待 master 的最新数据成功被复制到只读区域**。
 
 # References
 
