@@ -219,7 +219,7 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/geographically-distributed-clusters.jpg" width="500px">
 
-但这里将产生一个新的问题：**只读区域的数据库有同步延迟**。想象以下这个场景：
+但这里将产生一个新的问题：**只读区域的数据库有同步延迟，可能导致竞争条件出现**。想象以下这个场景：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/writes-in-non-master.jpg" width="500px">
 
@@ -229,7 +229,7 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 4. A 写入的数据从 master DB 中同步到 replica DB，并通过 mcsqueal 将本地 memcache 中的数据删除
 5. web server B 将其读到的数据写入 memcache 中
 
-这是 DB 与 memcache 中的数据将再次出现不一致。如何解决这个问题？FB 在 memcache 上引入 remote marker 机制：
+此时，DB 与 memcache 中的数据将再次出现不一致，且必须等待数据过期之后才能恢复。如何解决这个问题？FB 在 memcache 上引入 remote marker 机制：
 
 <img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/remote-markers.jpg" width="500px">
 
@@ -241,7 +241,7 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 4. 等待 master DB 将数据同步到本地 replica DB 中，并且在 SQL 语句中埋入 $r_{d}$ 的信息
 5. 本地 replica DB 通过 mcsqueal 解析 SQL 语句中，删除 remote marker $r_{d}$
 
-remote marker 机制实际上是在**强行等待 master 的最新数据成功被复制到只读区域**。
+remote marker 机制实际上就是标记了 **数据写入 master DB 但尚未同步到 replica DB** 的中间状态。
 
 # References
 
