@@ -241,6 +241,11 @@ FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcs
 4. 等待 master DB 将数据同步到本地 replica DB 中，并且在 SQL 语句中埋入 $r_{d}$ 的信息
 5. 本地 replica DB 通过 mcsqueal 解析 SQL 语句中，删除 remote marker $r_{d}$
 
+当 replica 区域的 web server 想要读取数据 d 发生 cache miss 时：
+
+* 如果 memcache 中数据 d 带了 $r_{d}$，则从 master DB 中读取数据
+* 如果 memcache 中数据 d 没有 $r_{d}$，则直接从本地的 replica DB 中读取数据
+
 remote marker 机制实际上就是标记了 **数据写入 master DB 但尚未同步到 replica DB** 的中间状态。
 
 # References
