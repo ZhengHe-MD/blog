@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-04-11T15:17:38.525Z</updated>
+  <updated>2020-06-06T02:51:53.264Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -17,21 +17,58 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>报警平台的匹配器演进</title>
+    <link href="https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
+    <id>https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
+    <published>2020-05-10T00:00:00.000Z</published>
+    <updated>2020-06-06T02:51:53.264Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
+&lt;p&gt;本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。&lt;/p&gt;
+&lt;h3 id=&quot;背景&quot;&gt;背景&lt;/h3&gt;
+&lt;p&gt;报警平台是伴鱼内部各端、应用、基础设施等&lt;strong&gt;服务异常状态信息的集散中心&lt;/strong&gt;。整体流程如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg&quot; height=&quot;150px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式&lt;strong&gt;路由&lt;/strong&gt;给理应关心它的人。总体而言，路由的需求可以分为以下几种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;路由给服务的负责人及其团队&lt;/li&gt;
+&lt;li&gt;路由给服务依赖方人员及其团队&lt;/li&gt;
+&lt;li&gt;路由给所有值班人员所在的即时消息群&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为了满足这样的需求，报警平台采用树状结构组织路由信息，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/route-tree.jpg&quot; height=&quot;350px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;每个节点是一个路由节点，节点上可以挂载不同的规则，如抑制规则、通知规则；也可以存放不同的配置信息，如触发报警的阈值，以及相关负责人及其团队的联系方式。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="system design" scheme="https://zhenghe-md.github.io/categories/system-design/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>What&#39;s Really New with NewSQL (2016)</title>
     <link href="https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-04-11T15:17:38.525Z</updated>
+    <updated>2020-06-06T02:51:53.272Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;在进入文章之前，应该先介绍两位重量级作者：&lt;a href=&quot;cs.cmu.edu/~pavlo/&quot;&gt;Andrew Pavlo&lt;/a&gt; 和 &lt;a href=&quot;https://451research.com/analyst-team/analyst/Matt+Aslett&quot;
-        
-      
+      &lt;p&gt;在进入文章之前，应该先介绍两位重量级作者：&lt;a href=&quot;cs.cmu.edu/~pavlo/&quot;&gt;Andrew Pavlo&lt;/a&gt; 和 &lt;a href=&quot;https://451research.com/analyst-team/analyst/Matt+Aslett&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Matthew Aslett&lt;/a&gt;。Andrew 在 CMU 的计算机科学学院任教，主攻方向包括内存数据库、自动驾驶系统架构、事务处理系统和海量数据分析，他是 CMU Database Group 的核心成员，在 CMU 开设的两门课程 Database Systems (15-445/645) 和 Advanced Database System (15-721) 全是干货；Matthew 是 &lt;a href=&quot;https://451research.com/about-us/our-research/research-channels/data-ai-analytics&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;451 research: Data, AI &amp;amp; Analytics channel&lt;/a&gt; 的 VP，他在 2011 年的一篇 &lt;a href=&quot;http://cs.brown.edu/courses/cs227/archives/2012/papers/newsql/aslett-newsql.pdf&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;论文&lt;/a&gt; 中第一次用 &lt;strong&gt;NewSQL&lt;/strong&gt; 指代提供类似 NoSQL 高吞吐、高可用支持，同时仍然保持 ACID 特性的新一代数据库系统。&lt;/p&gt;
+&lt;p&gt;相比于已经问世 40 多年的关系型数据库 (relational DBMS) ，我们不禁会问：&quot;&lt;strong&gt;新兴的 NewSQL 究竟是一种市场营销还是确有其创新之处&lt;/strong&gt;？&quot; 如果 NewSQL 确实能够在多方面达到更高的性能，那么下一个问题就是：&quot;&lt;strong&gt;它的性能是来自于硬件的升级还是其系统设计有着科学上的创新&lt;/strong&gt;？&quot;&lt;/p&gt;
+&lt;p&gt;要回答这两个问题，我们先讨论数据库系统的历史以及 NewSQL 的诞生，再讨论 NewSQL 在数据库系统各个重要设计方面的细节。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注：本文基本上会是原文的一个完整翻译，如果你愿意，大可直接点击文末链接翻看原文 ：）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;a-brief-history-of-dbmss&quot;&gt;A Brief History of DBMSS&lt;/h2&gt;
+&lt;p&gt;世界上第一个数据库系统，IBM IMS (Information Management System) 诞生于 1966 年，它被用于存储土星五号 (Saturn V) 和阿波罗 (Apollo) 空间探索项目所需的零件和供应商信息。IMS 的主要贡献在于展示了 &quot;&lt;strong&gt;应用程序逻辑与数据操作逻辑应该分离&lt;/strong&gt;&quot; 的理念，应用程序开发者只需要关注数据的逻辑变化，而无需关心其具体实现。在 IMS 之后，出现了第一批关系型数据库，其主要代表就是 IBM 的 System R 系统以及加州大学的 INGRES，即 PostgreSQL 的前身。INGRES 迅速在其它大学的信息系统中流行起来，并于 70 年代末商业化。大约在相同的时期，Oracle 采用类似 System R 的设计，开发并发布其 DBMS 的第一个版本。在 80 年代初期又涌现了一批公司，它们也推出自己的商业化数据库产品，如 Sybase 和 Informix。在 System R 之后，IBM 在 1983 年发布了新的关系型数据库 DB2，后者复用了 System R 的部分代码，但二者至今未开源。&lt;/p&gt;
+&lt;p&gt;从 80 年代末到 90 年代初，面向对象的语言开始流行，这也催生了一批面向对象的 DBMS 诞生，以期磨平数据库模型与语言之间的隔阂。然而由于没有类似 SQL 一样的标准接口，这些面向对象的 DBMS 始终没有在市场上被广泛接受，不过它们的一些设计理念逐渐被融合进关系型数据库，许多流行的关系型数据库都增加了对 Object、XML 和 JSON 数据的支持。除此之外，面向文档 (document-oriented) 的 NoSQL 数据库也或多或少是面向对象的 DBMS 的延伸。&lt;/p&gt;
+&lt;p&gt;90 年代的一个大事件就是两个开源关系型数据库的发布，MySQL 和 PostgreSQL。MySQL 于 1995 年在瑞士诞生，主要基于 ISAM 的 mSQL 系统开发；PostgreSQL 于 1994 年启动，由两名伯克利的学生 fork Postgres 的源码二次开发，增加 SQL 查询语言的支持。&lt;/p&gt;
+&lt;p&gt;从 2000 年后，互联网应用如雨后春笋般出现，这些应用对各种资源的要求都远超传统的软件服务。互联网应用需要支持大量用户的并发访问，且对可用性要求极高，最好永远在线。在实践中，数据库开始成为互联网应用的瓶颈。许多厂商尝试纵向扩容，提高单机硬件性能，但这种方式换来的提升十分有限，表现出明显的边际收益递减。而且纵向扩容通常很不平滑，将数据从一台机器移动到另一台机器需要长时间下线服务，这对于互联网用户来说无法接受。为了解决这个问题，一些公司定制化开发中间件 (middleware)，将数据分片到多个普通单机 DBMS 上：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./middleware.jpg&quot; width=&quot;600px&quot;&gt;&lt;/p&gt;
     
     </summary>
     
@@ -50,17 +87,23 @@
     <link href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-04-11T15:17:38.501Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync
-        
-      
+      &lt;p&gt;提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？”&lt;/p&gt;
+&lt;p&gt;因此我决定深究这个话题。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;备注：本文中，因为信息源使用的术语不同，Correctness 与 Safety 分别翻译成正确性和安全性，实际上二者在分布式锁话题的范畴中意思相同。&lt;/em&gt;&lt;/p&gt;
+&lt;h1 id=&quot;efficiency-correctness&quot;&gt;Efficiency &amp;amp; Correctness&lt;/h1&gt;
+&lt;p&gt;如果想让单机/实例上的多个线程去执行同一组任务，为了避免任务被重复执行，使用本地环境提供的 Lock 原语即可实现；但如果想让单机/实例上，或多机/实例上的多个进程去抢同一组任务，就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;效率 (Efficiency)：为了避免一个任务被执行多次，每个执行方在任务启动时先抢锁，在绝大多数情况下能避免重复工作。即便在极其偶然的情况下，分布式锁服务故障导致同一时刻有两个执行方抢到锁，使得某个任务被执行两次，总体看来依然无伤大雅。&lt;/li&gt;
+&lt;li&gt;正确性 (Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg&quot; width=&quot;680px&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;solutions&quot;&gt;Solutions&lt;/h1&gt;
+&lt;p&gt;在进入分布式锁解决方案之前，必须要明确：&lt;strong&gt;分布式锁只是某个特定业务需求解决方案的一部分&lt;/strong&gt;，业务功能的真正实现是&lt;strong&gt;业务服务&lt;/strong&gt;、&lt;strong&gt;分布式锁&lt;/strong&gt;、&lt;strong&gt;存储服务&lt;/strong&gt;以及&lt;strong&gt;其它有关各方&lt;/strong&gt;共同努力的结果。&lt;/p&gt;
     
     </summary>
     
@@ -77,18 +120,24 @@
     <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-04-11T15:17:38.505Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;&lt;em&gt;论文引用量：744 (截止至 2020-03-15)&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于
-        
-      
+      &lt;p&gt;&lt;em&gt;论文引用量：744 (截止至 2020-03-15)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于 NetDB workshop，如今原文的三位作者，Jay Kreps、Neha Narkhede 以及 Jun Rao 一同离开 LinkedIn，创立 &lt;a href=&quot;https://www.confluent.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Confluent.io&lt;/a&gt;，提供基于 Kafka 的企业级 Event Streaming Platform 服务。&lt;/p&gt;
+&lt;p&gt;除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication，exactly-once delivery 等。&lt;/p&gt;
+&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;在规模较大的互联网公司中，每天都会产生大量的日志数据，如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用户事件：登录、访问、点击、分享、评论、搜索&lt;/li&gt;
+&lt;li&gt;性能指标：时延、错误、QPS&lt;/li&gt;
+&lt;li&gt;机器指标：CPU、Memory、Network、Disk Utilication&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这些日志数据常常被用于离线分析，帮助公司了解用户、产品，帮助开发者了解系统、服务。在初期，每当 LinkedIn 内部有服务需要使用这些日志数据时，研发人员就需要写新的数据传输脚本或在线传输逻辑，久而久之，内部服务的拓扑图就出现了类似完全图的形状：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg&quot; width=&quot;600px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这种拓扑图对分布式系统很不友好，不仅可能造成网络资源浪费，维护成本也极高。有 DRY 精神的工程师肯定无法忍受这样的架构，这时就需要有一个服务能将日志数据的消费和生产隔离：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/pub-sub-topology.jpg&quot; width=&quot;600px&quot;&gt;&lt;/p&gt;
     
     </summary>
     
@@ -107,17 +156,23 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-04-11T15:17:38.513Z</updated>
+    <updated>2020-06-06T02:51:53.260Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 &lt;strong&gt;单集群 (Single Front-end Cluster)&lt;/strong&gt;、&lt;strong&gt;多集群 (Multiple Front-end
-        
-      
+      &lt;p&gt;本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 &lt;strong&gt;单集群 (Single Front-end Cluster)&lt;/strong&gt;、&lt;strong&gt;多集群 (Multiple Front-end Clusters)&lt;/strong&gt;、&lt;strong&gt;多区域 (Multiple Regions)&lt;/strong&gt; 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 redis、boltDB、levelDB 等其它服务作为缓存单元。&lt;/p&gt;
+&lt;p&gt;在下文中，需要注意两个词语的区别：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;memcached：指 memcached 源码或运行时，即单机版&lt;/li&gt;
+&lt;li&gt;memcache：指基于 memcached 构建的分布式缓存系统，即分布式版&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;background&quot;&gt;Background&lt;/h1&gt;
+&lt;p&gt;与大部分互联网公司的读写流量特点类似，FB 的整体业务呈现出明显读多写少的特点，其读请求量比写请求量高出若 &lt;strong&gt;2&lt;/strong&gt; 个数量级 (数据来自于 &lt;a href=&quot;https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;slides&lt;/a&gt;)，因此增加缓存层可以显著提高业务稳定性，保护 DB。&lt;/p&gt;
+&lt;h2 id=&quot;pre-memcache&quot;&gt;Pre-memcache&lt;/h2&gt;
+&lt;p&gt;在使用缓存层之前，FB 的 Web Server 直接访问数据库，通过 &lt;strong&gt;数据分片&lt;/strong&gt; 和 &lt;strong&gt;一主多从&lt;/strong&gt; 的方式来扛住读写流量：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;但随着用户数数量飙升，单纯靠数据库来抗压成本高，效率低。&lt;/p&gt;
+&lt;h2 id=&quot;design-requirements&quot;&gt;Design Requirements&lt;/h2&gt;
     
     </summary>
     
@@ -138,17 +193,20 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-04-11T15:17:38.521Z</updated>
+    <updated>2020-06-06T02:51:53.264Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届
-        
-      
+      &lt;p&gt;Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。&lt;/p&gt;
+&lt;p&gt;时序数据库是 Promtheus 监控平台的一部分，在了解其存储层的演化过程之前，我们需要先了解时序数据库及其要解决的根本问题。&lt;/p&gt;
+&lt;h1 id=&quot;tsdb&quot;&gt;TSDB&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;时序数据库 (Time Series Database, TSDB)&lt;/strong&gt; 是数据库大家庭中的一员，专门存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。&lt;strong&gt;时序 (Time Series)&lt;/strong&gt; 指的是某个变量随时间变化的所有历史，而&lt;strong&gt;样本 (Sample)&lt;/strong&gt; 指的是历史中该变量的瞬时值：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/ts-sample.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;每个样本由&lt;strong&gt;时序标识&lt;/strong&gt;、&lt;strong&gt;时间戳&lt;/strong&gt;和&lt;strong&gt;数值&lt;/strong&gt; 3 部分构成，其所属的时序就由一系列样本构成。由于时间是连续的，我们不可能、也没有必要记录时序在每个时刻的数值，因此&lt;strong&gt;采样间隔&lt;/strong&gt; (Interval) 也是时序的重要组成部分。采样间隔越小、样本总量越大、捕获细节越多；采样间隔越大、样本总量越小、遗漏细节越多。以服务器机器监控为例，通常采样间隔为 15 秒。&lt;/p&gt;
+&lt;p&gt;数据的高效查询离不开索引，对于时序数据而言，唯一的、天然的索引就是时间 (戳)。因此通常时序数据库的存储层相比于关系型数据库要简单得多。仔细思考，你可能会发现时序数据在某种程度上就是键值数据的一个子集，因此键值数据库天然地可以作为时序数据的载体。通常一个时序数据库能容纳百万量级以上的时序数据，要从其中搜索到其中少量的几个时序也非易事，因此对时序本身建立高效的索引也很重要。&lt;/p&gt;
+&lt;h1 id=&quot;the-fundamental-problem-of-tsdbs&quot;&gt;The Fundamental Problem of TSDBs&lt;/h1&gt;
+&lt;p&gt;TSDB 要解决的基本问题，可以概括为下图：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/tsdb-fundamental-problem.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
     
     </summary>
     
@@ -165,17 +223,44 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-04-11T15:17:38.509Z</updated>
+    <updated>2020-06-06T02:51:53.252Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;本文转自我个人的 &lt;a href=&quot;https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores&quot;
-        
-      
+      &lt;p&gt;本文转自我个人的 &lt;a href=&quot;https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;gitbook&lt;/a&gt;。&lt;/p&gt;
+&lt;h1 id=&quot;background&quot;&gt;Background&lt;/h1&gt;
+&lt;p&gt;数据库中的各种奇技淫巧，实际上都来自于内存与磁盘的读写模式和性能区别。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/memory-disk.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;总结如下表：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&quot;header&quot;&gt;
+&lt;th&gt;Memory&lt;/th&gt;
+&lt;th&gt;Disk&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;byte-addressable&lt;/td&gt;
+&lt;td&gt;block-addressable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;fast&lt;/td&gt;
+&lt;td&gt;slow&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;expensive&lt;/td&gt;
+&lt;td&gt;cheap&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;当数据库中的数据无法一次性装入内存时，数据的读写就可能需要从内存穿透到磁盘。在 OLTP 场景下，每次事务写入和读取的数据数量都不大。但因为磁盘是块存储设备，无论是否需要，写入和读取都以块 (block) 为单位：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/file-block.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这就导致许多不必要的数据传输。除此之外，在磁盘中连续读取或写入相邻的数据块比随机的数据块效率高。因此数据库在组织数据、索引时，为了减少不必要的 I/O，同时提高 I/O 的效率，就需要尽可能做到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;让具有局部性的数据、索引在磁盘上相邻存储&lt;/li&gt;
+&lt;li&gt;让具有局部性的数据、索引批量写入到磁盘中&lt;/li&gt;
+&lt;/ul&gt;
     
     </summary>
     
@@ -194,18 +279,24 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-04-11T15:17:38.497Z</updated>
+    <updated>2020-06-06T02:51:53.244Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;在计算机系统设计实践中，我们常常会遇到下图所示架构：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/coherence.jpg&quot;
-        
-      
+      &lt;p&gt;在计算机系统设计实践中，我们常常会遇到下图所示架构：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/coherence.jpg&quot; width=&quot;400px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在&lt;strong&gt;同级 Cache 之间 (Cache Coherence) &lt;/strong&gt;和&lt;strong&gt;上下级 Cache 之间&lt;/strong&gt;。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：&lt;strong&gt;在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量提高、时延减少&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;本文将探讨三个场景：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;Cache Policy In Single-core Processor&lt;/li&gt;
+&lt;li&gt;Cache Coherence in Multi-core Processor&lt;/li&gt;
+&lt;li&gt;Cache Policy in Cache/DB Architecture&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&quot;cache-policy-in-single-core-processor&quot;&gt;Cache Policy in Single-core Processor&lt;/h1&gt;
+&lt;p&gt;在单核 CPU 中，只有一套 Cache，因此只要确保写入 Cache 中的数据也写入到 Memory 即可。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/single-core-cache-architecture.jpg&quot; width=&quot;450px&quot;&gt;&lt;/p&gt;
+&lt;p&gt;补充一些概念定义：数据在 Cache 与 Memory 之间移动的最小单位通常在 32 - 128 字节之间，Memory 中对应的最小单位数据称为 Cache Block，Cache 中与单个 Cache Block 对应的存储空间称为 Cache Line，在 Cache 中除了存储 Block 数据，还需要存储 Block 对应的唯一标识 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: 0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.593ex&quot; height=&quot;1.532ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -677 704 677&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-54&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; (Tag)，以及一个用于标记 Cache Line 是否有数据的有效位 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.05ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.74ex&quot; height=&quot;1.595ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -683 769 705&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-56&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;。完整对应关系如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/cache-block-and-cache-line.jpg&quot; width=&quot;450px&quot;&gt;&lt;/p&gt;
     
     </summary>
     
@@ -220,17 +311,28 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-04-11T15:17:38.501Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;论文作者的贡献主要包含两部分：Consistent Hashing 和 Random Trees。Consistent Hashing 主要用于解决分布式哈希表 (Distributed Hash Table, DHT) 的桶增减带来的重新哈希问题；Random
-        
-      
+      &lt;p&gt;论文作者的贡献主要包含两部分：Consistent Hashing 和 Random Trees。Consistent Hashing 主要用于解决分布式哈希表 (Distributed Hash Table, DHT) 的桶增减带来的重新哈希问题；Random Trees 主要用于分布式缓存中的热点问题，它利用了 Consistent Hashing。下文主要关注 Consistent Hashing。&lt;/p&gt;
+&lt;h1 id=&quot;contribution&quot;&gt;Contribution&lt;/h1&gt;
+&lt;p&gt;在分布式环境下，单台机器的负载有限，我们需要将请求散列到不同的机器上，利用更多的机器实现服务的横向扩容。这时候就需要 Hash Function，好的 Hash Function 能够帮我们均匀地分布到不同的机器上。但传统的 Hash Function 通常是静态的，桶的数量固定。在多台机器组成的服务中，每台机器就是一个桶，但机器在运行的过程中很可能出现崩溃，在请求数量波动较大时，需要动态地增减机器。如果每次桶的数量发生变化时都需要重新散列所有请求，可能造成多方面影响：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;来自于同一个用户的请求在桶发生变化时将被打到不同的节点，可能导致数据不一致 (考虑 monotonic consistency)&lt;/li&gt;
+&lt;li&gt;所有的 Client 都需要知道当前最新的 Hash Function 配置，在网络中传播这个配置需要时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Consistent Hashing 的提出就是希望能够缓解/解决这个问题，使得每次桶数量发生变化时不需要重新散列桶内的所有元素，而是将受影响的数量控制在很小的范围内。&lt;/p&gt;
+&lt;h1 id=&quot;definitions&quot;&gt;Definitions&lt;/h1&gt;
+&lt;p&gt;作者从四个方面讨论了好的 Consistent Hash Function 应该满足的性质：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Balance：元素应当尽量均匀地分布到不同的桶内 (with high probability)&lt;/li&gt;
+&lt;li&gt;Monotonicity：当增加新的桶时，元素只可能从旧桶移动到新桶，而不可能从旧桶移动到其它旧桶&lt;/li&gt;
+&lt;li&gt;Spread：在不同的用户眼里，相同的元素可能被散列到不同的桶中，我们称之为不同的观点。Spread 要求总的观点数量必须有一个上限。好的 Consistent Hash Function 应当让 spread 尽量小。&lt;/li&gt;
+&lt;li&gt;Load：类似 spread，Load 性质是针对不同的用户，但它规定的是单个桶中不同元素数量的上限，即每个桶中的，至少有一个用户认为其中含有的，元素数量存在上限。好的 Consitent Hash Function 应当让这个上限尽量小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;construction&quot;&gt;Construction&lt;/h1&gt;
+&lt;p&gt;作者提出一种构建好的 Consistent Hash Function 的方法：&lt;/p&gt;
     
     </summary>
     
@@ -247,18 +349,26 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-04-11T15:17:38.505Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1 id=&quot;摘要&quot;&gt;摘要&lt;/h1&gt;
-&lt;p&gt;Linear Hashing 和 Spiral Storage 是两种动态哈希算法。这两种算法最初都是为了优化外部存储 (secondary/external storage)
-        
-      
+      &lt;h1 id=&quot;摘要&quot;&gt;摘要&lt;/h1&gt;
+&lt;p&gt;Linear Hashing 和 Spiral Storage 是两种动态哈希算法。这两种算法最初都是为了优化外部存储 (secondary/external storage) 数据访问而设计的。本文将这两种算法引入到内存中，即键值数据可以一次性读入内存的场景，对比、分析二者之间，以及与其它动态哈希算法的性能。实验结果表明：Linear Hashing 的性能上要优于 Spiral Storage，实现难度上要小于 Spiral Storage。其它纳入对比范围的动态哈希算法包括 Unbalanced Binary Tree 以及支持周期性 rehashing 版本的 Double Hashing。Linear Hashing 的查询时间与 Double Hashing 相当，同时远远优于 Unbalanced Binary Tree，即使在 tree 很小的场景上也如此；在载入键值数据的表现上，三者相当。总体而言，Linear Hashing 是一个简单、高效的动态哈希算法，非常适用于键空间未知的场景。&lt;/p&gt;
+&lt;h1 id=&quot;简介&quot;&gt;简介&lt;/h1&gt;
+&lt;p&gt;许多为外部文件存储而设计的动态哈希算法在过去的若干年中被提出，这些算法允许外部文件根据内部存储的纪录数量而优雅地扩大和缩小。在外部文件存储场景中，外部存储比内存读写慢很多，它的特点总结如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;按块读写数据，如 4096 字节为 1 块&lt;/li&gt;
+&lt;li&gt;倾向于读写连续块&lt;/li&gt;
+&lt;li&gt;倾向于批量读写&lt;/li&gt;
+&lt;li&gt;在每一层都设有缓存来优化性能&lt;/li&gt;
+&lt;li&gt;根据磁盘中数据块的读写次数来衡量程序的性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Linear Hashing 和 Spiral Storage 在上述场景中都已被验证有效。本文将介绍如何将二者引入到 Internal Hash Table 场景中，在数学上分析其预期性能，并通过实验验证预期。从实验结论上看，两种方法对于 Internal Hash Table 、键 (key) 空间未知的场景同样有效。其中 Linear Hashing 更快且更容易实现。&lt;/p&gt;
+&lt;p&gt;所有 Hashing 技术都有一个特点：当负载提高时，基本操作的复杂度，如插入、查询、删除，也将提高。如果希望 Hash Table 的性能维持在一个可接受的下限之上，我们必须通过某种方式为其分配新的空间。传统的方案是创建一个新的、更大的哈希表，然后将所有数据重新哈希到新的哈希表上。动态哈希算法的不同之处在于，它允许哈希表逐渐扩大，每次增加一个桶。当新桶加入到寻址空间时，只需要重新哈希原来的一个桶即可，而不需要将所有数据全部重新哈希。&lt;/p&gt;
+&lt;h1 id=&quot;linear-hashing&quot;&gt;Linear Hashing&lt;/h1&gt;
+&lt;p&gt;通常在 Hash 算法中需要一个 Hash Function，将输入参数转化成一个整数：&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;math display&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot; display=&quot;true&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;12.301ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 5437.1 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-66&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(827.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3A&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1383.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-78&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2233.3, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2192&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3511.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-68&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(4087.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(4476.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-78&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(5048.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;&lt;/p&gt;
     
     </summary>
     
@@ -275,18 +385,28 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-04-11T15:17:38.509Z</updated>
+    <updated>2020-06-06T02:51:53.252Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
-&lt;p&gt;缓存置换算法 (Cache Eviction Algorithm) 在操作系统、数据库以及其它系统中被广泛用于缓存置换模块，当缓存空间不足时，它利用局部性原理 (Principle of Locality)
-        
-      
+      &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
+&lt;p&gt;缓存置换算法 (Cache Eviction Algorithm) 在操作系统、数据库以及其它系统中被广泛用于缓存置换模块，当缓存空间不足时，它利用局部性原理 (Principle of Locality) 预测未来数据的使用模式，将最不可能被访问的数据清出从而提高缓存命中率。目前已经存在的缓存置换算法包括 MRU (Most Recently Used)、MFU (Most Frequently Used)、LRU (Least Recently Used) 以及 LFU (Least Frequently Used) 等。每个算法都有其各自的适用场景。到目前为止，应用范围最广的是 LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloads)，同时 LRU 拥有 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;4.618ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 2041 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-4F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(763, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1152, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1652, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 时间复杂度的成熟实现方案。与 LRU 类似，LFU 同样与大多数应用的负载模式相近，但目前 LFU 最佳实现方案的时间复杂度是&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;8.608ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 3804.6 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-4F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(763, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1152, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1450, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;msub&quot; transform=&quot;translate(1935, 0)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-67&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(477, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot; transform=&quot;translate(2815.6, 0)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(3415.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; ，不如 LRU。本文，我们提出一种同样达到 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;4.618ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 2041 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-4F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(763, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1152, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1652, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 时间复杂度的 LFU 实现方案，它支持的操作包括插入、访问以及删除。&lt;/p&gt;
+&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;本文将按顺序介绍：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LFU 的典型使用场景&lt;/li&gt;
+&lt;li&gt;LFU 的接口说明&lt;/li&gt;
+&lt;li&gt;目前 LFU 的最佳实现方案&lt;/li&gt;
+&lt;li&gt;时间复杂度为&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;4.618ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 2041 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-4F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(763, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1152, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1652, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 的 LFU 实现方案&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;uses-of-lfu&quot;&gt;Uses of LFU&lt;/h1&gt;
+&lt;p&gt;LFU 的一个典型使用场景就是 HTTP 的缓存代理应用 (caching network proxy application)。它位于网络服务与用户之间，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LtT8ewAV2T9BqtnuARR%2F-LtTA_ECgl4tFvFiT3Ct%2FScreen%20Shot%202019-11-12%20at%201.55.13%20PM.jpg?alt=media&amp;amp;token=52931771-0cc6-44b4-a76a-f9bade6ff75a&quot; style=&quot;zoom:50%;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;它通过将大多数用户可能请求的静态文件放入缓存中，来优化网络利用率，提高服务的响应速度。这种缓存代理需要满足：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;在有限的存储资源中缓存尽可能多的、更可能被重复使用的数据&lt;/li&gt;
+&lt;li&gt;实现的成本应该尽可能小，保证代理在高负荷下也能正常工作&lt;/li&gt;
+&lt;/ol&gt;
     
     </summary>
     
@@ -303,18 +423,24 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-04-11T15:17:38.525Z</updated>
+    <updated>2020-06-06T02:51:53.272Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1 id=&quot;简介&quot;&gt;简介&lt;/h1&gt;
-&lt;p&gt;本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 &lt;a href=&quot;https://en.wikipedia.org/wiki/Dijkstra_Prize&quot;
-        
-      
+      &lt;h1 id=&quot;简介&quot;&gt;简介&lt;/h1&gt;
+&lt;p&gt;本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 &lt;a href=&quot;https://en.wikipedia.org/wiki/Dijkstra_Prize&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Dijkstra Prize&lt;/a&gt; 的第一篇论文，高达 11692 的引用量（截至 2019/12/08）足以证明其广泛的影响力：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvXsiCfww2vR_HsaxRb%2F-LvXtSjgJb4u4T-v-7v6%2FScreen%20Shot%202019-12-08%20at%208.25.33%20AM.jpg?alt=media&amp;amp;token=7acfd213-f92a-4947-9d19-18ef4a210bbd&quot; style=&quot;zoom:50%;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;本文主要讨论 3 个话题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分布式系统中的事件偏序&lt;/li&gt;
+&lt;li&gt;利用逻辑时钟实现事件偏序&lt;/li&gt;
+&lt;li&gt;利用逻辑时钟实现事件全序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;事件顺序&quot;&gt;事件顺序&lt;/h1&gt;
+&lt;h2 id=&quot;生活中的事件顺序&quot;&gt;生活中的事件顺序&lt;/h2&gt;
+&lt;p&gt;生活中，当两个事件 A 和 B 发生时，我们可以利用其发生的时刻来确定它们的先后关系，如：&lt;/p&gt;
+&lt;p&gt;A：2019-12-08T00:00:00+00:00&lt;/p&gt;
+&lt;p&gt;B：2019-12-07T08:00:00+00:00&lt;/p&gt;
     
     </summary>
     
@@ -331,17 +457,27 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-04-11T15:17:38.501Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;p&gt;早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin
-        
-      
+      &lt;p&gt;早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。&lt;/p&gt;
+&lt;p&gt;本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。&lt;/p&gt;
+&lt;h1 id=&quot;why-design-goals&quot;&gt;Why &amp;amp; Design Goals&lt;/h1&gt;
+&lt;p&gt;云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。&lt;/p&gt;
+&lt;p&gt;通常这些异常会被监控捕捉，如时延异常、错误日志、程序崩溃，在紧急处理之后，就需要调查案发现场，彻底解决问题。这时候就需要了解每个请求在整个微服务集群内部的行踪。&lt;/p&gt;
+&lt;p&gt;这就向分布式追踪系统提出了两点要求：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;处处部署 (ubiquitous deployment)&lt;/li&gt;
+&lt;li&gt;持续监控 (continuous monitoring)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果部署不完全或者监控有间断，就可能有一小部分历史无法被追踪到，从而影响到问题定位的准确度，使得追踪效果大打折扣。&lt;/p&gt;
+&lt;p&gt;据此，我们提出追踪系统的 3 个主要设计目标：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;strong&gt;低成本 (Low overhead)&lt;/strong&gt;：对服务的性能影响应该能够忽略不计&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;对应用透明 (Application-level transparency)&lt;/strong&gt;：应用开发者对追踪系统无感知&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;扩展性好 (Scalability)&lt;/strong&gt;：支持部署到所有服务的所有实例上&lt;/li&gt;
+&lt;/ol&gt;
     
     </summary>
     
@@ -358,18 +494,26 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-04-11T15:17:38.505Z</updated>
+    <updated>2020-06-06T02:51:53.248Z</updated>
     
     <summary type="html">
     
-      
-      
-        
-        
-          &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
-&lt;p&gt;在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是
-        
-      
+      &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
+&lt;p&gt;在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是 Facebook 内部孵化的内存时序数据库，Gorilla。Facebook 团队发现：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;监控系统的用户主要关注的是数据的聚合分析，而不是单个数据点&lt;/li&gt;
+&lt;li&gt;对于线上问题的根源分析来说，最近的数据比过去的数据更有价值&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Gorilla 以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;delta-of-delta timestamps&lt;/li&gt;
+&lt;li&gt;XOR&#39;s floating point values&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。&lt;/p&gt;
+&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;以下是 FB 内部对时序数据库的要求：&lt;/p&gt;
+&lt;h2 id=&quot;write-dominate&quot;&gt;Write Dominate&lt;/h2&gt;
+&lt;p&gt;对时序数据库的首要限制就是必须一直能够写入数据，即写数据的高可用。因为 FB 内部的服务集群每秒将产生 1 千万个采样数据点。相较之下，读数据比写数据要求通常要低好几个数量级，因为数据的消费者是一些运维、开发使用的控制面板以及自动化报警系统，它们的请求频率低且通常只关注部分时序数据。由于用户关注的往往是整组时序数据的聚合结果，而不是单个数据点，因此传统数据库中的 ACID 保证也并不是时序数据库的核心要求，即便在极端情况下，丢弃少量数据也不会影响核心用途。&lt;/p&gt;
     
     </summary>
     
