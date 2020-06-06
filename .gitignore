@@ -1,8 +1,10 @@
 .DS_Store
 Thumbs.db
+*.swp
 db.json
 *.log
 node_modules/
 public/
 .deploy*/
 *~
+.idea
