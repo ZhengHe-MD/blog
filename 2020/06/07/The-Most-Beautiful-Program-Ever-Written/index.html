@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文来自于 2017 年 PWL NYC Meetup，作者的简介如下：  William E. Byrd (@webyrd) is a Research Assistant Professor in the School of Computing at the University of Utah. He is co-author of &#39;The Reasoned Schemer&#39;, and i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Most Beautiful Program Ever Written">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="本文来自于 2017 年 PWL NYC Meetup，作者的简介如下：  William E. Byrd (@webyrd) is a Research Assistant Professor in the School of Computing at the University of Utah. He is co-author of &#39;The Reasoned Schemer&#39;, and i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/tree.jpg">
+<meta property="article:published_time" content="2020-06-07T10:04:15.000Z">
+<meta property="article:modified_time" content="2020-06-07T07:29:30.705Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="papers-we-love">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/tree.jpg">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>The Most Beautiful Program Ever Written | ZhengHe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          The Most Beautiful Program Ever Written
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-07 10:04:15 / 修改时间：07:29:30" itemprop="dateCreated datePublished" datetime="2020-06-07T10:04:15+00:00">2020-06-07</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/07/The-Most-Beautiful-Program-Ever-Written/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文来自于 2017 年 PWL NYC Meetup，作者的简介如下：</p>
+<blockquote>
+<p>William E. Byrd (<span class="citation" data-cites="webyrd">@webyrd</span>) is a Research Assistant Professor in the School of Computing at the University of Utah. He is co-author of 'The Reasoned Schemer', and is co-designer of the miniKanren relational programming language. He loves StarCraft (BW &amp; SC2). Ask him about the scanning tunneling microscope (STM) he is building.</p>
+</blockquote>
+<p>先假设你已经对 Scheme (Lisp 的一门方言) 的基本语法有一些了解。我们直奔主题，来看这个 "The Most Beautiful Program Ever Written" 究竟是什么程序。</p>
+<h2 id="a-lisp-interpreter-written-in-lisp">A Lisp interpreter written in Lisp</h2>
+<p>这个 List interpreter 的核心代码如下：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">define</span></span> eval-expr</span><br><span class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (expr env)</span><br><span class="line">    (<span class="name">pmatch</span> expr</span><br><span class="line">            [,x (<span class="name">guard</span> (<span class="name"><span class="builtin-name">symbol?</span></span> x))</span><br><span class="line">                (<span class="name">env</span> x)]</span><br><span class="line">            [(<span class="name"><span class="builtin-name">lambda</span></span> (,x) ,body)</span><br><span class="line">             (<span class="name"><span class="builtin-name">lambda</span></span> (arg)</span><br><span class="line">               (<span class="name">eval-expr</span> body (<span class="name"><span class="builtin-name">lambda</span></span> (y)</span><br><span class="line">                                 (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">eq?</span></span> x y)</span><br><span class="line">                                     arg</span><br><span class="line">                                     (<span class="name">env</span> y)))))]</span><br><span class="line">            [(,rator ,rand)</span><br><span class="line">             ((<span class="name">eval-expr</span> rator env)</span><br><span class="line">              (<span class="name">eval-expr</span> rand env))])))</span><br></pre></td></tr></table></figure>
+<p>pmatch 中仅用短短 3 行代码，就实现了 List interpreter 核心流程，它是如何做到的？</p>
+<h3 id="pmatch">pmatch</h3>
+<p><code>pmatch</code> 是一个 <code>pattern match</code> 工具包，用于匹配输入的文本，如：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(,rator ,rand)]</span><br></pre></td></tr></table></figure>
+<p>可以匹配以下任意一种表达式：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">'(add1 <span class="number">1</span>) <span class="comment">; rator: add1, rand: 1</span></span><br><span class="line">'(sub1 <span class="number">1</span>) <span class="comment">; rator: sub1, rand: 1</span></span><br><span class="line">'((lambda (x) (+ x x)) <span class="number">3</span>) <span class="comment">; rator: (lambda (x) (+ x x)), rand: 3</span></span><br><span class="line">'(zero? <span class="number">1</span>) <span class="comment">; rator: zero?, rand: 1</span></span><br></pre></td></tr></table></figure>
+<p>匹配到模式之后，可以继续指定应该采取的行动，如：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">pmatch</span> expr</span><br><span class="line">        [(,rator ,rand)</span><br><span class="line">         (<span class="name">rator</span> rand)])</span><br></pre></td></tr></table></figure>
+<p>假如 expr 为 <code>'(add1 1)</code>，那么就会执行：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">add1</span> <span class="number">1</span>)</span><br><span class="line">&gt; 2</span><br></pre></td></tr></table></figure>
+<h3 id="operator-operand">(ope)rator &amp; (ope)rand</h3>
+<p>把 rator/rand 的 pmatch 语句抽出来，得到：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">define</span></span> eval-expr</span><br><span class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (expr env)</span><br><span class="line">    (<span class="name">pmatch</span> expr</span><br><span class="line">            [(,rator ,rand),</span><br><span class="line">             ((<span class="name">eval-expr</span> rator)</span><br><span class="line">              (<span class="name">eval-expr</span> rand))])))</span><br></pre></td></tr></table></figure>
+<p>通常，计算机程序本身就是树状结构：</p>
+<p><img src="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/tree.jpg" alt="tree" /></p>
+<p>如上图所示：</p>
+<ul>
+<li>main 函数调用 A 函数，A 函数中调用 C 函数</li>
+<li>A 返回后，main 函数调用 B 函数，B 函数中调用 D 函数</li>
+<li>B 返回后，main 函数调用 E 函数</li>
+<li>E 返回后，main 函数退出</li>
+</ul>
+<p>那么 interpreter 的一个实现思路就是不断得递归调用 interpreter 本身，因此这里对 rator 和 rand 就是递归调用 eval-expr 本身，然后再将 rand 作为参数传递给 rator。这样这个 interpreter 就具备了解释嵌套程序的能力，如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">add1</span> (<span class="name">add1</span> <span class="number">1</span>))</span><br><span class="line"><span class="comment">; rator=add1,rand=(eval-expr (add1 1))</span></span><br><span class="line"><span class="comment">; rator=add1,rand=(rator=add1, rand=1)</span></span><br><span class="line"><span class="comment">; rator=add1,rand=2</span></span><br><span class="line">&gt; 2</span><br></pre></td></tr></table></figure>
+<h3 id="env">env</h3>
+<p><code>eval-expr</code> 有两个参数，一个是需要解释的语句，另一个就是包含变量信息的环境，后者是传递参数、闭包的手段。为简单起见，我们设它是个仅有一个入参的 lambda 表达式，如：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">define</span></span> environment</span><br><span class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (x) (<span class="name">error</span> <span class="string">"oops"</span>)))</span><br></pre></td></tr></table></figure>
+<p>当某 procedure 执行的过程中需要引用变量时，如：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">define</span></span> hello <span class="number">1</span>)</span><br><span class="line">(<span class="name">add1</span> hello)</span><br><span class="line">&gt; 2</span><br></pre></td></tr></table></figure>
+<p>那么我们的 interpreter 在遇到变量 (symbol) 时，势必需要有查询变量对应值的能力，即 variable-lookup，这便是下面这行代码的作用，</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">pmatch</span> expr</span><br><span class="line">        [,x (<span class="name">guard</span> (<span class="name"><span class="builtin-name">symbol?</span></span> x))</span><br><span class="line">            (<span class="name">env</span> x)])</span><br></pre></td></tr></table></figure>
+<h3 id="lambda">lambda</h3>
+<p>最后就是如何处理 lambda 表达式：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name">pmatch</span> expr</span><br><span class="line">  [(<span class="name"><span class="builtin-name">lambda</span></span> (,x) ,body)</span><br><span class="line">               (<span class="name"><span class="builtin-name">lambda</span></span> (arg)</span><br><span class="line">                 (<span class="name">eval-expr</span> body (<span class="name"><span class="builtin-name">lambda</span></span> (y)</span><br><span class="line">                                   (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">eq?</span></span> x y)</span><br><span class="line">                                       arg</span><br><span class="line">                                       (<span class="name">env</span> y)))))])</span><br></pre></td></tr></table></figure>
+<p>这里我们只考虑带有一个参数的 lambda 表达式，x 就是这个参数，body 就是具体的执行逻辑。由于 body 在执行的过程中需要访问 x 参数，因此我们需要将 x 的值放到 env 中，这样 interpreter 就能够通过 env 逻辑找到 x 对应的值，因此在执行 <code>(eval-expr body)</code> 时，需要传递这个 env 表达式：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">lambda</span></span> (y)</span><br><span class="line">  (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">eq?</span></span> x y)</span><br><span class="line">      arg</span><br><span class="line">      (<span class="name">env</span> y)))</span><br></pre></td></tr></table></figure>
+<p>即：如果要查询的参数与 x 相同，就将 arg 返回，注意这里 arg 与 x 实际上都是变量的标记，背后指代的是相同的东西。</p>
+<h2 id="examples">Examples</h2>
+<p>有了上面 3 条基础逻辑，再简单扩充一下，就能得到一个简易的 Lisp interpreter：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; interp.scm</span></span><br><span class="line">(<span class="name"><span class="builtin-name">define</span></span> eval-expr</span><br><span class="line">  (<span class="name"><span class="builtin-name">lambda</span></span> (expr env)</span><br><span class="line">    (<span class="name">pmatch</span> expr</span><br><span class="line">      [,n (<span class="name">guard</span> (<span class="name"><span class="builtin-name">number?</span></span> n))</span><br><span class="line">          n]</span><br><span class="line">      [,x (<span class="name">guard</span> (<span class="name"><span class="builtin-name">symbol?</span></span> x))</span><br><span class="line">       (<span class="name">env</span> x)]</span><br><span class="line">      [(<span class="name"><span class="builtin-name">zero?</span></span> ,e)</span><br><span class="line">       (<span class="name"><span class="builtin-name">zero?</span></span> (<span class="name">eval-expr</span> e env))]</span><br><span class="line">      [(<span class="name">sub1</span> ,e)</span><br><span class="line">       (<span class="name">sub1</span> (<span class="name">eval-expr</span> e env))]</span><br><span class="line">      [(<span class="name"><span class="builtin-name">*</span></span> ,e1 ,e2)</span><br><span class="line">       (<span class="name"><span class="builtin-name">*</span></span> (<span class="name">eval-expr</span> e1 env)</span><br><span class="line">          (<span class="name">eval-expr</span> e2 env))]</span><br><span class="line">      [(<span class="name"><span class="builtin-name">if</span></span> ,t ,c ,a)</span><br><span class="line">       (<span class="name"><span class="builtin-name">if</span></span> (<span class="name">eval-expr</span> t env)</span><br><span class="line">           (<span class="name">eval-expr</span> c env)</span><br><span class="line">           (<span class="name">eval-expr</span> a env))]</span><br><span class="line">      [(<span class="name"><span class="builtin-name">lambda</span></span> (,x) ,body)</span><br><span class="line">       (<span class="name"><span class="builtin-name">lambda</span></span> (arg)</span><br><span class="line">         (<span class="name">eval-expr</span> body (<span class="name"><span class="builtin-name">lambda</span></span> (y)</span><br><span class="line">                           (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">eq?</span></span> x y)</span><br><span class="line">                               arg</span><br><span class="line">                               (<span class="name">env</span> y)))))]</span><br><span class="line">      [(,rator ,rand)</span><br><span class="line">       ((<span class="name">eval-expr</span> rator env)</span><br><span class="line">        (<span class="name">eval-expr</span> rand env))])))</span><br></pre></td></tr></table></figure>
+<p>启动 scheme，加载 <code>pmatch</code> 和 <code>interp</code>：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; (load "pmatch.scm")</span><br><span class="line">&gt; (load "interp.scm")</span><br><span class="line">&gt; (define environment</span><br><span class="line">    (lambda (x) (error 'lookup "oops")))</span><br></pre></td></tr></table></figure>
+<p>我们就能验证这个小小的 interpreter：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; (eval-expr '(sub1 1) environment)</span><br><span class="line"><span class="number">0</span></span><br><span class="line">&gt; (eval-expr '(sub1</span><br><span class="line">                (sub1 1)) environment)</span><br><span class="line"><span class="number">-1</span></span><br><span class="line">&gt; (eval-expr '(((lambda (!)</span><br><span class="line">									(<span class="name"><span class="builtin-name">lambda</span></span> (n)</span><br><span class="line">                    ((! !) n)))</span><br><span class="line">                (<span class="name"><span class="builtin-name">lambda</span></span> (!)</span><br><span class="line">                  (<span class="name"><span class="builtin-name">lambda</span></span> (n)</span><br><span class="line">                    (<span class="name"><span class="builtin-name">if</span></span> (<span class="name"><span class="builtin-name">zero?</span></span> n)</span><br><span class="line">                        <span class="number">1</span></span><br><span class="line">                        (* n ((! !) (sub1 n)))))))</span><br><span class="line">               5) environment)</span><br><span class="line"><span class="number">120</span></span><br></pre></td></tr></table></figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>尽管这个 Lisp interpreter 功能并不完全，但其中包含编程思想确十分丰富。基于此，我们可以了解程序语言的编译/解释过程，甚至尝试不同的程序语言特性。它也是 SICP 这门课的精髓所在。</p>
+<h2 id="references">References</h2>
+<ul>
+<li>The Most Beautiful Program Ever Written [PWL NYC],<a href="https://www.meetup.com/papers-we-love/events/238718664/" target="_blank" rel="noopener">meetup page</a>, <a href="https://www.youtube.com/watch?v=OyfBQmvr2Hc&amp;t=3080s" target="_blank" rel="noopener">video</a>, <a href="https://github.com/webyrd/Barliman/blob/master/interpreter_experiments/interp.scm" target="_blank" rel="noopener">interp.scm</a>, <a href="https://gist.github.com/lazywithclass/6af94f652cd59796e9592a5ea5772d17#simple-example" target="_blank" rel="noopener">unofficial gist</a></li>
+<li>webyrd/quines - <a href="https://github.com/webyrd/quines/blob/master/pmatch.scm" target="_blank" rel="noopener">pmatch.scm</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/papers-we-love/" rel="tag"># papers-we-love</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/" rel="prev" title="报警平台的匹配器演进">
+      <i class="fa fa-chevron-left"></i> 报警平台的匹配器演进
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#a-lisp-interpreter-written-in-lisp"><span class="nav-number">1.</span> <span class="nav-text">A Lisp interpreter written in Lisp</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pmatch"><span class="nav-number">1.1.</span> <span class="nav-text">pmatch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#operator-operand"><span class="nav-number">1.2.</span> <span class="nav-text">(ope)rator &amp; (ope)rand</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#env"><span class="nav-number">1.3.</span> <span class="nav-text">env</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lambda"><span class="nav-number">1.4.</span> <span class="nav-text">lambda</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#examples"><span class="nav-number">2.</span> <span class="nav-text">Examples</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">3.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/";
+    this.page.identifier = "2020/06/07/The-Most-Beautiful-Program-Ever-Written/";
+    this.page.title = "The Most Beautiful Program Ever Written";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

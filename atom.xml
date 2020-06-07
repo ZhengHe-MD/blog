@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-06-06T02:51:53.264Z</updated>
+  <updated>2020-06-07T07:29:30.705Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -17,11 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>The Most Beautiful Program Ever Written</title>
+    <link href="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
+    <id>https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
+    <published>2020-06-07T10:04:15.000Z</published>
+    <updated>2020-06-07T07:29:30.705Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文来自于 2017 年 PWL NYC Meetup，作者的简介如下：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;William E. Byrd (&lt;span class=&quot;citation&quot; data-cites=&quot;webyrd&quot;&gt;@webyrd&lt;/span&gt;) is a Research Assistant Professor in the School of Computing at the University of Utah. He is co-author of &#39;The Reasoned Schemer&#39;, and is co-designer of the miniKanren relational programming language. He loves StarCraft (BW &amp;amp; SC2). Ask him about the scanning tunneling microscope (STM) he is building.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;先假设你已经对 Scheme (Lisp 的一门方言) 的基本语法有一些了解。我们直奔主题，来看这个 &quot;The Most Beautiful Program Ever Written&quot; 究竟是什么程序。&lt;/p&gt;
+&lt;h2 id=&quot;a-lisp-interpreter-written-in-lisp&quot;&gt;A Lisp interpreter written in Lisp&lt;/h2&gt;
+&lt;p&gt;这个 List interpreter 的核心代码如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight scheme&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;(&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;define&lt;/span&gt;&lt;/span&gt; eval-expr&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;lambda&lt;/span&gt;&lt;/span&gt; (expr env)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    (&lt;span class=&quot;name&quot;&gt;pmatch&lt;/span&gt; expr&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [,x (&lt;span class=&quot;name&quot;&gt;guard&lt;/span&gt; (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;symbol?&lt;/span&gt;&lt;/span&gt; x))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                (&lt;span class=&quot;name&quot;&gt;env&lt;/span&gt; x)]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [(&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;lambda&lt;/span&gt;&lt;/span&gt; (,x) ,body)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;             (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;lambda&lt;/span&gt;&lt;/span&gt; (arg)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;               (&lt;span class=&quot;name&quot;&gt;eval-expr&lt;/span&gt; body (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;lambda&lt;/span&gt;&lt;/span&gt; (y)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                 (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;if&lt;/span&gt;&lt;/span&gt; (&lt;span class=&quot;name&quot;&gt;&lt;span class=&quot;builtin-name&quot;&gt;eq?&lt;/span&gt;&lt;/span&gt; x y)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                     arg&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                     (&lt;span class=&quot;name&quot;&gt;env&lt;/span&gt; y)))))]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            [(,rator ,rand)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;             ((&lt;span class=&quot;name&quot;&gt;eval-expr&lt;/span&gt; rator env)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              (&lt;span class=&quot;name&quot;&gt;eval-expr&lt;/span&gt; rand env))])))&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;pmatch 中仅用短短 3 行代码，就实现了 List interpreter 核心流程，它是如何做到的？&lt;/p&gt;
+&lt;h3 id=&quot;pmatch&quot;&gt;pmatch&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;pmatch&lt;/code&gt; 是一个 &lt;code&gt;pattern match&lt;/code&gt; 工具包，用于匹配输入的文本，如：&lt;/p&gt;
+&lt;figure class=&quot;highlight scheme&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;[(,rator ,rand)]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/tags/papers-we-love/"/>
+    
+  </entry>
+  
+  <entry>
     <title>报警平台的匹配器演进</title>
     <link href="https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-06-06T02:51:53.264Z</updated>
+    <updated>2020-06-07T07:29:30.701Z</updated>
     
     <summary type="html">
     
@@ -53,7 +83,7 @@
     <link href="https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-06-06T02:51:53.272Z</updated>
+    <updated>2020-06-07T07:29:30.705Z</updated>
     
     <summary type="html">
     
@@ -87,7 +117,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.681Z</updated>
     
     <summary type="html">
     
@@ -120,7 +150,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.685Z</updated>
     
     <summary type="html">
     
@@ -156,7 +186,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-06-06T02:51:53.260Z</updated>
+    <updated>2020-06-07T07:29:30.693Z</updated>
     
     <summary type="html">
     
@@ -193,7 +223,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-06-06T02:51:53.264Z</updated>
+    <updated>2020-06-07T07:29:30.701Z</updated>
     
     <summary type="html">
     
@@ -223,7 +253,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-06-06T02:51:53.252Z</updated>
+    <updated>2020-06-07T07:29:30.689Z</updated>
     
     <summary type="html">
     
@@ -279,7 +309,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-06-06T02:51:53.244Z</updated>
+    <updated>2020-06-07T07:29:30.677Z</updated>
     
     <summary type="html">
     
@@ -311,7 +341,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.681Z</updated>
     
     <summary type="html">
     
@@ -349,7 +379,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.685Z</updated>
     
     <summary type="html">
     
@@ -385,7 +415,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-06-06T02:51:53.252Z</updated>
+    <updated>2020-06-07T07:29:30.689Z</updated>
     
     <summary type="html">
     
@@ -423,7 +453,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-06-06T02:51:53.272Z</updated>
+    <updated>2020-06-07T07:29:30.705Z</updated>
     
     <summary type="html">
     
@@ -457,7 +487,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.681Z</updated>
     
     <summary type="html">
     
@@ -494,7 +524,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-06-06T02:51:53.248Z</updated>
+    <updated>2020-06-07T07:29:30.685Z</updated>
     
     <summary type="html">
     
