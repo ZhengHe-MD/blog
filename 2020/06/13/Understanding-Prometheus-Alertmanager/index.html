@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：  这些命中的路由就可能发出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Understanding Prometheus Alertmanager">
+<meta property="og:url" content="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：  这些命中的路由就可能发出">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/architecture.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/dispatcher.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/notification-pipeline.jpg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/why-ha.jpg">
+<meta property="article:published_time" content="2020-06-13T22:21:27.000Z">
+<meta property="article:modified_time" content="2020-06-14T14:44:52.036Z">
+<meta property="article:author" content="ZhengHe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Understanding Prometheus Alertmanager | ZhengHe</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Understanding Prometheus Alertmanager
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-13 22:21:27" itemprop="dateCreated datePublished" datetime="2020-06-13T22:21:27+00:00">2020-06-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-14 14:44:52" itemprop="dateModified" datetime="2020-06-14T14:44:52+00:00">2020-06-14</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/13/Understanding-Prometheus-Alertmanager/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。</p>
+<h2 id="整体报警控制逻辑">整体报警控制逻辑</h2>
+<p>Alertmanager 将报警路由组织成树状结构：</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg" alt="route-tree" /></p>
+<p>每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg" alt="route-tree-matched" /></p>
+<p>这些命中的路由就可能发出报警信息。那么报警信息在单个路由内部是如何处理的？</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route.jpg" alt="routed" /></p>
+<p>每个路由 (Route) 内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到一个组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的人。</p>
+<h2 id="项目架构">项目架构</h2>
+<p>Alertmanager 项目内部大体可以分为 model、base、business、communication 四层，如下图所示：</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/architecture.jpg" alt="architecture" /></p>
+<p>此分层非官方分层，实际源码结构并未按此分层来组织，且层与层之间的界限也不明显，仅供参考。</p>
+<h3 id="model">Model</h3>
+<p>model 层中定义了 Alertmanager 的主要数据模型，报警 (Alert)、路由 (Route) 以及匹配器 (Matcher)。</p>
+<h4 id="alert">Alert</h4>
+<p>由于 Alert 是贯穿整个 Prometheus 生态的核心概念，因此它的定义实际上并不在 Alergmanager 项目中，而是在 <code>github.com/prometheus/common</code> 项目的 model 中，这里截取源码中的定义如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Alert is a generic representation of an alert in the Prometheus eco-system.</span></span><br><span class="line"><span class="keyword">type</span> Alert <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// Label value pairs for purpose of aggregation, matching, and disposition</span></span><br><span class="line">	<span class="comment">// dispatching. This must minimally include an "alertname" label.</span></span><br><span class="line">	Labels LabelSet <span class="string">`json:"labels"`</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Extra key/value information which does not define alert identity.</span></span><br><span class="line">	Annotations LabelSet <span class="string">`json:"annotations"`</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// The known time range for this alert. Both ends are optional.</span></span><br><span class="line">	StartsAt     time.Time <span class="string">`json:"startsAt,omitempty"`</span></span><br><span class="line">	EndsAt       time.Time <span class="string">`json:"endsAt,omitempty"`</span></span><br><span class="line">	GeneratorURL <span class="keyword">string</span>    <span class="string">`json:"generatorURL"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> LabelSet <span class="keyword">map</span>[LabelName]LabelValue</span><br></pre></td></tr></table></figure>
+<p>Labels 是 Alert 的特征描述，它可以被用来区分不同的 Alert，也是后续路由、分组、通知的依据；Annotations 是 Alert 的一些附加信息，能够影响 Alert 在系统内部处理的逻辑，不会被用来标识 Alert 本身；StartsAt 和 EndsAt 标识报警的开始时间以及结束时间；GeneratorURL 用于追溯报警源头。</p>
+<h4 id="route">Route</h4>
+<p>路由树是 Alertmanager 的核心，信息分发的主体，其结构体具体如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Route is a node that contains definitions of how to handle alerts.</span></span><br><span class="line"><span class="keyword">type</span> Route <span class="keyword">struct</span> &#123;</span><br><span class="line">	parent *Route</span><br><span class="line">	<span class="comment">// The configuration parameters for matches of this route.</span></span><br><span class="line">	RouteOpts RouteOpts</span><br><span class="line">	<span class="comment">// Equality or regex matchers an alert has to fulfill to match</span></span><br><span class="line">	<span class="comment">// this route.</span></span><br><span class="line">	Matchers types.Matchers</span><br><span class="line">	<span class="comment">// If true, an alert matches further routes on the same level.</span></span><br><span class="line">	Continue <span class="keyword">bool</span></span><br><span class="line">	<span class="comment">// Children routes of this route.</span></span><br><span class="line">	Routes []*Route</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Route 是树状结构，parent 和 Routes 就是每个节点的父节点和子节点；Matchers 用于匹配 Alerts；Continue 决定是否继续尝试在其它兄弟节点匹配。RouteOpts 结构如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RouteOpts holds various routing options necessary for processing alerts</span></span><br><span class="line"><span class="comment">// that match a given route.</span></span><br><span class="line"><span class="keyword">type</span> RouteOpts <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// The identifier of the associated notification configuration.</span></span><br><span class="line">	Receiver <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// What labels to group alerts by for notifications.</span></span><br><span class="line">	GroupBy <span class="keyword">map</span>[model.LabelName]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	<span class="comment">// Use all alert labels to group.</span></span><br><span class="line">	GroupByAll <span class="keyword">bool</span></span><br><span class="line">	<span class="comment">// How long to wait to group matching alerts before sending</span></span><br><span class="line">	<span class="comment">// a notification.</span></span><br><span class="line">	GroupWait      time.Duration</span><br><span class="line">	GroupInterval  time.Duration</span><br><span class="line">	RepeatInterval time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Receiver 是通知对象的标识信息，它可以对应着最终的通知媒介，比如一组邮箱、一个 Slack channel 甚至通用的 webhook；GroupBy 是路由分组的属性集合，如果这个集合有 cluster 和 business 两个属性，那么所有来自于同一集群，同属一个业务线的报警信息就会被分发到这个集合中；当 Route 节点收到报警信息后，会等待 GroupWait 长度的时间，合并相同的报警信息，批量发送；如果某 Group 中迎来了新的报警 (和已知的报警在 Labels 上有所不同)，那么经过 GroupInterval 后，新的消息就会被发出；如果该 Group 没有迎来新的报警，且老的报警仍然处于活跃状态，那么经过 RepeatInterval 后，老的报警消息会继续被发送。通常 RepeatInterval 要比 GroupInterval 大许多。</p>
+<h4 id="matcher">Matcher</h4>
+<p>Matcher 用于匹配报警信息，可以被用在多个地方，如：</p>
+<ul>
+<li>Route：用于决定报警信息是否被捕获</li>
+<li>Silence/Inhibitor：用于决定报警信息是否被抑制</li>
+<li>...</li>
+</ul>
+<p>其结构十分简单：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Matcher defines a matching rule for the value of a given label.</span></span><br><span class="line"><span class="keyword">type</span> Matcher <span class="keyword">struct</span> &#123;</span><br><span class="line">	Name    <span class="keyword">string</span> <span class="string">`json:"name"`</span></span><br><span class="line">	Value   <span class="keyword">string</span> <span class="string">`json:"value"`</span></span><br><span class="line">	IsRegex <span class="keyword">bool</span>   <span class="string">`json:"isRegex"`</span></span><br><span class="line"></span><br><span class="line">	regex *regexp.Regexp</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>单个 Matcher 匹配一个 Label，分成完全匹配和正则匹配两种模式。</p>
+<h3 id="base">Base</h3>
+<p>Base 层是 Alertmanager 内部所需的基础逻辑模块，包括 Store、Template、Config 以及 Notification Log。Template 封装了 go 原生的 html template 和 text template，主要用于格式化报警通知的具体内容；Config 负责定义、加载 Alertmanager 的配置信息，详细配置可参考<a href="https://prometheus.io/docs/alerting/latest/configuration/" target="_blank" rel="noopener">官方文档</a>。下面详细介绍 Store 和 Notification Log。</p>
+<h4 id="store">Store</h4>
+<p>Store 是内存中的一组 Alerts 集合，它支持往集合中添加、删除、获取 Alert，同时支持异步的对已经解决的 Alert 做垃圾收集，其所有操作都满足线程安全。Store 在 3 个地方被使用：</p>
+<ul>
+<li><p>Aggregation Group：作为单个 Route 中每个 Group 的 Alerts 容器</p></li>
+<li><p>Mem Provider：作为单个 Alertmanager 实例内部存放全量 Alerts 的容器</p></li>
+<li><p>Inhibitor：作为每条 Inhibitor Rule 中缓存的 Source Alerts 缓存容器</p></li>
+</ul>
+<h4 id="notification-log">Notification Log</h4>
+<p>Notification Log，简称 NFLog，用于记录同一集群内所有 Alertmanager 实例曾经触发的通知日志。通过本实例发出的通知消息在被 NFLog 记录的同时，会通过 gossip 的方式广播到其它实例，其它实例获得该信息后就能对通知去重，避免重复向相关人员发送通知。此外，与 Store 类似，NFLog 会定期地将过期通知消息垃圾收集，也会定期将当前所有日志快照写出到本地日志文件。NFLog 利用 CRDT (context-free replicated data type) 在不同实例之间同步数据，保证最终一致性，是 Alertmanager 高可用架构的重要组件。</p>
+<h3 id="business">Business</h3>
+<h4 id="provider">Provider</h4>
+<p>Provider 向 Alertmanager 提供 Alerts 信息的中心存储。Alertmanager 将客户端发送来的 Alert 信息放入 Provider 中，后者向 Alertmanager 的其它组件提供订阅消息，其核心接口如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Alerts gives access to a set of alerts. All methods are goroutine-safe.</span></span><br><span class="line"><span class="keyword">type</span> Alerts <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Subscribe returns an iterator over active alerts that have not been</span></span><br><span class="line">	<span class="comment">// resolved and successfully notified about.</span></span><br><span class="line">	<span class="comment">// They are not guaranteed to be in chronological order.</span></span><br><span class="line">	Subscribe() AlertIterator</span><br><span class="line">	<span class="comment">// GetPending returns an iterator over all alerts that have</span></span><br><span class="line">	<span class="comment">// pending notifications.</span></span><br><span class="line">	GetPending() AlertIterator</span><br><span class="line">	<span class="comment">// Get returns the alert for a given fingerprint.</span></span><br><span class="line">	Get(model.Fingerprint) (*types.Alert, error)</span><br><span class="line">	<span class="comment">// Put adds the given alert to the set.</span></span><br><span class="line">	Put(...*types.Alert) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Provider 仅仅是定义了接口，但这个中心存储可以有多种实现，Alertmanager 默认提供了内存版本的实现，即 <code>provider/mem/mem.go</code>，如果其它团队想要二次开发，也可以基于此提供持久化存储版本的实现。</p>
+<h4 id="dispatcher">Dispatcher</h4>
+<p>Dispatcher 负责串联 Alertmanager 的核心报警控制逻辑，是 Alertmanager 的指挥中枢。其处理流程如下图所示：</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/dispatcher.jpg" alt="dispatcher" /></p>
+<p>Dispatcher 初始化时，会通过异步线程从 Provider 订阅的 Alerts 信息。每当新的 Alert 信息出现，然后将其转发给路由树，后者递归地为 Alert 寻找匹配的路由节点 (Route)，找到符合条件的一组路由节点后，将 Alert 放入每个节点对应的 Group 中，同时异步地执行对应的通知流水线 (Notification Pipeline)。</p>
+<h4 id="notifier">Notifier</h4>
+<p>Notifier 负责消息的去重、抑制、发送、同步，整个过程被组织成一条流水线 (Pipeline)，后者进而由若干个可配置的 (Stage) 构成：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Stage processes alerts under the constraints of the given context.</span></span><br><span class="line"><span class="keyword">type</span> Stage <span class="keyword">interface</span> &#123;</span><br><span class="line">	Exec(ctx context.Context, l log.Logger, alerts ...*types.Alert) (context.Context, []*types.Alert, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个 Stage 结束时会返回允许进入下一个 Stage 的 Alerts 列表，如果后者是一个空列表，流水线就会提前结束。在当前版本 (Alertmanager v0.2.1) 中的一条通知流水线是如何构成的？</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/notification-pipeline.jpg" alt="notification-pipeline" /></p>
+<ul>
+<li>RoutingStage：关联同一条报警信息的各接收方与其对应的 MultiStage</li>
+<li>GossipSettleStage：等待一个足够长的时间，尽量保证多个实例之间的信息同步完毕</li>
+<li>InhibitorMuteStage/SilencerMuteStage：确定是否应该抑制，需要抑制的 Alert 会被过滤</li>
+<li>WaitStage：等待一个足够长的时间，不同实例等待的时间不同，从而尽可能保证去重逻辑生效</li>
+<li>DedupStage：通过 NFLog 执行去重逻辑</li>
+<li>RetryStage：发送消息，若失败则重试</li>
+<li>SetNotifiesStage：将发送记录写进 NFLog 中</li>
+</ul>
+<p>此外，还有两个流程控制 Stage：</p>
+<ul>
+<li>MultiStage：将多个 Stage 串行执行</li>
+<li>FanoutStage：将多个 Stage 并发执行</li>
+</ul>
+<h4 id="silence-inhibitor">Silence &amp; Inhibitor</h4>
+<p>Silence 与 Inhibitor 分别实现两种报警抑制方式。Silence 允许用户指定时间范围以及匹配器列表来抑制特定的报警；Inhibitor 允许用户关联不同的报警信息，当出现 A 类报警时，抑制 B 类报警。</p>
+<h3 id="communication">Communication</h3>
+<p>通信层负责处理 Alertmanager 实例与客户端以及集群内其它实例的沟通逻辑。</p>
+<h4 id="http">HTTP</h4>
+<p>Alertmanager 曾经有过两个版本的 HTTP 层实现，v2 版本使用 openapi 规范定义交互协议，并利用相应的工具 (swagger) 生成 server stub 和 client stub，再基于此实现相应的业务逻辑，这层逻辑比较薄，内容不多，这里不再赘述。</p>
+<h4 id="cluster">Cluster</h4>
+<p>Cluster 是 Alertmanager 的高可用模块，主要负责集群元信息的维护，如集群内部有哪些实例，每个实例的健康状况如何，有新的实例加入或者故障实例移除时，需要做哪些相应的更新。在启动时，实例需要通过一个或多个已知的实例来传递自己加入集群的消息，通过实例间的 gossip，使得集群中所有实例中维护的集群元信息保持最终一致。</p>
+<h2 id="设计思考">设计思考</h2>
+<p>以下讨论我个人对 Alertmanager 的一些设计决定的分析：</p>
+<h5 id="通过-crdt-和-memberlist-实现-ap-系统">通过 CRDT 和 memberlist 实现 AP 系统</h5>
+<p>如果我们的各个微服务已经做到了高可用，监控本身也需要高可用。通常的做法就是让两个 Prometheus 实例去采集相同的数据，如下图所示：</p>
+<p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/why-ha.jpg" alt="why-ha" /></p>
+<p>自然而然地，我们也不能让 Alertmanager 出现单点故障，因此就需要建立 Alertmanager Cluster 达到高可用。需要注意的是，报警是个 AP 系统，可用性是第一位，如果报警系统不可用，就会出现故障发生但无人知晓的情况。对于报警系统来说，C (consistency) 并不需要得到绝对保证，同样出现不一致，多报要比漏报更能够被接受。基于以上考虑，Alertmanager 通过 memberlist 的 gossip 机制实现 Alertmanager 的集群管理，多个 Prometheus 会将报警信息打到所有实例上，再通过不同实例间的交流和报警去重逻辑来最大程度上避免重复报警。如果实例间出现网络分区，可能出现多次报警的情况。除此之外，不同 Alertmanager 之间存在需要共享的数据，如通知记录 (Notification Log) 和抑制规则，Alertmanager 通过 CRDT 来保证这些数据的最终一致性。</p>
+<h5 id="以内存作为主要存储">以内存作为主要存储</h5>
+<p>报警信息有两个主要特点：时效性强和数据量小。前者体现在报警通知在发出之后，已经不存在在线处理、分析的价值；后者体现在报警过多，相应的开发团队会及时处理，遏制报警数量的增长。基于这些特点，选择内存作为即时报警数据的存储，定时做垃圾清理足以应对日常需求，即便未来有离线分析的需求，在 Provider 层面增加持久化存储的实现支持即可。</p>
+<h5 id="基于树状结构的分发逻辑和配置继承定制化">基于树状结构的分发逻辑和配置继承、定制化</h5>
+<p>公司的组织架构是树状结构，根据康威定律，研发团队及微服务分层分组也会收敛到树状结构。报警的目标之一是将问题快速反馈给相关的人或者团队，那么通过树状结构组织分发逻辑是顺势而为。此外，树状结构可以方便地实现配置的继承，而在单个节点上覆盖配置又能方便地支持定制化。</p>
+<h2 id="小结">小结</h2>
+<p>Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象尝试，从模型设计、分发逻辑到典型的 AP 系统高可用方案，都值得我们分析和讨论。</p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://prometheus.io/docs/alerting/latest/" target="_blank" rel="noopener">Docs: Prometheus Alerting</a></li>
+<li><a href="https://github.com/prometheus/alertmanager" target="_blank" rel="noopener">Github: prometheus/alertmanager</a></li>
+<li><a href="https://www.youtube.com/watch?v=VgsM8pOyN5s&amp;t=1161s" target="_blank" rel="noopener">PromCon EU 2019: Fun and Profit with Alertmanager</a></li>
+<li><a href="https://www.youtube.com/watch?v=i6Hmc0bKHAY" target="_blank" rel="noopener">PromCon 2017: Alertmanager and High Availability</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/" rel="prev" title="The Most Beautiful Program Ever Written">
+      <i class="fa fa-chevron-left"></i> The Most Beautiful Program Ever Written
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#整体报警控制逻辑"><span class="nav-number">1.</span> <span class="nav-text">整体报警控制逻辑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目架构"><span class="nav-number">2.</span> <span class="nav-text">项目架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#model"><span class="nav-number">2.1.</span> <span class="nav-text">Model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#alert"><span class="nav-number">2.1.1.</span> <span class="nav-text">Alert</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#route"><span class="nav-number">2.1.2.</span> <span class="nav-text">Route</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#matcher"><span class="nav-number">2.1.3.</span> <span class="nav-text">Matcher</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#base"><span class="nav-number">2.2.</span> <span class="nav-text">Base</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#store"><span class="nav-number">2.2.1.</span> <span class="nav-text">Store</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#notification-log"><span class="nav-number">2.2.2.</span> <span class="nav-text">Notification Log</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#business"><span class="nav-number">2.3.</span> <span class="nav-text">Business</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#provider"><span class="nav-number">2.3.1.</span> <span class="nav-text">Provider</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dispatcher"><span class="nav-number">2.3.2.</span> <span class="nav-text">Dispatcher</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#notifier"><span class="nav-number">2.3.3.</span> <span class="nav-text">Notifier</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#silence-inhibitor"><span class="nav-number">2.3.4.</span> <span class="nav-text">Silence &amp; Inhibitor</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#communication"><span class="nav-number">2.4.</span> <span class="nav-text">Communication</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#http"><span class="nav-number">2.4.1.</span> <span class="nav-text">HTTP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cluster"><span class="nav-number">2.4.2.</span> <span class="nav-text">Cluster</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计思考"><span class="nav-number">3.</span> <span class="nav-text">设计思考</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#通过-crdt-和-memberlist-实现-ap-系统"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">通过 CRDT 和 memberlist 实现 AP 系统</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#以内存作为主要存储"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">以内存作为主要存储</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于树状结构的分发逻辑和配置继承定制化"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">基于树状结构的分发逻辑和配置继承、定制化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">4.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/";
+    this.page.identifier = "2020/06/13/Understanding-Prometheus-Alertmanager/";
+    this.page.title = "Understanding Prometheus Alertmanager";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
