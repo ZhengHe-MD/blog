@@ -2,6 +2,8 @@
 title: Understanding Prometheus Alertmanager
 date: 2020-06-13 22:21:27
 tags:
+categories:
+- system design
 ---
 
 Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。
