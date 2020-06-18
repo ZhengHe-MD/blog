@@ -6,7 +6,7 @@ categories:
 - system design
 ---
 
-Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。
+Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。
 
 ## 整体报警控制逻辑
 
@@ -14,15 +14,15 @@ Alertmanager 将报警路由组织成树状结构：
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg" alt="route-tree" />
 
-每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：
+每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个路由的配置决定是否递归地继续往下传播。每条报警信息最终都会匹配到一棵路由子树，如下图所示：
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg" alt="route-tree-matched" />
 
-这些命中的路由就可能发出报警信息。那么报警信息在单个路由内部是如何处理的？
+这棵子树上的路由就是可能发出报警信息的路由。那么报警信息在单个路由内部是如何处理的？
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route.jpg" alt="routed" />
 
-每个路由 (Route) 内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到一个组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的人。
+每个路由内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到某个特定的组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的负责人。
 
 ## 项目架构
 
@@ -30,7 +30,7 @@ Alertmanager 项目内部大体可以分为 model、base、business、communicat
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/architecture.jpg" alt="architecture" />
 
-此分层非官方分层，实际源码结构并未按此分层来组织，且层与层之间的界限也不明显，仅供参考。
+此分层非官方分层，实际源码结构并未按此分层来组织，且层与层之间的界限也不明显，这里仅供下文分析参考。
 
 ### Model
 
@@ -101,7 +101,7 @@ type RouteOpts struct {
 }
 ```
 
-Receiver 是通知对象的标识信息，它可以对应着最终的通知媒介，比如一组邮箱、一个 Slack channel 甚至通用的 webhook；GroupBy 是路由分组的属性集合，如果这个集合有 cluster 和 business 两个属性，那么所有来自于同一集群，同属一个业务线的报警信息就会被分发到这个集合中；当 Route 节点收到报警信息后，会等待 GroupWait 长度的时间，合并相同的报警信息，批量发送；如果某 Group 中迎来了新的报警 (和已知的报警在 Labels 上有所不同)，那么经过 GroupInterval 后，新的消息就会被发出；如果该 Group 没有迎来新的报警，且老的报警仍然处于活跃状态，那么经过 RepeatInterval 后，老的报警消息会继续被发送。通常 RepeatInterval 要比 GroupInterval 大许多。
+Receiver 是通知对象的标识信息，它可以对应着最终的通知媒介，比如一组邮箱、一个 Slack channel 或是通用的 webhook；GroupBy 是路由分组的属性集合，如果这个集合有 cluster 和 business 两个属性，那么所有来自于同一集群，同属一个业务线的报警信息就会被分发到这个集合中；当 Route 节点收到报警信息后，会等待 GroupWait 长度的时间，合并相同的报警信息，批量发送；如果某 Group 中迎来了新的报警 (和已知的报警在 Labels 上有所不同)，那么经过 GroupInterval 后，新的消息就会被发出；如果该 Group 没有迎来新的报警，且老的报警仍然处于活跃状态，那么经过 RepeatInterval 后，老的报警消息会继续被发送。通常 RepeatInterval 要比 GroupInterval 大许多。
 
 #### Matcher
 
@@ -231,7 +231,7 @@ Cluster 是 Alertmanager 的高可用模块，主要负责集群元信息的维�
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/why-ha.jpg" alt="why-ha" />
 
-自然而然地，我们也不能让 Alertmanager 出现单点故障，因此就需要建立 Alertmanager Cluster 达到高可用。需要注意的是，报警是个 AP 系统，可用性是第一位，如果报警系统不可用，就会出现故障发生但无人知晓的情况。对于报警系统来说，C (consistency) 并不需要得到绝对保证，同样出现不一致，多报要比漏报更能够被接受。基于以上考虑，Alertmanager 通过 memberlist 的 gossip 机制实现 Alertmanager 的集群管理，多个 Prometheus 会将报警信息打到所有实例上，再通过不同实例间的交流和报警去重逻辑来最大程度上避免重复报警。如果实例间出现网络分区，可能出现多次报警的情况。除此之外，不同 Alertmanager 之间存在需要共享的数据，如通知记录 (Notification Log) 和抑制规则，Alertmanager 通过 CRDT 来保证这些数据的最终一致性。
+自然而然地，我们也不能让 Alertmanager 出现单点故障，因此就需要建立 Alertmanager Cluster 达到高可用。需要注意的是，报警是个 AP 系统，可用性是第一位，如果报警系统不可用，就会出现故障发生但无人知晓的情况。对于报警系统来说，C (consistency) 并不需要得到绝对保证，同样出现不一致，多报要比漏报更能够被接受。基于以上考虑，Alertmanager 通过 memberlist 的 gossip 机制实现 Alertmanager 的集群管理，多个 Prometheus 会将报警信息打到所有实例上，再通过不同实例间的交流和报警去重逻辑来最大程度上避免重复报警。如果实例间出现网络分区，可能出现多次报警的情况。除此之外，不同 Alertmanager 之间存在需要共享的数据，如通知记录 (Notification Log) 和抑制规则，Alertmanager 通过 CRDT 来解决数据冲突，保证数据的最终一致性。
 
 ##### 以内存作为主要存储
 
@@ -248,13 +248,13 @@ Cluster 是 Alertmanager 的高可用模块，主要负责集群元信息的维�
 * 手动：服务维护者修复问题后手动标记
 * 自动：报警平台根据报警信息的出现规律利用规则自动判断
 
-从准确性角度分析，手动标记的准确度取决于服务维护者的判断能力，绝大多数情况下能准确反馈情况，而自动标记存在误判可能；从用户体验上看，手动标记会给服务维护者带来额外的操作负担，也容易出现漏标、多标、误标的情况，而自动标记则无需服务维护者参与。
+从准确性角度分析，手动标记的准确度取决于服务维护者的判断能力，绝大多数情况下能准确反馈情况，而自动标记存在误判可能；从用户体验上看，手动标记会给服务维护者带来额外的操作负担，也可能出现漏标、多标、误标的情况，而自动标记则无需服务维护者参与。
 
 Alertmanager 采用的是自动方案，在报警信息第一次出现时，直接标记其结束时间为 5 分钟后 (全局的 resolve_timeout 配置决定)，若在 5 分钟内报警未再次出现，则认为报警处于已经解决的状态；若在 5 分钟内报警再次出现，则将报警的结束时间延长 5 分钟。
 
 ## 小结
 
-Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象尝试，从模型设计、分发逻辑到典型的 AP 系统高可用方案，都值得我们分析和讨论。
+Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象尝试，从模型设计、分发逻辑、通知流水线到典型的 AP 系统高可用方案，都值得我们学习和讨论。
 
 ## 参考
 
