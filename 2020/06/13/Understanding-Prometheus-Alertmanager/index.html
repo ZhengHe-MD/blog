@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：  这些命中的路由就可能发出">
+  <meta name="description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个路由的配置决定是否递归地继续往下传播。每条报警信息最终都会匹配到一棵路由子树，如下图所示：  这棵子树上的路由就是可能">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Understanding Prometheus Alertmanager">
 <meta property="og:url" content="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：  这些命中的路由就可能发出">
+<meta property="og:description" content="Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。 整体报警控制逻辑 Alertmanager 将报警路由组织成树状结构：  每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个路由的配置决定是否递归地继续往下传播。每条报警信息最终都会匹配到一棵路由子树，如下图所示：  这棵子树上的路由就是可能">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/notification-pipeline.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/why-ha.jpg">
 <meta property="article:published_time" content="2020-06-13T22:21:27.000Z">
-<meta property="article:modified_time" content="2020-06-15T06:24:04.309Z">
+<meta property="article:modified_time" content="2020-06-18T09:52:37.260Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg">
@@ -316,7 +316,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-15 06:24:04" itemprop="dateModified" datetime="2020-06-15T06:24:04+00:00">2020-06-15</time>
+                <time title="修改时间：2020-06-18 09:52:37" itemprop="dateModified" datetime="2020-06-18T09:52:37+00:00">2020-06-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -355,19 +355,19 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。</p>
+        <p>Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。</p>
 <h2 id="整体报警控制逻辑">整体报警控制逻辑</h2>
 <p>Alertmanager 将报警路由组织成树状结构：</p>
 <p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg" alt="route-tree" /></p>
-<p>每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：</p>
+<p>每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个路由的配置决定是否递归地继续往下传播。每条报警信息最终都会匹配到一棵路由子树，如下图所示：</p>
 <p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg" alt="route-tree-matched" /></p>
-<p>这些命中的路由就可能发出报警信息。那么报警信息在单个路由内部是如何处理的？</p>
+<p>这棵子树上的路由就是可能发出报警信息的路由。那么报警信息在单个路由内部是如何处理的？</p>
 <p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route.jpg" alt="routed" /></p>
-<p>每个路由 (Route) 内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到一个组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的人。</p>
+<p>每个路由内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到某个特定的组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的负责人。</p>
 <h2 id="项目架构">项目架构</h2>
 <p>Alertmanager 项目内部大体可以分为 model、base、business、communication 四层，如下图所示：</p>
 <p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/architecture.jpg" alt="architecture" /></p>
-<p>此分层非官方分层，实际源码结构并未按此分层来组织，且层与层之间的界限也不明显，仅供参考。</p>
+<p>此分层非官方分层，实际源码结构并未按此分层来组织，且层与层之间的界限也不明显，这里仅供下文分析参考。</p>
 <h3 id="model">Model</h3>
 <p>model 层中定义了 Alertmanager 的主要数据模型，报警 (Alert)、路由 (Route) 以及匹配器 (Matcher)。</p>
 <h4 id="alert">Alert</h4>
@@ -379,7 +379,7 @@ mjx-container + br {
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Route is a node that contains definitions of how to handle alerts.</span></span><br><span class="line"><span class="keyword">type</span> Route <span class="keyword">struct</span> &#123;</span><br><span class="line">	parent *Route</span><br><span class="line">	<span class="comment">// The configuration parameters for matches of this route.</span></span><br><span class="line">	RouteOpts RouteOpts</span><br><span class="line">	<span class="comment">// Equality or regex matchers an alert has to fulfill to match</span></span><br><span class="line">	<span class="comment">// this route.</span></span><br><span class="line">	Matchers types.Matchers</span><br><span class="line">	<span class="comment">// If true, an alert matches further routes on the same level.</span></span><br><span class="line">	Continue <span class="keyword">bool</span></span><br><span class="line">	<span class="comment">// Children routes of this route.</span></span><br><span class="line">	Routes []*Route</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Route 是树状结构，parent 和 Routes 就是每个节点的父节点和子节点；Matchers 用于匹配 Alerts；Continue 决定是否继续尝试在其它兄弟节点匹配。RouteOpts 结构如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RouteOpts holds various routing options necessary for processing alerts</span></span><br><span class="line"><span class="comment">// that match a given route.</span></span><br><span class="line"><span class="keyword">type</span> RouteOpts <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// The identifier of the associated notification configuration.</span></span><br><span class="line">	Receiver <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// What labels to group alerts by for notifications.</span></span><br><span class="line">	GroupBy <span class="keyword">map</span>[model.LabelName]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	<span class="comment">// Use all alert labels to group.</span></span><br><span class="line">	GroupByAll <span class="keyword">bool</span></span><br><span class="line">	<span class="comment">// How long to wait to group matching alerts before sending</span></span><br><span class="line">	<span class="comment">// a notification.</span></span><br><span class="line">	GroupWait      time.Duration</span><br><span class="line">	GroupInterval  time.Duration</span><br><span class="line">	RepeatInterval time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Receiver 是通知对象的标识信息，它可以对应着最终的通知媒介，比如一组邮箱、一个 Slack channel 甚至通用的 webhook；GroupBy 是路由分组的属性集合，如果这个集合有 cluster 和 business 两个属性，那么所有来自于同一集群，同属一个业务线的报警信息就会被分发到这个集合中；当 Route 节点收到报警信息后，会等待 GroupWait 长度的时间，合并相同的报警信息，批量发送；如果某 Group 中迎来了新的报警 (和已知的报警在 Labels 上有所不同)，那么经过 GroupInterval 后，新的消息就会被发出；如果该 Group 没有迎来新的报警，且老的报警仍然处于活跃状态，那么经过 RepeatInterval 后，老的报警消息会继续被发送。通常 RepeatInterval 要比 GroupInterval 大许多。</p>
+<p>Receiver 是通知对象的标识信息，它可以对应着最终的通知媒介，比如一组邮箱、一个 Slack channel 或是通用的 webhook；GroupBy 是路由分组的属性集合，如果这个集合有 cluster 和 business 两个属性，那么所有来自于同一集群，同属一个业务线的报警信息就会被分发到这个集合中；当 Route 节点收到报警信息后，会等待 GroupWait 长度的时间，合并相同的报警信息，批量发送；如果某 Group 中迎来了新的报警 (和已知的报警在 Labels 上有所不同)，那么经过 GroupInterval 后，新的消息就会被发出；如果该 Group 没有迎来新的报警，且老的报警仍然处于活跃状态，那么经过 RepeatInterval 后，老的报警消息会继续被发送。通常 RepeatInterval 要比 GroupInterval 大许多。</p>
 <h4 id="matcher">Matcher</h4>
 <p>Matcher 用于匹配报警信息，可以被用在多个地方，如：</p>
 <ul>
@@ -442,7 +442,7 @@ mjx-container + br {
 <h5 id="通过-crdt-和-memberlist-实现-ap-系统">通过 CRDT 和 memberlist 实现 AP 系统</h5>
 <p>如果我们的各个微服务已经做到了高可用，监控本身也需要高可用。通常的做法就是让两个 Prometheus 实例去采集相同的数据，如下图所示：</p>
 <p><img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/why-ha.jpg" alt="why-ha" /></p>
-<p>自然而然地，我们也不能让 Alertmanager 出现单点故障，因此就需要建立 Alertmanager Cluster 达到高可用。需要注意的是，报警是个 AP 系统，可用性是第一位，如果报警系统不可用，就会出现故障发生但无人知晓的情况。对于报警系统来说，C (consistency) 并不需要得到绝对保证，同样出现不一致，多报要比漏报更能够被接受。基于以上考虑，Alertmanager 通过 memberlist 的 gossip 机制实现 Alertmanager 的集群管理，多个 Prometheus 会将报警信息打到所有实例上，再通过不同实例间的交流和报警去重逻辑来最大程度上避免重复报警。如果实例间出现网络分区，可能出现多次报警的情况。除此之外，不同 Alertmanager 之间存在需要共享的数据，如通知记录 (Notification Log) 和抑制规则，Alertmanager 通过 CRDT 来保证这些数据的最终一致性。</p>
+<p>自然而然地，我们也不能让 Alertmanager 出现单点故障，因此就需要建立 Alertmanager Cluster 达到高可用。需要注意的是，报警是个 AP 系统，可用性是第一位，如果报警系统不可用，就会出现故障发生但无人知晓的情况。对于报警系统来说，C (consistency) 并不需要得到绝对保证，同样出现不一致，多报要比漏报更能够被接受。基于以上考虑，Alertmanager 通过 memberlist 的 gossip 机制实现 Alertmanager 的集群管理，多个 Prometheus 会将报警信息打到所有实例上，再通过不同实例间的交流和报警去重逻辑来最大程度上避免重复报警。如果实例间出现网络分区，可能出现多次报警的情况。除此之外，不同 Alertmanager 之间存在需要共享的数据，如通知记录 (Notification Log) 和抑制规则，Alertmanager 通过 CRDT 来解决数据冲突，保证数据的最终一致性。</p>
 <h5 id="以内存作为主要存储">以内存作为主要存储</h5>
 <p>报警信息有两个主要特点：时效性强和数据量小。前者体现在报警通知在发出之后，已经不存在在线处理、分析的价值；后者体现在报警过多，相应的开发团队会及时处理，遏制报警数量的增长。基于这些特点，选择内存作为即时报警数据的存储，定时做垃圾清理足以应对日常需求，即便未来有离线分析的需求，在 Provider 层面增加持久化存储的实现支持即可。</p>
 <h5 id="基于树状结构的分发逻辑和配置继承定制化">基于树状结构的分发逻辑和配置继承、定制化</h5>
@@ -453,10 +453,10 @@ mjx-container + br {
 <li>手动：服务维护者修复问题后手动标记</li>
 <li>自动：报警平台根据报警信息的出现规律利用规则自动判断</li>
 </ul>
-<p>从准确性角度分析，手动标记的准确度取决于服务维护者的判断能力，绝大多数情况下能准确反馈情况，而自动标记存在误判可能；从用户体验上看，手动标记会给服务维护者带来额外的操作负担，也容易出现漏标、多标、误标的情况，而自动标记则无需服务维护者参与。</p>
+<p>从准确性角度分析，手动标记的准确度取决于服务维护者的判断能力，绝大多数情况下能准确反馈情况，而自动标记存在误判可能；从用户体验上看，手动标记会给服务维护者带来额外的操作负担，也可能出现漏标、多标、误标的情况，而自动标记则无需服务维护者参与。</p>
 <p>Alertmanager 采用的是自动方案，在报警信息第一次出现时，直接标记其结束时间为 5 分钟后 (全局的 resolve_timeout 配置决定)，若在 5 分钟内报警未再次出现，则认为报警处于已经解决的状态；若在 5 分钟内报警再次出现，则将报警的结束时间延长 5 分钟。</p>
 <h2 id="小结">小结</h2>
-<p>Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象尝试，从模型设计、分发逻辑到典型的 AP 系统高可用方案，都值得我们分析和讨论。</p>
+<p>Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象尝试，从模型设计、分发逻辑、通知流水线到典型的 AP 系统高可用方案，都值得我们学习和讨论。</p>
 <h2 id="参考">参考</h2>
 <ul>
 <li><a href="https://prometheus.io/docs/alerting/latest/" target="_blank" rel="noopener">Docs: Prometheus Alerting</a></li>

@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-06-15T06:24:04.309Z</updated>
+  <updated>2020-06-18T09:52:37.260Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -21,19 +21,19 @@
     <link href="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-06-15T06:24:04.309Z</updated>
+    <updated>2020-06-18T09:52:37.260Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;Alertmanager 是 Prometheus 提供的报警分发平台，它主要解决的是报警的去重、分组、路由、抑制等常见问题。&lt;/p&gt;
+      &lt;p&gt;Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。&lt;/p&gt;
 &lt;h2 id=&quot;整体报警控制逻辑&quot;&gt;整体报警控制逻辑&lt;/h2&gt;
 &lt;p&gt;Alertmanager 将报警路由组织成树状结构：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree.jpg&quot; alt=&quot;route-tree&quot;&gt;&lt;/p&gt;
-&lt;p&gt;每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个子路由的配置决定是否递归地继续往下传播。每条报警信息都可能匹配到一个路由子树，如下图所示：&lt;/p&gt;
+&lt;p&gt;每条报警信息进入 Alertmanager 后，都会被流转给根路由，然后根据每个路由的配置决定是否递归地继续往下传播。每条报警信息最终都会匹配到一棵路由子树，如下图所示：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route-tree-matched.jpg&quot; alt=&quot;route-tree-matched&quot;&gt;&lt;/p&gt;
-&lt;p&gt;这些命中的路由就可能发出报警信息。那么报警信息在单个路由内部是如何处理的？&lt;/p&gt;
+&lt;p&gt;这棵子树上的路由就是可能发出报警信息的路由。那么报警信息在单个路由内部是如何处理的？&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/blog/2020/06/13/Understanding-Prometheus-Alertmanager/route.jpg&quot; alt=&quot;routed&quot;&gt;&lt;/p&gt;
-&lt;p&gt;每个路由 (Route) 内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到一个组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的人。&lt;/p&gt;
+&lt;p&gt;每个路由内部会有一组匹配器 (Matcher) 负责匹配报警信息，匹配成功则表示路由命中。进入路由内部后，会根据报警信息的一些特征将其分配到某个特定的组 (Group)，每个组内拥有独立的通知 (Notify) 处理逻辑，如抑制、冷却、去重，最终满足一定条件后，路由会根据接收人 (Receiver) 配置，将报警信息通过通知媒介传递给相应的负责人。&lt;/p&gt;
 &lt;h2 id=&quot;项目架构&quot;&gt;项目架构&lt;/h2&gt;
     
     </summary>
@@ -49,7 +49,7 @@
     <link href="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-06-15T06:24:04.305Z</updated>
+    <updated>2020-06-18T09:52:37.260Z</updated>
     
     <summary type="html">
     
@@ -79,7 +79,7 @@
     <link href="https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-06-15T06:24:04.301Z</updated>
+    <updated>2020-06-18T09:52:37.252Z</updated>
     
     <summary type="html">
     
@@ -111,7 +111,7 @@
     <link href="https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-06-15T06:24:04.309Z</updated>
+    <updated>2020-06-18T09:52:37.260Z</updated>
     
     <summary type="html">
     
@@ -145,7 +145,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
@@ -178,7 +178,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
@@ -214,7 +214,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-06-15T06:24:04.297Z</updated>
+    <updated>2020-06-18T09:52:37.248Z</updated>
     
     <summary type="html">
     
@@ -251,7 +251,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-06-15T06:24:04.301Z</updated>
+    <updated>2020-06-18T09:52:37.256Z</updated>
     
     <summary type="html">
     
@@ -281,7 +281,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-06-15T06:24:04.289Z</updated>
+    <updated>2020-06-18T09:52:37.240Z</updated>
     
     <summary type="html">
     
@@ -337,7 +337,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-06-15T06:24:04.281Z</updated>
+    <updated>2020-06-18T09:52:37.232Z</updated>
     
     <summary type="html">
     
@@ -369,7 +369,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
@@ -407,7 +407,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
@@ -443,7 +443,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-06-15T06:24:04.289Z</updated>
+    <updated>2020-06-18T09:52:37.240Z</updated>
     
     <summary type="html">
     
@@ -481,7 +481,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-06-15T06:24:04.309Z</updated>
+    <updated>2020-06-18T09:52:37.260Z</updated>
     
     <summary type="html">
     
@@ -515,7 +515,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
@@ -552,7 +552,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-06-15T06:24:04.285Z</updated>
+    <updated>2020-06-18T09:52:37.236Z</updated>
     
     <summary type="html">
     
