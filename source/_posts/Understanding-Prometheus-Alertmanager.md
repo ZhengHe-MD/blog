@@ -3,7 +3,6 @@ title: Prometheus Alertmanager Walkthrough
 date: 2020-06-13 22:21:27
 tags:
 categories:
-- system design
 - open source project
 ---
 

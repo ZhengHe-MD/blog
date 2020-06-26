@@ -13,11 +13,12 @@ mathjax:
 
 为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在**同级 Cache 之间 (Cache Coherence) **和**上下级 Cache 之间**。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：**在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量提高、时延减少**。
 
-本文将探讨三个场景：
+本文将探讨四个场景：
 
 1. Cache Policy In Single-core Processor
 2. Cache Coherence in Multi-core Processor
 3. Cache Policy in Cache/DB Architecture
+4. Cache Policy in Distributed DBMS Architecture
 
 # Cache Policy in Single-core Processor
 
@@ -301,6 +302,9 @@ Write Behind 还有一种变体，就是将写入的顺序调换：
 在 Write-Behind 的变体中，解析复制日志的中间件只需要与数据库建立 1 个连接即可，如下图所示：
 
 <img src="/blog/2020/02/19/Cache-Policies/webapp-database-cache-connections-3.jpg" width="600px">
+
+# Cache Policy in Distributed DBMS Architecture
+(TODO)
 
 ## Summary
 
