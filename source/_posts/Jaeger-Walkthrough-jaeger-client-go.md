@@ -20,7 +20,7 @@ jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解
 
 * 如何将数据上报到存储中心
 * 如何对数据抽样，支持不同的抽样策略
-* 需要收集哪些性能指标
+* 需要收集哪些统计指标
 
 接下来，我们就着源码对这些问题一一分析。
 
@@ -175,7 +175,7 @@ remote reporter 的结构如下：
 ```go
 // reporter.go
 type remoteReporter struct {
-  queueLength int64 // used to update metrics.Gauge
+	queueLength int64 // used to update metrics.Gauge
 	closed      int64 // 0 - not closed, 1 - closed
 	reporterOptions
 	sender        Transport
@@ -191,7 +191,7 @@ type reporterOptions struct {
 }
 ```
 
-remote reporter 在内部会维护一个队列，即一个 repoterQueueItem 类型的 channel，当应用调用 `Report` 方法时，就将 span 塞进队列，同时增加其引用计数保证其不被回收。另一侧，remote reporter 在初始化时会启动一个异步线程将队列中的 span 取出，并追加 (append) 到 sender 中：
+remote reporter 在内部会维护一个队列，即一个 repoterQueueItem 类型的 channel，当应用调用 `Report` 方法时，就将 span 塞进队列，同时增加其引用计数保证其不被回收。另一侧，remote reporter 在初始化时会启动一个异步线程将队列中的 span 取出，并追加 (append) 到 sender 中。sender 实现了 Transport 接口：
 
 ```go
 // transport.go
@@ -202,13 +202,11 @@ type Transport interface {
 }
 ```
 
-其中 `Append` 会将 span 序列化并放入内部缓冲区，如果内部缓冲区长度超过限制，则 transport 会自动 `Flush`，并返回写出的 span 数量；如果未超出，则保留在缓冲区中。remote reporter 也会每隔一段时间强制调用 sender 的 `Flush` 方法，通过时间和数量两个维度来保证数据的准实时上报。
+其中 `Append` 会将 span 序列化并放入 sender 内部缓冲区，如果内部缓冲区长度超过限制，则 sender 会自动 `Flush`，并返回写出的 span 数量；如果未超出，则保留在缓冲区中。remote reporter 也会每隔一段时间强制调用 sender 的 `Flush` 方法，通过时间和数量两个维度来保证数据的准实时上报。
 
 ## 数据抽样
 
-大型 web 服务的请求量通常很大，而实际开发者关心的调用链通常只是其中异常的少数，因此这里存在很低的信噪比：想保留越多的异常请求现场，就要保存越多的无用数据。**提高低信噪比**是调用链追踪解决方案的核心设计目标。
-
-本节从抽样器接口和类型 (策略) 两个方面讨论数据抽样模块。
+大型 web 服务的请求量通常很大，而实际开发者关心的调用链通常只是其中异常的少数，因此这里存在很低的信噪比：想保留越多的异常请求现场，就要保存越多的无用数据。**提高信噪比**是调用链追踪解决方案的核心设计目标。本节从抽样器接口和类型 (策略) 两个方面讨论数据抽样模块。
 
 ### Sampler Interface
 
@@ -337,7 +335,7 @@ type PerOperationSampler struct {
 
 顾名思义，RemotelyControlledSampler 其实并不与某种抽样策略对应，它能通过外部配置中心获取配置，生成配置指定类型 Sampler，从而允许服务治理框架通过中心化配置调整各微服务调用链信息的抽样策略。
 
-## 性能指标
+## 统计指标
 
 在 [metrics.go](https://github.com/jaegertracing/jaeger-client-go/blob/master/metrics.go) 中我们可以看到 jaeger-client-go 埋下的所有统计数据点，这里主要介绍与 trace、span、reporter 和 sampler 有关的统计数据点：
 
