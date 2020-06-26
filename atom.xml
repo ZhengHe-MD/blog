@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/"/>
-  <updated>2020-06-21T14:25:37.394Z</updated>
+  <updated>2020-06-26T05:58:10.768Z</updated>
   <id>https://zhenghe-md.github.io/</id>
   
   <author>
@@ -17,11 +17,46 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Jaeger Walkthrough: jaeger-client-go</title>
+    <link href="https://zhenghe-md.github.io/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
+    <id>https://zhenghe-md.github.io/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
+    <published>2020-06-21T22:28:35.000Z</published>
+    <updated>2020-06-26T05:58:10.768Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，&lt;a href=&quot;https://github.com/jaegertracing/jaeger-client-go/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;jaeger-client-go&lt;/a&gt;。&lt;/p&gt;
+&lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
+&lt;p&gt;jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如何在进程内部管理调用链追踪信息 (tracer, span)&lt;/li&gt;
+&lt;li&gt;如何在进程间传递调用链追踪信息 (span context, propagation)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;但在调用链追踪实践中，jaeger-client-go 仅仅解决上述两个问题还不够，它还需要考虑的问题包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如何将数据上报到存储中心&lt;/li&gt;
+&lt;li&gt;如何对数据抽样，支持不同的抽样策略&lt;/li&gt;
+&lt;li&gt;需要收集哪些性能指标&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接下来，我们就着源码对这些问题一一分析。&lt;/p&gt;
+&lt;h2 id=&quot;进程内调用链追踪信息管理&quot;&gt;进程内调用链追踪信息管理&lt;/h2&gt;
+&lt;h3 id=&quot;tracer&quot;&gt;Tracer&lt;/h3&gt;
+&lt;p&gt;Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="open source project" scheme="https://zhenghe-md.github.io/categories/open-source-project/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Prometheus Alertmanager Walkthrough</title>
     <link href="https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-06-21T14:25:37.394Z</updated>
+    <updated>2020-06-26T05:58:10.792Z</updated>
     
     <summary type="html">
     
@@ -39,9 +74,7 @@
     </summary>
     
     
-      <category term="system design" scheme="https://zhenghe-md.github.io/categories/system-design/"/>
-    
-      <category term="open source project" scheme="https://zhenghe-md.github.io/categories/system-design/open-source-project/"/>
+      <category term="open source project" scheme="https://zhenghe-md.github.io/categories/open-source-project/"/>
     
     
   </entry>
@@ -51,7 +84,7 @@
     <link href="https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-06-21T14:25:37.394Z</updated>
+    <updated>2020-06-26T05:58:10.788Z</updated>
     
     <summary type="html">
     
@@ -81,7 +114,7 @@
     <link href="https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-06-21T14:25:37.386Z</updated>
+    <updated>2020-06-26T05:58:10.784Z</updated>
     
     <summary type="html">
     
@@ -113,7 +146,7 @@
     <link href="https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-06-21T14:25:37.394Z</updated>
+    <updated>2020-06-26T05:58:10.792Z</updated>
     
     <summary type="html">
     
@@ -147,7 +180,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
@@ -180,7 +213,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
@@ -216,7 +249,7 @@
     <link href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-06-21T14:25:37.382Z</updated>
+    <updated>2020-06-26T05:58:10.780Z</updated>
     
     <summary type="html">
     
@@ -253,7 +286,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-06-21T14:25:37.390Z</updated>
+    <updated>2020-06-26T05:58:10.784Z</updated>
     
     <summary type="html">
     
@@ -283,7 +316,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-06-21T14:25:37.374Z</updated>
+    <updated>2020-06-26T05:58:10.772Z</updated>
     
     <summary type="html">
     
@@ -339,18 +372,19 @@
     <link href="https://zhenghe-md.github.io/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-06-21T14:25:37.366Z</updated>
+    <updated>2020-06-26T05:58:10.764Z</updated>
     
     <summary type="html">
     
       &lt;p&gt;在计算机系统设计实践中，我们常常会遇到下图所示架构：&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/blog/2020/02/19/Cache-Policies/coherence.jpg&quot; width=&quot;400px&quot;&gt;&lt;/p&gt;
 &lt;p&gt;为了解决单个存储器读吞吐无法满足要求的问题，常常需要在存储器上面增加一个或多个缓存。但由于相同的数据被复制到一个或多个地方，就容易引发数据一致性问题。不一致的数据可能出现在&lt;strong&gt;同级 Cache 之间 (Cache Coherence) &lt;/strong&gt;和&lt;strong&gt;上下级 Cache 之间&lt;/strong&gt;。解决这些数据一致性问题的方案可以统称为 Cache Policies。从本质上看，所有 Cache Policies 的设计目的都可以概括为：&lt;strong&gt;在增加一级缓存之后，系统看起来和没加缓存的行为一致，但得益于局部性原理，系统的读吞吐量提高、时延减少&lt;/strong&gt;。&lt;/p&gt;
-&lt;p&gt;本文将探讨三个场景：&lt;/p&gt;
+&lt;p&gt;本文将探讨四个场景：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;Cache Policy In Single-core Processor&lt;/li&gt;
 &lt;li&gt;Cache Coherence in Multi-core Processor&lt;/li&gt;
 &lt;li&gt;Cache Policy in Cache/DB Architecture&lt;/li&gt;
+&lt;li&gt;Cache Policy in Distributed DBMS Architecture&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h1 id=&quot;cache-policy-in-single-core-processor&quot;&gt;Cache Policy in Single-core Processor&lt;/h1&gt;
 &lt;p&gt;在单核 CPU 中，只有一套 Cache，因此只要确保写入 Cache 中的数据也写入到 Memory 即可。&lt;/p&gt;
@@ -371,7 +405,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
@@ -409,7 +443,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
@@ -445,7 +479,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-06-21T14:25:37.374Z</updated>
+    <updated>2020-06-26T05:58:10.772Z</updated>
     
     <summary type="html">
     
@@ -483,7 +517,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-06-21T14:25:37.394Z</updated>
+    <updated>2020-06-26T05:58:10.792Z</updated>
     
     <summary type="html">
     
@@ -517,7 +551,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
@@ -554,7 +588,7 @@
     <link href="https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-06-21T14:25:37.370Z</updated>
+    <updated>2020-06-26T05:58:10.768Z</updated>
     
     <summary type="html">
     
