@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2020-07-15T01:50:05.376Z</updated>
+  <updated>2020-07-15T03:03:48.539Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2020-07-15T01:50:05.376Z</updated>
+    <updated>2020-07-15T03:03:48.539Z</updated>
     
     <summary type="html">
     
@@ -33,7 +33,7 @@
 &lt;h3 id=&quot;数据库中的日志&quot;&gt;数据库中的日志&lt;/h3&gt;
 &lt;p&gt;日志在数据库中常常被用来实现故障恢复、数据复制、最终一致性等。一个事务提交成功与否在日志提交成功时就可以确定，只要 WAL 落盘，便可告诉客户端提交成功，即便数据库发生故障，也能从 WAL 日志中恢复数据；日志 (如 BinLog) 的 pub/sub 机制可以用来在主节点与复制节点之间同步数据，通过同步的进度可以知道不同复制节点的同步进度，此外日志的逻辑顺序保证了主节点与复制节点之间数据的一致性。&lt;/p&gt;
 &lt;h3 id=&quot;分布式系统中的日志&quot;&gt;分布式系统中的日志&lt;/h3&gt;
-&lt;p&gt;实际上，数据库利用日志来解决的问题，也是所有分布式系统需要解决的根本问题，如刚才提到的故障恢复、数据同步、数据一致性等等。我们可以称之为以日志为中心 (log-centric) 的解决方案，实际上可以观察到：&lt;/p&gt;
+&lt;p&gt;数据库利用日志来解决的问题，也是所有分布式系统需要解决的根本问题，如刚才提到的故障恢复、数据同步、数据一致性等等，可以称之为以日志为中心 (log-centric) 的解决方案。更严谨地说：&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;如果两个相同的 (identical)、确定 (deterministic) 的进程以相同的状态启动，按相同的顺序获取相同的输入，它们将最终达到相同的状态。&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -51,7 +51,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2020-07-15T01:50:05.380Z</updated>
+    <updated>2020-07-15T03:03:48.543Z</updated>
     
     <summary type="html">
     
@@ -86,7 +86,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-07-15T01:50:05.404Z</updated>
+    <updated>2020-07-15T03:03:48.567Z</updated>
     
     <summary type="html">
     
@@ -114,7 +114,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-07-15T01:50:05.404Z</updated>
+    <updated>2020-07-15T03:03:48.567Z</updated>
     
     <summary type="html">
     
@@ -144,7 +144,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-07-15T01:50:05.400Z</updated>
+    <updated>2020-07-15T03:03:48.559Z</updated>
     
     <summary type="html">
     
@@ -176,7 +176,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-07-15T01:50:05.404Z</updated>
+    <updated>2020-07-15T03:03:48.567Z</updated>
     
     <summary type="html">
     
@@ -210,7 +210,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-07-15T01:50:05.372Z</updated>
+    <updated>2020-07-15T03:03:48.539Z</updated>
     
     <summary type="html">
     
@@ -243,7 +243,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-07-15T01:50:05.384Z</updated>
+    <updated>2020-07-15T03:03:48.547Z</updated>
     
     <summary type="html">
     
@@ -279,7 +279,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-07-15T01:50:05.392Z</updated>
+    <updated>2020-07-15T03:03:48.555Z</updated>
     
     <summary type="html">
     
@@ -316,7 +316,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-07-15T01:50:05.400Z</updated>
+    <updated>2020-07-15T03:03:48.563Z</updated>
     
     <summary type="html">
     
@@ -346,7 +346,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-07-15T01:50:05.384Z</updated>
+    <updated>2020-07-15T03:03:48.547Z</updated>
     
     <summary type="html">
     
@@ -402,7 +402,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-07-15T01:50:05.368Z</updated>
+    <updated>2020-07-15T03:03:48.531Z</updated>
     
     <summary type="html">
     
@@ -435,7 +435,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-07-15T01:50:05.372Z</updated>
+    <updated>2020-07-15T03:03:48.535Z</updated>
     
     <summary type="html">
     
@@ -473,7 +473,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-07-15T01:50:05.376Z</updated>
+    <updated>2020-07-15T03:03:48.539Z</updated>
     
     <summary type="html">
     
@@ -509,7 +509,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-07-15T01:50:05.384Z</updated>
+    <updated>2020-07-15T03:03:48.547Z</updated>
     
     <summary type="html">
     
@@ -547,7 +547,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-07-15T01:50:05.404Z</updated>
+    <updated>2020-07-15T03:03:48.567Z</updated>
     
     <summary type="html">
     
@@ -581,7 +581,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-07-15T01:50:05.372Z</updated>
+    <updated>2020-07-15T03:03:48.535Z</updated>
     
     <summary type="html">
     
@@ -618,7 +618,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-07-15T01:50:05.376Z</updated>
+    <updated>2020-07-15T03:03:48.539Z</updated>
     
     <summary type="html">
     
