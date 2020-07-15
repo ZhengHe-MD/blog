@@ -23,7 +23,7 @@
   <meta name="description" content="本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 单集群 (Single Front-end Cluster)、多集群 (Multiple Front-end Clusters)、多区域 (Multiple Regions) 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 re">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Scaling Memcache at Facebook (2013)">
-<meta property="og:url" content="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/index.html">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/index.html">
 <meta property="og:site_name" content="ZhengHe">
 <meta property="og:description" content="本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 单集群 (Single Front-end Cluster)、多集群 (Multiple Front-end Clusters)、多区域 (Multiple Regions) 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 re">
 <meta property="og:locale" content="zh_CN">
@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/writes-in-non-master.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/remote-markers.jpg">
 <meta property="article:published_time" content="2020-03-08T16:40:55.000Z">
-<meta property="article:modified_time" content="2020-07-15T00:34:08.432Z">
+<meta property="article:modified_time" content="2020-07-15T01:50:05.392Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="distributed system">
 <meta property="article:tag" content="kv">
@@ -51,7 +51,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg">
 
-<link rel="canonical" href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
 
 
 <script id="page-configurations">
@@ -297,7 +297,7 @@ mjx-container + br {
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.jpeg">
@@ -327,7 +327,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-15 00:34:08" itemprop="dateModified" datetime="2020-07-15T00:34:08+00:00">2020-07-15</time>
+                <time title="修改时间：2020-07-15 01:50:05" itemprop="dateModified" datetime="2020-07-15T01:50:05+00:00">2020-07-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -826,7 +826,7 @@ mjx-container + br {
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "https://zhenghe-md.github.io/2020/03/08/Scaling-Memcache-at-Facebook-2013/";
+    this.page.url = "https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/";
     this.page.identifier = "2020/03/08/Scaling-Memcache-at-Facebook-2013/";
     this.page.title = "Scaling Memcache at Facebook (2013)";
     };
