@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2020-07-21T14:03:49.843Z</updated>
+  <updated>2020-08-01T06:01:02.921Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,44 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)</title>
+    <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
+    <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
+    <published>2020-07-21T23:35:09.000Z</published>
+    <updated>2020-08-01T06:01:02.921Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;引言&quot;&gt;引言&lt;/h2&gt;
+&lt;p&gt;最近因为工作的关系接触 ElasticSearch，发现搜索引擎也是计算机应用的一个有意思的分支。于是通过 Freiburg 的 Information Retrieval 公开课开始系统地了解信息检索这个领域，感觉收获颇丰。周末一时兴起，上 Google Research 找到了 Google 的开山之作，近距离地感受一下 19800+ 引用量、造就如今 Google 万亿市值的这篇文章。&lt;/p&gt;
+&lt;p&gt;本文介绍会尽可能地忠于原文，但不是完全逐字逐句的翻译。&lt;/p&gt;
+&lt;h2 id=&quot;简介&quot;&gt;1. 简介&lt;/h2&gt;
+&lt;p&gt;近年来，网络中的信息量和非专业的用户都在快速增长，为信息检索领域带来了新的挑战。从行为上看，人们更倾向于以门户网站，如 Yahoo，或搜索引擎为起点，利用网页间的链接来浏览所需信息。门户网站的索引来自于人工维护，聚合效果好、主观性高、维护成本高、改进速度慢，且通常不会覆盖小众话题。自动化的搜索引擎则相反，其它都满足，但聚合效果差，依赖于关键词匹配的检索方式返回的匹配项质量过低。一些广告商为了获取更多的流量，通过逆向工程来误导搜索引擎，使其结果靠前，进一步加剧问题的严重性。我们搭建了一个大型搜索引擎来当前系统的这些已知问题，它通过重度利用网页文本中的特殊结构来提供更高质量的检索结果。&lt;strong&gt;我们为这个系统取名为 Google，因为它是 googol (即 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.05ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;4.775ex&quot; height=&quot;2.005ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -864 2110.7 886&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-30&quot; transform=&quot;translate(500, 0)&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; transform=&quot;translate(1000, 393.1) scale(0.707)&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-30&quot; transform=&quot;translate(500, 0)&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-30&quot; transform=&quot;translate(1000, 0)&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; ) 的常用拼写，后者的含义恰好与构建大型搜索引擎的目标体量相契合&lt;/strong&gt;。&lt;/p&gt;
+&lt;h3 id=&quot;网络搜索引擎的扩张1994---2000&quot;&gt;网络搜索引擎的扩张：1994 - 2000&lt;/h3&gt;
+&lt;p&gt;为了跟上网络信息扩张的速度，搜索引擎技术也必须加速规模化。1994 年，World Wide Web Worm (WWWW)，第一代网络搜索引擎 (web search engine) 之一，对 11 万网页或文件建立了索引；到了 1997 年末，行业领先的网络搜索引擎建立索引的数量已达到 200 万 (WebCrawler)，甚至 1 亿 (Search Engine Watch)。可以预见这个数量在 2000 年将超过 10 亿。与此同时，网络上的搜索引擎处理的查询也在飞速增长。在 1994 年初，WWWW 大约每日需要处理 1500 次查询，到了 1997 年末，Altavista 已经声称自己每日处理的请求量达到 2 千万。同样可以预见，这个数量在 2000 年也将达到亿级。Google 的目标就是要提供相应规模、高质量的网络搜索服务。&lt;/p&gt;
+&lt;h3 id=&quot;google-与网络一同扩张&quot;&gt;Google: 与网络一同扩张&lt;/h3&gt;
+&lt;p&gt;即便是搭建一个满足当前规模的网络搜索引擎也需要面对许多挑战，如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;高性能的网页抓取技术保证原始数据全而新&lt;/li&gt;
+&lt;li&gt;充足的存储空间用以存放索引和网页本身 (如果需要的话)&lt;/li&gt;
+&lt;li&gt;索引系统必须能够高效地处理百 G 级别的数据&lt;/li&gt;
+&lt;li&gt;查询必须能被快速处理，QPS 过千&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/categories/papers-we-love/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>I ❤ Logs 小结</title>
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2020-07-21T14:03:49.843Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
@@ -51,7 +84,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2020-07-21T14:03:49.847Z</updated>
+    <updated>2020-08-01T06:01:02.897Z</updated>
     
     <summary type="html">
     
@@ -86,7 +119,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-07-21T14:03:49.871Z</updated>
+    <updated>2020-08-01T06:01:02.917Z</updated>
     
     <summary type="html">
     
@@ -114,7 +147,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-07-21T14:03:49.871Z</updated>
+    <updated>2020-08-01T06:01:02.917Z</updated>
     
     <summary type="html">
     
@@ -144,7 +177,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-07-21T14:03:49.863Z</updated>
+    <updated>2020-08-01T06:01:02.909Z</updated>
     
     <summary type="html">
     
@@ -176,7 +209,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-07-21T14:03:49.871Z</updated>
+    <updated>2020-08-01T06:01:02.917Z</updated>
     
     <summary type="html">
     
@@ -210,7 +243,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-07-21T14:03:49.839Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
@@ -243,7 +276,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-07-21T14:03:49.847Z</updated>
+    <updated>2020-08-01T06:01:02.897Z</updated>
     
     <summary type="html">
     
@@ -279,7 +312,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-07-21T14:03:49.859Z</updated>
+    <updated>2020-08-01T06:01:02.905Z</updated>
     
     <summary type="html">
     
@@ -316,7 +349,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-07-21T14:03:49.867Z</updated>
+    <updated>2020-08-01T06:01:02.913Z</updated>
     
     <summary type="html">
     
@@ -346,7 +379,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-07-21T14:03:49.851Z</updated>
+    <updated>2020-08-01T06:01:02.897Z</updated>
     
     <summary type="html">
     
@@ -402,7 +435,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-07-21T14:03:49.835Z</updated>
+    <updated>2020-08-01T06:01:02.885Z</updated>
     
     <summary type="html">
     
@@ -435,7 +468,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-07-21T14:03:49.839Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
@@ -473,7 +506,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-07-21T14:03:49.843Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
@@ -509,7 +542,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-07-21T14:03:49.851Z</updated>
+    <updated>2020-08-01T06:01:02.897Z</updated>
     
     <summary type="html">
     
@@ -547,7 +580,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-07-21T14:03:49.871Z</updated>
+    <updated>2020-08-01T06:01:02.917Z</updated>
     
     <summary type="html">
     
@@ -581,7 +614,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-07-21T14:03:49.839Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
@@ -618,7 +651,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-07-21T14:03:49.843Z</updated>
+    <updated>2020-08-01T06:01:02.889Z</updated>
     
     <summary type="html">
     
