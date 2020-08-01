@@ -69,9 +69,11 @@ Google 搜索结果的高准确率由两个特性来保证：
 
 >假设网页 $A$ 被 $n$ 个页面引用，分别是 $T_1...T_n$；参数 $d$ 为取值范围在 $[0,1]$ 的衰减因子，通常取值为 0.85；$C(A)$ 为网页 $A$ 外链的页面个数，那么 PageRank 可以由如下公式计算得到：
 >
->$ PR(A) = (1-d) + d(\frac{PR(T_1)}{C(T_1)} + ... + \frac{PR(T_n)}{C(T_n)}) $
+>$ PR(A) = (1-d) + d(\frac{PR(T_1)}{C(T_1)} + ... + \frac{PR(T_n)}{C(T_n)}) $  , (备注：如果这里显示有问题请看下面这张图)
 >
 >实际上，PageRanks 可以被理解成所有网页的概率分布，所有网页的 PageRanks 加总值为 1。
+
+<img src="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/page-rank.jpg" alt="page-rank" width="480px"/>
 
 PageRank，即 $PR(A)$ 可以利用简单的迭代算法计算得到，它是网页链接矩阵的主特征向量 (principal eigenvector)。利用中型机，2600 万页面的 PageRank 可以在几个小时内计算得出。
 
@@ -122,7 +124,7 @@ WWWW 采用这种方案的主要原因在于帮助用户检索非文本信息，
 
 整体架构如下图所示：
 
-![high-level-google-architecture](http://infolab.stanford.edu/~backrub/over.gif)
+<img src="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/high-level-google-architecture.jpg" alt="high-level-google-architecture" width="480px"/>
 
 在 Google 中，URL 服务负责提供 URL 列表给爬虫服务，爬虫 (crawlers) 服务则以这些页面为起点，不断进行爬取操作。被爬取的网页会被传输给存储 (Store) 服务，存储服务负责将网页压缩，然后放入仓库 (Repository) 中。每个新的网页都会被分配唯一标识，即 docID。
 
@@ -150,7 +152,7 @@ BigFiles 是基于多个文件系统提供虚拟文件系统的抽象，每个�
 
 仓库中存储着每个网页的完整 HTML 数据，并使用 zlib 压缩。在压缩技术的选择中，需要考虑压缩速度和压缩率之间的权衡。相对于 zlib 3:1 的压缩率，bzip 的压缩率能达到 4:1，但 zlib 在速度上的优势让我们选择它。在仓库中，所有文档依次存放，每个文档的头部存储着 docID、长度、URL 等元信息，如下图所示：
 
-![repository-data-structure](http://infolab.stanford.edu/~backrub/repos.gif)
+<img src="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/repository-data-structure.jpg" alt="repository-data-structure" width="480px"/>
 
 文档的读取不需要额外获取其它服务的数据，这对数据的一致性和功能开发都提供了便利。我们可以从仓库中的数据和抓取的错误日志出发，重新构建其它任何数据结构。
 
@@ -188,7 +190,7 @@ compact encoding 为每个 hit 分配 2 字节。Google 定义了两种 hits，f
 
 这里值得关注的一个问题是：在 doclist 中不同的文档之间如何排序？一种简单的方案是按照 docID 排序存储，这种方案对于多词查询合并 (merge) doclist 的操作十分友好；另一种选择是按照单词在文档中出现的模式定制化排序。这使得单个词语查询非常容易，也可以让多词查询的结果文档尽量排序靠前，但合并的过程将变得不友好。Google 选择了一个折衷的方案，保留两组倒排索引，一组用于存放 title hits 或者 anchor hits，可以称之为短文本倒排索引，其容器为短反向桶 (short barrels)，另一组用于存放普通 hits，可以称之为全文倒排索引 (full text inverted index)，其容器为全反向桶 (full barrels)。在搜索时，先检查第一组索引，如果结果不足，再到第二组索引中查询。**文章并未提及两组索引内部使用哪种排列方式，个人认为也许可以在短文本索引中按 docID 排序，在全文索引中可定制的利用模式排序，从而得到更快的响应速度**。
 
-![forward and reverse indexes and the lexicon](http://infolab.stanford.edu/~backrub/barrels.gif)
+<img src="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/forward-and-reverse-indexes-and-the-lexicon.jpg" alt="forward-and-reverse-indexes-and-the-lexicon" width="480px"/>
 
 ### 爬取网络数据
 
