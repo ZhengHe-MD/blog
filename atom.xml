@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2020-09-19T07:19:47.812Z</updated>
+  <updated>2020-09-21T13:58:50.574Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,45 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Apache Arrow 小结</title>
+    <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
+    <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
+    <published>2020-09-20T21:14:48.000Z</published>
+    <updated>2020-09-21T13:58:50.574Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：&lt;/p&gt;
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Chunk stores multiple rows of data in Apache Arrow format.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// See https://arrow.apache.org/docs/format/Columnar.html#physical-memory-layout&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Values are appended in compact format and can be directly accessed without decoding.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// When the chunk is done processing, we can reuse the allocated memory by resetting it.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;type&lt;/span&gt; Chunk &lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &amp;#123; &lt;span class=&quot;comment&quot;&gt;/*...*/&lt;/span&gt; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;心里自然而然会产生疑问：为什么要使用这个项目规定的数据存储格式？于是在阅读完 TiDB 相关源码和单测后，顺便搜寻并浏览一些有趣的资料 (见文末参考部分)，现在将这次调研的收获小结在这篇博客中。&lt;/p&gt;
+&lt;h2 id=&quot;项目简介&quot;&gt;项目简介&lt;/h2&gt;
+&lt;p&gt;现存的大数据分析系统基本都基于各自不同的内存数据结构，这就会带来一系列的重复工作：从计算引擎上看，算法必须基于项目特有的数据结构、API 与算法之间出现不必要的耦合；从数据获取上看，数据加载时必须反序列化，而每一种数据源都需要单独实现相应的加载器；从生态系统上看，跨项目、跨语言的合作无形之中被阻隔。能否减少或消除数据在不同系统间序列化、反序列化的成本？能否跨项目复用算法及 IO 工具？能否推动更广义的合作，让数据分析系统的开发者联合起来？在这样的使命驱动下，Arrow 就诞生了。&lt;/p&gt;
+&lt;p&gt;与其它项目不同，Arrow 项目的草台班子由 5 个 Apache Members、6 个 PMC Chairs 和一些其它项目的 PMC 及 committer 构成，他们直接找到 ASF 董事会，征得同意后直接以顶级 Apache 项目身份启动。想了解项目的详细历史可以阅读项目 Chair，Jacques Nadeau 写的这篇&lt;a href=&quot;https://www.dremio.com/origin-history-of-apache-arrow/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;博客&lt;/a&gt;。另外，这张 &lt;a href=&quot;https://docs.google.com/spreadsheets/d/1q6UqluW6SLuMKRwW2TBGBzHfYLlXYm37eKJlIxWQGQM/edit#gid=0&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;google sheet&lt;/a&gt; 记录着项目的取名过程，取名为 Arrow 的原因是：&quot;math symbol for vector. and arrows are fast. also alphabetically will show up on top.&quot; 可以说考虑得相当全面 😂。&lt;/p&gt;
+&lt;p&gt;Arrow 的愿景是提供内存数据分析 (in-memory analytics) 的开发平台，让数据在异构大数据系统间移动、处理地更快：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/blog/2020/09/20/apache-arrow-summary/defragmenting-data.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;项目主要由 3 部分构成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用于分析查询引擎 (analytical query engines)、数据帧 (data frames) 设计的内存列存数据格式&lt;/li&gt;
+&lt;li&gt;用于 IPC/RPC 的二进制协议&lt;/li&gt;
+&lt;li&gt;用于构建数据处理应用的开发平台&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+      <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
+    
+    
+      <category term="database" scheme="https://zhenghe-md.github.io/blog/tags/database/"/>
+    
+  </entry>
+  
+  <entry>
     <title>The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)</title>
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2020-09-19T07:19:47.812Z</updated>
+    <updated>2020-09-21T13:58:50.574Z</updated>
     
     <summary type="html">
     
@@ -54,7 +88,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2020-09-19T07:19:47.780Z</updated>
+    <updated>2020-09-21T13:58:50.542Z</updated>
     
     <summary type="html">
     
@@ -84,7 +118,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2020-09-19T07:19:47.784Z</updated>
+    <updated>2020-09-21T13:58:50.546Z</updated>
     
     <summary type="html">
     
@@ -119,7 +153,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-09-19T07:19:47.808Z</updated>
+    <updated>2020-09-21T13:58:50.570Z</updated>
     
     <summary type="html">
     
@@ -147,7 +181,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-09-19T07:19:47.808Z</updated>
+    <updated>2020-09-21T13:58:50.570Z</updated>
     
     <summary type="html">
     
@@ -177,7 +211,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-09-19T07:19:47.800Z</updated>
+    <updated>2020-09-21T13:58:50.566Z</updated>
     
     <summary type="html">
     
@@ -209,7 +243,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-09-19T07:19:47.808Z</updated>
+    <updated>2020-09-21T13:58:50.574Z</updated>
     
     <summary type="html">
     
@@ -243,7 +277,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-09-19T07:19:47.776Z</updated>
+    <updated>2020-09-21T13:58:50.538Z</updated>
     
     <summary type="html">
     
@@ -276,7 +310,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-09-19T07:19:47.784Z</updated>
+    <updated>2020-09-21T13:58:50.550Z</updated>
     
     <summary type="html">
     
@@ -312,7 +346,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-09-19T07:19:47.796Z</updated>
+    <updated>2020-09-21T13:58:50.558Z</updated>
     
     <summary type="html">
     
@@ -349,7 +383,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-09-19T07:19:47.800Z</updated>
+    <updated>2020-09-21T13:58:50.566Z</updated>
     
     <summary type="html">
     
@@ -379,7 +413,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-09-19T07:19:47.788Z</updated>
+    <updated>2020-09-21T13:58:50.550Z</updated>
     
     <summary type="html">
     
@@ -435,7 +469,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-09-19T07:19:47.772Z</updated>
+    <updated>2020-09-21T13:58:50.534Z</updated>
     
     <summary type="html">
     
@@ -468,7 +502,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-09-19T07:19:47.776Z</updated>
+    <updated>2020-09-21T13:58:50.538Z</updated>
     
     <summary type="html">
     
@@ -506,7 +540,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-09-19T07:19:47.776Z</updated>
+    <updated>2020-09-21T13:58:50.542Z</updated>
     
     <summary type="html">
     
@@ -542,7 +576,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-09-19T07:19:47.788Z</updated>
+    <updated>2020-09-21T13:58:50.550Z</updated>
     
     <summary type="html">
     
@@ -580,7 +614,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-09-19T07:19:47.808Z</updated>
+    <updated>2020-09-21T13:58:50.570Z</updated>
     
     <summary type="html">
     
@@ -614,7 +648,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-09-19T07:19:47.776Z</updated>
+    <updated>2020-09-21T13:58:50.538Z</updated>
     
     <summary type="html">
     
@@ -651,7 +685,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
     <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-09-19T07:19:47.776Z</updated>
+    <updated>2020-09-21T13:58:50.542Z</updated>
     
     <summary type="html">
     
