@@ -31,11 +31,11 @@ Arrow 的愿景是提供内存数据分析 (in-memory analytics) 的开发平台
 
 项目主要由 3 部分构成：
 
-* 用于分析查询引擎 (analytical query engines)、数据帧 (data frames) 设计的内存列存数据格式
+* 为分析查询引擎 (analytical query engines)、数据帧 (data frames) 设计的内存列存数据格式
 * 用于 IPC/RPC 的二进制协议
 * 用于构建数据处理应用的开发平台
 
-项目的基石是基于内存的列存数据格式，它的特点包括：
+整个项目的基石是基于内存的列存数据格式，现在将它的特点罗列如下：
 
 * 标准化 (standardized)，与语言无关 (language-independent)
 * 同时支持平铺 (flat) 和层级 (hierarchical) 数据结构
@@ -129,7 +129,7 @@ Students:   Andrew, Beatrice
 Year:       2020
 ```
 
-我们可以将改嵌套数据结构分成 3 列：Name、Instructor、Students 以及 Year，其中 Name 和 Instructor 是变长字符串列，Year 是定长整数列，Students 是字符串数组列 (二维数组)，它们的存储结构分别如下所示：
+我们可以将改嵌套数据结构分成 4 列：Name、Instructor、Students 以及 Year，其中 Name 和 Instructor 是变长字符串列，Year 是定长整数列，Students 是字符串数组列 (二维数组)，它们的存储结构分别如下所示：
 
 ```text
 Name Column:
@@ -201,7 +201,7 @@ SELECT a FROM t WHERE t.a = 477638700;
 
 <img src="/blog/2020/09/20/apache-arrow-summary/experiment-1.png" />
 
-列存版本与行存版本的性能相差无几，原因在于实验执行时关闭了所有 CPU 优化 (vectorization/SIMD processing)，使得该查询的瓶颈出现在 CPU 处理上。我们来一起分析一下其中的原因：根据经验，从内存扫描数据到 CPU 中的吞吐量能达到 30GB/s，现代 CPU 的处理频率能达到 3GHz，即每秒 30 亿 CPU指令，因此即便处理器可以在一个 CPU 周期执行 32 位整数比较，它的处理速度最多为 12 GB/s，远远小于内存输送数据的速度。因此不论是行存还是列存，是输送 0.25GB 还是 1.5GB 数据到 CPU 中，都不会对结果有大的影响。
+列存版本与行存版本的性能相差无几，原因在于实验执行时关闭了所有 CPU 优化 (vectorization/SIMD processing)，使得该查询的瓶颈出现在 CPU 处理上。我们来一起分析一下其中的原因：根据经验，从内存扫描数据到 CPU 中的吞吐能达到 30GB/s，现代 CPU 的处理频率能达到 3GHz，即每秒 30 亿 CPU指令，因此即便处理器可以在一个 CPU 周期执行 32 位整数比较，它的吞吐最多为 12 GB/s，远远小于内存输送数据的吞吐。因此不论是行存还是列存，是输送 0.25GB 还是 1.5GB 数据到 CPU 中，都不会对结果有大的影响。
 
 如果打开 CPU 优化选项，情况就大不相同。对于列存数据，只要这些整数在内存中连续存放，编译器可以将简单的操作向量化，如 32 位整数的比较。通常，向量化后处理器在单条指令中能够同时将 4 个 32 位整数与指定值比较。优化后再执行相同的查询，实验的结果如下图所示：
 
