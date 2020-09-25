@@ -170,9 +170,18 @@ nested student list nullBitmap:
 | Byte 0   | Bytes 1-63 |
 |----------|------------|
 | 00000011 | 0 (padding)|
+
+Year Column
+data:       2019|2019
+length:     2
+nullCount:  0
+nullBitmap:
+| Byte 0   | Bytes 1-63 |
+|----------|------------|
+| 00000011 | 0 (padding)|
 ```
 
-这里的 Students 列本身就是嵌套数据结构，而外层的 Class 列包含了 Students 列，可以看出这种巧思能支持无限嵌套，是很值得称赞的设计。
+这里的 Students 列本身就是嵌套数据结构，而外层的 Class 表包含了 Students 列，可以看出这种巧思能支持无限嵌套，是很值得称赞的设计。
 
 ### Buffer alignment and padding
 
