@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2020-09-30T08:02:49.652Z</updated>
+  <updated>2020-10-05T08:23:24.269Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,90 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Go Error Handling 方案调研</title>
+    <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
+    <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
+    <published>2020-10-05T16:20:00.000Z</published>
+    <updated>2020-10-05T08:23:24.269Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;go-error-handling-方案调研&quot;&gt;Go Error Handling 方案调研&lt;/h1&gt;
+&lt;p&gt;自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。&lt;/p&gt;
+&lt;h2 id=&quot;术语说明&quot;&gt;0. 术语说明&lt;/h2&gt;
+&lt;p&gt;为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&quot;header&quot;&gt;
+&lt;th&gt;英文&lt;/th&gt;
+&lt;th&gt;中文&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;error&lt;/td&gt;
+&lt;td&gt;错误&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;exception&lt;/td&gt;
+&lt;td&gt;异常&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;error-code-based&lt;/td&gt;
+&lt;td&gt;基于错误码&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;exception-based&lt;/td&gt;
+&lt;td&gt;基于异常&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;package&lt;/td&gt;
+&lt;td&gt;包 (Go 中 module 由多个 package 构成)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;error wrapping/unwrapping&lt;/td&gt;
+&lt;td&gt;包装错误/解包装&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;error inspection&lt;/td&gt;
+&lt;td&gt;错误检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;error formatting&lt;/td&gt;
+&lt;td&gt;错误格式化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;odd&quot;&gt;
+&lt;td&gt;error chain&lt;/td&gt;
+&lt;td&gt;错误链表，即通过包装将错误组织成链表结构&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&quot;even&quot;&gt;
+&lt;td&gt;error class&lt;/td&gt;
+&lt;td&gt;错误类别、类型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;下文中，errors package 指代我们定制化的 error handling 方案。&lt;/p&gt;
+&lt;h2 id=&quot;文献综述&quot;&gt;1. 文献综述&lt;/h2&gt;
+&lt;p&gt;不同程序语言的 error handling 方案大致可以分为两种：error-code-based 和 exception-based。Raymond 在博客 [2] [3] 中指出 exception-based 错误处理更不利于写出优质的代码，也更难辨别优质和劣质的代码；Go 在设计时选择了 error-code-based error handling 方案，鼓励开发者显式地在 error 出现的地方直接处理 [4]；并在官博 [5] 中提出了 &lt;strong&gt;errors are values&lt;/strong&gt; 的理念，只要实现 &lt;code&gt;Error&lt;/code&gt; 接口的结构体就可以作为 error，不同的项目就能够按需定制 error handling 实现方案，并提出在一些特殊场景下可以利用非通用的代码重构技巧避免冗长、啰嗦的表达，如errWriter；许多来自 Java、Python 等语言的工程师习惯了 exception-based 的方案，遇到 Go 时感到十分不习惯 [6]，但如果我们总是希望在一门新语言中尝试套用自己熟悉语言的语法，就无法充分理解其它语言在这方面的设计理念。Go 核心工程师 Rob Pike 在 [7] 中描述了他如何在 &lt;a href=&quot;https://upspin.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Upspin&lt;/a&gt; 项目中定制 error 信息和处理方案，使得项目对程序、用户及开发者更加友好；许多 error handling 项目都关注到了多层嵌套调用场景下的上下文注入问题，即所谓的 error wrapping，其中 Dave Cheney 的项目 pkg/errors [8] 被广泛使用，Go 在 1.13 后也提供类似的原生解决方案 [9]；受 [7] [8] 的启发，Ben Johnson，boltDB 的作者，结合自己多年的编码经验，在 [10] 中提出 &lt;strong&gt;Failure is your Domain&lt;/strong&gt; 的观点，认为每个项目应当构建特有的 error handling package，并提出逻辑调用栈 (logical stack) 的概念，在 GopherCon 2019，还有工程师在推广类似的方案 [11]。&lt;/p&gt;
+&lt;p&gt;error handling 可以细分为 checking、inspection 和 formatting 三部分，分别指判断 error 发生与否、检查 error 类型、打印 error 上下文。在发现 Go 社区的开发者们因为语言本身对 error handling 的支持不足，频繁创造各种各样的轮子之后，Russ Cox 在 2018 年末发布了两个新提议 [12] [13]，前者尝试解决 checking 代码冗长的问题；后者尝试解决 inspection 的信息丢失以及 formatting 的上下文信息不足问题。目前仅 inspection 的方案被整合到了 1.13 中，直到最近的 1.15 版本没有新的解决方案出现。&lt;/p&gt;
+&lt;h2 id=&quot;项目综述&quot;&gt;2. 项目综述&lt;/h2&gt;
+    
+    </summary>
+    
+    
+      <category term="engineering" scheme="https://zhenghe-md.github.io/blog/categories/engineering/"/>
+    
+    
+      <category term="Go" scheme="https://zhenghe-md.github.io/blog/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Apache Arrow 小结</title>
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2020-09-30T08:02:49.652Z</updated>
+    <updated>2020-10-05T08:23:24.301Z</updated>
     
     <summary type="html">
     
@@ -55,7 +134,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2020-09-30T08:02:49.652Z</updated>
+    <updated>2020-10-05T08:23:24.301Z</updated>
     
     <summary type="html">
     
@@ -88,7 +167,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
+    <updated>2020-10-05T08:23:24.269Z</updated>
     
     <summary type="html">
     
@@ -118,7 +197,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2020-09-30T08:02:49.628Z</updated>
+    <updated>2020-10-05T08:23:24.277Z</updated>
     
     <summary type="html">
     
@@ -153,7 +232,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2020-09-30T08:02:49.648Z</updated>
+    <updated>2020-10-05T08:23:24.297Z</updated>
     
     <summary type="html">
     
@@ -181,7 +260,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2020-09-30T08:02:49.648Z</updated>
+    <updated>2020-10-05T08:23:24.297Z</updated>
     
     <summary type="html">
     
@@ -211,7 +290,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2020-09-30T08:02:49.644Z</updated>
+    <updated>2020-10-05T08:23:24.293Z</updated>
     
     <summary type="html">
     
@@ -243,7 +322,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2020-09-30T08:02:49.652Z</updated>
+    <updated>2020-10-05T08:23:24.301Z</updated>
     
     <summary type="html">
     
@@ -277,7 +356,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
+    <updated>2020-10-05T08:23:24.269Z</updated>
     
     <summary type="html">
     
@@ -310,7 +389,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2020-09-30T08:02:49.628Z</updated>
+    <updated>2020-10-05T08:23:24.277Z</updated>
     
     <summary type="html">
     
@@ -346,7 +425,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2020-09-30T08:02:49.636Z</updated>
+    <updated>2020-10-05T08:23:24.289Z</updated>
     
     <summary type="html">
     
@@ -383,7 +462,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2020-09-30T08:02:49.644Z</updated>
+    <updated>2020-10-05T08:23:24.293Z</updated>
     
     <summary type="html">
     
@@ -413,7 +492,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2020-09-30T08:02:49.628Z</updated>
+    <updated>2020-10-05T08:23:24.281Z</updated>
     
     <summary type="html">
     
@@ -469,7 +548,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2020-09-30T08:02:49.616Z</updated>
+    <updated>2020-10-05T08:23:24.265Z</updated>
     
     <summary type="html">
     
@@ -502,7 +581,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
+    <updated>2020-10-05T08:23:24.269Z</updated>
     
     <summary type="html">
     
@@ -540,7 +619,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/</id>
     <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
+    <updated>2020-10-05T08:23:24.269Z</updated>
     
     <summary type="html">
     
@@ -576,7 +655,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/LFU-Implementation-With-O-1-Complexity-2010/</id>
     <published>2020-02-17T18:27:16.000Z</published>
-    <updated>2020-09-30T08:02:49.628Z</updated>
+    <updated>2020-10-05T08:23:24.281Z</updated>
     
     <summary type="html">
     
@@ -614,7 +693,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/</id>
     <published>2020-02-17T18:25:14.000Z</published>
-    <updated>2020-09-30T08:02:49.648Z</updated>
+    <updated>2020-10-05T08:23:24.297Z</updated>
     
     <summary type="html">
     
@@ -648,7 +727,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/</id>
     <published>2020-02-17T18:16:20.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
+    <updated>2020-10-05T08:23:24.269Z</updated>
     
     <summary type="html">
     
@@ -677,42 +756,6 @@
     
     
       <category term="tracing" scheme="https://zhenghe-md.github.io/blog/tags/tracing/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/</id>
-    <published>2020-02-16T22:46:29.000Z</published>
-    <updated>2020-09-30T08:02:49.620Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;abstract&quot;&gt;Abstract&lt;/h1&gt;
-&lt;p&gt;在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是 Facebook 内部孵化的内存时序数据库，Gorilla。Facebook 团队发现：&lt;/p&gt;
-&lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;监控系统的用户主要关注的是数据的聚合分析，而不是单个数据点&lt;/li&gt;
-&lt;li&gt;对于线上问题的根源分析来说，最近的数据比过去的数据更有价值&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Gorilla 以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：&lt;/p&gt;
-&lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;delta-of-delta timestamps&lt;/li&gt;
-&lt;li&gt;XOR&#39;s floating point values&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。&lt;/p&gt;
-&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
-&lt;p&gt;以下是 FB 内部对时序数据库的要求：&lt;/p&gt;
-&lt;h2 id=&quot;write-dominate&quot;&gt;Write Dominate&lt;/h2&gt;
-&lt;p&gt;对时序数据库的首要限制就是必须一直能够写入数据，即写数据的高可用。因为 FB 内部的服务集群每秒将产生 1 千万个采样数据点。相较之下，读数据比写数据要求通常要低好几个数量级，因为数据的消费者是一些运维、开发使用的控制面板以及自动化报警系统，它们的请求频率低且通常只关注部分时序数据。由于用户关注的往往是整组时序数据的聚合结果，而不是单个数据点，因此传统数据库中的 ACID 保证也并不是时序数据库的核心要求，即便在极端情况下，丢弃少量数据也不会影响核心用途。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/categories/papers-we-love/"/>
-    
-    
-      <category term="tsdb" scheme="https://zhenghe-md.github.io/blog/tags/tsdb/"/>
     
   </entry>
   

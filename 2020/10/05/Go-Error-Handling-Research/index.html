@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Go Error Handling 方案调研 自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。 0. 术语说明 为了避免翻译造成的歧义，文中涉及的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Error Handling 方案调研">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="Go Error Handling 方案调研 自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。 0. 术语说明 为了避免翻译造成的歧义，文中涉及的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-05T16:20:00.000Z">
+<meta property="article:modified_time" content="2020-10-05T08:23:24.269Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Go Error Handling 方案调研 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-172943223-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go Error Handling 方案调研
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-05 16:20:00 / 修改时间：08:23:24" itemprop="dateCreated datePublished" datetime="2020-10-05T16:20:00+00:00">2020-10-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/blog/categories/engineering/" itemprop="url" rel="index">
+                    <span itemprop="name">engineering</span>
+                  </a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/10/05/Go-Error-Handling-Research/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/05/Go-Error-Handling-Research/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="go-error-handling-方案调研">Go Error Handling 方案调研</h1>
+<p>自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。</p>
+<h2 id="术语说明">0. 术语说明</h2>
+<p>为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：</p>
+<table>
+<thead>
+<tr class="header">
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>error</td>
+<td>错误</td>
+</tr>
+<tr class="even">
+<td>exception</td>
+<td>异常</td>
+</tr>
+<tr class="odd">
+<td>error-code-based</td>
+<td>基于错误码</td>
+</tr>
+<tr class="even">
+<td>exception-based</td>
+<td>基于异常</td>
+</tr>
+<tr class="odd">
+<td>package</td>
+<td>包 (Go 中 module 由多个 package 构成)</td>
+</tr>
+<tr class="even">
+<td>error wrapping/unwrapping</td>
+<td>包装错误/解包装</td>
+</tr>
+<tr class="odd">
+<td>error inspection</td>
+<td>错误检查</td>
+</tr>
+<tr class="even">
+<td>error formatting</td>
+<td>错误格式化</td>
+</tr>
+<tr class="odd">
+<td>error chain</td>
+<td>错误链表，即通过包装将错误组织成链表结构</td>
+</tr>
+<tr class="even">
+<td>error class</td>
+<td>错误类别、类型</td>
+</tr>
+</tbody>
+</table>
+<p>下文中，errors package 指代我们定制化的 error handling 方案。</p>
+<h2 id="文献综述">1. 文献综述</h2>
+<p>不同程序语言的 error handling 方案大致可以分为两种：error-code-based 和 exception-based。Raymond 在博客 [2] [3] 中指出 exception-based 错误处理更不利于写出优质的代码，也更难辨别优质和劣质的代码；Go 在设计时选择了 error-code-based error handling 方案，鼓励开发者显式地在 error 出现的地方直接处理 [4]；并在官博 [5] 中提出了 <strong>errors are values</strong> 的理念，只要实现 <code>Error</code> 接口的结构体就可以作为 error，不同的项目就能够按需定制 error handling 实现方案，并提出在一些特殊场景下可以利用非通用的代码重构技巧避免冗长、啰嗦的表达，如errWriter；许多来自 Java、Python 等语言的工程师习惯了 exception-based 的方案，遇到 Go 时感到十分不习惯 [6]，但如果我们总是希望在一门新语言中尝试套用自己熟悉语言的语法，就无法充分理解其它语言在这方面的设计理念。Go 核心工程师 Rob Pike 在 [7] 中描述了他如何在 <a href="https://upspin.io/" target="_blank" rel="noopener">Upspin</a> 项目中定制 error 信息和处理方案，使得项目对程序、用户及开发者更加友好；许多 error handling 项目都关注到了多层嵌套调用场景下的上下文注入问题，即所谓的 error wrapping，其中 Dave Cheney 的项目 pkg/errors [8] 被广泛使用，Go 在 1.13 后也提供类似的原生解决方案 [9]；受 [7] [8] 的启发，Ben Johnson，boltDB 的作者，结合自己多年的编码经验，在 [10] 中提出 <strong>Failure is your Domain</strong> 的观点，认为每个项目应当构建特有的 error handling package，并提出逻辑调用栈 (logical stack) 的概念，在 GopherCon 2019，还有工程师在推广类似的方案 [11]。</p>
+<p>error handling 可以细分为 checking、inspection 和 formatting 三部分，分别指判断 error 发生与否、检查 error 类型、打印 error 上下文。在发现 Go 社区的开发者们因为语言本身对 error handling 的支持不足，频繁创造各种各样的轮子之后，Russ Cox 在 2018 年末发布了两个新提议 [12] [13]，前者尝试解决 checking 代码冗长的问题；后者尝试解决 inspection 的信息丢失以及 formatting 的上下文信息不足问题。目前仅 inspection 的方案被整合到了 1.13 中，直到最近的 1.15 版本没有新的解决方案出现。</p>
+<h2 id="项目综述">2. 项目综述</h2>
+<p>发布之初，Go (&lt;1.13) 仅提供 <code>Error</code> 接口及 <code>errors.New</code>、<code>fmt.Errorf</code> 两个构建 error 的方法 [4]；Go 1.13 支持利用 <code>%w</code> 格式化符号实现 error wrapping，并提供 <code>Unwrap</code>、<code>errors.Is</code> 以及 <code>errors.As</code> 来解决 error wrapping 过程中上下文缺失的问题 [9]；spacemonkeygo 为了将大型 Python 仓库迁移到 Go 上，开发了 [14] ，模拟 Python 中 error class 的继承，支持自动记录日志、调用栈以及任意键值数据，支持 error inspection；juju errors [15] 因 juju 项目而诞生，在 wrap error 时，你可以选择保留或隐藏 error 产生的原因 (cause)，但它的 <code>Cause</code> 方法仅 unwrap 一层，而 [8] 会递归地遍历 error chain，[16] 中的概念与 [15] 类似，仅在 API 上有所不同；hashicorp 开源的 errwrap [16]，支持将 errors 组织成树状结构，并提供 <code>Walk</code> 方法遍历这棵树；pkg/errors [8] 提供 wrapping 和调用栈捕获的功能，并利用 <code>%+v</code> 格式化 error，展示更多的细节，它认为只有整个 error chain 最末端的 error 最有价值，pingcap/errors [18] 基于 [8] 二次开发，并且在 [19] 中增加了 error 类 (域) 的概念；upspin.io/errors [20] 是定制化 error 的实践范本，同时引入了 <code>errors.Is</code> 和 <code>errors.Match</code> 用于辅助检查 error 类型；[21] 考虑了 error 在进程间传递的场景，让 error handling 具备网络传播兼容能力。</p>
+<h2 id="现状">3. 现状</h2>
+<h3 id="举例">3.1 举例</h3>
+<p>目前，公司内部生产环境使用 Go 1.12，仅有最基本的 error handling 工具，此外服务器研发团队没有统一 error handling 方案。一段 Controller 中典型的代码如下所示：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *GRPCADServiceImpl)</span> <span class="title">DelAD</span><span class="params">(ctx context.Context, req *ad.DelADReq)</span> <span class="params">(res *ad.DelADRes, err error)</span></span> &#123;</span><br><span class="line">  <span class="comment">// (1)</span></span><br><span class="line">  fun := <span class="string">"GRPCADServiceImpl.DelAD --&gt;"</span> </span><br><span class="line">	res = &amp;ad.DelADRes&#123;&#125;</span><br><span class="line">  </span><br><span class="line">  passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// (2)</span></span><br><span class="line">    err = fmt.Errorf(<span class="string">"%s check auth failed err %v"</span>, fun, err)</span><br><span class="line">    <span class="comment">// (5)</span></span><br><span class="line">    xlog.Error(err)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> !passed &#123;</span><br><span class="line">    <span class="comment">// (3)</span></span><br><span class="line">    res.ErrInfo = &amp;grpcutil.ErrInfo&#123;Code: <span class="number">-1</span>, Msg: <span class="string">"not authorized"</span>&#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">	conds := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">"id"</span>: req.Id&#125;</span><br><span class="line"></span><br><span class="line">	adToDelete, err := model.ADDao.GetOneAD(ctx, conds)</span><br><span class="line">  <span class="comment">// (4)</span></span><br><span class="line">  <span class="keyword">if</span> err == scanner.ErrEmptyRow &#123;</span><br><span class="line">    res.ErrInfo = &amp;grpcutil.ErrInfo&#123;Code: <span class="number">-1</span>, Msg: <span class="string">"ad not found"</span>&#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	_, err = model.ADDao.DeleteAD(ctx, conds)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	res.Data = &amp;ad.DelADRes_Data&#123;</span><br><span class="line">		Id: req.Id,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先抛开代码逻辑的正确性，只谈 error handling 逻辑，我们可以大致总结出如下几点 (以下序号与上述代码中的序号一一对应)：</p>
+<ol type="1">
+<li>每个函数的起始处设置一个 <code>fun := "FunctionName --&gt;"</code>，便于生成日志和 error 信息</li>
+<li>如果遇到服务端 error，则使用 <code>fmt.Errorf</code> 将被调函数返回的 error 信息包装一层，并记录 ERROR 级别日志，继续向上返回</li>
+<li>如果遇到客户端 error，则设置响应结构体的 ErrInfo 字段，可以设定 error code 和用户可见的 error msg</li>
+<li>如果需要针对不同 error 类型执行不同逻辑分支，则利用等价判断。</li>
+</ol>
+<h3 id="讨论">3.2 讨论</h3>
+<p>以上几点并未形成任何跨项目的规范，仅仅是路径依赖的结果。其中有一些小问题，我在下面列举出来：</p>
+<h5 id="fun-的约定值">fun 的约定值</h5>
+<p><code>fun</code> 的约定值是 <code>${结构体名称}.${函数名称} --&gt;</code>。首先，后面的箭头符号 <code>--&gt;</code> 需要占用 3 个字符，日志量大时会占用可观的存储空间。除此之外，每位工程师都需要手写 <code>--&gt;</code>，即便它可以增加日志可读性，至少我们应当让它自动生成。</p>
+<h5 id="error-wrapping">error wrapping</h5>
+<p>前面已经提到过，使用 <code>fmt.Errorf</code> 包装被调函数返回的 error 会丢失一些上下文信息 (如下层错误类型)，但打印到日志中的 error 信息一般足以追溯线上问题。抛开上下文信息丢失问题，以上面的代码为例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Errorf(<span class="string">"%s check auth failed err %v"</span>, fun, err)</span><br></pre></td></tr></table></figure>
+<p>的打印结果是："GRPCADServiceImpl.DelAD --&gt; check auth failed err auth.CheckAuth --&gt; xxx"，可以发现 "check auth failed" 与 "auth.CheckAuth" 的内容相同，增加了消息的冗余度。如果保证每个被调函数也会在错误消息中增加 <code>fun</code> 的信息，我们可以将其简化为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Errorf(<span class="string">"%s %v"</span>, fun, err)</span><br></pre></td></tr></table></figure>
+<p>其打印结果就是："GRPCADServiceImpl.DelAD --&gt; auth.CheckAuth --&gt; xxx"，这里已经可以看到<strong>逻辑调用栈</strong>的影子。但因为 <code>fun</code> 的存在主要是为了打日志方便，当不需要打日志时就不会声明这个局部变量，因此没有形成统一的规范，打印结果中的逻辑调用栈信息实际上并无法保证完整性。</p>
+<h5 id="客户端-error">客户端 error</h5>
+<p>遇到客户端 error，如鉴权失败、请求参数校验失败等情况，需要在每个可能出问题的地方书写同样的代码逻辑来构建 <code>ErrInfo</code> 字段。目前，error code 的使用刚刚起步，采用不同业务线预留号段的策略；error msg 还处在蛮荒状态，尚未有进入讨论阶段的方案。</p>
+<h5 id="error-inspection">error inspection</h5>
+<p>error inspection 采用的是比较原始的等价判断 (==) 或类型断言来实现，因为没有 wrapping 方案，类型断言也基本不用，或至少没有在实践上达成共识。</p>
+<h2 id="error-handling-的世界观和方法论">4. error handling 的世界观和方法论</h2>
+<p>在上文中，我们阐述了 error handling 现状，并讨论其中的潜在问题。需要肯定的是，即便当前的方案并不完美，它事实上已经满足开发者平时的服务日志观测及问题排查的需求。但我们缺失的是更系统的跨项目 error handling 共识及其方案。经过调研和分析后，我将在本节介绍我认同的 Go error handling 的世界观，并介绍相应的实践方法论。</p>
+<h3 id="世界观">4.1 世界观</h3>
+<p>####4.1.1 "happy path" 与 "sad path" 地位相同</p>
+<p>如果我们将函数的正常逻辑路径称为 "happy path"，异常逻辑路径称为 "sad path"。在使用 exception-based error handling 的编程语言时，工程师认为 "sad path" 是一种需要额外考虑的特殊情况，需要特殊对待；而在 Go 开发者眼里，"happy path" 和 "sad path" 都是一般的情况，二者应该同样重要，被同等对待。</p>
+<h4 id="面向应用程序用户及运维">4.1.2 面向应用程序、用户及运维</h4>
+<blockquote>
+<p>The tricky part about errors is that they need to be different things to different consumers of them.</p>
+<p>— Ben Johnson</p>
+</blockquote>
+<p>当我们在代码中处理 error 时，需要思考这样一个问题："是谁在消费这些 errors？" 在任意一个服务的生命周期中，通常至少有 3 个角色关心 error：应用程序 (application) 本身、服务的用户 (end user)、服务的维护者 (operator)。在刚才的例子中，error 类型检查 (4) 面向的是应用程序；创建 res.ErrInfo (3) 面向的是服务的用户；打印日志 (5) 面向的是维护者。因此一个设计精良的 errors package 要能够让工程师自如地处理 error 与各个角色之间的信息传递。</p>
+<h5 id="应用程序与-error">应用程序与 error</h5>
+<p>应用程序可能拥有各种各样的外部依赖，比如第三方服务、内部 RPC 服务、数据库服务、消息队列服务，甚至磁盘、网卡、CPU 等等。这些依赖本身随时可能出现这样或那样的问题，但这类问题本身通常不会导致应用程序的进程崩溃，只要问题是临时的、非致命的、在定义范围内的，应用程序就可以从容地根据 error 的特点处理。因此应用程序需要能够准确、方便、健壮地获取 error 特征。</p>
+<h5 id="用户与-error">用户与 error</h5>
+<p>当服务运行遇到 error 时，需要向普通的 C 端用户提供友好、明确的消息提示，让他明白系统正处于异常状态，可以稍后重试或联系客服、技术人员。因此消息应该是对人类友好的自然语言。除此之外，系统内部的细节，如错误栈信息，不应当直接暴露给 C 端用户，对于未明确定义的 error 更应如此。主要原因在于：</p>
+<ol type="1">
+<li>用户不应该关心服务的实现细节</li>
+<li>暴露不必要的细节可能会降低系统安全性</li>
+</ol>
+<h5 id="维护者与-error">维护者与 error</h5>
+<p>遇到线上问题时，服务的维护者接到报警后，需要根据详细的 error 信息做根源分析，这时信息越多越好，当然更高的可读性能够帮助维护人员更快地定位问题，解决问题。这里的维护者一般是服务的开发者，而非 devop 团队成员。</p>
+<p><em>备注：本节的观点主要源自于 [7] [10]</em></p>
+<h3 id="方法论">5. 方法论</h3>
+<p>在进入方法论之前，需要先明确适用范围：本节提出的方法针对的是单个网络服务 (如 HTTP/RPC) 内部的 error，不涉及 error 在进程间的传递的部分，针对后者可以考虑 cockroachdb 团队提出的解决方案 [21]。</p>
+<h4 id="errors-are-values">5.1 errors are values</h4>
+<p>任何实现了 <code>Error</code> 接口的数据类型都是 error，它们与字符串、整数、结构体相比并没有特别之处。</p>
+<h5 id="将-happy-path-留在控制流的最外层">5.1.1 将 "happy path" 留在控制流的最外层</h5>
+<p>Go 鼓励工程师将逻辑的 "happy path" 留在函数缩进的最外层，而把 "sad path" 放到第二级缩进中，如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Do</span><span class="params">()</span> <span class="params">(ret <span class="keyword">interface</span>&#123;&#125;, err error)</span></span> &#123;</span><br><span class="line">  <span class="comment">// happy path</span></span><br><span class="line">  v1, err := A()</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// sad path 1</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  v2, err := B(v1)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// sad path 2</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  ret = process(v1, v2)</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>「现状」一节中的例子也遵守了这个规则。</p>
+<h5 id="error-是否为空反映调用成功与否">5.1.2 error 是否为空反映调用成功与否</h5>
+<blockquote>
+<p>Never use nil to indicate failure</p>
+<p>— Dave Cheney</p>
+</blockquote>
+<p>所有可能产生 error 的函数都使用 Go 的多值返回特性，其中最后一个返回值默认为 <code>error</code> 类型，即：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">A</span> <span class="params">(args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(ret <span class="keyword">interface</span>&#123;&#125;, err error)</span></span></span><br></pre></td></tr></table></figure>
+<p>调用方默认先检查 err 是否为空，为空则认为调用成功，非空则认为调用失败，如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  ret, err := A(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">// 调用失败，即 sad path</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 调用成功，即 happy path</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦调用失败，调用方不应该使用其它任意返回值，或对其它返回值有任何假设，而是采用 fail-fast 的策略结束执行。<strong>不要使用其它返回值的特征作为调用成功与否的依据</strong>，这样做既不符合 Go 的设计理念，也会使代码的可读性大大下降。</p>
+<h4 id="从-error-的消费者角度出发">5.2 从 error 的消费者角度出发</h4>
+<p>本节我们要定制自己的 errors package，并利用它来解决现状中的问题，同时践行我们的世界观。既然关心 error 的角色有很多，我们就索性分开管理面向不同消费者的信息，因此定义 <code>Error</code> 结构体如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Error defines a standard application error.</span></span><br><span class="line"><span class="keyword">type</span> Error <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// For application/machine</span></span><br><span class="line">	Class Class</span><br><span class="line">	<span class="comment">// For both users &amp; operators, see methods ErrMsg (users) and Error (operators)</span></span><br><span class="line">	Msg <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// For operators</span></span><br><span class="line">	Op    Op    <span class="comment">// logical operation</span></span><br><span class="line">	Code  <span class="keyword">int</span>   <span class="comment">// error code, which identifies an user-defined error</span></span><br><span class="line">	Cause error <span class="comment">// error from lower level</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Op <span class="keyword">string</span></span><br><span class="line"><span class="keyword">type</span> Class <span class="keyword">string</span></span><br></pre></td></tr></table></figure>
+<p>其中 Class 表示 error 类型，面向应用程序；Msg 表示 error 消息，既面向外部用户，也面向维护者，分别体现在 <code>ErrMsg</code> 和 <code>Error</code> 两个方法上；Op 指 Error 生成时所处的函数，Code 是 error 的标识，Cause 存储下层 error，三者面向维护者。为了方便创建 Error，errors package 还提供一个 constructor：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">E</span><span class="params">(args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="comment">// ignore preprocessing</span></span><br><span class="line">	e := &amp;Error&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> _, arg := <span class="keyword">range</span> args &#123;</span><br><span class="line">		<span class="keyword">switch</span> arg := arg.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> Class:</span><br><span class="line">			e.Class = arg</span><br><span class="line">		<span class="keyword">case</span> <span class="keyword">string</span>:</span><br><span class="line">			e.Msg = arg</span><br><span class="line">		<span class="keyword">case</span> Op:</span><br><span class="line">			e.Op = arg</span><br><span class="line">		<span class="keyword">case</span> <span class="keyword">int</span>:</span><br><span class="line">			e.Code = arg</span><br><span class="line">		<span class="keyword">case</span> *Error:</span><br><span class="line">			cp := *arg</span><br><span class="line">			e.Cause = &amp;cp</span><br><span class="line">		<span class="keyword">case</span> error:</span><br><span class="line">			e.Cause = arg</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			_, file, line, _ := runtime.Caller(<span class="number">1</span>)</span><br><span class="line">			log.Printf(<span class="string">"errors.E: bad call from %s:%d: %v"</span>, file, line, args)</span><br><span class="line">			<span class="keyword">return</span> fmt.Errorf(<span class="string">"unknown type %T, value %v in error call"</span>, arg, arg)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// ignore postprocessing</span></span><br><span class="line">	<span class="keyword">return</span> e</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样开发者就可以很方便地构建 Error，并填充任意需要的字段，包括 wrap 下层 error。</p>
+<h5 id="应用程序">5.2.1 应用程序</h5>
+<p>应用程序主要关注 error 的两个方面：「是否为空」及「所属类型」。前者我们在上文中已经讨论，本节只关注后者。有的开发者可能会定义许多 error 类型，涉及各种分支情形，以便应用程序可以根据各种场景做判断，如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">  ErrCodeInvalidUserName    Class = <span class="string">"invalid username"</span></span><br><span class="line">  ErrCodeInvalidPassword    Class = <span class="string">"invalid password"</span></span><br><span class="line">  ErrCodeUserNotFound       Class = <span class="string">"user not found"</span></span><br><span class="line">  ErrCodeDepartmentNotFound Class = <span class="string">"department not found"</span></span><br><span class="line">  ErrCodeTokenNotFound      Class = <span class="string">"token not found"</span> </span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>但如果从应用程序的角度出发，一般情况下，上层代码逻辑仅关心少数的几种 error 类型，甚至大多数情况下仅关心 error 是临时性还是永久性的即可。error 类型过多，则上层调用方需要处理的场景就越多，这既给调用方添加负担，又将实现细节暴露到上层。经过权衡，我认同 Ben Johnson 的主张，在 errors package 中定义少量几个含义宽泛的 error 类型即可，就先从以下几个开始：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	Conflict   Class = <span class="string">"conflict"</span>          <span class="comment">// Action cannot be performed</span></span><br><span class="line">	Internal   Class = <span class="string">"internal"</span>          <span class="comment">// Internal error, error from DB, RPC, and other external services</span></span><br><span class="line">	Invalid    Class = <span class="string">"invalid"</span>           <span class="comment">// Validation failed</span></span><br><span class="line">	NotFound   Class = <span class="string">"not_found"</span>         <span class="comment">// Entity does not exist</span></span><br><span class="line">	PermDenied Class = <span class="string">"permission_denied"</span> <span class="comment">// Does not have permission</span></span><br><span class="line">	Other      Class = <span class="string">"other"</span>             <span class="comment">// Unclassified error</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>也许你已经察觉到这与 HTTP 协议的响应码有些相似。最后的 Other 类型可以容纳未定义的 error，在必要时可以将其它类型从中抽出。判断 error 类型时，可以使用工具函数 Is，如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> errors.Is(err, errors.Invalid) &#123;</span><br><span class="line">  <span class="comment">// sad path</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不同抽象层中的 error 可以通过多层 wrapping，形成 error chain。Is 会从头到尾遍历 error chain，以第一个 Class 取值不为 zero value 的 <code>*Error</code> 为判定依据。实践中，我们约定：<strong>error chain 上最后一个数据类型为 <code>*Error</code> 的节点，它必须有一个定义好的的 Class，而它前面的所有节点 Class 都为空</strong>。背后的理由是：整个 error chain 应该只有一个类型，且开发者关心的是根因。</p>
+<h5 id="用户">5.2.2 用户</h5>
+<p>直接返回给普通用户的消息存放在 Msg 字段中，它的内容通常在最外层 (Controller) 设置。errors package 也提供了 ErrMsg 工具函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ErrMsg</span><span class="params">(err error)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	code := firstCode(err)</span><br><span class="line">  <span class="comment">// if err != nil, msg will be set to a default msg</span></span><br><span class="line">	msg := firstMsg(err)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> msg != <span class="string">""</span> &amp;&amp; code != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Sprintf(<span class="string">"[%d] %s"</span>, code, msg)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> msg</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ErrMsg 与 Is 类似，其中 code 取值为 error chain 上第一个非 0 的 error code；msg 取值为 error chain 上第一个非空字符串的 error msg，如果参数 err 不为空，且找不到合法的 msg，则返回默认消息。</p>
+<h5 id="维护者">5.2.3 维护者</h5>
+<p>服务出现线上问题时，对服务的维护者而言最重要的就是日志信息。有效的日志信息需要包括至少两部分：(逻辑) 调用栈和 error 详情，前者帮助开发者追溯引起 error 的调用链；后者为开发者提供造成 error 的现场信息，如位置和参数。日志信息的展示对应 error 的 formatting 功能。</p>
+<p>在 Go 程序中，发生 panic 时就可以看到类似如下的调用栈信息：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">goroutine <span class="number">11</span> [running]:</span><br><span class="line">testing.tRunner.func1(<span class="number">0xc420092690</span>)</span><br><span class="line">    /usr/local/<span class="keyword">go</span>/src/testing/testing.<span class="keyword">go</span>:<span class="number">711</span> +<span class="number">0x2d2</span></span><br><span class="line"><span class="built_in">panic</span>(<span class="number">0x53f820</span>, <span class="number">0x594da0</span>)</span><br><span class="line">    /usr/local/<span class="keyword">go</span>/src/runtime/<span class="built_in">panic</span>.<span class="keyword">go</span>:<span class="number">491</span> +<span class="number">0x283</span></span><br><span class="line">github.com/yourbasic/bit.(*Set).Max(<span class="number">0xc42000a940</span>, <span class="number">0x0</span>)</span><br><span class="line">    ../src/github.com/bit/set_math_bits.<span class="keyword">go</span>:<span class="number">137</span> +<span class="number">0x89</span></span><br><span class="line">github.com/yourbasic/bit.TestMax(<span class="number">0xc420092690</span>)</span><br><span class="line">    ../src/github.com/bit/set_test.<span class="keyword">go</span>:<span class="number">165</span> +<span class="number">0x337</span></span><br><span class="line">testing.tRunner(<span class="number">0xc420092690</span>, <span class="number">0x57f5e8</span>)</span><br><span class="line">    /usr/local/<span class="keyword">go</span>/src/testing/testing.<span class="keyword">go</span>:<span class="number">746</span> +<span class="number">0xd0</span></span><br><span class="line">created by testing.(*T).Run</span><br><span class="line">    /usr/local/<span class="keyword">go</span>/src/testing/testing.<span class="keyword">go</span>:<span class="number">789</span> +<span class="number">0x2de</span></span><br></pre></td></tr></table></figure>
+<p>这里的调用栈信息非常完整，完全满足开发者的问题排查需求。但在日志采集的过程中，由于出现了换行，会造成检索难的问题；如果将其合并成一行，则会严重影响可读性。errors package 使用逻辑调用栈，可以打印出轻量的、可读性强的 error 信息，以下便是对应 <code>Error</code> 接口的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Error)</span> <span class="title">Error</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	b := bytes.NewBuffer(<span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> e.Op != <span class="string">""</span> &#123;</span><br><span class="line">		_, _ = fmt.Fprintf(b, <span class="string">"%s: "</span>, e.Op)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// print operation info of the tail error</span></span><br><span class="line">	<span class="keyword">if</span> e.Cause == <span class="literal">nil</span> &#123;</span><br><span class="line">		e.writeOpInfo(b)</span><br><span class="line">		<span class="keyword">return</span> b.String()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// if the inner error is of type *Error, only print the Op,</span></span><br><span class="line">	<span class="comment">// otherwise, print operation info and the inner error</span></span><br><span class="line">	<span class="keyword">if</span> _, isError := e.Cause.(*Error); isError &#123;</span><br><span class="line">		b.WriteString(e.Cause.Error())</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		e.writeOpInfo(b)</span><br><span class="line">		b.WriteString(e.Cause.Error())</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> b.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Error)</span> <span class="title">writeOpInfo</span><span class="params">(b *bytes.Buffer)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e.Code != <span class="number">0</span> &amp;&amp; <span class="built_in">len</span>(e.Msg) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		_, _ = fmt.Fprintf(b, <span class="string">"[%d] %s"</span>, e.Code, e.Msg)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> e.Code != <span class="number">0</span> &#123;</span><br><span class="line">		_, _ = fmt.Fprintf(b, <span class="string">"[%d]"</span>, e.Code)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">len</span>(e.Msg) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		_, _ = fmt.Fprintf(b, <span class="string">"%s"</span>, e.Msg)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设存在以下场景：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetUser</span><span class="params">(ctx context.Context, id <span class="keyword">int</span>)</span> <span class="params">(user *User, err error)</span></span> &#123;</span><br><span class="line">  op := errors.Op(<span class="string">"GetUser"</span>)</span><br><span class="line">  <span class="keyword">if</span> user, err = db.GetUser(ctx, id); err != <span class="literal">nil</span> &#123;</span><br><span class="line">  	<span class="keyword">return</span> errors.E(op, errors.Internal, <span class="number">10001</span>, fmt.Sprintf(<span class="string">"get user %d from db"</span>, id), err)  </span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// happy path (ignored)</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">HandleGetUser</span><span class="params">(ctx context.Context, req GetUserReq)</span> <span class="params">(res GetUserRes)</span></span> &#123;</span><br><span class="line">  op := errors.Op(<span class="string">"HandleGetUser"</span>)</span><br><span class="line">  <span class="keyword">if</span> user, err := GetUser(ctx, req.Id); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    err = errors.E(op, err)</span><br><span class="line">    log.Error(err) <span class="comment">// (1)</span></span><br><span class="line">    res = GetUserRes&#123;Msg: errors.ErrMsg(err), Code: errors.ErrCode(err)&#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// happy path (ignored)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 (1) 处打印出来的日志就是 <code>HandleGetUser: GetUser: [10001] get user 10873521 from db</code>，前半段是服务内部的逻辑调用栈，后半段是出错细节，合并在同一行中，对日志收集和查看也比较友好。在打错误日志时，需要遵守一个原则：<strong>每个 error 只被打印一次</strong>，且通常这一次打印发生在调用链的头部，因为头部拥有最完备的信息。这种做法的不方便之处在于，调用链上的每个函数都需要定义一个局部变量 <code>op</code>，并且当下层返回的 error 不为空时需要包装一层，增加了许多人工成本，但鉴于在「现状」一节中的方案也做了这样的事情，引入 errors package 实际并未增加额外的工作。</p>
+<p>如果我们构建的是开放 API 服务，为了方便快速定位问题，可以使用 <code>Code</code> 标识具体的某个 error，其数值范围，每个取值的含义由使用方自行决定。</p>
+<p><em>备注：本节的观点主要源自于 [1] [7] [10]</em></p>
+<h3 id="完整示例">6. 完整示例</h3>
+<p>现在我们用上节介绍的世界观和方法论，尝试改善「现状」：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *GRPCADServiceImpl)</span> <span class="title">delAD</span><span class="params">(ctx context.Context, req *ad.DelADReq)</span> <span class="params">(res *ad.DelADRes, err error)</span></span> &#123;</span><br><span class="line">  op := errors.Op(<span class="string">"GRPCADServiceImpl.DelAD"</span>)</span><br><span class="line">	res = &amp;ad.DelADRes&#123;&#125;</span><br><span class="line">  </span><br><span class="line">  passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> errors.E(op, err)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> !passed &#123;</span><br><span class="line">    res.ErrInfo = &amp;grpcutil.ErrInfo&#123;Code: ErrCodeNotAuthorized, Msg: ErrMsgNotAuthorized&#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">	conds := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">"id"</span>: req.Id&#125;</span><br><span class="line"></span><br><span class="line">	adToDelete, err := model.ADDao.GetOneAD(ctx, conds)</span><br><span class="line">  <span class="keyword">if</span> errors.Is(err, errors.NotFound) &#123;</span><br><span class="line">    res.ErrInfo = &amp;grpcutil.ErrInfo&#123;Code: errors.ErrCode(err), Msg: fmt.Sprintf(<span class="string">"未找到广告 %d"</span>, req.Id)&#125;</span><br><span class="line">    err = <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.E(op, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	_, err = model.ADDao.DeleteAD(ctx, conds)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.E(op, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	res.Data = &amp;ad.DelADRes_Data&#123;Id: req.Id&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *GRPCADServiceImpl)</span> <span class="title">DelAD</span><span class="params">(ctx context.Context, req *ad.DelADReq)</span> <span class="params">(res *ad.DelADRes, err error)</span></span> &#123;</span><br><span class="line">  res, err := delAD(ctx, req)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    xlog.Error(err)</span><br><span class="line">    res.ErrInfo = &amp;grpcutil.ErrInfo&#123;Code: errors.ErrCode(err), Msg: errors.ErrMsg(err)&#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了代码的简洁，打 ERROR 级别日志和根据 err 构建 ErrInfo 的逻辑单独抽离到 <code>DelAD</code> 函数中，当然我们也可以通过 Interceptor 来达到同样的目的。</p>
+<h2 id="参考">参考</h2>
+<p>[1]: <a href="https://dave.cheney.net/practical-go/presentations/gophercon-singapore-2019.html#_error_handling" target="_blank" rel="noopener">practical-go: gophercon-singapore-2019#error_handling</a></p>
+<p>[2]: <a href="https://devblogs.microsoft.com/oldnewthing/20040422-00/?p=39683" target="_blank" rel="noopener">Cleaner, more elegant, and wrong</a></p>
+<p>[3]: <a href="https://devblogs.microsoft.com/oldnewthing/20050114-00/?p=36693" target="_blank" rel="noopener">Cleaner, more elegant, and harder to recognize</a></p>
+<p>[4]: <a href="https://blog.golang.org/error-handling-and-go" target="_blank" rel="noopener">The Go Blog: Error handling and Go</a></p>
+<p>[5]: <a href="https://blog.golang.org/errors-are-values" target="_blank" rel="noopener">The Go Blog: Errors are values</a></p>
+<p>[6]: <a href="https://8thlight.com/blog/kyle-krull/2018/08/13/exploring-error-handling-patterns-in-go.html" target="_blank" rel="noopener">Exploring Error Handling Patterns in Go</a></p>
+<p>[7]: <a href="https://commandcenter.blogspot.com/2017/12/error-handling-in-upspin.html" target="_blank" rel="noopener">Error handling in Upspin</a></p>
+<p>[8]: <a href="https://github.com/pkg/errors" target="_blank" rel="noopener">pkg errors</a></p>
+<p>[9]: <a href="https://blog.golang.org/go1.13-errors" target="_blank" rel="noopener">Working with Errors in Go 1.13</a></p>
+<p>[10]: <a href="https://middlemost.com/failure-is-your-domain/" target="_blank" rel="noopener">Failure is your Domain --- Ben Johnson</a></p>
+<p>[11]: GopherCon 2019: Marwan Sulaiman - Handling Go Errors, <a href="https://www.youtube.com/watch?v=4WIhhzTTd0Y" target="_blank" rel="noopener">video</a>, <a href="https://about.sourcegraph.com/go/gophercon-2019-handling-go-errors/" target="_blank" rel="noopener">summary</a></p>
+<p>[12]: <a href="https://go.googlesource.com/proposal/+/master/design/go2draft-error-handling-overview.md" target="_blank" rel="noopener">Error Handling — Problem Overview</a></p>
+<p>[13]: <a href="https://go.googlesource.com/proposal/+/master/design/go2draft-error-values-overview.md" target="_blank" rel="noopener">Error Values — Problem Overview</a></p>
+<p>[14]: <a href="https://github.com/spacemonkeygo/errors" target="_blank" rel="noopener">spacemonkeygo errors</a></p>
+<p>[15]: <a href="https://github.com/juju/errors" target="_blank" rel="noopener">juju errors</a></p>
+<p>[16]: gopkg errgo <a href="https://github.com/go-errgo/errgo/tree/v1.0.1" target="_blank" rel="noopener">v1</a>, <a href="https://github.com/go-errgo/errgo/tree/v2" target="_blank" rel="noopener">v2</a></p>
+<p>[17]: <a href="github.com/hashicorp/errwrap">hashicorp errwrap</a></p>
+<p>[18]: <a href="https://github.com/pingcap/errors" target="_blank" rel="noopener">pingcap errors</a></p>
+<p>[19]: <a href="https://github.com/pingcap/parser/blob/release-3.0/terror/terror.go" target="_blank" rel="noopener">pingcap parser terror</a></p>
+<p>[20]: <a href="https://github.com/upspin/upspin/tree/master/errors" target="_blank" rel="noopener">upspin.io errors</a></p>
+<p>[21]: <a href="https://github.com/cockroachdb/errors" target="_blank" rel="noopener">cockroachdb errors</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/Go/" rel="tag"># Go</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2020/09/20/apache-arrow-summary/" rel="prev" title="Apache Arrow 小结">
+      <i class="fa fa-chevron-left"></i> Apache Arrow 小结
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go-error-handling-方案调研"><span class="nav-number">1.</span> <span class="nav-text">Go Error Handling 方案调研</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#术语说明"><span class="nav-number">1.1.</span> <span class="nav-text">0. 术语说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文献综述"><span class="nav-number">1.2.</span> <span class="nav-text">1. 文献综述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目综述"><span class="nav-number">1.3.</span> <span class="nav-text">2. 项目综述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#现状"><span class="nav-number">1.4.</span> <span class="nav-text">3. 现状</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#举例"><span class="nav-number">1.4.1.</span> <span class="nav-text">3.1 举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#讨论"><span class="nav-number">1.4.2.</span> <span class="nav-text">3.2 讨论</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#fun-的约定值"><span class="nav-number">1.4.2.0.1.</span> <span class="nav-text">fun 的约定值</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#error-wrapping"><span class="nav-number">1.4.2.0.2.</span> <span class="nav-text">error wrapping</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#客户端-error"><span class="nav-number">1.4.2.0.3.</span> <span class="nav-text">客户端 error</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#error-inspection"><span class="nav-number">1.4.2.0.4.</span> <span class="nav-text">error inspection</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error-handling-的世界观和方法论"><span class="nav-number">1.5.</span> <span class="nav-text">4. error handling 的世界观和方法论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#世界观"><span class="nav-number">1.5.1.</span> <span class="nav-text">4.1 世界观</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#面向应用程序用户及运维"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">4.1.2 面向应用程序、用户及运维</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#应用程序与-error"><span class="nav-number">1.5.1.1.1.</span> <span class="nav-text">应用程序与 error</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#用户与-error"><span class="nav-number">1.5.1.1.2.</span> <span class="nav-text">用户与 error</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#维护者与-error"><span class="nav-number">1.5.1.1.3.</span> <span class="nav-text">维护者与 error</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法论"><span class="nav-number">1.5.2.</span> <span class="nav-text">5. 方法论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#errors-are-values"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">5.1 errors are values</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#将-happy-path-留在控制流的最外层"><span class="nav-number">1.5.2.1.1.</span> <span class="nav-text">5.1.1 将 &quot;happy path&quot; 留在控制流的最外层</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#error-是否为空反映调用成功与否"><span class="nav-number">1.5.2.1.2.</span> <span class="nav-text">5.1.2 error 是否为空反映调用成功与否</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从-error-的消费者角度出发"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">5.2 从 error 的消费者角度出发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#应用程序"><span class="nav-number">1.5.2.2.1.</span> <span class="nav-text">5.2.1 应用程序</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#用户"><span class="nav-number">1.5.2.2.2.</span> <span class="nav-text">5.2.2 用户</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#维护者"><span class="nav-number">1.5.2.2.3.</span> <span class="nav-text">5.2.3 维护者</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整示例"><span class="nav-number">1.5.3.</span> <span class="nav-text">6. 完整示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">1.6.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/";
+    this.page.identifier = "2020/10/05/Go-Error-Handling-Research/";
+    this.page.title = "Go Error Handling 方案调研";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
