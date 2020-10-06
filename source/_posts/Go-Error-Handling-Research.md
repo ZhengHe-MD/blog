@@ -48,7 +48,7 @@ error handling 可以细分为 checking、inspection 和 formatting 三部分，
 func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
   // (1)
   fun := "GRPCADServiceImpl.DelAD -->" 
-	res = &ad.DelADRes{}
+  res = &ad.DelADRes{}
   
   passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
   if err != nil {
@@ -65,29 +65,29 @@ func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *a
     return
   }
 
-	conds := map[string]interface{}{"id": req.Id}
+  conds := map[string]interface{}{"id": req.Id}
 
-	adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
+  adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
   // (4)
   if err == scanner.ErrEmptyRow {
     res.ErrInfo = &grpcutil.ErrInfo{Code: -1, Msg: "ad not found"}
     return
   }
   
-	if err != nil {
-		return
-	}
+  if err != nil {
+    return
+  }
 
-	_, err = model.ADDao.DeleteAD(ctx, conds)
-	if err != nil {
-		return
-	}
+  _, err = model.ADDao.DeleteAD(ctx, conds)
+  if err != nil {
+    return
+  }
 
-	res.Data = &ad.DelADRes_Data{
-		Id: req.Id,
-	}
+  res.Data = &ad.DelADRes_Data{
+    Id: req.Id,
+  }
 
-	return
+  return
 }
 ```
 
@@ -230,14 +230,14 @@ func main() {
 ```go
 // Error defines a standard application error.
 type Error struct {
-	// For application/machine
-	Class Class
-	// For both users & operators, see methods ErrMsg (users) and Error (operators)
-	Msg string
-	// For operators
-	Op    Op    // logical operation
-	Code  int   // error code, which identifies an user-defined error
-	Cause error // error from lower level
+  // For application/machine
+  Class Class
+  // For both users & operators, see methods ErrMsg (users) and Error (operators)
+  Msg string
+  // For operators
+  Op    Op    // logical operation
+  Code  int   // error code, which identifies an user-defined error
+  Cause error // error from lower level
 }
 
 type Op string
@@ -248,31 +248,31 @@ type Class string
 
 ```go
 func E(args ...interface{}) error {
-	// ignore preprocessing
-	e := &Error{}
-	for _, arg := range args {
-		switch arg := arg.(type) {
-		case Class:
-			e.Class = arg
-		case string:
-			e.Msg = arg
-		case Op:
-			e.Op = arg
-		case int:
-			e.Code = arg
-		case *Error:
-			cp := *arg
-			e.Cause = &cp
-		case error:
-			e.Cause = arg
-		default:
-			_, file, line, _ := runtime.Caller(1)
-			log.Printf("errors.E: bad call from %s:%d: %v", file, line, args)
-			return fmt.Errorf("unknown type %T, value %v in error call", arg, arg)
-		}
-	}
-	// ignore postprocessing
-	return e
+  // ignore preprocessing
+  e := &Error{}
+  for _, arg := range args {
+    switch arg := arg.(type) {
+    case Class:
+      e.Class = arg
+    case string:
+      e.Msg = arg
+    case Op:
+      e.Op = arg
+    case int:
+      e.Code = arg
+    case *Error:
+      cp := *arg
+      e.Cause = &cp
+    case error:
+      e.Cause = arg
+    default:
+      _, file, line, _ := runtime.Caller(1)
+      log.Printf("errors.E: bad call from %s:%d: %v", file, line, args)
+      return fmt.Errorf("unknown type %T, value %v in error call", arg, arg)
+    }
+  }
+  // ignore postprocessing
+  return e
 }
 ```
 
@@ -322,15 +322,15 @@ if errors.Is(err, errors.Invalid) {
 
 ```go
 func ErrMsg(err error) string {
-	code := firstCode(err)
+  code := firstCode(err)
   // if err != nil, msg will be set to a default msg
-	msg := firstMsg(err)
+  msg := firstMsg(err)
 
-	if msg != "" && code != 0 {
-		return fmt.Sprintf("[%d] %s", code, msg)
-	}
+  if msg != "" && code != 0 {
+    return fmt.Sprintf("[%d] %s", code, msg)
+  }
 
-	return msg
+  return msg
 }
 ```
 
@@ -362,36 +362,36 @@ created by testing.(*T).Run
 
 ```go
 func (e *Error) Error() string {
-	b := bytes.NewBuffer(nil)
-	if e.Op != "" {
-		_, _ = fmt.Fprintf(b, "%s: ", e.Op)
-	}
-	// print operation info of the tail error
-	if e.Cause == nil {
-		e.writeOpInfo(b)
-		return b.String()
-	}
+  b := bytes.NewBuffer(nil)
+  if e.Op != "" {
+    _, _ = fmt.Fprintf(b, "%s: ", e.Op)
+  }
+  // print operation info of the tail error
+  if e.Cause == nil {
+    e.writeOpInfo(b)
+    return b.String()
+  }
 
-	// if the inner error is of type *Error, only print the Op,
-	// otherwise, print operation info and the inner error
-	if _, isError := e.Cause.(*Error); isError {
-		b.WriteString(e.Cause.Error())
-	} else {
-		e.writeOpInfo(b)
-		b.WriteString(e.Cause.Error())
-	}
+  // if the inner error is of type *Error, only print the Op,
+  // otherwise, print operation info and the inner error
+  if _, isError := e.Cause.(*Error); isError {
+    b.WriteString(e.Cause.Error())
+  } else {
+    e.writeOpInfo(b)
+    b.WriteString(e.Cause.Error())
+  }
 
-	return b.String()
+  return b.String()
 }
 
 func (e *Error) writeOpInfo(b *bytes.Buffer) {
-	if e.Code != 0 && len(e.Msg) > 0 {
-		_, _ = fmt.Fprintf(b, "[%d] %s", e.Code, e.Msg)
-	} else if e.Code != 0 {
-		_, _ = fmt.Fprintf(b, "[%d]", e.Code)
-	} else if len(e.Msg) > 0 {
-		_, _ = fmt.Fprintf(b, "%s", e.Msg)
-	}
+  if e.Code != 0 && len(e.Msg) > 0 {
+     _, _ = fmt.Fprintf(b, "[%d] %s", e.Code, e.Msg)
+  } else if e.Code != 0 {
+    _, _ = fmt.Fprintf(b, "[%d]", e.Code)
+  } else if len(e.Msg) > 0 {
+    _, _ = fmt.Fprintf(b, "%s", e.Msg)
+  }
 }
 ```
 
@@ -401,7 +401,7 @@ func (e *Error) writeOpInfo(b *bytes.Buffer) {
 func GetUser(ctx context.Context, id int) (user *User, err error) {
   op := errors.Op("GetUser")
   if user, err = db.GetUser(ctx, id); err != nil {
-  	return errors.E(op, errors.Internal, 10001, fmt.Sprintf("get user %d from db", id), err)  
+    return errors.E(op, errors.Internal, 10001, fmt.Sprintf("get user %d from db", id), err)  
   } else {
     // happy path (ignored)
   }
@@ -432,7 +432,7 @@ func HandleGetUser(ctx context.Context, req GetUserReq) (res GetUserRes) {
 ```go
 func (m *GRPCADServiceImpl) delAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
   op := errors.Op("GRPCADServiceImpl.DelAD")
-	res = &ad.DelADRes{}
+  res = &ad.DelADRes{}
   
   passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
   if err != nil {
@@ -444,26 +444,26 @@ func (m *GRPCADServiceImpl) delAD(ctx context.Context, req *ad.DelADReq) (res *a
     return
   }
 
-	conds := map[string]interface{}{"id": req.Id}
+  conds := map[string]interface{}{"id": req.Id}
 
-	adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
+  adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
   if errors.Is(err, errors.NotFound) {
     res.ErrInfo = &grpcutil.ErrInfo{Code: errors.ErrCode(err), Msg: fmt.Sprintf("未找到广告 %d", req.Id)}
     err = nil
     return
   }
   
-	if err != nil {
-		return errors.E(op, err)
-	}
+  if err != nil {
+    return errors.E(op, err)
+  }
 
-	_, err = model.ADDao.DeleteAD(ctx, conds)
-	if err != nil {
-		return errors.E(op, err)
-	}
+  _, err = model.ADDao.DeleteAD(ctx, conds)
+  if err != nil {
+    return errors.E(op, err)
+  }
 
-	res.Data = &ad.DelADRes_Data{Id: req.Id}
-	return
+  res.Data = &ad.DelADRes_Data{Id: req.Id}
+  return
 }
 
 func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
