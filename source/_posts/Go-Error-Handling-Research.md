@@ -136,7 +136,7 @@ error inspection 采用的是比较原始的等价判断 (==) 或类型断言来
 
 ### 4.1 世界观
 
-####4.1.1 "happy path" 与 "sad path" 地位相同
+#### 4.1.1 "happy path" 与 "sad path" 地位相同
 
 如果我们将函数的正常逻辑路径称为 "happy path"，异常逻辑路径称为 "sad path"。在使用 exception-based error handling 的编程语言时，工程师认为 "sad path" 是一种需要额外考虑的特殊情况，需要特殊对待；而在 Go 开发者眼里，"happy path" 和 "sad path" 都是一般的情况，二者应该同样重要，被同等对待。
 
