@@ -284,11 +284,11 @@ func E(args ...interface{}) error {
 
 ```go
 const (
-  ErrCodeInvalidUserName    Class = "invalid username"
-  ErrCodeInvalidPassword    Class = "invalid password"
-  ErrCodeUserNotFound       Class = "user not found"
-  ErrCodeDepartmentNotFound Class = "department not found"
-  ErrCodeTokenNotFound      Class = "token not found" 
+  InvalidUserName    Class = "invalid username"
+  InvalidPassword    Class = "invalid password"
+  UserNotFound       Class = "user not found"
+  DepartmentNotFound Class = "department not found"
+  TokenNotFound      Class = "token not found" 
   //...
 )
 ```
