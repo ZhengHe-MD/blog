@@ -2,7 +2,7 @@
 title: 'Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)'
 date: 2020-02-17 18:16:20
 tags: 
-- tracing
+- distributed tracing
 categories:
 - papers-we-love
 ---
