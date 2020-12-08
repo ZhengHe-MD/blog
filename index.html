@@ -316,7 +316,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -427,7 +427,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -582,7 +582,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -624,17 +624,17 @@ mjx-container + br {
           <p>最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Chunk stores multiple rows of data in Apache Arrow format.</span></span><br><span class="line"><span class="comment">// See https://arrow.apache.org/docs/format/Columnar.html#physical-memory-layout</span></span><br><span class="line"><span class="comment">// Values are appended in compact format and can be directly accessed without decoding.</span></span><br><span class="line"><span class="comment">// When the chunk is done processing, we can reuse the allocated memory by resetting it.</span></span><br><span class="line"><span class="keyword">type</span> Chunk <span class="keyword">struct</span> &#123; <span class="comment">/*...*/</span> &#125;</span><br></pre></td></tr></table></figure>
 <p>心里自然而然会产生疑问：为什么要使用这个项目规定的数据存储格式？于是在阅读完 TiDB 相关源码和单测后，顺便搜寻并浏览一些有趣的资料 (见文末参考部分)，现在将这次调研的收获小结在这篇博客中。</p>
+<p>本文简单地介绍一种内存列存数据格式：Apache Arrow，主要涉及的内容包括：</p>
+<ul>
+<li>Arrow 项目的来源</li>
+<li>Arrow 如何表示定长、变长和嵌套数据</li>
+<li>内存列存数据格式与磁盘列存数据格式的设计取舍</li>
+</ul>
+<p>注：Arrow 即可以指内存列存数据格式，也可以指 Apache Arrow 项目整体，因此下文中将用 「Arrow」 表示格式本身，「Arrow 项目」表示整体项目。</p>
 <h2 id="项目简介">项目简介</h2>
 <p>现存的大数据分析系统基本都基于各自不同的内存数据结构，这就会带来一系列的重复工作：从计算引擎上看，算法必须基于项目特有的数据结构、API 与算法之间出现不必要的耦合；从数据获取上看，数据加载时必须反序列化，而每一种数据源都需要单独实现相应的加载器；从生态系统上看，跨项目、跨语言的合作无形之中被阻隔。能否减少或消除数据在不同系统间序列化、反序列化的成本？能否跨项目复用算法及 IO 工具？能否推动更广义的合作，让数据分析系统的开发者联合起来？在这样的使命驱动下，Arrow 就诞生了。</p>
 <p>与其它项目不同，Arrow 项目的草台班子由 5 个 Apache Members、6 个 PMC Chairs 和一些其它项目的 PMC 及 committer 构成，他们直接找到 ASF 董事会，征得同意后直接以顶级 Apache 项目身份启动。想了解项目的详细历史可以阅读项目 Chair，Jacques Nadeau 写的这篇<a href="https://www.dremio.com/origin-history-of-apache-arrow/" target="_blank" rel="noopener">博客</a>。另外，这张 <a href="https://docs.google.com/spreadsheets/d/1q6UqluW6SLuMKRwW2TBGBzHfYLlXYm37eKJlIxWQGQM/edit#gid=0" target="_blank" rel="noopener">google sheet</a> 记录着项目的取名过程，取名为 Arrow 的原因是："math symbol for vector. and arrows are fast. also alphabetically will show up on top." 可以说考虑得相当全面 😂。</p>
 <p>Arrow 的愿景是提供内存数据分析 (in-memory analytics) 的开发平台，让数据在异构大数据系统间移动、处理地更快：</p>
-<p><img src="/blog/2020/09/20/apache-arrow-summary/defragmenting-data.jpg"></p>
-<p>项目主要由 3 部分构成：</p>
-<ul>
-<li>为分析查询引擎 (analytical query engines)、数据帧 (data frames) 设计的内存列存数据格式</li>
-<li>用于 IPC/RPC 的二进制协议</li>
-<li>用于构建数据处理应用的开发平台</li>
-</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/09/20/apache-arrow-summary/#more" rel="contents">
@@ -692,7 +692,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -803,7 +803,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -911,7 +911,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1024,7 +1024,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1130,7 +1130,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
 
           
@@ -1227,7 +1227,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1337,7 +1337,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-08 10:02:35" itemprop="dateModified" datetime="2020-12-08T10:02:35+00:00">2020-12-08</time>
+                <time title="修改时间：2020-12-08 12:10:49" itemprop="dateModified" datetime="2020-12-08T12:10:49+00:00">2020-12-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
