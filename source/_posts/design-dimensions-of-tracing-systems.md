@@ -67,7 +67,7 @@ categories:
 
 
 
-![blackbox](./design-dimensions-of-tracing-systems/blackbox.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png)
 
 
 
@@ -86,7 +86,7 @@ categories:
 
 
 
-![metadata-propagation](./design-dimensions-of-tracing-systems/metadata-propagation.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/metadata-propagation.png)
 
 
 
@@ -98,7 +98,7 @@ categories:
 
 
 
-![basic-architecture](./design-dimensions-of-tracing-systems/basic-architecture.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/basic-architecture.png)
 
 
 
@@ -167,7 +167,7 @@ Span Model 最早由 Google 在 [Dapper](https://research.google/pubs/pub36356/)
 
 
 
-![span-model](./design-dimensions-of-tracing-systems/span-model.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/span-model.png)
 
 
 
@@ -177,7 +177,7 @@ Span Model 单因多果的关系与调用栈在概念上十分契合，很容易
 
 
 
-![diamond](./design-dimensions-of-tracing-systems/diamond.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/diamond.png)
 
 ### Event Model
 
@@ -185,7 +185,7 @@ Span Model 单因多果的关系与调用栈在概念上十分契合，很容易
 
 
 
-![event-model](./design-dimensions-of-tracing-systems/event-model.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/event-model.png)
 
 
 
@@ -227,7 +227,7 @@ Event Model 的优势在于表达力强，但缺点是相比 Span Model 更加�
 
 在实践中，开发者习惯以单个请求的视角分析问题，因此调用链追踪系统通常不会关注不同请求之间的因果关系，但会在数据模型上保持对应的表达能力。对于同一请求的计算任务之间的因果关系，通常 SDK 提供方会尽可能地帮助开发者在所有跨进程的连接点上埋点，以此达到追踪目的，如 HTTP/RPC 调用、数据库访问、消息生产和消费等。但有时候源自于 A 请求的计算任务会被 B 请求触发，如下图中的例子所示：
 
-![submitter-and-trigger](./design-dimensions-of-tracing-systems/submitter-and-trigger.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/submitter-and-trigger.png)
 
 Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Request two 将数据 d2 提交到同一个缓存中，触发 d1 被写出到持久化存储中。这时如何归属 d1 的写出操作就决定了调用链追踪系统是选择提交者角度 (submitter-preserving) 还是触发者角度 (trigger-preserving)。
 
@@ -256,7 +256,7 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 
 
-![sampling-methods](./design-dimensions-of-tracing-systems/sampling-methods.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/sampling-methods.png)
 
 ### 头部连贯采样
 
@@ -278,7 +278,7 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 甘特图常被用于展示单个请求的调用链数据，以下是调用链追踪系统最常用的甘特图变体：
 
-![gantt](./design-dimensions-of-tracing-systems/gantt.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png)
 
 图的左边通常组织为树状结构，通常父节点表示调用方，子节点表示被调方，兄弟节点之间为并发关系，且从上至下时间单调递增；图的右边展示的是与标准甘特图类似的条状结构。
 
@@ -286,7 +286,7 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 泳道图可以被用于展示单个请求的调用链数据，相比甘特图更加精细，常用于 [Event Model](https://github.com/ZhengHe-MD/database-of-tracing-systems/blob/main/dimensions/design/tracing-model/README.md#event-model) 展示更复杂的计算关系，举例如下：
 
-[![swimlane](./design-dimensions-of-tracing-systems/swimlane.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/swimlane.png)
 
 其中泳道，即虚线框，用于表示计算执行单元；圆点展示某时刻发生的事件；箭头表示事件之间的关系。
 
@@ -294,7 +294,7 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 流程图常被用于展示多个相似请求调用链数据的聚合信息，这些请求的调用链结构应该完全一致。举例如下：
 
-[<img src="./design-dimensions-of-tracing-systems/flow-graph.png" alt="flow-graphs" style="zoom:50%;" />
+[<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flow-graph.png" alt="" style="zoom:50%;" />
 
 图中的节点表示系统中发生的事件，边表示因果关系，权重可以表示事件发生的时间差，它们共同组成一个有向无环图。流程图甚至可以表达 fan-outs 和 fan-ins，即 forks 和 joins 的因果关系，能保留更多的调用链细节信息。
 
@@ -302,25 +302,25 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 调用图被用于展示多个请求的聚合信息，这些请求的调用链结构无需完全一致。调用图上的节点表示系统中的服务、模块或接口，边表示因果关系，权重则可以表示流量、资源占用等自定义信息。调用图中可能出现环，意味着系统中存在环形依赖。调用图示例如下：
 
-![call-graphs](./design-dimensions-of-tracing-systems/call-graph.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png)
 
 ### 调用树 (Calling Context Trees)
 
 调用树被用于展示多个请求的聚合信息，这些请求的调用链结构通常不同。调用树根节点到任意叶子节点的路径都是分布式系统中真实存在的调用路径，举例如下：
 
-![cct](./design-dimensions-of-tracing-systems/cct.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png)
 
 ## 火焰图 (Flame graph)
 
 火焰图常被用于展示单机程序调用栈耗时信息，如 Go 中的 pprof。它与调用树的结构类似，常被用于展示多个请求的聚合信息，但展示形式不同，能更直观地展示各个组件的耗时信息，举例如下：
 
-![flame-graphs](./design-dimensions-of-tracing-systems/flame-graph.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/flame-graph.png)
 
 ## 从维度到场景
 
 了解各个设计维度之后，我们一起回顾本文开头提到的场景，试着分析在这些维度上该如何选择。下面以异常检测和分布式侧写为例：
 
-![use-case-dimension-matrix](./design-dimensions-of-tracing-systems/use-case-dimension-matrix.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/use-case-dimension-matrix.png)
 
 **异常检测**：某个请求出问题开发者需要查看完整调用链信息，因此需要连贯采样，又由于问题请求的发生是小概率事件，只能通过尾部连贯采样来保证数据都能被捕获。开发者习惯以从每个请求造成的影响分析问题，因此请求内部的因果关系应该选择触发者视角。甘特图、流程图都是适用单个调用链的可视化方案。元数据结构中，动态定长相对静态定长能更准确地采集上下游关系，相对动态变长能节省网络成本，且后者带来的实时性上的优化对异常检测并不重要，因此动态定长元数据是更合适的选择。
 
@@ -338,11 +338,11 @@ Jaeger 的名字源于德语中的猎人，是由 Uber 内部 Observability 团�
 
 Jaeger 的架构与上文提到的调用链追踪系统的基本架构十分类似，它有两种部署架构选择，分别如下面两张图所示：
 
-![jaeger-architecture-1](./design-dimensions-of-tracing-systems/jaeger-architecture-1.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-1.png)
 
 
 
-![jaeger-architecture-2](./design-dimensions-of-tracing-systems/jaeger-architecture-2.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-2.png)
 
 二者结构大致相同，主要区别在于 jaeger-collector 与 DB 之间加了 Kafka 做缓冲，解决峰值流量过载问题。整个 Jaeger 后端不存在单点故障，Jaeger-collector、Kafka、DB (Cassandra 和 ElasticSearch) 都支持横向扩展。
 
@@ -362,7 +362,7 @@ Jaeger 在官网上介绍自己的主要功能如下：
 
 Jaeger 中调用链数据模型遵守了 opentracing 标准，使用的是典型的 Span Model，其核心数据结构如下图所示：
 
-![data-model](./design-dimensions-of-tracing-systems/data-model.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/data-model.png)
 
 下面是一个具体的例子：
 
@@ -443,17 +443,17 @@ jaeger-ui 项目提供了丰富的调用链数据可视化支持，包括针对�
 
 ### 甘特图
 
-![gantt](./design-dimensions-of-tracing-systems/gantt.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png)
 
 ### 调用树
 
-![cct](./design-dimensions-of-tracing-systems/cct.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png)
 
 调用树目前仍在实验阶段，暂时还不是正式功能。
 
 ### 调用图
 
-![call-graph](./design-dimensions-of-tracing-systems/call-graph.png)
+![](/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png)
 
 同时还可以聚焦到某个节点，让调用图只显示与该节点相关的服务，即焦点图 (focus graph)。
 
