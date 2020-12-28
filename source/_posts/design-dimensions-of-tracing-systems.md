@@ -67,7 +67,7 @@ categories:
 
 
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png" width="600px"/>
 
 
 
@@ -86,7 +86,7 @@ categories:
 
 
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/metadata-propagation.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/metadata-propagation.png" width="600px"/>
 
 
 
@@ -98,7 +98,7 @@ categories:
 
 
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/basic-architecture.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/basic-architecture.png" width="720px"/>
 
 
 
@@ -146,7 +146,7 @@ categories:
 
 在数据上报和处理的过程中，agent 或 collector 可以通过维持本地队列来削峰，但如果超出局部队列的容量限制，就要考虑数据丢失与时效性之间的权衡。如果可以容忍数据丢失，就可以像路由器丢包似的直接丢掉无法处理的数据；如果可以放弃峰值时效性，则可以通过高吞吐、存储容量高的消息中间件，如 Kafka，来代替局部队列。
 
- # 设计维度
+# 设计维度
 
 在 2014 年的一篇[论文](http://So, you want to trace your distributed system? Key design insights from years of practical experience)中，研究团队在分析多个当时的调用链追踪系统后，总结出 4 个设计维度：
 
@@ -227,7 +227,11 @@ Event Model 的优势在于表达力强，但缺点是相比 Span Model 更加�
 
 在实践中，开发者习惯以单个请求的视角分析问题，因此调用链追踪系统通常不会关注不同请求之间的因果关系，但会在数据模型上保持对应的表达能力。对于同一请求的计算任务之间的因果关系，通常 SDK 提供方会尽可能地帮助开发者在所有跨进程的连接点上埋点，以此达到追踪目的，如 HTTP/RPC 调用、数据库访问、消息生产和消费等。但有时候源自于 A 请求的计算任务会被 B 请求触发，如下图中的例子所示：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/submitter-and-trigger.png)
+
+
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/submitter-and-trigger.png" width="600px" />
+
+
 
 Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Request two 将数据 d2 提交到同一个缓存中，触发 d1 被写出到持久化存储中。这时如何归属 d1 的写出操作就决定了调用链追踪系统是选择提交者角度 (submitter-preserving) 还是触发者角度 (trigger-preserving)。
 
@@ -256,7 +260,9 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/sampling-methods.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/sampling-methods.png" width="600px" />
+
+
 
 ### 头部连贯采样
 
@@ -278,7 +284,11 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 甘特图常被用于展示单个请求的调用链数据，以下是调用链追踪系统最常用的甘特图变体：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png)
+
+
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png" width="480px" />
+
+
 
 图的左边通常组织为树状结构，通常父节点表示调用方，子节点表示被调方，兄弟节点之间为并发关系，且从上至下时间单调递增；图的右边展示的是与标准甘特图类似的条状结构。
 
@@ -302,19 +312,25 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 调用图被用于展示多个请求的聚合信息，这些请求的调用链结构无需完全一致。调用图上的节点表示系统中的服务、模块或接口，边表示因果关系，权重则可以表示流量、资源占用等自定义信息。调用图中可能出现环，意味着系统中存在环形依赖。调用图示例如下：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png)
+
+
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png" width="480px" />
+
+
 
 ### 调用树 (Calling Context Trees)
 
 调用树被用于展示多个请求的聚合信息，这些请求的调用链结构通常不同。调用树根节点到任意叶子节点的路径都是分布式系统中真实存在的调用路径，举例如下：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png)
+
+
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png" width="480px" />
 
 ## 火焰图 (Flame graph)
 
 火焰图常被用于展示单机程序调用栈耗时信息，如 Go 中的 pprof。它与调用树的结构类似，常被用于展示多个请求的聚合信息，但展示形式不同，能更直观地展示各个组件的耗时信息，举例如下：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/flame-graph.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flame-graph.png" width="480px" />
 
 ## 从维度到场景
 
@@ -338,11 +354,11 @@ Jaeger 的名字源于德语中的猎人，是由 Uber 内部 Observability 团�
 
 Jaeger 的架构与上文提到的调用链追踪系统的基本架构十分类似，它有两种部署架构选择，分别如下面两张图所示：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-1.png)
 
 
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-1.png" width="600px" />
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-2.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-2.png" width="600px" />
 
 二者结构大致相同，主要区别在于 jaeger-collector 与 DB 之间加了 Kafka 做缓冲，解决峰值流量过载问题。整个 Jaeger 后端不存在单点故障，Jaeger-collector、Kafka、DB (Cassandra 和 ElasticSearch) 都支持横向扩展。
 
@@ -362,7 +378,7 @@ Jaeger 在官网上介绍自己的主要功能如下：
 
 Jaeger 中调用链数据模型遵守了 opentracing 标准，使用的是典型的 Span Model，其核心数据结构如下图所示：
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/data-model.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/data-model.png" width="780px" />
 
 下面是一个具体的例子：
 
@@ -443,17 +459,17 @@ jaeger-ui 项目提供了丰富的调用链数据可视化支持，包括针对�
 
 ### 甘特图
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png" width="480px" />
 
 ### 调用树
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png" width="480px" />
 
 调用树目前仍在实验阶段，暂时还不是正式功能。
 
 ### 调用图
 
-![](/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png)
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png" width="480px" />
 
 同时还可以聚焦到某个节点，让调用图只显示与该节点相关的服务，即焦点图 (focus graph)。
 
