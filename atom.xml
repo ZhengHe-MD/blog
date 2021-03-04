@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-03-02T04:49:33.676Z</updated>
+  <updated>2021-03-04T09:09:58.473Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,48 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>调用链追踪系统在伴鱼：实践篇</title>
+    <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
+    <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
+    <published>2021-03-04T17:03:51.000Z</published>
+    <updated>2021-03-04T09:09:58.473Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;此文同时发表在&lt;a href=&quot;https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;伴鱼技术博客&lt;/a&gt;上&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在 &lt;a href=&quot;https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/&quot;&gt;理论篇&lt;/a&gt; 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;内部基础设施无需做跨语言支持&lt;/li&gt;
+&lt;li&gt;技术选型会有轻微的语言倾向&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;早期实践&quot;&gt;1. 早期实践&lt;/h2&gt;
+&lt;h3 id=&quot;对接-jaeger&quot;&gt;1.1 对接 Jaeger&lt;/h3&gt;
+&lt;p&gt;2019 年，公司内部的微服务数量逐步增加，调用关系日趋复杂，工程师做性能分析、问题排查的难度变大。这时亟需一套调用链追踪系统帮助我们增强对服务端全貌的了解。经过调研后，我们决定采用同样基于 Go 语言搭建的、由 CNCF 孵化的项目 &lt;a href=&quot;https://www.jaegertracing.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Jaeger&lt;/a&gt;。当时，服务的开发和治理都尚未引入 &lt;code&gt;context&lt;/code&gt;，不论进程内部调用还是跨进程调用，都没有上下文传递。因此早期引入调用链追踪的工作重心就落在了服务及服务治理框架的改造，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 HTTP、Thrift 和 gRPC 的服务端和客户端注入上下文信息&lt;/li&gt;
+&lt;li&gt;在数据库、缓存、消息队列的接入点上埋点&lt;/li&gt;
+&lt;li&gt;快速往既有项目仓库中注入 &lt;code&gt;context&lt;/code&gt; 的命令行工具&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;部署方面：测试环境采用 &lt;strong&gt;all-in-one&lt;/strong&gt;，线上环境采用 &lt;a href=&quot;https://www.jaegertracing.io/docs/1.22/architecture/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;&lt;strong&gt;direct-to-storage&lt;/strong&gt;&lt;/a&gt; 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了 metrics、logs 和 traces 三个要素。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./distributed-tracing-v1.png&quot; alt=&quot;distributed-tracing-v1&quot; style=&quot;zoom:50%;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;遇到的问题&quot;&gt;1.2 遇到的问题&lt;/h3&gt;
+    
+    </summary>
+    
+    
+      <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Counting Large Numbers of Events in Small Registers (1978)</title>
     <link href="https://zhenghe-md.github.io/blog/2021/01/24/counting-large-numbers-of-events-in-small-registers-1978/"/>
     <id>https://zhenghe-md.github.io/blog/2021/01/24/counting-large-numbers-of-events-in-small-registers-1978/</id>
     <published>2021-01-24T14:40:16.000Z</published>
-    <updated>2021-03-02T04:49:33.676Z</updated>
+    <updated>2021-03-04T09:09:58.453Z</updated>
     
     <summary type="html">
     
@@ -55,7 +92,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-03-02T04:49:33.676Z</updated>
+    <updated>2021-03-04T09:09:58.453Z</updated>
     
     <summary type="html">
     
@@ -90,7 +127,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-03-02T04:49:33.696Z</updated>
+    <updated>2021-03-04T09:09:58.477Z</updated>
     
     <summary type="html">
     
@@ -129,7 +166,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-03-02T04:49:33.644Z</updated>
+    <updated>2021-03-04T09:09:58.421Z</updated>
     
     <summary type="html">
     
@@ -208,7 +245,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-03-02T04:49:33.676Z</updated>
+    <updated>2021-03-04T09:09:58.453Z</updated>
     
     <summary type="html">
     
@@ -242,7 +279,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-03-02T04:49:33.700Z</updated>
+    <updated>2021-03-04T09:09:58.481Z</updated>
     
     <summary type="html">
     
@@ -275,7 +312,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-03-02T04:49:33.644Z</updated>
+    <updated>2021-03-04T09:09:58.421Z</updated>
     
     <summary type="html">
     
@@ -305,7 +342,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-03-02T04:49:33.652Z</updated>
+    <updated>2021-03-04T09:09:58.429Z</updated>
     
     <summary type="html">
     
@@ -340,7 +377,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-03-02T04:49:33.672Z</updated>
+    <updated>2021-03-04T09:09:58.449Z</updated>
     
     <summary type="html">
     
@@ -368,7 +405,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-03-02T04:49:33.672Z</updated>
+    <updated>2021-03-04T09:09:58.449Z</updated>
     
     <summary type="html">
     
@@ -398,7 +435,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-03-02T04:49:33.668Z</updated>
+    <updated>2021-03-04T09:09:58.445Z</updated>
     
     <summary type="html">
     
@@ -430,7 +467,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-03-02T04:49:33.676Z</updated>
+    <updated>2021-03-04T09:09:58.449Z</updated>
     
     <summary type="html">
     
@@ -464,7 +501,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-03-02T04:49:33.644Z</updated>
+    <updated>2021-03-04T09:09:58.421Z</updated>
     
     <summary type="html">
     
@@ -497,7 +534,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-03-02T04:49:33.652Z</updated>
+    <updated>2021-03-04T09:09:58.429Z</updated>
     
     <summary type="html">
     
@@ -533,7 +570,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-03-02T04:49:33.660Z</updated>
+    <updated>2021-03-04T09:09:58.437Z</updated>
     
     <summary type="html">
     
@@ -570,7 +607,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-03-02T04:49:33.668Z</updated>
+    <updated>2021-03-04T09:09:58.445Z</updated>
     
     <summary type="html">
     
@@ -600,7 +637,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2021-03-02T04:49:33.656Z</updated>
+    <updated>2021-03-04T09:09:58.429Z</updated>
     
     <summary type="html">
     
@@ -656,7 +693,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2021-03-02T04:49:33.640Z</updated>
+    <updated>2021-03-04T09:09:58.413Z</updated>
     
     <summary type="html">
     
@@ -689,7 +726,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2021-03-02T04:49:33.644Z</updated>
+    <updated>2021-03-04T09:09:58.417Z</updated>
     
     <summary type="html">
     
@@ -711,42 +748,6 @@
 &lt;/ul&gt;
 &lt;h1 id=&quot;construction&quot;&gt;Construction&lt;/h1&gt;
 &lt;p&gt;作者提出一种构建好的 Consistent Hash Function 的方法：&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/categories/papers-we-love/"/>
-    
-    
-      <category term="data structures &amp; algorithms" scheme="https://zhenghe-md.github.io/blog/tags/data-structures-algorithms/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Dynamic Hash Tables (1988)</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/02/18/Dynamic-Hash-Tables-1988/</id>
-    <published>2020-02-18T12:36:49.000Z</published>
-    <updated>2021-03-02T04:49:33.644Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;摘要&quot;&gt;摘要&lt;/h1&gt;
-&lt;p&gt;Linear Hashing 和 Spiral Storage 是两种动态哈希算法。这两种算法最初都是为了优化外部存储 (secondary/external storage) 数据访问而设计的。本文将这两种算法引入到内存中，即键值数据可以一次性读入内存的场景，对比、分析二者之间，以及与其它动态哈希算法的性能。实验结果表明：Linear Hashing 的性能上要优于 Spiral Storage，实现难度上要小于 Spiral Storage。其它纳入对比范围的动态哈希算法包括 Unbalanced Binary Tree 以及支持周期性 rehashing 版本的 Double Hashing。Linear Hashing 的查询时间与 Double Hashing 相当，同时远远优于 Unbalanced Binary Tree，即使在 tree 很小的场景上也如此；在载入键值数据的表现上，三者相当。总体而言，Linear Hashing 是一个简单、高效的动态哈希算法，非常适用于键空间未知的场景。&lt;/p&gt;
-&lt;h1 id=&quot;简介&quot;&gt;简介&lt;/h1&gt;
-&lt;p&gt;许多为外部文件存储而设计的动态哈希算法在过去的若干年中被提出，这些算法允许外部文件根据内部存储的纪录数量而优雅地扩大和缩小。在外部文件存储场景中，外部存储比内存读写慢很多，它的特点总结如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;按块读写数据，如 4096 字节为 1 块&lt;/li&gt;
-&lt;li&gt;倾向于读写连续块&lt;/li&gt;
-&lt;li&gt;倾向于批量读写&lt;/li&gt;
-&lt;li&gt;在每一层都设有缓存来优化性能&lt;/li&gt;
-&lt;li&gt;根据磁盘中数据块的读写次数来衡量程序的性能&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Linear Hashing 和 Spiral Storage 在上述场景中都已被验证有效。本文将介绍如何将二者引入到 Internal Hash Table 场景中，在数学上分析其预期性能，并通过实验验证预期。从实验结论上看，两种方法对于 Internal Hash Table 、键 (key) 空间未知的场景同样有效。其中 Linear Hashing 更快且更容易实现。&lt;/p&gt;
-&lt;p&gt;所有 Hashing 技术都有一个特点：当负载提高时，基本操作的复杂度，如插入、查询、删除，也将提高。如果希望 Hash Table 的性能维持在一个可接受的下限之上，我们必须通过某种方式为其分配新的空间。传统的方案是创建一个新的、更大的哈希表，然后将所有数据重新哈希到新的哈希表上。动态哈希算法的不同之处在于，它允许哈希表逐渐扩大，每次增加一个桶。当新桶加入到寻址空间时，只需要重新哈希原来的一个桶即可，而不需要将所有数据全部重新哈希。&lt;/p&gt;
-&lt;h1 id=&quot;linear-hashing&quot;&gt;Linear Hashing&lt;/h1&gt;
-&lt;p&gt;通常在 Hash 算法中需要一个 Hash Function，将输入参数转化成一个整数：&lt;/p&gt;
-&lt;p&gt;&lt;span class=&quot;math display&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot; display=&quot;true&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;12.301ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 5437.1 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-66&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(827.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3A&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1383.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-78&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2233.3, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2192&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3511.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-68&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(4087.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(4476.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-78&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(5048.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;&lt;/p&gt;
     
     </summary>
     
