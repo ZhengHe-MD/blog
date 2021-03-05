@@ -39,8 +39,8 @@ categories:
 
 这些采样方式都属于头部连贯采样 (head-based coherent sampling)，我们在 [理论篇](https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/) 中曾讨论过其优劣势。伴鱼的生产环境中使用的是限流采样策略：每个进程每秒最多采 1 条 trace。这种策略虽然很节省资源，但其缺点在一次次线上问题排查中逐渐暴露：
 
-1. 一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致**小流量接口一直采集不到调用链数据而饿死 (starving)**。
-2. 线上服务出错是小概率事件，导致出错的请求被采中的概率更小，就导致**采到的调用链信息量不大，引发问题的调用链却丢失**的问题。
+1. 一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致**小流量接口一直采集不到调用链数据而饿死 (starving)**
+2. 线上服务出错是小概率事件，导致出错的请求被采中的概率更小，就导致**采到的调用链信息量不大，引发问题的调用链却丢失**的问题
 
 ## 2. 调用链通路改造
 
@@ -64,10 +64,10 @@ Jaeger 团队从 2017 年就开始[讨论](https://github.com/jaegertracing/jaeg
 
 collector 内部有 4 个核心组件：
 
-* Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 OTLP。除此之外，还可以支持从 Kafka 中接收以上格式的数据。
-* Processors：负责实施处理逻辑，如打包、过滤、修饰、采样等等，尾部采样逻辑就可以在这里实现。
-* Exporters：负责将处理后的 telemetry data 按指定的格式重新输出到后端服务中，如 Zipkin、Jaeger、OpenCensus 的 backend，也可以输出到 Kafka 或另一组 collector 中。
-* Extensions：提供一些核心流程之外的插件，如分析性能问题的 pprof，健康监测的 health 等等。
+* Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 OTLP。除此之外，还可以支持从 Kafka 中接收以上格式的数据
+* Processors：负责实施处理逻辑，如打包、过滤、修饰、采样等等，尾部采样逻辑就可以在这里实现
+* Exporters：负责将处理后的 telemetry data 按指定的格式重新输出到后端服务中，如 Zipkin、Jaeger、OpenCensus 的 backend，也可以输出到 Kafka 或另一组 collector 中
+* Extensions：提供一些核心流程之外的插件，如分析性能问题的 pprof，健康监测的 health 等等
 
 利用不同的 Receivers、Processors、Exporters，我们可以组装出一个或多个 Pipelines。
 
