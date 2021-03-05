@@ -23,7 +23,9 @@ categories:
 * 在数据库、缓存、消息队列的接入点上埋点
 * 快速往既有项目仓库中注入 `context` 的命令行工具
 
-部署方面：测试环境采用 **all-in-one**，线上环境采用 [**direct-to-storage**](https://www.jaegertracing.io/docs/1.22/architecture/) 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了 metrics、logs 和 traces 三个要素。
+部署方面：测试环境采用 **all-in-one**，线上环境采用 [**direct-to-storage**](https://www.jaegertracing.io/docs/1.22/architecture/) 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。
+
+下图是第一版调用链追踪系统的数据上报通路示意图。服务运行在容器中，通过 opentracing 的 sdk 埋点，Jaeger 的 go-sdk 上报到宿主机上的 Jaeger-agent，后者再将数据进一步上报到 Jaeger-collector，最终将调用链数据写入 ES，建立索引，即图中的 Jaeger backends。
 
 <img src="./distributed-tracing-v1.png" alt="distributed-tracing-v1" style="zoom:50%;" />
 
@@ -37,7 +39,7 @@ categories:
 
 这些采样方式都属于头部连贯采样 (head-based coherent sampling)，我们在 [理论篇](https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/) 中曾讨论过其优劣势。伴鱼的生产环境中使用的是限流采样策略：每个进程每秒最多采 1 条 trace。这种策略虽然很节省资源，但其缺点在一次次线上问题排查中逐渐暴露：
 
-1. 一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致**小流量接口饿死**。
+1. 一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致**小流量接口一直采集不到调用链数据而饿死 (starving)**。
 2. 线上服务出错是小概率事件，导致出错的请求被采中的概率更小，就导致**采到的调用链信息量不大，引发问题的调用链却丢失**的问题。
 
 ## 2. 调用链通路改造
@@ -62,7 +64,7 @@ Jaeger 团队从 2017 年就开始[讨论](https://github.com/jaegertracing/jaeg
 
 collector 内部有 4 个核心组件：
 
-* Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 otlp。除此之外，还可以支持从 Kafka 中接收以上格式的数据。
+* Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 OTLP。除此之外，还可以支持从 Kafka 中接收以上格式的数据。
 * Processors：负责实施处理逻辑，如打包、过滤、修饰、采样等等，尾部采样逻辑就可以在这里实现。
 * Exporters：负责将处理后的 telemetry data 按指定的格式重新输出到后端服务中，如 Zipkin、Jaeger、OpenCensus 的 backend，也可以输出到 Kafka 或另一组 collector 中。
 * Extensions：提供一些核心流程之外的插件，如分析性能问题的 pprof，健康监测的 health 等等。
@@ -229,7 +231,7 @@ opentelemetry-collector 内部利用 OpenCensus sdk 埋了很多有用的监控�
 
 ## 4. 小结
 
-借助开源项目，我们得以通过花费极少的人力，解决当前伴鱼内部调用链追踪应用的稳态分析及异常检测需求。调用链追踪是可观测性平台的重要组件，未来我们将继续把一些精力放在 telemetry data 的整合上，为研发提供更全面、一致的服务观测分析体验。
+借助开源项目，我们得以通过花费极少的人力，解决当前伴鱼内部调用链追踪应用的稳态分析及异常检测需求，同时也为开源项目和社区做出微小的贡献。调用链追踪是可观测性平台的重要组件，未来我们将继续把一些精力放在 telemetry data 的整合上，为研发提供更全面、一致的服务观测分析体验。
 
 ## 5. 参考
 
