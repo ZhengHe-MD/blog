@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/tailsamplingprocessor-ticker.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/span-distribution.png">
 <meta property="article:published_time" content="2021-03-04T17:03:51.000Z">
-<meta property="article:modified_time" content="2021-03-05T15:27:12.295Z">
+<meta property="article:modified_time" content="2021-03-05T15:37:47.388Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/distributed-tracing-v1.png">
@@ -325,7 +325,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-05 15:27:12" itemprop="dateModified" datetime="2021-03-05T15:27:12+00:00">2021-03-05</time>
+                <time title="修改时间：2021-03-05 15:37:47" itemprop="dateModified" datetime="2021-03-05T15:37:47+00:00">2021-03-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -380,7 +380,8 @@ mjx-container + br {
 <li>在数据库、缓存、消息队列的接入点上埋点</li>
 <li>快速往既有项目仓库中注入 <code>context</code> 的命令行工具</li>
 </ul>
-<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a href="https://www.jaegertracing.io/docs/1.22/architecture/" target="_blank" rel="noopener"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了 metrics、logs 和 traces 三个要素。</p>
+<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a href="https://www.jaegertracing.io/docs/1.22/architecture/" target="_blank" rel="noopener"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。</p>
+<p>下图是第一版调用链追踪系统的数据上报通路示意图。服务运行在容器中，通过 opentracing 的 sdk 埋点，Jaeger 的 go-sdk 上报到宿主机上的 Jaeger-agent，后者再将数据进一步上报到 Jaeger-collector，最终将调用链数据写入 ES，建立索引，即图中的 Jaeger backends。</p>
 <p><img src="./distributed-tracing-v1.png" alt="distributed-tracing-v1" style="zoom:50%;" /></p>
 <h3 id="遇到的问题">1.2 遇到的问题</h3>
 <p>在 <a href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/" target="_blank" rel="noopener">理论篇</a> 中，我们介绍过 Jaeger 支持三种采样方式：</p>
@@ -391,7 +392,7 @@ mjx-container + br {
 </ul>
 <p>这些采样方式都属于头部连贯采样 (head-based coherent sampling)，我们在 <a href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/" target="_blank" rel="noopener">理论篇</a> 中曾讨论过其优劣势。伴鱼的生产环境中使用的是限流采样策略：每个进程每秒最多采 1 条 trace。这种策略虽然很节省资源，但其缺点在一次次线上问题排查中逐渐暴露：</p>
 <ol type="1">
-<li>一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致<strong>小流量接口饿死</strong>。</li>
+<li>一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致<strong>小流量接口一直采集不到调用链数据而饿死 (starving)</strong>。</li>
 <li>线上服务出错是小概率事件，导致出错的请求被采中的概率更小，就导致<strong>采到的调用链信息量不大，引发问题的调用链却丢失</strong>的问题。</li>
 </ol>
 <h2 id="调用链通路改造">2. 调用链通路改造</h2>
@@ -406,7 +407,7 @@ mjx-container + br {
 <p><img src="./open-telemetry-collector-architecture.png" alt="otelcol-architecture" style="zoom:40%;" /></p>
 <p>collector 内部有 4 个核心组件：</p>
 <ul>
-<li>Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 otlp。除此之外，还可以支持从 Kafka 中接收以上格式的数据。</li>
+<li>Receivers：负责接收不同格式的 telemetry data，对于 trace 来说就是 Zipkin、Jaeger、OpenCensus 以及其自研的 OTLP。除此之外，还可以支持从 Kafka 中接收以上格式的数据。</li>
 <li>Processors：负责实施处理逻辑，如打包、过滤、修饰、采样等等，尾部采样逻辑就可以在这里实现。</li>
 <li>Exporters：负责将处理后的 telemetry data 按指定的格式重新输出到后端服务中，如 Zipkin、Jaeger、OpenCensus 的 backend，也可以输出到 Kafka 或另一组 collector 中。</li>
 <li>Extensions：提供一些核心流程之外的插件，如分析性能问题的 pprof，健康监测的 health 等等。</li>
@@ -526,7 +527,7 @@ mjx-container + br {
 </table>
 <p>目前我们刚刚在报警平台中支持此 SLI 的埋点。目前还有个别服务尚未升级相关依赖，因此该指标尚不能反映所有服务的情况，我们会继续推动各服务全面升级，按照以上 SLO 来要求新版系统。</p>
 <h2 id="小结">4. 小结</h2>
-<p>借助开源项目，我们得以通过花费极少的人力，解决当前伴鱼内部调用链追踪应用的稳态分析及异常检测需求。调用链追踪是可观测性平台的重要组件，未来我们将继续把一些精力放在 telemetry data 的整合上，为研发提供更全面、一致的服务观测分析体验。</p>
+<p>借助开源项目，我们得以通过花费极少的人力，解决当前伴鱼内部调用链追踪应用的稳态分析及异常检测需求，同时也为开源项目和社区做出微小的贡献。调用链追踪是可观测性平台的重要组件，未来我们将继续把一些精力放在 telemetry data 的整合上，为研发提供更全面、一致的服务观测分析体验。</p>
 <h2 id="参考">5. 参考</h2>
 <ul>
 <li><a href="https://www.infoq.cn/article/NVdIDI5lZBfmaIHWNVxS" target="_blank" rel="noopener">调用链追踪系统在伴鱼：理论篇</a></li>
