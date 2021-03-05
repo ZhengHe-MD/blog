@@ -445,7 +445,7 @@ type SpanContext struct {
 
 目前 Jaeger 支持三种采样方式：
 
-* Constant：要么全采样，要么不采样
+* Const：要么全采样，要么不采样
 * Probabilistic：按固定概率采样
 * Rate Limiting：限流采样，即保证每个进程每隔一段时间最多采 k 个
 
