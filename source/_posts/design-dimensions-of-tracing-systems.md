@@ -26,7 +26,7 @@ categories:
 
 如果有一门学科叫软件社会学，那么康威定律 (Conway's law) 必定是其中的基本定律之一。如果把互联网公司内部的全体信息系统看作是一整个系统，那么这个系统模块结构会向公司的组织架构收敛。从组织架构层面看，公司结构从扁平向多层级演变，信息传递的环节增加，沟通效率随之下降，进而影响公司的行动效率。不论从组员之间的熟悉程度还是从部门目标一致性来看，部门内部的沟通效率要远远高于部门间的沟通效率。因此，如果系统模块结构与组织架构约趋近，公司的沟通效率就能接近极大值。团队的分化通常伴随着服务的拆分，这也是许多公司业务增长以后进行微服务化的动机。微服务化后，公司信息系统就被迫成为了分布式系统。尽管分布式系统带来了种种好处，如持续集成、增量部署、横向扩展、故障隔离，但系统可观测性比起单机系统下降了很多，甚至几乎没有人能够对公司信息系统有全局性的了解。
 
-任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心 (machine-centric) 走向以请求为中心 (workflow-centric)，配合日志、监控指标数据 (三者合称 Telemetry)，使得微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。
+任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心 (machine-centric) 走向以请求为中心 (workflow-centric)。调用链、日志、监控指标数据，三者合称 Telemetry，有了它们，微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。
 
 ## 使用场景
 
@@ -34,16 +34,16 @@ categories:
 
 ### 异常检测
 
-异常检测指的是定位和排查一些引发系统异常行为的请求。通常这些请求的出现频率通常很低，其出现属于小概率事件。尽管异常事件被采样的概率很低，但它的信息熵大，能给到开发者更多关于其维护系统的细节信息。这些细节可能体现在：慢请求、慢查询、循环调用未设上限、存在错误级别日志、未覆盖测试的问题逻辑分支等等。如果调用链追踪系统能主动为开发者发现异常问题，将使得风险隐患提前暴露，并被扼杀在摇篮中。
+异常检测指的是定位和排查一些引发系统异常行为的请求。通常这些请求的出现频率通常很低，其出现属于小概率事件。尽管异常事件被采样的概率很低，但它的信息熵大，能给到开发者更多细节信息。这些细节可能体现在：慢请求、慢查询、循环调用未设上限、存在错误级别日志、未覆盖测试的问题逻辑分支等等。如果调用链追踪系统能主动为开发者发现异常问题，将使得风险隐患提前暴露，并被扼杀在摇篮中。
 
 ### 稳态分析
 
 稳态分析指的是分析微服务在正常流量下的各方面状态，分析粒度可能包括单个接口、单个服务、多个服务等等；分析范围可能是单个请求或多个请求；分析角度可能包括埋点指标、依赖关系、流量大小等等。稳态分析通常反映的是系统主要流程的健康状态，一些配置的改动，如存储节点修改、客户端日志上报频率，都可能反馈到系统稳态。稳态分析还可以有很多细分场景，如：
 
 * 稳态性能分析：定位和排查系统稳态中的性能问题，这些问题的起因通常与异常检测类似，只是其影响尚不足以触发报警。
-* 服务依赖分析：构建接口级别的依赖关系图，节点通常为接口或服务，边通常为接口或服务的调用关系，边的权重则为流量。构建方式可以分为离线构建和在线构建，对应的就是静态关系图或动态关系图。这些信息可以以基础 API 的方式提供给上游应用使用，如 APM。
+* 服务依赖分析：构建接口级别的依赖关系图，节点通常为接口或服务，边通常为接口或服务的调用关系，边的权重则为流量。构建方式可以分为离线构建和在线构建，对应的就是静态关系图和动态关系图。这些信息可以以基础 API 的方式提供给上游应用使用，如 APM。
 
-### 分布式侧写
+### 分布式侧写 (profiling)
 
 许多编程语言都提供侧写工具，如 go tool pprof，能通过采集不同资源的使用负载，如 CPU、内存、协程等，分析进程内部不同模块的资源使用模式，最后通过调用树或火焰图等可视化方式呈现给开发者。分布式侧写就是这类侧写工具的分布式版本，开发者通过打开侧写开关，采样分析一段时间，得到微服务之间的资源占用比例，如时延，然后通过类似单机的数据可视化方式分析接口或服务整体的性能瓶颈。
 
@@ -148,7 +148,7 @@ categories:
 
 # 设计维度
 
-在 2014 年的一篇[论文](http://So, you want to trace your distributed system? Key design insights from years of practical experience)中，研究团队在分析多个当时的调用链追踪系统后，总结出 4 个设计维度：
+在 2014 年的一篇[论文](https://www.pdl.cmu.edu/PDL-FTP/SelfStar/CMU-PDL-14-102.pdf)中，研究团队在分析多个当时的调用链追踪系统后，总结出 4 个设计维度：
 
 * Which causal relationships should be reserved?
 * How should causal relationships be tracked?
@@ -181,7 +181,7 @@ Span Model 单因多果的关系与调用栈在概念上十分契合，很容易
 
 ### Event Model
 
-[X-Trace](http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf) 是最早使用 Event Model 的项目。在 X-Trace 中，一个事件 (event) 是计算任务中的一个时刻，计算任务中的因果关系由事件之间的边 (edges) 表示，任意两个事件都可以用一条边连接。值得注意的是，这里的 edge 表示的实际上是 [Lamport (1978)](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) 中提到的 "happens-before" 关系，假设有一条边从 EventA 连到 EventB，那么 "happens-before" 那么 EventA 可能对 EventB 产生影响。但在简单场景下，我们可以直接认为边指代激活关系 (activation relationship) 或依赖关系 (dependency relationships)，二者都是 "happens-before" 关系的子集。与 Span Model 不同的是，Event Model 中每个事件可以有多条入边 (incoming edges)，这让 Event Model 可以轻松表达复杂关系，如 fork/join 或 fan-ins/fan-outs 关系。Event Model 支持更精细化的调用链数据展示，举例如下：
+[X-Trace](http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf) 是最早使用 Event Model 的项目。在 X-Trace 中，一个事件 (event) 是计算任务中的一个时刻，计算任务中的因果关系由事件之间的边 (edges) 表示，任意两个事件都可以用一条边连接。值得注意的是，这里的 edge 表示的实际上是 [Lamport (1978)](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) 中提到的 "happens-before" 关系，假设有一条边从 EventA 连到 EventB，那么 "happens-before" 表示 EventA 可能对 EventB 产生影响。但在简单场景下，我们可以直接认为边指代激活关系 (activation relationship) 或依赖关系 (dependency relationships)，二者都是 "happens-before" 关系的子集。与 Span Model 不同的是，Event Model 中每个事件可以有多条入边 (incoming edges)，这让 Event Model 可以轻松表达复杂关系，如 fork/join 或 fan-ins/fan-outs 关系。Event Model 支持更精细化的调用链数据展示，举例如下：
 
 
 
@@ -214,7 +214,7 @@ Event Model 的优势在于表达力强，但缺点是相比 Span Model 更加�
 同一请求 (intra-request) 的计算任务之间可能存在因果关系，如：
 
 * 进程 P1 通过 HTTP 或 RPC 调用进程 P2
-* 进程 P1 写入数据到存储服务中，或从存储服务中读取数据
+* 进程 P1 或 P2 写入数据到存储服务中，或从存储服务中读取数据
 * 进程 P1 生产消息到 MQ 中，进程 P2 消费到消息并处理
 * ...
 
@@ -304,7 +304,7 @@ Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Reques
 
 流程图常被用于展示多个相似请求调用链数据的聚合信息，这些请求的调用链结构应该完全一致。举例如下：
 
-[<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flow-graph.png" alt="" style="zoom:50%;" />
+<img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flow-graph.png" alt="" style="zoom:50%;" />
 
 图中的节点表示系统中发生的事件，边表示因果关系，权重可以表示事件发生的时间差，它们共同组成一个有向无环图。流程图甚至可以表达 fan-outs 和 fan-ins，即 forks 和 joins 的因果关系，能保留更多的调用链细节信息。
 
@@ -475,7 +475,7 @@ jaeger-ui 项目提供了丰富的调用链数据可视化支持，包括针对�
 
 # 调用链追踪系统数据库
 
-[AP](http://www.cs.cmu.edu/~pavlo/) 在 2014 年建立了网站 [dbdb.io](https://dbdb.io/)，即 Database of Databases，从一些固定的维度来分析市面上琳琅满目的数据库系统。受这个项目启发，我们也可以本文提到的设计维度，来分析市面上的调用链追踪系统，从而获得更加系统化的理解，并将分析调研的结果沉淀下来。于是我就建立了这个项目 [Database of Tracing Systems](https://github.com/ZhengHe-MD/database-of-tracing-systems)，如果你对此感兴趣，欢迎参与调研，共同建立调用链追踪系统的数据库。
+[AP](http://www.cs.cmu.edu/~pavlo/) 在 2014 年建立了网站 [dbdb.io](https://dbdb.io/)，即 Database of Databases，从一些固定的维度来分析市面上琳琅满目的数据库系统。受这个项目启发，我们也可以用本文提到的设计维度，来分析市面上的调用链追踪系统，从而获得更加系统化的理解，并将分析调研的结果沉淀下来。于是我就建立了这个项目 [Database of Tracing Systems](https://github.com/ZhengHe-MD/database-of-tracing-systems)，如果你对此感兴趣，欢迎参与调研，共同建立调用链追踪系统的数据库。
 
 # 参考资料
 
