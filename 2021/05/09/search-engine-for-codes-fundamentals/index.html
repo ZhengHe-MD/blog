@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="完整调研报告请见我个人的 Notion 笔记  0. 引入 最近，我们遇到了两个场景：  负责基础服务的工程师想下线一个接口但不知道有哪些服务调用 负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方  仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码搜索引擎：基础篇">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="完整调研报告请见我个人的 Notion 笔记  0. 引入 最近，我们遇到了两个场景：  负责基础服务的工程师想下线一个接口但不知道有哪些服务调用 负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方  仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/anatomy.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/query-languages.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/indexes.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/suffix-array-example-1.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/suffix-array-example-2.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/text-based-query-process.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/lsif-example.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/index-of-repo.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/history-timeline.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/hound-logic-flow.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/live-grep-home-page.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/zoekt-search-home-page.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/zoekt-index.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/sourcegraph-architecture.png">
+<meta property="article:published_time" content="2021-05-09T10:19:17.000Z">
+<meta property="article:modified_time" content="2021-05-16T01:28:44.465Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="system design">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/anatomy.png">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>代码搜索引擎：基础篇 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-172943223-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          代码搜索引擎：基础篇
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-09 10:19:17" itemprop="dateCreated datePublished" datetime="2021-05-09T10:19:17+00:00">2021-05-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-16 01:28:44" itemprop="dateModified" datetime="2021-05-16T01:28:44+00:00">2021-05-16</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/05/09/search-engine-for-codes-fundamentals/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/05/09/search-engine-for-codes-fundamentals/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>完整调研报告请见我个人的 Notion <a href="https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7" target="_blank" rel="noopener">笔记</a></p>
+</blockquote>
+<h1 id="引入">0. 引入</h1>
+<p>最近，我们遇到了两个场景：</p>
+<ol type="1">
+<li>负责基础服务的工程师想下线一个接口但不知道有哪些服务调用</li>
+<li>负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方</li>
+</ol>
+<p>仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系统中维护的依赖关系在三个方面无法满足上述需求：</p>
+<ol type="1">
+<li>一些上古服务仍然在运行，但没有接入调用链追踪系统</li>
+<li>调用链追踪系统中维护的是「动态依赖关系」，即最近 N 天 (由 retention policy 决定) 捕获的调用关系</li>
+<li>调用链追踪系统中存储的是经采样策略过滤后的数据，可能存在漏采的情况</li>
+</ol>
+<p>于是我们开始思考另一个方向：<strong>通过代码搜索引擎提取静态依赖关系</strong>。恰好在 2020 Q4 末，我们将内部所有项目仓库从 Gerrit 迁移到了 Gitlab，为代码搜索引擎的落地铺平了道路。</p>
+<p>在下文中，我们将和大家分享代码搜索引擎的调研报告，期望能帮助读者了解代码搜索引擎如何工作。报告主要讨论以下话题：</p>
+<ul>
+<li>为什么做</li>
+<li>一般架构</li>
+<li>设计决定</li>
+<li>实现挑战</li>
+<li>开源项目</li>
+</ul>
+<h1 id="为什么做">1. 为什么做</h1>
+<p>Google 内部曾对工程师做一次 <a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf" target="_blank" rel="noopener">调研</a>，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求 (search quries)；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一；在「引入」中，我们也介绍了伴鱼搭建代码搜索引擎的初衷。那么在业界的实践中，代码搜索引擎主要被用来解决哪些问题呢？</p>
+<p>常见的代码搜索场景包括：</p>
+<ul>
+<li>理解代码间的依赖关系</li>
+<li>寻找即将弃用 (deprecated) 接口的引用地点</li>
+<li>避免重复造轮子</li>
+<li>分享编码方案和编码风格</li>
+<li>发现低质量的代码</li>
+<li>定位安全问题</li>
+<li>...</li>
+</ul>
+<p>尽管服务和仓库不一定是一一映射关系，但如果服务被拆分，通常仓库也会被拆分；服务拆分后可观测性 (observability) 会下降，仓库被拆分后可观测性也会下降。在仓库拆分前，搜索代码只需要执行 <code>grep</code> 命令；仓库拆分后，工程师连公司内部存在哪些仓库都无法准确知道，更不用说 clone 到本地进行搜索。因此代码搜索引擎实际上是一种提高仓库可观测性的工具。</p>
+<h1 id="一般架构">2. 一般架构</h1>
+<p><img src="./anatomy.png" width="680px" /></p>
+<p>如上图所示，代码搜索引擎通常可以分为两个部分：Web Server 和 Index Serer。</p>
+<p>Web Server 负责渲染查询页面，接收用户的查询请求，将查询调度到合适的 Index Server 中，获取查询结果，并返回到前端向用户展示。Index Server 负责从仓库托管服务中按给定的策略拉取相关仓库数据到本地并建立索引。当仓库数据更新时，需要同步仓库变动，更新索引，保证数据的最终一致性。当仓库数量过多，索引体积过大时，Index Server 需要支持横向扩展，分片管理数据；当请求数量过多时，Web Server 也需要支持横向扩展。</p>
+<p>实践中，有的项目会将 Web Server 和 Index Server 合而为一，有的会将 Index Server 的仓库同步和索引建立进一步拆分成两个模块，甚至将仓库和索引的元数据用关系型数据库单独管理，但这一切都能够以「一般框架」为起点设计。</p>
+<h1 id="设计决定">3. 设计决定</h1>
+<p>了解了代码搜索引擎的一般架构后，我们从以下四个角度出发，讨论该系统各个模块的设计决定：</p>
+<ul>
+<li>查询语言</li>
+<li>索引结构</li>
+<li>数据管理</li>
+<li>结果排序</li>
+</ul>
+<h2 id="查询语言">3.1 查询语言</h2>
+<p><img src="./query-languages.png" width="480px" /></p>
+<p>如上图所示，代码搜索引擎的查询语言通常由两部分构成：「修饰词」和「匹配器」。「修饰词」用来制定查询的范围，如仓库名称、文件名称、编程语言等等。它既用于帮助用户更精确地描述查询内容，也能够为搜索引擎更高效地执行提供线索。「匹配器」则是对目标代码特征的表述，它可以是关键词 (keyword)、子串 (substring)、正则表达式 (regular expression)，也可以是包含编程语言特征的结构化 (structural) 描述。</p>
+<p>举例如下：语句</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r:kubernetes b:master common.*Describe</span><br></pre></td></tr></table></figure>
+<p>表示的是：搜索 kubernetes 仓库 master 分支中，匹配正则表达式 <code>common.*Describe</code> 的源码。再看看「匹配器」，假设有一个文档 (document) 内容如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">greeting</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.Println(<span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过关键词匹配，你可以搜索单词，如 "greeting"，或词组，如 "hello world"，搜索到该文档，但无法通过搜索子串，如 "greet" 或 "Print" 达到目的；通过子字符串匹配，你可以搜索任意子串，如 "greet"、"Print"，当然跨越单词的子串也没问题，如 "ello wor"；通过正则表达式，你的描述可以更加灵活，如所有包含 ctx 参数的函数可以搜索 "^func.*ctx"。关键词、子字符串、正则表达式的表达力依次递增，但三者都属于纯文本匹配器。如果想基于编程语言的语法结构来搜索，那么就需要结构化匹配器。例如在 Sourcegraph 中，你可以通过以下匹配器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">switch :[[v]] :&#x3D; :[x].(type) &#123;:[_] case nil: :[_]&#125;</span><br></pre></td></tr></table></figure>
+<p>来匹配 Go 源码中 type switch 代码块中包含 nil case 的情况。</p>
+<h2 id="索引结构">3.2 索引结构</h2>
+<p>代码搜索引擎之于通用文本搜索引擎，就如时序数据库之于关系型数据库，前者是后者的一个特例。因此驱动代码搜索引擎的许多索引结构源于通用文本搜索引擎。</p>
+<p><img src="./indexes.png" width="680px"/></p>
+<p>如上图所示，我们大致可以将代码搜索引擎常用的索引结构分为两类：「基于文本」 (text-based) 和「语言感知」 (language-aware)。基于文本的索引结构只对语料做纯文本分析，而语言感知的索引结构需要理解编程语言的语法结构，前者适用于所有文本搜索引擎，后者则为代码搜索引擎特有。</p>
+<p>本节我们首先回顾一下「倒排索引」的基础知识，随后依次讨论上图叶子节点中的索引结构。</p>
+<h3 id="倒排索引">3.2.1 倒排索引</h3>
+<p>文本搜索的实现离不开一个经典的数据结构 — 倒排索引 (Inverted Index)。本节简单回顾倒排索引的基本结构以及它的一些基本变体。如果你对这个话题有兴趣深入了解，我推荐弗莱堡大学的 Information Retrieval 课程 (<a href="https://www.youtube.com/playlist?list=PLfgMNKpBVg4V8GtMB7eUrTyvITri8WF7i" target="_blank" rel="noopener">视频</a> | <a href="https://github.com/ZhengHe-MD/ir-freiburg" target="_blank" rel="noopener">资料</a>)。</p>
+<p>给定如下一组文档 (documents)：</p>
+<ol type="1">
+<li>He likes to wink, he likes to drink.</li>
+<li>He likes to drink, and drink, and drink.</li>
+<li>The thing he likes to drink is ink.</li>
+<li>He likes to wink and drink pink ink.</li>
+</ol>
+<p>其中序号即为文档编号。最简单的倒排索引就是先对其分词，找出每个单词对应的文档列表：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"and"</span>: [<span class="number">2</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"drink"</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"he"</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"ink"</span>: [<span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"is"</span>: [<span class="number">3</span>],</span><br><span class="line">  <span class="attr">"likes"</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"the"</span>: [<span class="number">3</span>],</span><br><span class="line">  <span class="attr">"thing"</span>: [<span class="number">3</span>],</span><br><span class="line">  <span class="attr">"to"</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>],</span><br><span class="line">  <span class="attr">"wink"</span>: [<span class="number">1</span>, <span class="number">4</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在相关书籍中，这个数据结构被称为 Posting Lists 或 Postings。为了算法实现上的高效，每个单词对应的文档序号列表通常按顺序排列。</p>
+<p>有了上述结构，我们就能支持简单的「关键词搜索」(Keyword Search) 功能。假如用户想查询包含单词 "wink" 的文档，就找到单词 "wink" 对应的文档列表即可。上述结构也能支持「词组搜索」 (Phrase Search)，比如 "likes to"，就可以分别找到 "likes" 和 "to" 对应的文档列表，取二者交集。但对于这些筛选出来的文档，我们还需要再进行一遍确认，因为 "likes" 和 "to" 出现的位置和顺序都无法保证符合要求，比如文档 "To my mind, I likes the way you achieve this"。</p>
+<p>另一种支持的「词组搜索」 的方法是在 Postings 中加入每个词语出现的位置信息，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"drink"</span>: &#123;</span><br><span class="line">    <span class="attr">"1"</span>: [<span class="number">30</span>],</span><br><span class="line">    <span class="attr">"2"</span>: [<span class="number">13</span>, <span class="number">24</span>, <span class="number">35</span>],</span><br><span class="line">    <span class="attr">"3"</span>: [<span class="number">23</span>],</span><br><span class="line">    <span class="attr">"4"</span>: [<span class="number">22</span>]</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通常称这种 Postings 为 Positional Postings。这时支持「词组搜索」就是小菜一碟了，典型的空间换时间。</p>
+<p>如果用户记不住完整的单词和词组，怎么办？这就需要支持一种新的搜索方式 —「子串搜索」(Substring Search)，如搜索 "ink"，要给出 "drink"、"wink" 和 "ink" 的结果并集。显然，每次遍历 Postings 中的所有 key 效率不高，尤其是需要做多语言支持的时候，那么一个常用的技巧就是 q-gram (或 n-gram)。gram 就是若干连续字符的集合，而前面的 q 或 n 表示的是连续的字符个数，2-gram 就是字符的两两组合，3-gram (trigram) 就是三个字符的任意组合，依次类推。比如字符串 "freiburg" 包含的所有 3-gram 包括：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$$f, $fr, fre, rei, eib, ibu, bur, urg, rg$, g$$</span><br></pre></td></tr></table></figure>
+<p>而 q-gram index 就是把前面的 Postings 中的词语换成这些 q-gram。那么查询子串 "reibur" 就可以转化为查询<code>rei AND eib AND ibu AND bur</code>。</p>
+<blockquote>
+<p>💡 留个思考：如果想支持模糊检索该怎么做呢？</p>
+</blockquote>
+<p>以上是对倒排索引的简单回顾，接下来我们来讨论代码搜索引擎常用的索引结构。</p>
+<h3 id="trigram">3.2.2 Trigram</h3>
+<p>Russ Cox 在博客 <a href="https://swtch.com/~rsc/regexp/regexp4.html" target="_blank" rel="noopener">How Google Code Search Worked</a> 中提出用 Trigram 索引来支持代码搜索，其结构与 3.2.1 节中介绍的 3-gram 完全一致，这里不再赘述。</p>
+<blockquote>
+<p>❓为什么是 3-gram，而不是 2-gram 或 4-gram</p>
+<p>In practice, there are too few distinct 2-grams and too many distinct 4-grams, so 3-grams (trigrams) it is. — Russ Cox</p>
+</blockquote>
+<h3 id="positional-trigram">3.2.3 Positional Trigram</h3>
+<p>Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postings 间的关系，基本结构如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"$&#123;trigram&#125;"</span>: &#123;</span><br><span class="line">    <span class="attr">"$&#123;doc_id&#125;"</span>: [<span class="number">1</span>, <span class="number">3</span>] <span class="comment">// positions</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即在 Trigram Index 的基础上增加位置信息。</p>
+<h3 id="suffix-array">3.2.4 Suffix Array</h3>
+<p>一个字符串的 Suffix Array 是它所有后缀子串按字典序排列的数组。假设给定一个字符串 "hello world"：</p>
+<p><img src="./suffix-array-example-1.png" /></p>
+<p>它的所有后缀子串包含："hello world"、"ello world"、"llo world" 等等，排序后得到：</p>
+<p><img src="./suffix-array-example-2.png" /></p>
+<p>拿到上述排序结构后，查询子串就可以转化成二分查找问题。</p>
+<blockquote>
+<p>💡留个思考：如何高效地存储 Suffix Array 索引？需要存储所有子串吗？</p>
+</blockquote>
+<h3 id="基于文本索引的查询过程">3.2.5 基于文本索引的查询过程</h3>
+<p>无论是 Trigram、Positional Trigram 还是 Suffix Array，如果想支持通过正则表达式搜索代码，都要实现以下流程：</p>
+<p><img src="./text-based-query-process.png" /></p>
+<ol type="1">
+<li>将正则表达式转化成子串的「与」、「或」组合</li>
+<li>将子串的组合查询转化成对应的索引查询 (Trigram, Positional Trigram, Suffix Array)</li>
+<li>执行索引查询，获取候选文档列表</li>
+<li>对每个候选文档执行实际的正则表达式，将匹配成功的结果返回</li>
+</ol>
+<p>由于第 1 步和第 2 步可能不是等价转换，因此需要通过第 4 步得到精确的查询结果。这里问题的难点在于：<strong>如何将正则表达式转化成子串的「与」、「或」组合</strong>。</p>
+<p>举一些简单的例子：</p>
+<ul>
+<li><code>/Google.*Search/</code> → <code>Google AND Search</code></li>
+<li><code>(Path|PathFragment).*=.*/usr/local</code> → <code>("Path" OR "PathFragment") AND "/usr/local"</code></li>
+</ul>
+<p>需要关注的是，第 1、2 步的选择性越大，第 4 步的成本就越小，因此转化方案的好坏取决于其转化效率和结果查询的选择性。对这个话题感兴趣，可以深入了解业界的解决方案：</p>
+<ul>
+<li><a href="https://swtch.com/~rsc/regexp/regexp4.html" target="_blank" rel="noopener">Google Code Search</a></li>
+<li><a href="https://github.com/google/zoekt/blob/master/doc/design.md" target="_blank" rel="noopener">Zoekt</a></li>
+<li><a href="https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/" target="_blank" rel="noopener">Livegrep</a></li>
+<li><a href="https://blog.aaw.io/2016/06/10/regrams-intro.html" target="_blank" rel="noopener">Regular Expression Search via Graph Cuts</a></li>
+</ul>
+<h3 id="ctags">3.2.6 Ctags</h3>
+<p>Ctags 是 unix 或 unix-like 系统中内置的工具，为源码仓库生成「语言对象」 (language objects) 的索引。目前仍在维护的版本是 Universal Ctags，想了解更多细节可以阅读它的<a href="https://docs.ctags.io/en/latest/index.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>以我的一个玩具项目「<a href="https://github.com/ZhengHe-MD/regexgo" target="_blank" rel="noopener">Zhenghe-MD/regexgo</a>」为例，执行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/ZhengHe-MD/regexgo.git</span><br><span class="line">$ <span class="built_in">cd</span> regexgo &amp;&amp; ctags **/*.go</span><br></pre></td></tr></table></figure>
+<p>就能在 regexgo 文件夹中看到一个 tags 文件，其内容如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MatchString	nfa.go	&#x2F;^func MatchString(n *nfa, word string, options *Mat&#x2F;</span><br><span class="line">TestBackTracking	nfa_test.go	&#x2F;^func TestBackTracking(t *testing.T) &#123;$&#x2F;</span><br><span class="line">TestNFASearch	nfa_test.go	&#x2F;^func TestNFASearch(t *testing.T) &#123;$&#x2F;</span><br><span class="line">TestToPostfix	parser_test.go	&#x2F;^func TestToPostfix(t *testing.T) &#123;$&#x2F;</span><br><span class="line">addEpsilonTransition	nfa.go	&#x2F;^func addEpsilonTransition(from *state, to *state) &#x2F;</span><br><span class="line">addTransition	nfa.go	&#x2F;^func addTransition(from, to *state, symbol byte) &#123;&#x2F;</span><br><span class="line">backtracking	nfa.go	&#x2F;^func backtracking(s *state, visited map[*state]int&#x2F;</span><br><span class="line">const	nfa.go	&#x2F;^const ($&#x2F;</span><br><span class="line">import	nfa_test.go	&#x2F;^import ($&#x2F;</span><br><span class="line">nfaSearch	nfa.go	&#x2F;^func nfaSearch(n *nfa, word string) bool &#123;$&#x2F;</span><br><span class="line">toPostfix	parser.go	&#x2F;^func toPostfix(exp string) string &#123;$&#x2F;</span><br></pre></td></tr></table></figure>
+<p>每行数据是一个 <code>(language object, file, regexp matcher)</code> 三元组。Ctags 常常被用于 IDE 实现定义跳转的功能，它也可以被集成到代码搜索引擎中，更好地服务于「语言感知」的查询。</p>
+<p>Ctags 背后由不同编程语言的解析器 (parser) 驱动，后者的原理则是另一个话题，不在本文中讨论。</p>
+<h3 id="lsif">3.2.7 LSIF</h3>
+<p>从 Ctags 的例子中可以看出，Ctags 中记录的「语言对象」信息量很小，基本上只有函数信息。要支持表达力更强的「语言感知」查询，其记录的信息还远远不够。在数据模型和信息量上，LSIF 比 Ctags 走得更远：</p>
+<blockquote>
+<p>The goal of the LSIF is to support rich code navigation in development tools or Web UI without needing a local copy of the source code. — <a href="https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/" target="_blank" rel="noopener">LSP/LSIF docs</a></p>
+</blockquote>
+<p>由于 LSIF 的设计目的是支持丰富的代码跳转能力，因此它需要记录包括变量定义、引用，函数的定义、调用及它们之间的关系。LSIF 是将这些实体，及实体之间的关系用图结构来建模。以下是 Chris Wendt 在 GopherCon 2019 上题为「<a href="https://www.youtube.com/watch?v=fMIRKRj_A88" target="_blank" rel="noopener">LSIF + Go</a>」中的其中一张 slide，其中红色框框为图的点，绿色线为图的边。</p>
+<p><img src="./lsif-example.png" with="680px" /></p>
+<p>将这张图记录到索引中，就可以在必要的时候按「图」索骥，支持丰富的「语言感知」查询。以下是 LSIF 的索引文件数据示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">6</span>,<span class="attr">"type"</span>:<span class="string">"vertex"</span>,<span class="attr">"label"</span>:<span class="string">"definitionResult"</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">7</span>,<span class="attr">"type"</span>:<span class="string">"edge"</span>,<span class="attr">"label"</span>:<span class="string">"next"</span>,<span class="attr">"outV"</span>:<span class="number">4</span>,<span class="attr">"inV"</span>:<span class="number">5</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">8</span>,<span class="attr">"type"</span>:<span class="string">"edge"</span>,<span class="attr">"label"</span>:<span class="string">"textDocument/definition"</span>,<span class="attr">"outV"</span>:<span class="number">5</span>,<span class="attr">"inV"</span>:<span class="number">6</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">9</span>,<span class="attr">"type"</span>:<span class="string">"edge"</span>,<span class="attr">"label"</span>:<span class="string">"item"</span>,<span class="attr">"outV"</span>:<span class="number">6</span>,<span class="attr">"inVs"</span>:[<span class="number">4</span>],<span class="attr">"document"</span>:<span class="number">3</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">10</span>,<span class="attr">"type"</span>:<span class="string">"vertex"</span>,<span class="attr">"label"</span>:<span class="string">"hoverResult"</span>,<span class="attr">"result"</span>:&#123;<span class="attr">"contents"</span>:[&#123;<span class="attr">"language"</span>:<span class="string">"go"</span>,<span class="attr">"value"</span>:<span class="string">"package \"fmt\""</span>&#125;,<span class="string">"Package fmt implements ... \n\n"</span>]&#125;&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">11</span>,<span class="attr">"type"</span>:<span class="string">"edge"</span>,<span class="attr">"label"</span>:<span class="string">"textDocument/hover"</span>,<span class="attr">"outV"</span>:<span class="number">5</span>,<span class="attr">"inV"</span>:<span class="number">10</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">12</span>,<span class="attr">"type"</span>:<span class="string">"vertex"</span>,<span class="attr">"label"</span>:<span class="string">"range"</span>,<span class="attr">"start"</span>:&#123;<span class="attr">"line"</span>:<span class="number">4</span>,<span class="attr">"character"</span>:<span class="number">5</span>&#125;,<span class="attr">"end"</span>:&#123;<span class="attr">"line"</span>:<span class="number">4</span>,<span class="attr">"character"</span>:<span class="number">12</span>&#125;&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">13</span>,<span class="attr">"type"</span>:<span class="string">"vertex"</span>,<span class="attr">"label"</span>:<span class="string">"resultSet"</span>&#125;</span><br><span class="line">&#123;<span class="attr">"id"</span>:<span class="number">14</span>,<span class="attr">"type"</span>:<span class="string">"vertex"</span>,<span class="attr">"label"</span>:<span class="string">"definitionResult"</span>&#125;</span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<h2 id="数据管理">3.3 数据管理</h2>
+<p>代码搜索引擎需要管理两组数据：仓库和索引。根据使用场景需要，引擎可以将它们存储在 HDD 或 SSD 上，并在服务的时候载入必要的部分到内存中。因为数据模型比较简单，代码搜索引擎会直接使用文件系统存储仓库和索引。</p>
+<h3 id="数据分片">3.3.1 数据分片</h3>
+<p>就如早期的 Slack 可以基于 workspace_id 隔离计算、存储资源，支持系统横向扩展，代码搜索引擎中也存在这样一个东西，它就是 repo_id。它既可以帮助查询引擎缩小搜寻范围，也可以帮助存储引擎管理仓库和索引数据。</p>
+<h3 id="仓库">3.3.2 仓库</h3>
+<p>仓库通常被托管在云服务中，如 Github、Gitlab、BitBucket 等等，因此代码搜索引擎的核心工作之一就是从托管服务中同步仓库。这里有两个小的设计决定：同步内容和同步时机。</p>
+<h4 id="同步内容">同步内容</h4>
+<p>以 Git 为例，你可以选择 clone、shallow clone 或 bare clone。<code>git clone</code> 会拉取仓库的所有历史并 checkout 到默认分支 (main/master) 最新的 commit 上；<code>git clone --depth=k</code> 会拉取仓库最新的 k 个 commit 数据，丢弃之前的历史；<code>git clone --bare</code> 只拉取仓库的 .git 文件夹。三者的区别体现在拉取数据的大小和保留的仓库历史信息上。</p>
+<h4 id="同步时机">同步时机</h4>
+<p>如果代码搜索引擎需要为之建索引的仓库数量不多，可以简单的按用户对实时性的要求定期全量拉取，如 1 小时、1 天等等；如果需要索引整个 Github 上的大部分，甚至所有开源项目，就需要结合事件回调、动态调整更新频率等复杂策略控制各个项目的同步时机。必要的时候还需引入关系型数据库存储相关元数据。</p>
+<h3 id="索引">3.3.3 索引</h3>
+<p>大多数代码搜索引擎的数据管理模块会以一个索引文件对应一个仓库，这与上文提到的数据分片策略相关。有些引擎会选择在索引文件中冗余一份源码，使得查询过程可以完全在索引文件中完成，同时可以将仓库与索引的管理解耦。其中一个实现上常见的技巧是将每个仓库的所有源文件按某个顺序连接 (concatenate) 起来，然后再对整个大文件建立索引：</p>
+<p><img src="./index-of-repo.png" /></p>
+<p>在绝大多数时候，研发关心的是仓库的最新版本，因此一个务实主义的做法是只对最新的版本建立索引。</p>
+<blockquote>
+<p>Indexing every branch of every repository isn’t a pragmatic use of resources for most customers, so this decision balances optimizing the common case (searching all default branches) with space savings (not indexing everything). — <a href="https://docs.sourcegraph.com/dev/background-information/architecture/index" target="_blank" rel="noopener">Sourcegraph</a></p>
+</blockquote>
+<p>仓库发生变化后，数据管理模块需要将这些变化反馈到索引上。</p>
+<h2 id="结果排序">3.4 结果排序</h2>
+<p>对于像 Google 这样的搜索引擎，排序是非常重要的一环，把用户最想获取的信息按质量从高到低排序就是它的设计目的之一。实际上排序质量的衡量背后有一系列的理论研究在支撑。然而，目前绝大多数开源代码搜索引擎并不太关心排序，个人认为其原因可能在于：</p>
+<ol type="1">
+<li>开发者通常能非常精准地在查询语句中描述自己想要的代码，甚至做到 100% 的 precision 和 recall</li>
+<li>代码搜索引擎搜索范围通常为一个公司或部门内部的所有仓库，数量不多，结果列表不会很长</li>
+</ol>
+<p>一些云端仓库托管服务也提供搜索服务，从它们的角度考虑，支持基于流行度、活跃度、话题的排序就变得相当必要。</p>
+<h1 id="实现挑战">4. 实现挑战</h1>
+<p>本节介绍搭建一个代码搜索引擎可能会遇到的问题。这个列表会随着日后的调研和实践 (如果有的话) 继续增补内容。</p>
+<h2 id="unicode">4.1 Unicode</h2>
+<p>Zoekt 项目的作者，Google 工程师 Han-Wen 在 Gerrit Summit 2017 上的 <a href="https://storage.googleapis.com/gerrit-talks/summit/2017/Zoekt%20-%20improved%20codesearch.pdf" target="_blank" rel="noopener">分享</a> 中曾经介绍过，在他开发第一版 Zoekt 时，只考虑了源码中的 ascii 字符，当他期望扩大项目适用范围，支持 unicode 时，发现自己以前有很多逻辑不再适用。因为 unicode 的每个字符的长度不定，一些基于字符串字节长度的计算不再成立。如果你的代码搜索引擎是面向各种语言的，在写代码时需要格外留意这方面的考虑。</p>
+<h2 id="安全问题">4.2 安全问题</h2>
+<p>对于一个组织内部的代码搜索引擎来说，最大的风险就是代码中的敏感信息泄露。开发者可能会无意地将一些 token、秘钥、邮箱、手机号等等信息放到源码中。尽管这样的风险本来也存在，但代码搜索引擎的存在放大了泄漏风险。</p>
+<h2 id="分页">4.3 分页</h2>
+<p>假如一个搜索请求命中的文档很多，用户在前端就希望能够分页查询。代码搜索引擎支持分页比在关系型数据库中支持分页要难一些，因为你永远无法知道一个临时的查询会在一个仓库匹配多少次，你也无法为此提前建立精确的索引。如果对此感兴趣，可以看看 <a href="https://docs.sourcegraph.com/dev/background-information/architecture/search-pagination" target="_blank" rel="noopener">Sourcegraph 如何解决这个问题</a>。</p>
+<h1 id="开源项目">5. 开源项目</h1>
+<p>本节介绍的项目在时间线上排列如下：</p>
+<p><img src="./history-timeline.png" /></p>
+<p>其中 Google Code Search 算是这个领域的开山之作，后续的项目都是 「inspired by Russ Cox's work」😆。</p>
+<h2 id="google-code-search">5.1 Google Code Search</h2>
+<blockquote>
+<p>⚠️ 本节的大部分内容来自于 Russ Cox 的博客 <a href="https://swtch.com/~rsc/regexp/regexp4.html" target="_blank" rel="noopener">How Google Code Search Worked</a>。</p>
+</blockquote>
+<h3 id="一点历史">5.1.1 一点历史</h3>
+<p>如果这个世界要求必须有一些工程师来研究代码搜索工具，那么十有八九这些工程师来自 Google。2006 年夏天，Russ Cox 来到 Google 实习。当时，Google 内部有一个叫作「gsearch」的项目用于代码搜索，它的实现可以简单地理解成分布式 grep，即启动多台机器存储不同的仓库集合，每次查询时将 grep 命令下发到各个机器，每个机器在本地执行 grep 后返回，并将结果汇总。</p>
+<p>Russ Cox 的 mentor，Jeff Dean 在他开始实习时说：「如果能做一个支持搜索全世界开源代码的工具，是不是很酷？」在当年 10 月，这个项目 Google Code Search 终于<a href="http://googlecode.blogspot.com/2006/10/search-worlds-public-source-code.html" target="_blank" rel="noopener">上线</a>。</p>
+<h3 id="查询语言-1">5.1.2 查询语言</h3>
+<p>Google Code Search 支持通过正则表达式搜索，Russ Cox 描述这种查询为「geekily great but a very small niche」。Russ Cox 开源的核心代码并没有支持通过「修饰词」来缩短检索范围，而只是提供了类似 grep 的命令行工具。这大概是因为开源出来的<a href="https://github.com/google/codesearch" target="_blank" rel="noopener">代码</a>足以展示一个代码搜索引擎的运行逻辑，剩下的就让有兴趣的开发者自行扩展。</p>
+<p>这里有一个值得一提的小插曲，Russ Cox 在项目的概念验证阶段中发现大部分手头的正则表达式引擎都不能保证线性时空复杂度，因为它们使用的是回溯法 (backtracking) 而非有限自动机 (finite automata)。尽管 Google Code Search 使用的正则表达式引擎仍然是 <a href="https://9fans.github.io/plan9port/man/man1/grep.html" target="_blank" rel="noopener">Plan 9 grep</a> 中的实现，若干年后，这个引擎终于被替换成了 <a href="https://github.com/google/re2" target="_blank" rel="noopener">RE2</a>。当然，如何实现一个正则表达式是另一个有趣的话题，但不在本文的讨论范围内，有兴趣可以先读一下 Russ Cox 的 <a href="https://swtch.com/~rsc/regexp/" target="_blank" rel="noopener">正则表达式系列博客</a>。</p>
+<h3 id="索引-1">5.1.3 索引</h3>
+<p>Google Code Search 使用的是最基本的 Trigram Index。索引本身并无复杂之处，实际花费 Russ Cox 大量精力的是「从正则表达式到 Trigram 查询」的转化上。</p>
+<h3 id="运行">5.1.4 运行</h3>
+<p>上文介绍过，在 Google Code Search 中 Russ Cox 只提供了本地的可执行命令，供开发者试验。项目提供的可执行命令包括 cindex、csearch 和 cgrep。</p>
+<p>cindex会对所有输入的源码文件，建立一个单独的索引文件，默认存储在 <code>$HOME/.csearchindex</code> 中。比如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cindex <span class="variable">$HOME</span>/src /usr/include</span><br></pre></td></tr></table></figure>
+<p>会为 <code>$HOME/src</code> 和 <code>/usr/include</code> 文件夹下的所有源码文件建立索引。如果重复执行该命令，会自动增量更新发生变化的部分，多次操作效果幂等。csearch 可以支持用正则表达式在 cindex 已经建立好的索引上检索代码。cgrep 则是提供 grep 类似交互风格的 csearch。</p>
+<h3 id="小结">5.1.5 小结</h3>
+<p>总结一下， Google Code Search 项目并不关注仓库同步与索引维护的自动化。开发者如果想将它服务化，需要自己构建相应的逻辑。网上并没有关于 Google 将其服务化、规模化的细节。</p>
+<h2 id="hound">5.2 Hound</h2>
+<p>两位在 <a href="https://www.etsy.com/" target="_blank" rel="noopener">Etsy</a> 工作的工程师，<a href="https://github.com/kellegous" target="_blank" rel="noopener">Kelly Norton</a> 和 <a href="https://github.com/jklein" target="_blank" rel="noopener">Jonathan Klein</a>，基于 Google Code Search 搭建了 Hound 来解决他们在公司内部遇到的代码搜索需求。</p>
+<blockquote>
+<p>We've used many similar tools in the past, and most of them are either too slow, too hard to configure, or require too much software to be installed. Which brings us to... — Hound README.md</p>
+</blockquote>
+<p>Hound 项目就是 Google Code Search 项目的服务化，它甚至很实在地在源码中<a href="https://github.com/hound-search/hound/tree/main/codesearch" target="_blank" rel="noopener">直接搬运</a>了 google/codesearch 的仓库。它在原作的基础上增加了仓库同步、索引维护、 HTTP 服务等模块。</p>
+<p>Hound 在启动时需要读取一个配置文件，描述数据存放的根目录，以及需要搜索哪些仓库。一个配置文件的示例如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"dbpath"</span> : <span class="string">"db"</span>,</span><br><span class="line">  <span class="attr">"repos"</span> : &#123;</span><br><span class="line">    <span class="attr">"Hound"</span> : &#123;</span><br><span class="line">      <span class="attr">"url"</span> : <span class="string">"https://github.com/etsy/hound.git"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因此如果你希望它能够自动发现新的符合要求的仓库，则需要额外提供「仓库发现」逻辑。</p>
+<h3 id="存储">5.2.1 存储</h3>
+<p>Hound 的所有数据存放在配置文件中制定的 <code>dbpath</code> 目录下。该目录下存放两种文件夹：</p>
+<ul>
+<li>仓库文件夹：<code>vcs-${Repo.Url}</code></li>
+<li>索引文件夹：<code>idx-${random_hash}</code></li>
+</ul>
+<p>每个仓库中存放着 <code>git clone</code> 下来的数据；索引文件夹的布局如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">idx-10837b48f746028d</span><br><span class="line">├── excluded_files.json</span><br><span class="line">├── metadata.gob</span><br><span class="line">├── raw</span><br><span class="line">│   ├── README.md</span><br><span class="line">│   ├── go.mod</span><br><span class="line">│   └── ...</span><br><span class="line">│       </span><br><span class="line">└── tri</span><br></pre></td></tr></table></figure>
+<p>其中 tri 文件就是 Google Code Search 中 cindex 生成的索引文件，而 raw 文件夹下冗余了一份仓库中所有被建立索引的源码文件。</p>
+<h3 id="服务化">5.2.2 服务化</h3>
+<p>Hound 的启动流程如下图所示：</p>
+<p><img src="./hound-logic-flow.png" width="680px" /></p>
+<p>Hound 只有一个进程，启动后它会先触发首次同步，同时构建索引。不论成功或失败，一旦所有仓库都被访问一次后，就通过 HTTP 服务开放搜索 API，之后每隔 30 秒， Hound 就会启动一次数据的全量更新。对于少量仓库的场景，这个策略运行得很完美。</p>
+<h2 id="livegrep">5.3 Livegrep</h2>
+<p><a href="https://github.com/livegrep/livegrep/" target="_blank" rel="noopener">Livegrep</a> 项目的 README 这么介绍自己：</p>
+<blockquote>
+<p>Livegrep is a tool, partially inspired by Google Code Search, for interactive regex search of ~gigabyte-scale source repositories.</p>
+</blockquote>
+<p>可以看出，其设计目的是为了在超大型项目上实现实时搜索，而非我们所面临的「微仓库」场景。</p>
+<h3 id="查询语言-2">5.3.1 查询语言</h3>
+<p>Livegrep 支持「修饰器」+「匹配器」构成的查询语句，其中「匹配器」兼容 RE2 的正则表达式语法。其搜索主页提供了一些说明：</p>
+<p><img src="./live-grep-home-page.png" /></p>
+<h3 id="索引-2">5.3.2 索引</h3>
+<p>Livegrep 使用 Suffix Array 给仓库建立索引，它的作者 Nelson Elhage 在博客 <a href="https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/" target="_blank" rel="noopener">Regular Expression Search with Suffix Arrays</a> 中说道，在实践中 Livegrep 需要使用原仓库语料 3-5 倍的空间建立索引，是典型的空间换时间策略。这也说明获得它提供的 <a href="https://livegrep.com/search/linux" target="_blank" rel="noopener">极致搜索体验</a> 需要付出代价。</p>
+<h3 id="存储-1">5.3.3 存储</h3>
+<p>Livegrep 为一个仓库建立一个索引文件，构建完毕后可以抛开仓库独立运行。根据能够获取到的信息， Livegrep 主要关注单个仓库搜索，为了速度，它会默认将整个索引文件加载进内存，如果内存放不下可以使用 mmap 选项。由于索引体积较大，同时在成百上千个仓库中搜索并非 Livegrep 所擅长的事情。</p>
+<h3 id="服务化-1">5.3.4 服务化</h3>
+<p>Livegrep 的架构与代码搜索引擎的一般架构基本一致，一个进程用于拉取代码、建立索引、提供查询 API，一个进程提供搜索页面和 API 服务。据其文档所述，要支持仓库的变更同步，需要启动额外的进程，如「livegrep-github-reindex」。</p>
+<h2 id="zoekt">5.4 Zoekt</h2>
+<blockquote>
+<p>⚠️ 本节大部分内容来自于 Zoekt 项目的<a href="https://github.com/google/zoekt/blob/master/doc/design.md" target="_blank" rel="noopener">设计文档</a>。</p>
+</blockquote>
+<p>Google 的工程师 Han-Wen 在 2016 年首次发布了 Zoekt 项目，并在 Gerrit Summit 2016 的演讲「<a href="https://storage.googleapis.com/gerrit-talks/summit/2016/zoekt.pdf" target="_blank" rel="noopener">Zoekt - Codesearch for Git</a>」中介绍了这个项目。在接下去的一年中，他继续优化 Zoekt 项目，并在 Gerrit Summit 2017 的演讲 「<a href="https://storage.googleapis.com/gerrit-talks/summit/2017/Zoekt%20-%20improved%20codesearch.pdf" target="_blank" rel="noopener">Zoekt, improved - Codesearch, one year later</a>」中介绍了他解决的问题和改进的功能。</p>
+<h3 id="查询语句">5.4.1 查询语句</h3>
+<p>Zoekt 支持「修饰器」+「匹配器」构成的查询语句，其搜索主页提供了许多查询示例和说明，以下是截图：</p>
+<p><img src="./zoekt-search-home-page.png" /></p>
+<h3 id="索引和存储">5.4.2 索引和存储</h3>
+<p>Zoekt 将每个仓库的所有源码文件连接成一个大文件，并基于它构建 Positional Trigram 索引，并将索引数据用 gob 编码后直接附加在大文件后面：</p>
+<p><img src="./zoekt-index.png" /></p>
+<p>这个文件的后缀名为 <code>${repo}.zoekt</code>。由于 <code>.zoekt</code> 文件同时包含代码和索引，只要没有新的代码更新，Zoekt 可以只靠索引文件来提供搜索服务。</p>
+<p>除此之外，Zoekt 还支持通过引入 ctags 优化查询结构的排序。</p>
+<h3 id="服务化-2">5.4.3 服务化</h3>
+<p>Zoekt 部署包含两个模块：zoekt-indexserver 和 zoekt-webserver。它的架构与代码搜索引擎的一般架构基本一致。zoekt-indexserver 负责代码同步和索引维护，它原生继承了许多代码托管服务，如 Github、Gitlab、Bitbucket、Gerrit 和 Gitiles，同时还支持配置仓库过滤器，通过仓库名称等特征来选择支持的搜索范围，解决了仓库发现的问题，这方面比 Hound 要友好很多。默认配置下，zoekt-indexserver 每天拉取一次仓库数据，重建索引。zoekt-webserver 则负责提供 HTTP 服务和搜索页面。</p>
+<h2 id="sourcegraph">5.5 Sourcegraph</h2>
+<p>实际上 Sourcegraph 是一家<a href="https://www.crunchbase.com/organization/sourcegraph/technology" target="_blank" rel="noopener">公司</a>的名字，同时也是它们的核心代码搜索<a href="https://github.com/sourcegraph/sourcegraph" target="_blank" rel="noopener">产品</a>的名称。基于其大规模代码检索能力，Sourcegraph 还发布了多个产品：</p>
+<ul>
+<li>Code Search：提供海量仓库搜索功能</li>
+<li>Code Intelligence：提供跨仓库的类似 IDE 的丰富的云上代码访问、跳转功能</li>
+<li>Batch Changes：跨仓库批量修改代码，推送 PR/MR 并跟踪合并结果</li>
+</ul>
+<p>本节我们主要关注它的 Code Search 产品，下文中如无特殊说明，我们用 Sourcegraph 指代其 Code Search 产品。</p>
+<h3 id="查询语言-3">5.5.1 查询语言</h3>
+<p>Sourcegraph 支持「设计决定」一节中提到的所有查询语言，也是当前唯一支持结构化查询的代码搜索引擎。想了解它支持的完整语法和使用示例，可以翻阅它的<a href="https://docs.sourcegraph.com/code_search" target="_blank" rel="noopener">官方文档</a>。如果你对 Sourcegraph 如何支持结构化查询有个大致了解，可以看看它们的设计文档 <a href="https://docs.google.com/document/d/16WwZA8zf-soI0HgCXGrRL5IrmyZnGYrB5VTXsqguUzo/edit#" target="_blank" rel="noopener">RFC 40</a>，同时也许你会对 <a href="https://github.com/comby-tools/comby" target="_blank" rel="noopener">comby</a> 感兴趣。</p>
+<h3 id="索引-3">5.5.2 索引</h3>
+<p>Sourcegraph 实际利用 Zoekt 驱动，因此它使用的自然也是 Positional Trigram 索引。值得一提的是，Sourcegraph 公司的 Code Intelligence 产品还有一个 Precise Code Intelligence 版本，是由 LSIF 索引驱动。</p>
+<h3 id="存储-2">5.5.3 存储</h3>
+<p>Sourcegraph 在隔离代码和索引上更近了一步。在它的架构中存在一个支持横向扩展的 gitserver 服务，负责从不同的代码托管服务中拉取数据。而由 zoekt-indexserver 负责对 gitserver 中的仓库构建 Positional Trigram 索引。更准确地说，还有一个叫做 repo-updater 的组件负责 gitserver 数据拉取任务的调度，后者将元数据存储在 Postgres 中，同时向 gitserver 发送相关命令。</p>
+<p>由于 Sourcegraph 需要支持为海量仓库建立索引，它还基于仓库活跃度制定了数据同步的退避 (backoff) 策略。举例如下：如果一个仓库的最后一个 commit 在 8 小时以前，下一次数据同步就会在 4 小时 (8 小时的 1/2) 后调度，如果届时仍然没有数据变动，则再下一次数据同步任务将在 6 小时候被调度。</p>
+<h3 id="服务化-3">5.5.4 服务化</h3>
+<blockquote>
+<p>⚠️ 本节内容来自于官方文档 <a href="https://docs.sourcegraph.com/dev/background-information/architecture" target="_blank" rel="noopener">Sourcegraph architecture overview</a>。</p>
+</blockquote>
+<p>以下是 Sourcegraph 的架构全图：</p>
+<p><img src="./sourcegraph-architecture.png" /></p>
+<p>代码同步由 gitserver 和 repo-updater 完成，详情可查看 <a href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-repository" target="_blank" rel="noopener">Life of a repository</a>；基于文本的代码搜索由 Zoekt 项目支持，包括 zoekt-indexserver 和 zoekt-webserver。在未建立索引的分支上的查询由 searcher 完成。syntect-server 负责往搜索结果中添加语法高亮信息，详情可查看 <a href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query" target="_blank" rel="noopener">Life of a search query</a>；precise-code-intel-worker 则负责前面提到的 Precise Code Intelligence。</p>
+<p>作为一个商业化的代码搜索引擎项目，Sourcegraph 无论在系统设计上还是产品体验上都更加完善。</p>
+<h2 id="项目对比">5.6 项目对比</h2>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 35%" />
+<col style="width: 24%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>项目名称</th>
+<th>查询语言</th>
+<th>索引</th>
+<th>服务架构</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Google Code Search</strong></td>
+<td>[substring, regexp]</td>
+<td>Trigram</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td><strong>Hound</strong></td>
+<td>[substring, regexp]</td>
+<td>Trigram</td>
+<td>WebServer、 IndexServer 合并</td>
+</tr>
+<tr class="odd">
+<td><strong>Livegrep</strong></td>
+<td>[substring, regexp] + [modifier]</td>
+<td>Suffix Array</td>
+<td>WebServer、IndexServer 隔离</td>
+</tr>
+<tr class="even">
+<td><strong>Zoekt</strong></td>
+<td>[substring, regexp] + [modifier]</td>
+<td>Positional Trigram, Ctags</td>
+<td>WebServer、IndexServer 隔离</td>
+</tr>
+<tr class="odd">
+<td><strong>Sourcegraph</strong></td>
+<td>[substring, regexp, structural] + [modifier]</td>
+<td>Positional Trigram, Ctags, LSIF</td>
+<td>WebServer、IndexServer 隔离</td>
+</tr>
+</tbody>
+</table>
+<h1 id="参考文献">6. 参考文献</h1>
+<ul>
+<li>Code Search
+<ul>
+<li><a href="https://github.com/google/codesearch" target="_blank" rel="noopener">google/codesearch</a></li>
+<li><a href="https://swtch.com/~rsc/regexp/regexp4.html" target="_blank" rel="noopener">Regular Expression Matching with a Trigram Index or How Google Code Search Worked</a></li>
+<li><a href="https://github.com/aaw/regrams" target="_blank" rel="noopener">aaw/regrams</a>, <a href="http://blog.aaw.io/2016/06/10/regrams-intro.html" target="_blank" rel="noopener">Regular Expression Search via Graph Cuts</a></li>
+</ul></li>
+<li>Hound
+<ul>
+<li><a href="https://github.com/hound-search/hound" target="_blank" rel="noopener">hound-search/hound</a></li>
+</ul></li>
+<li>Zoekt
+<ul>
+<li><a href="https://github.com/google/zoekt" target="_blank" rel="noopener">google/zoekt</a>, <a href="https://github.com/google/zoekt/blob/master/doc/design.md" target="_blank" rel="noopener">design doc</a></li>
+<li>Gerrit Summit 2016: <a href="https://storage.googleapis.com/gerrit-talks/summit/2016/zoekt.pdf" target="_blank" rel="noopener">Zoekt — Code search for Git</a></li>
+<li>Gerrit Summit 2017: <a href="https://storage.googleapis.com/gerrit-talks/summit/2017/Zoekt%20-%20improved%20codesearch.pdf" target="_blank" rel="noopener">Zoekt, improved — Code search, one year later</a></li>
+</ul></li>
+<li>Sourcegraph
+<ul>
+<li><a href="http://github.com/sourcegraph/sourcegraph" target="_blank" rel="noopener">sourcegraph/sourcegraph</a></li>
+<li><a href="https://about.sourcegraph.com/blog/going-beyond-regular-expressions-with-structural-code-search/?_ga=2.47533863.1028188413.1619672448-1802763594.1619435671" target="_blank" rel="noopener">Going beyond regular expressions with structural code search</a></li>
+<li><a href="https://github.com/comby-tools/comby" target="_blank" rel="noopener">comby-tools/comby</a></li>
+<li><a href="https://docs.google.com/document/d/16WwZA8zf-soI0HgCXGrRL5IrmyZnGYrB5VTXsqguUzo/edit#" target="_blank" rel="noopener">RFC 48 APPROVED: Structural Search</a></li>
+<li>Documentation
+<ul>
+<li><a href="https://docs.sourcegraph.com/dev/background-information/architecture" target="_blank" rel="noopener">Sourcegraph architecture overview</a></li>
+<li><a href="https://docs.sourcegraph.com/code_intelligence/explanations/search_based_code_intelligence" target="_blank" rel="noopener">Search-based code intelligence</a></li>
+<li><a href="https://docs.sourcegraph.com/code_intelligence/explanations/precise_code_intelligence" target="_blank" rel="noopener">Precise code intelligence</a></li>
+<li><a href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-repository" target="_blank" rel="noopener">Life of a repository</a></li>
+<li><a href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query" target="_blank" rel="noopener">Life of a search query</a></li>
+<li><a href="https://docs.sourcegraph.com/dev/background-information/architecture/search-pagination" target="_blank" rel="noopener">Search pagination</a></li>
+</ul></li>
+</ul></li>
+<li>Livegrep
+<ul>
+<li><a href="https://github.com/livegrep/livegrep/" target="_blank" rel="noopener">livegrep/livegrep</a></li>
+<li><a href="https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/" target="_blank" rel="noopener">Regular Expression Search with Suffix Arrays</a></li>
+</ul></li>
+<li>Code Intelligence
+<ul>
+<li><a href="https://ctags.io/" target="_blank" rel="noopener">Universal Ctags</a></li>
+<li><a href="https://microsoft.github.io/language-server-protocol/" target="_blank" rel="noopener">Language Server Protocol</a></li>
+<li><a href="https://www.youtube.com/watch?v=fMIRKRj_A88" target="_blank" rel="noopener">GopherCon 2019 Lightning Talk: Chris Wendt - LSIF + Go</a></li>
+</ul></li>
+<li>Regular Expressions
+<ul>
+<li><a href="https://swtch.com/~rsc/regexp/" target="_blank" rel="noopener">Implementing Regular Expressions</a></li>
+<li><a href="https://swtch.com/~rsc/regexp/regexp1.html" target="_blank" rel="noopener">Regular Expression Matching Can Be Simple And Fast</a></li>
+<li><a href="https://swtch.com/~rsc/regexp/regexp2.html" target="_blank" rel="noopener">Regular Expression Matching: the Virtual Machine Approach</a></li>
+<li><a href="https://swtch.com/~rsc/regexp/regexp3.html" target="_blank" rel="noopener">Regular Expression Matching in the Wild</a></li>
+</ul></li>
+<li>Misc
+<ul>
+<li><a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf" target="_blank" rel="noopener">How Developers Search for Code: A Case Study</a></li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/system-design/" rel="tag"># system design</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/03/04/implementing-tail-based-sampling/" rel="prev" title="调用链追踪系统在伴鱼：实践篇">
+      <i class="fa fa-chevron-left"></i> 调用链追踪系统在伴鱼：实践篇
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#引入"><span class="nav-number">1.</span> <span class="nav-text">0. 引入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么做"><span class="nav-number">2.</span> <span class="nav-text">1. 为什么做</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一般架构"><span class="nav-number">3.</span> <span class="nav-text">2. 一般架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#设计决定"><span class="nav-number">4.</span> <span class="nav-text">3. 设计决定</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#查询语言"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 查询语言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#索引结构"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 索引结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#倒排索引"><span class="nav-number">4.2.1.</span> <span class="nav-text">3.2.1 倒排索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trigram"><span class="nav-number">4.2.2.</span> <span class="nav-text">3.2.2 Trigram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#positional-trigram"><span class="nav-number">4.2.3.</span> <span class="nav-text">3.2.3 Positional Trigram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#suffix-array"><span class="nav-number">4.2.4.</span> <span class="nav-text">3.2.4 Suffix Array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基于文本索引的查询过程"><span class="nav-number">4.2.5.</span> <span class="nav-text">3.2.5 基于文本索引的查询过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ctags"><span class="nav-number">4.2.6.</span> <span class="nav-text">3.2.6 Ctags</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lsif"><span class="nav-number">4.2.7.</span> <span class="nav-text">3.2.7 LSIF</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据管理"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 数据管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据分片"><span class="nav-number">4.3.1.</span> <span class="nav-text">3.3.1 数据分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#仓库"><span class="nav-number">4.3.2.</span> <span class="nav-text">3.3.2 仓库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同步内容"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">同步内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同步时机"><span class="nav-number">4.3.2.2.</span> <span class="nav-text">同步时机</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引"><span class="nav-number">4.3.3.</span> <span class="nav-text">3.3.3 索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结果排序"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 结果排序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现挑战"><span class="nav-number">5.</span> <span class="nav-text">4. 实现挑战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#unicode"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 Unicode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全问题"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 安全问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分页"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 分页</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开源项目"><span class="nav-number">6.</span> <span class="nav-text">5. 开源项目</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#google-code-search"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 Google Code Search</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一点历史"><span class="nav-number">6.1.1.</span> <span class="nav-text">5.1.1 一点历史</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询语言-1"><span class="nav-number">6.1.2.</span> <span class="nav-text">5.1.2 查询语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引-1"><span class="nav-number">6.1.3.</span> <span class="nav-text">5.1.3 索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">6.1.4.</span> <span class="nav-text">5.1.4 运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">6.1.5.</span> <span class="nav-text">5.1.5 小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hound"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 Hound</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#存储"><span class="nav-number">6.2.1.</span> <span class="nav-text">5.2.1 存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务化"><span class="nav-number">6.2.2.</span> <span class="nav-text">5.2.2 服务化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#livegrep"><span class="nav-number">6.3.</span> <span class="nav-text">5.3 Livegrep</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查询语言-2"><span class="nav-number">6.3.1.</span> <span class="nav-text">5.3.1 查询语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引-2"><span class="nav-number">6.3.2.</span> <span class="nav-text">5.3.2 索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储-1"><span class="nav-number">6.3.3.</span> <span class="nav-text">5.3.3 存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务化-1"><span class="nav-number">6.3.4.</span> <span class="nav-text">5.3.4 服务化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zoekt"><span class="nav-number">6.4.</span> <span class="nav-text">5.4 Zoekt</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查询语句"><span class="nav-number">6.4.1.</span> <span class="nav-text">5.4.1 查询语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引和存储"><span class="nav-number">6.4.2.</span> <span class="nav-text">5.4.2 索引和存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务化-2"><span class="nav-number">6.4.3.</span> <span class="nav-text">5.4.3 服务化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sourcegraph"><span class="nav-number">6.5.</span> <span class="nav-text">5.5 Sourcegraph</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查询语言-3"><span class="nav-number">6.5.1.</span> <span class="nav-text">5.5.1 查询语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#索引-3"><span class="nav-number">6.5.2.</span> <span class="nav-text">5.5.2 索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储-2"><span class="nav-number">6.5.3.</span> <span class="nav-text">5.5.3 存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#服务化-3"><span class="nav-number">6.5.4.</span> <span class="nav-text">5.5.4 服务化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#项目对比"><span class="nav-number">6.6.</span> <span class="nav-text">5.6 项目对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">7.</span> <span class="nav-text">6. 参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/";
+    this.page.identifier = "2021/05/09/search-engine-for-codes-fundamentals/";
+    this.page.title = "代码搜索引擎：基础篇";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

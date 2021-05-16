@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-03-05T15:40:13.616Z</updated>
+  <updated>2021-05-16T01:28:44.465Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,54 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>代码搜索引擎：基础篇</title>
+    <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
+    <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
+    <published>2021-05-09T10:19:17.000Z</published>
+    <updated>2021-05-16T01:28:44.465Z</updated>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;完整调研报告请见我个人的 Notion &lt;a href=&quot;https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;笔记&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;引入&quot;&gt;0. 引入&lt;/h1&gt;
+&lt;p&gt;最近，我们遇到了两个场景：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;负责基础服务的工程师想下线一个接口但不知道有哪些服务调用&lt;/li&gt;
+&lt;li&gt;负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系统中维护的依赖关系在三个方面无法满足上述需求：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;一些上古服务仍然在运行，但没有接入调用链追踪系统&lt;/li&gt;
+&lt;li&gt;调用链追踪系统中维护的是「动态依赖关系」，即最近 N 天 (由 retention policy 决定) 捕获的调用关系&lt;/li&gt;
+&lt;li&gt;调用链追踪系统中存储的是经采样策略过滤后的数据，可能存在漏采的情况&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;于是我们开始思考另一个方向：&lt;strong&gt;通过代码搜索引擎提取静态依赖关系&lt;/strong&gt;。恰好在 2020 Q4 末，我们将内部所有项目仓库从 Gerrit 迁移到了 Gitlab，为代码搜索引擎的落地铺平了道路。&lt;/p&gt;
+&lt;p&gt;在下文中，我们将和大家分享代码搜索引擎的调研报告，期望能帮助读者了解代码搜索引擎如何工作。报告主要讨论以下话题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;为什么做&lt;/li&gt;
+&lt;li&gt;一般架构&lt;/li&gt;
+&lt;li&gt;设计决定&lt;/li&gt;
+&lt;li&gt;实现挑战&lt;/li&gt;
+&lt;li&gt;开源项目&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;为什么做&quot;&gt;1. 为什么做&lt;/h1&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="system design" scheme="https://zhenghe-md.github.io/blog/tags/system-design/"/>
+    
+  </entry>
+  
+  <entry>
     <title>调用链追踪系统在伴鱼：实践篇</title>
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2021-03-05T15:40:13.616Z</updated>
+    <updated>2021-05-16T01:28:44.461Z</updated>
     
     <summary type="html">
     
@@ -54,45 +97,11 @@
   </entry>
   
   <entry>
-    <title>Counting Large Numbers of Events in Small Registers (1978)</title>
-    <link href="https://zhenghe-md.github.io/blog/2021/01/24/counting-large-numbers-of-events-in-small-registers-1978/"/>
-    <id>https://zhenghe-md.github.io/blog/2021/01/24/counting-large-numbers-of-events-in-small-registers-1978/</id>
-    <published>2021-01-24T14:40:16.000Z</published>
-    <updated>2021-03-05T15:40:13.600Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;最近开始听 Harvard 的 CS 299r，即 &quot;Algorithms for Big Data&quot; 这门课。第一节课除了介绍课程大纲外，还介绍了近似计数问题 (Approximate Counting Problem)，而其主要内容来自于 1978 年 Robert Morris 发表的这篇短文。本文尝试将课程和论文结合做一个小结。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;注：由于概率论知识储备有限，本文个别地方尚不严谨，希望他日能给出详细证明。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;approximate-counting-problem&quot;&gt;Approximate Counting Problem&lt;/h2&gt;
-&lt;p&gt;通常，一个 k-bit 寄存器的计数上限是 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.186ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;5.975ex&quot; height=&quot;2.117ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -853.7 2640.8 935.7&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(500, 363) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1140.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2212&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(2140.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;。由于种种限制，Morris 面对的场景限制如下：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;无法扩展寄存器长度 (&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.186ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;5.327ex&quot; height=&quot;1.756ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -694 2354.6 776&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(798.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1854.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-38&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;)&lt;/li&gt;
-&lt;li&gt;需要计数的事件总数远超过 255&lt;/li&gt;
-&lt;li&gt;计数结果无需精确，但相对误差 (relative error) 固定&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;我们将这个问题进一步提炼，可以重述为：&lt;strong&gt;使用最小的空间统计事件发生的总数&lt;/strong&gt;，且对于估计的结果 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.025ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.357ex&quot; height=&quot;1.62ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -705 600 716&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mover&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(50, 287)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，满足： &lt;span class=&quot;math display&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot; display=&quot;true&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;19.332ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 8544.6 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mtable&quot;&gt;&lt;g data-mml-node=&quot;mtr&quot;&gt;&lt;g data-mml-node=&quot;mtd&quot;&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-D-50&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(611, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1000, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot; transform=&quot;translate(1278, 0)&quot;&gt;&lt;g data-mml-node=&quot;mover&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(50, 287)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2100.2, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2212&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3100.4, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(3700.4, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(4256.2, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(5312, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3B5&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(5778, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(6378, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(7044.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(8100.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3B4&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 这里的 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.798ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;9.121ex&quot; height=&quot;3.166ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -1046.4 4031.4 1399.2&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3B5&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(743.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mfrac&quot; transform=&quot;translate(1799.6, 0)&quot;&gt;&lt;g data-mml-node=&quot;mrow&quot; transform=&quot;translate(220, 516.4) scale(0.707)&quot;&gt;&lt;g data-mml-node=&quot;mo&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot; transform=&quot;translate(278, 0)&quot;&gt;&lt;g data-mml-node=&quot;mover&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(50, 287)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(878, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2212&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1656, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2256, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7C&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(903.8, -345) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;1991.8&quot; height=&quot;60&quot; x=&quot;120&quot; y=&quot;220&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 即为相对误差。如 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.816ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;5.867ex&quot; height=&quot;2.773ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -864.9 2593.1 1225.5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3B5&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(743.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mfrac&quot; transform=&quot;translate(1799.6, 0)&quot;&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(220, 394) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(220, -345) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-33&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;553.6&quot; height=&quot;60&quot; x=&quot;120&quot; y=&quot;220&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.186ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;8.044ex&quot; height=&quot;1.808ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -717 3555.6 799&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3B4&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(721.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1777.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-30&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2E&quot; transform=&quot;translate(500, 0)&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-30&quot; transform=&quot;translate(778, 0)&quot;/&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot; transform=&quot;translate(1278, 0)&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 表示相对误差大于 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.816ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.795ex&quot; height=&quot;2.773ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -864.9 793.6 1225.5&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mfrac&quot;&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(220, 394) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(220, -345) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-33&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;553.6&quot; height=&quot;60&quot; x=&quot;120&quot; y=&quot;220&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 的概率小于 1%。&lt;/p&gt;
-&lt;h2 id=&quot;首次尝试拓宽计数范围&quot;&gt;首次尝试：拓宽计数范围&lt;/h2&gt;
-&lt;p&gt;为了使得计数范围超过精确计数的空间限制，最简单地方式就是&lt;strong&gt;每 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.023ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.061ex&quot; height=&quot;1.023ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -442 469 452&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-73&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 个事件计数值加 1，即每次遇到新的事件，按&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.797ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.795ex&quot; height=&quot;2.753ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -864.9 793.6 1217&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mfrac&quot;&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(220, 394) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(231, -345) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-73&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;553.6&quot; height=&quot;60&quot; x=&quot;120&quot; y=&quot;220&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 的概率自增&lt;/strong&gt;。这是经典的多重伯努利实验，其分布符合二项分布 (Binomial distribution)，二项分布 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;6.979ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 3084.7 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-42&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(759, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1148, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1748, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(2192.7, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2695.7, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 的均值 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;10.295ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 4550.6 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-45&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(764, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1153, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-78&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1725, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2391.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3447.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(4047.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，方差 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;14.513ex&quot; height=&quot;2.452ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -833.9 6414.6 1083.9&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3C3&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(571, 363) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1252.3, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(2308.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(2908.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(3411.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(3800.1, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(4522.3, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2212&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(5522.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(6025.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，那么其相对误差 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -1.098ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;12.137ex&quot; height=&quot;4.208ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -1374.7 5364.7 1860&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-3F5&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(683.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;msqrt&quot; transform=&quot;translate(1739.6, 0)&quot;&gt;&lt;g transform=&quot;translate(1020, 0)&quot;&gt;&lt;g data-mml-node=&quot;mfrac&quot;&gt;&lt;g data-mml-node=&quot;mrow&quot; transform=&quot;translate(220, 516.8) scale(0.707)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(503, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(892, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1392, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2212&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(2170, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-70&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2673, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1090.4, -345) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;2365.2&quot; height=&quot;60&quot; x=&quot;120&quot; y=&quot;220&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(0, 164.7)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-LO-221A&quot;/&gt;&lt;/g&gt;&lt;rect width=&quot;2605.2&quot; height=&quot;60&quot; x=&quot;1020&quot; y=&quot;1254.7&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，其中 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.025ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.357ex&quot; height=&quot;1.025ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -442 600 453&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 越小，相对误差越大；&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.025ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.357ex&quot; height=&quot;1.025ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -442 600 453&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 越大，相对误差越小。但这并不符合相对误差固定的要求，而且事件数量较小时误差更大通常无法接受，因此该方案不符合要求。&lt;/p&gt;
-&lt;h2 id=&quot;算法空间复杂度下限&quot;&gt;算法空间复杂度下限&lt;/h2&gt;
-&lt;p&gt;假设我们有一个确定性 (deterministic) 算法实现近似计数，这个算法的空间复杂度下限是多少？近似意味着当实际总数落在某个区间 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;6.805ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 3007.8 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mo&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-5B&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;msub&quot; transform=&quot;translate(278, 0)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(600, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(1281.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;msub&quot; transform=&quot;translate(1726.2, 0)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(600, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2729.8, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-5D&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 中时，给出的估计值为 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.339ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.27ex&quot; height=&quot;1.934ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -705 1003.6 855&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mover&quot;&gt;&lt;g data-mml-node=&quot;msub&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(600, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(251.8, 287)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-7E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;。假设我们有 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.025ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.179ex&quot; height=&quot;1.595ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -694 521 705&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; bits 空间，那么在该空间中最多可以表示 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: 0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.078ex&quot; height=&quot;1.932ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -853.7 918.4 853.7&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; transform=&quot;translate(500, 363) scale(0.707)&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 个区间。我们将这些区间标记为 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.339ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.11ex&quot; height=&quot;1.337ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -441 932.6 591&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msub&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-61&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(529, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;、&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.339ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.11ex&quot; height=&quot;1.337ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -441 932.6 591&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msub&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-61&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(529, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;、...、&lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.779ex&quot; height=&quot;1.564ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -441 1228.4 691.1&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msub&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-61&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; transform=&quot;translate(529, -250.1) scale(0.707)&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(500, 363) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;。为了在保证固定相对误差的同时尽量扩大计数范围，区间大小应该呈指数增长。假设这个指数为 2，即 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.471ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;10.48ex&quot; height=&quot;1.977ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -666 4632 874&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msub&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-61&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; transform=&quot;translate(529, -150) scale(0.707)&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(521, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-2B&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(1299, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-31&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2128.9, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-3D&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mn&quot; transform=&quot;translate(3184.6, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;msub&quot; transform=&quot;translate(3684.6, 0)&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-61&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(529, -150) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，那么可以推测这些区间最多可以表示约 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: 0&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;2.747ex&quot; height=&quot;2.187ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -966.7 1214.3 966.7&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mn&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-32&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;TeXAtom&quot; transform=&quot;translate(500, 363) scale(0.707)&quot; data-mjx-texclass=&quot;ORD&quot;&gt;&lt;g data-mml-node=&quot;msup&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(521, 363) scale(0.707)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6B&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt; 个数。换句话说，假设计数上限为 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.025ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1.357ex&quot; height=&quot;1.025ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -442 600 453&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;，该计数方案的空间复杂度为 &lt;span class=&quot;math inline&quot;&gt;&lt;mjx-container class=&quot;MathJax&quot; jax=&quot;SVG&quot;&gt;&lt;svg style=&quot;vertical-align: -0.566ex&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;12.305ex&quot; height=&quot;2.262ex&quot; role=&quot;img&quot; focusable=&quot;false&quot; viewBox=&quot;0 -750 5439 1000&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;&lt;g stroke=&quot;currentColor&quot; fill=&quot;currentColor&quot; stroke-width=&quot;0&quot; transform=&quot;matrix(1 0 0 -1 0 0)&quot;&gt;&lt;g data-mml-node=&quot;math&quot;&gt;&lt;g data-mml-node=&quot;mi&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-4F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(763, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1152, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1450, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(1935, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-67&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(2412, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-28&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(2801, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6C&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3099, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6F&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(3584, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-67&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mi&quot; transform=&quot;translate(4061, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-I-6E&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(4661, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;g data-mml-node=&quot;mo&quot; transform=&quot;translate(5050, 0)&quot;&gt;&lt;use xlink:href=&quot;#MJX-TEX-N-29&quot;/&gt;&lt;/g&gt;&lt;/g&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/mjx-container&gt;&lt;/span&gt;。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/tags/papers-we-love/"/>
-    
-  </entry>
-  
-  <entry>
     <title>调用链追踪系统的设计维度</title>
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-03-05T15:40:13.600Z</updated>
+    <updated>2021-05-16T01:28:44.441Z</updated>
     
     <summary type="html">
     
@@ -127,7 +136,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-03-05T15:40:13.620Z</updated>
+    <updated>2021-05-16T01:28:44.473Z</updated>
     
     <summary type="html">
     
@@ -166,7 +175,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-03-05T15:40:13.564Z</updated>
+    <updated>2021-05-16T01:28:44.409Z</updated>
     
     <summary type="html">
     
@@ -245,7 +254,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-03-05T15:40:13.596Z</updated>
+    <updated>2021-05-16T01:28:44.441Z</updated>
     
     <summary type="html">
     
@@ -279,7 +288,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-03-05T15:40:13.628Z</updated>
+    <updated>2021-05-16T01:28:44.477Z</updated>
     
     <summary type="html">
     
@@ -312,7 +321,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-03-05T15:40:13.564Z</updated>
+    <updated>2021-05-16T01:28:44.409Z</updated>
     
     <summary type="html">
     
@@ -342,7 +351,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-03-05T15:40:13.572Z</updated>
+    <updated>2021-05-16T01:28:44.417Z</updated>
     
     <summary type="html">
     
@@ -377,7 +386,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-03-05T15:40:13.596Z</updated>
+    <updated>2021-05-16T01:28:44.437Z</updated>
     
     <summary type="html">
     
@@ -405,7 +414,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-03-05T15:40:13.592Z</updated>
+    <updated>2021-05-16T01:28:44.437Z</updated>
     
     <summary type="html">
     
@@ -435,7 +444,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-03-05T15:40:13.588Z</updated>
+    <updated>2021-05-16T01:28:44.433Z</updated>
     
     <summary type="html">
     
@@ -467,7 +476,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-03-05T15:40:13.596Z</updated>
+    <updated>2021-05-16T01:28:44.441Z</updated>
     
     <summary type="html">
     
@@ -501,7 +510,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-03-05T15:40:13.564Z</updated>
+    <updated>2021-05-16T01:28:44.409Z</updated>
     
     <summary type="html">
     
@@ -534,7 +543,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-03-05T15:40:13.572Z</updated>
+    <updated>2021-05-16T01:28:44.417Z</updated>
     
     <summary type="html">
     
@@ -570,7 +579,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-03-05T15:40:13.584Z</updated>
+    <updated>2021-05-16T01:28:44.425Z</updated>
     
     <summary type="html">
     
@@ -607,7 +616,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-03-05T15:40:13.588Z</updated>
+    <updated>2021-05-16T01:28:44.433Z</updated>
     
     <summary type="html">
     
@@ -637,7 +646,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2021-03-05T15:40:13.576Z</updated>
+    <updated>2021-05-16T01:28:44.417Z</updated>
     
     <summary type="html">
     
@@ -693,7 +702,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2021-03-05T15:40:13.560Z</updated>
+    <updated>2021-05-16T01:28:44.405Z</updated>
     
     <summary type="html">
     
@@ -726,7 +735,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2021-03-05T15:40:13.564Z</updated>
+    <updated>2021-05-16T01:28:44.409Z</updated>
     
     <summary type="html">
     
