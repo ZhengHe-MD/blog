@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-05-16T01:28:44.465Z</updated>
+  <updated>2021-05-16T01:35:51.142Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2021-05-16T01:28:44.465Z</updated>
+    <updated>2021-05-16T01:35:51.142Z</updated>
     
     <summary type="html">
     
@@ -64,7 +64,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2021-05-16T01:28:44.461Z</updated>
+    <updated>2021-05-16T01:35:51.138Z</updated>
     
     <summary type="html">
     
@@ -101,7 +101,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-05-16T01:28:44.441Z</updated>
+    <updated>2021-05-16T01:35:51.118Z</updated>
     
     <summary type="html">
     
@@ -136,7 +136,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-05-16T01:28:44.473Z</updated>
+    <updated>2021-05-16T01:35:51.146Z</updated>
     
     <summary type="html">
     
@@ -175,7 +175,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-05-16T01:28:44.409Z</updated>
+    <updated>2021-05-16T01:35:51.086Z</updated>
     
     <summary type="html">
     
@@ -254,7 +254,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-05-16T01:28:44.441Z</updated>
+    <updated>2021-05-16T01:35:51.118Z</updated>
     
     <summary type="html">
     
@@ -288,7 +288,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-05-16T01:28:44.477Z</updated>
+    <updated>2021-05-16T01:35:51.154Z</updated>
     
     <summary type="html">
     
@@ -321,7 +321,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-05-16T01:28:44.409Z</updated>
+    <updated>2021-05-16T01:35:51.086Z</updated>
     
     <summary type="html">
     
@@ -351,7 +351,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-05-16T01:28:44.417Z</updated>
+    <updated>2021-05-16T01:35:51.090Z</updated>
     
     <summary type="html">
     
@@ -386,7 +386,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-05-16T01:28:44.437Z</updated>
+    <updated>2021-05-16T01:35:51.114Z</updated>
     
     <summary type="html">
     
@@ -414,7 +414,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-05-16T01:28:44.437Z</updated>
+    <updated>2021-05-16T01:35:51.114Z</updated>
     
     <summary type="html">
     
@@ -444,7 +444,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-05-16T01:28:44.433Z</updated>
+    <updated>2021-05-16T01:35:51.106Z</updated>
     
     <summary type="html">
     
@@ -476,7 +476,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-05-16T01:28:44.441Z</updated>
+    <updated>2021-05-16T01:35:51.114Z</updated>
     
     <summary type="html">
     
@@ -510,7 +510,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-05-16T01:28:44.409Z</updated>
+    <updated>2021-05-16T01:35:51.082Z</updated>
     
     <summary type="html">
     
@@ -543,7 +543,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-05-16T01:28:44.417Z</updated>
+    <updated>2021-05-16T01:35:51.094Z</updated>
     
     <summary type="html">
     
@@ -579,7 +579,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-05-16T01:28:44.425Z</updated>
+    <updated>2021-05-16T01:35:51.102Z</updated>
     
     <summary type="html">
     
@@ -616,7 +616,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-05-16T01:28:44.433Z</updated>
+    <updated>2021-05-16T01:35:51.110Z</updated>
     
     <summary type="html">
     
@@ -646,7 +646,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2021-05-16T01:28:44.417Z</updated>
+    <updated>2021-05-16T01:35:51.094Z</updated>
     
     <summary type="html">
     
@@ -702,7 +702,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2021-05-16T01:28:44.405Z</updated>
+    <updated>2021-05-16T01:35:51.078Z</updated>
     
     <summary type="html">
     
@@ -735,7 +735,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
     <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2021-05-16T01:28:44.409Z</updated>
+    <updated>2021-05-16T01:35:51.082Z</updated>
     
     <summary type="html">
     
