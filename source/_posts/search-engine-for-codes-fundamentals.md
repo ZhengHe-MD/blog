@@ -523,7 +523,7 @@ Sourcegraph 在隔离代码和索引上更近了一步。在它的架构中存�
 
 代码同步由 gitserver 和 repo-updater 完成，详情可查看 [Life of a repository](https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-repository)；基于文本的代码搜索由 Zoekt 项目支持，包括 zoekt-indexserver 和 zoekt-webserver。在未建立索引的分支上的查询由 searcher 完成。syntect-server 负责往搜索结果中添加语法高亮信息，详情可查看 [Life of a search query](https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query)；precise-code-intel-worker 则负责前面提到的 Precise Code Intelligence。
 
-作为一个商业化的代码搜索引擎项目，Sourcegraph 无论在系统设计上还是产品体验上都更加完善。
+作为一个商业化的代码搜索引擎项目，Sourcegraph 无论在系统设计上还是产品体验上都更加完善。如果你期望享受极致的使用体验，且不想花费时间、精力去了解、部署、运维一个代码搜索引擎，那么 Sourcegraph 是个很好的选择。
 
 ## 5.6 项目对比
 
