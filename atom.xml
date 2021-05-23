@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-05-17T05:00:27.537Z</updated>
+  <updated>2021-05-23T06:25:36.484Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,48 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>「Born a Crime」读后感</title>
+    <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
+    <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
+    <published>2021-05-23T09:04:37.000Z</published>
+    <updated>2021-05-23T06:25:36.484Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在 Palfish App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。&lt;/p&gt;
+&lt;p&gt;「Born a Crime」记录了 Trevor Noah 在南非成长的经历，但它并不像一个传记，而是将成长中的事件按照主题串联，如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;母亲对耶稣的绝对信仰&lt;/li&gt;
+&lt;li&gt;出生前后及幼年时期成长因为特殊肤色 (colored) 不得不面对的问题&lt;/li&gt;
+&lt;li&gt;母亲的独立，父亲的神秘&lt;/li&gt;
+&lt;li&gt;...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;💡 完整的梗概可以移步 &lt;a href=&quot;https://www.litcharts.com/lit/born-a-crime/summary&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这里&lt;/a&gt; 阅读&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;为什么人们会喜欢这本书？Trevor 在这个访谈里给出了他的看法。&lt;/p&gt;
+&lt;div class=&quot;video-container&quot;&gt;&lt;iframe src=&quot;https://www.youtube.com/embed/W79NnhLsosw&quot; frameborder=&quot;0&quot; loading=&quot;lazy&quot; allowfullscreen&gt;&lt;/iframe&gt;&lt;/div&gt;
+&lt;p&gt;大概说的就是每个人在这本书的某一桥段都会找到共鸣。当然，这也是所有受欢迎内容的共同特点。&lt;/p&gt;
+&lt;h2 id=&quot;语录及感受&quot;&gt;语录及感受&lt;/h2&gt;
+&lt;p&gt;下面我想挑选书中一些我特别喜欢的话，分享给对此有兴趣的你，也算是对这本书以及花在阅读这本书上的时间一个交代。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We tell people to follow their dreams, but you can only dream of what you can imagine, and, depending on where you come from, your imagination can be quite limited.&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="readings" scheme="https://zhenghe-md.github.io/blog/categories/readings/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>代码搜索引擎：基础篇</title>
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2021-05-17T05:00:27.537Z</updated>
+    <updated>2021-05-23T06:25:36.504Z</updated>
     
     <summary type="html">
     
@@ -64,7 +101,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2021-05-17T05:00:27.533Z</updated>
+    <updated>2021-05-23T06:25:36.500Z</updated>
     
     <summary type="html">
     
@@ -101,7 +138,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-05-17T05:00:27.517Z</updated>
+    <updated>2021-05-23T06:25:36.484Z</updated>
     
     <summary type="html">
     
@@ -136,7 +173,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-05-17T05:00:27.545Z</updated>
+    <updated>2021-05-23T06:25:36.512Z</updated>
     
     <summary type="html">
     
@@ -175,7 +212,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-05-17T05:00:27.481Z</updated>
+    <updated>2021-05-23T06:25:36.448Z</updated>
     
     <summary type="html">
     
@@ -254,7 +291,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-05-17T05:00:27.513Z</updated>
+    <updated>2021-05-23T06:25:36.480Z</updated>
     
     <summary type="html">
     
@@ -288,7 +325,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-05-17T05:00:27.549Z</updated>
+    <updated>2021-05-23T06:25:36.516Z</updated>
     
     <summary type="html">
     
@@ -321,7 +358,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-05-17T05:00:27.481Z</updated>
+    <updated>2021-05-23T06:25:36.448Z</updated>
     
     <summary type="html">
     
@@ -351,7 +388,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-05-17T05:00:27.489Z</updated>
+    <updated>2021-05-23T06:25:36.456Z</updated>
     
     <summary type="html">
     
@@ -386,7 +423,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-05-17T05:00:27.513Z</updated>
+    <updated>2021-05-23T06:25:36.480Z</updated>
     
     <summary type="html">
     
@@ -414,7 +451,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-05-17T05:00:27.509Z</updated>
+    <updated>2021-05-23T06:25:36.476Z</updated>
     
     <summary type="html">
     
@@ -444,7 +481,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-05-17T05:00:27.505Z</updated>
+    <updated>2021-05-23T06:25:36.472Z</updated>
     
     <summary type="html">
     
@@ -476,7 +513,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-05-17T05:00:27.513Z</updated>
+    <updated>2021-05-23T06:25:36.480Z</updated>
     
     <summary type="html">
     
@@ -510,7 +547,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-05-17T05:00:27.481Z</updated>
+    <updated>2021-05-23T06:25:36.448Z</updated>
     
     <summary type="html">
     
@@ -543,7 +580,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-05-17T05:00:27.489Z</updated>
+    <updated>2021-05-23T06:25:36.456Z</updated>
     
     <summary type="html">
     
@@ -579,7 +616,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-05-17T05:00:27.501Z</updated>
+    <updated>2021-05-23T06:25:36.468Z</updated>
     
     <summary type="html">
     
@@ -616,7 +653,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-05-17T05:00:27.505Z</updated>
+    <updated>2021-05-23T06:25:36.472Z</updated>
     
     <summary type="html">
     
@@ -646,7 +683,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/</id>
     <published>2020-02-26T23:23:03.000Z</published>
-    <updated>2021-05-17T05:00:27.493Z</updated>
+    <updated>2021-05-23T06:25:36.460Z</updated>
     
     <summary type="html">
     
@@ -702,7 +739,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/19/Cache-Policies/</id>
     <published>2020-02-19T23:17:10.000Z</published>
-    <updated>2021-05-17T05:00:27.477Z</updated>
+    <updated>2021-05-23T06:25:36.444Z</updated>
     
     <summary type="html">
     
@@ -727,44 +764,6 @@
     
       <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
     
-    
-  </entry>
-  
-  <entry>
-    <title>Consistent Hashing and Random Trees (1997)</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/02/18/Consistent-Hashing-and-Random-Trees-1997/</id>
-    <published>2020-02-18T17:33:21.000Z</published>
-    <updated>2021-05-17T05:00:27.481Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;论文作者的贡献主要包含两部分：Consistent Hashing 和 Random Trees。Consistent Hashing 主要用于解决分布式哈希表 (Distributed Hash Table, DHT) 的桶增减带来的重新哈希问题；Random Trees 主要用于分布式缓存中的热点问题，它利用了 Consistent Hashing。下文主要关注 Consistent Hashing。&lt;/p&gt;
-&lt;h1 id=&quot;contribution&quot;&gt;Contribution&lt;/h1&gt;
-&lt;p&gt;在分布式环境下，单台机器的负载有限，我们需要将请求散列到不同的机器上，利用更多的机器实现服务的横向扩容。这时候就需要 Hash Function，好的 Hash Function 能够帮我们均匀地分布到不同的机器上。但传统的 Hash Function 通常是静态的，桶的数量固定。在多台机器组成的服务中，每台机器就是一个桶，但机器在运行的过程中很可能出现崩溃，在请求数量波动较大时，需要动态地增减机器。如果每次桶的数量发生变化时都需要重新散列所有请求，可能造成多方面影响：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;来自于同一个用户的请求在桶发生变化时将被打到不同的节点，可能导致数据不一致 (考虑 monotonic consistency)&lt;/li&gt;
-&lt;li&gt;所有的 Client 都需要知道当前最新的 Hash Function 配置，在网络中传播这个配置需要时间&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Consistent Hashing 的提出就是希望能够缓解/解决这个问题，使得每次桶数量发生变化时不需要重新散列桶内的所有元素，而是将受影响的数量控制在很小的范围内。&lt;/p&gt;
-&lt;h1 id=&quot;definitions&quot;&gt;Definitions&lt;/h1&gt;
-&lt;p&gt;作者从四个方面讨论了好的 Consistent Hash Function 应该满足的性质：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Balance：元素应当尽量均匀地分布到不同的桶内 (with high probability)&lt;/li&gt;
-&lt;li&gt;Monotonicity：当增加新的桶时，元素只可能从旧桶移动到新桶，而不可能从旧桶移动到其它旧桶&lt;/li&gt;
-&lt;li&gt;Spread：在不同的用户眼里，相同的元素可能被散列到不同的桶中，我们称之为不同的观点。Spread 要求总的观点数量必须有一个上限。好的 Consistent Hash Function 应当让 spread 尽量小。&lt;/li&gt;
-&lt;li&gt;Load：类似 spread，Load 性质是针对不同的用户，但它规定的是单个桶中不同元素数量的上限，即每个桶中的，至少有一个用户认为其中含有的，元素数量存在上限。好的 Consitent Hash Function 应当让这个上限尽量小。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id=&quot;construction&quot;&gt;Construction&lt;/h1&gt;
-&lt;p&gt;作者提出一种构建好的 Consistent Hash Function 的方法：&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/categories/papers-we-love/"/>
-    
-    
-      <category term="data structures &amp; algorithms" scheme="https://zhenghe-md.github.io/blog/tags/data-structures-algorithms/"/>
     
   </entry>
   
