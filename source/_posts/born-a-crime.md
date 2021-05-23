@@ -47,7 +47,7 @@ categories:
 
 Trevor 和他的小伙伴们会从低价收取一些来源不明的物品，然后以合适的价钱卖出，他们知道这些东西可能是偷来的、抢来的或者骗来的，但是他们相互之间形成了共识 —「不问来源」。直到有一天，他收了一个照相机，里面存着许多家庭照片，这让 Trevor 第一次感受到：自己拿走的是某个家庭的美好回忆。
 
-在我不能确定并认可一件带来的社会价值时，我无法将其作为我的事业。
+在不能确定并认可一件事情带来的社会价值超过损伤时，我无法将其作为可以为之努力的事业。
 
 > Hustling is to work what surfing the Internet is to reading. If you add up how much you read in a year on the Internet—tweets, Facebook posts, lists—you’ve read the equivalent of a shit ton of books, but in fact you’ve read no books in a year.
 >
