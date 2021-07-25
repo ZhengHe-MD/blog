@@ -285,6 +285,128 @@ mjx-container + br {
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/2021/07/24/dialogue-system-research/" class="post-title-link" itemprop="url">对话系统调研报告</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-24 09:37:30" itemprop="dateCreated datePublished" datetime="2021-07-24T09:37:30+00:00">2021-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/07/24/dialogue-system-research/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/07/24/dialogue-system-research/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：</p>
+<ul>
+<li>问题背景</li>
+<li>使用场景</li>
+<li>基本概念</li>
+<li>构建方式</li>
+<li>基本架构</li>
+</ul>
+<p>最后将以 <a href="https://github.com/RasaHQ/rasa" target="_blank" rel="noopener">Rasa</a> 为例，介绍一个真实的对话系统项目。</p>
+<h2 id="背景知识">背景知识</h2>
+<blockquote>
+<p>ℹ️ 本节内容主要来自于 Speech and Language Processing 这本书的<a href="https://web.stanford.edu/~jurafsky/slp3/24.pdf" target="_blank" rel="noopener">第 24 章</a></p>
+</blockquote>
+<p>对话系统，顾名思义是用来与真人对话的系统。要做好这样的系统，了解、学习和研究「人类对话的特点」很有必要。</p>
+<h3 id="人类对话的特点">人类对话的特点</h3>
+<p>人类对话的特点理论上属于自然语言学的研究范畴，内容丰富，这里仅摘取其中一些要点。但如果有一天你想要把对话系统做到极致，系统地学习更多自然语言研究成果肯定能自底向上地帮助到你。</p>
+<ul>
+<li>轮次 (turns)：典型的对话通常由以对话双方轮流发言的形式出现，一来一回合称一轮 (turn)，来回多次被称为多轮对话。</li>
+<li>对话行为 (dialogue acts)：人们的每次发言或多或少都会带着一些目的，即可以是粗粒度的，如表述 (constatives)、请求 (requests)、指令 (directives)、承诺 (commissives)、表态 (acknowledgements)、问题 (questions)，也可以是细粒度的，如询问天气、预约时间、预定机票等等。</li>
+<li>共识确认 (grounding)：在对话过程中，为了保证双方的认识一致，沟通过程中会通过各种方式确认对方的想法。确认方式大致可以分为显式和隐式两种，举例如下：
+<ul>
+<li>显式：
+<ul>
+<li>A：我肚子在叫……</li>
+<li>B：你是不是想吃午饭了？</li>
+</ul></li>
+<li>隐式：
+<ul>
+<li>A：我今天想快点去上海……</li>
+<li>B：好的，那你想从首都机场还是大兴机场出发？(隐含确认出行方式)</li>
+</ul></li>
+</ul></li>
+<li>对话结构 (dialogue structure)：通过分析不同的对话，我们会发现对话常常由基本问答加上一些特殊变化构成。特殊变化包括题外话 (side sequence)、前置语句 (presequences)、后置语句 (postsequence)、重复确认 (clarification) 等等。</li>
+<li>主导性 (initiative)：当对话中有一方一直在单向获取另一方信息时，我们称前者为主动方，后者为被动方。在对话系统中，对话双方是用户 (user) 和系统 (system)，那么从主导性触发，对话系统可以被分为三类：用户主导 (user-initiative)、系统主导 (system-initiative) 和混合主导 (mixed initiative)。</li>
+<li>推理和隐喻 (inference &amp; implicature)：所谓含沙射影、话中带刺、指桑骂槐、拐弯抹角都是推理和隐喻的艺术。当然，推理和隐喻也可用于表达非负面的含义，这里就不展开描述。</li>
+</ul>
+<h3 id="常见使用场景">常见使用场景</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2021/07/24/dialogue-system-research/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -308,10 +430,16 @@ mjx-container + br {
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-05-23 09:04:37 / 修改时间：06:38:03" itemprop="dateCreated datePublished" datetime="2021-05-23T09:04:37+00:00">2021-05-23</time>
+              <time title="创建时间：2021-05-23 09:04:37" itemprop="dateCreated datePublished" datetime="2021-05-23T09:04:37+00:00">2021-05-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -425,7 +553,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
 
           
@@ -535,7 +663,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -650,7 +778,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -759,7 +887,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -870,7 +998,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1025,7 +1153,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1135,7 +1263,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1246,7 +1374,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1300,119 +1428,6 @@ mjx-container + br {
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/" class="post-title-link" itemprop="url">Jaeger Walkthrough: jaeger-client-go</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-06-21 22:28:35" itemprop="dateCreated datePublished" datetime="2020-06-21T22:28:35+00:00">2020-06-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-23 06:38:03" itemprop="dateModified" datetime="2021-05-23T06:38:03+00:00">2021-05-23</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/open-source-project/" itemprop="url" rel="index">
-                    <span itemprop="name">open source project</span>
-                  </a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/06/21/Jaeger-Walkthrough-jaeger-client-go/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，<a href="https://github.com/jaegertracing/jaeger-client-go/" target="_blank" rel="noopener">jaeger-client-go</a>。</p>
-<h2 id="简介">简介</h2>
-<p>jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：</p>
-<ul>
-<li>如何在进程内部管理调用链追踪信息 (tracer, span)</li>
-<li>如何在进程间传递调用链追踪信息 (span context, propagation)</li>
-</ul>
-<p>但在调用链追踪实践中，jaeger-client-go 仅仅解决上述两个问题还不够，它还需要考虑的问题包括：</p>
-<ul>
-<li>如何将数据上报到存储中心</li>
-<li>如何对数据抽样，支持不同的抽样策略</li>
-<li>需要收集哪些统计指标</li>
-</ul>
-<p>接下来，我们就着源码对这些问题一一分析。</p>
-<h2 id="进程内调用链追踪信息管理">进程内调用链追踪信息管理</h2>
-<h3 id="tracer">Tracer</h3>
-<p>Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1504,7 +1519,7 @@ mjx-container + br {
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

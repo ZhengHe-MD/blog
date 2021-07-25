@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：  问题背景 使用场景 基本概念 构建方式 基本架构  最后将以 Rasa 为例，介绍一个真实的对话系统项目。 背景知识  ℹ️ 本节内容主要来自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对话系统调研报告">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：  问题背景 使用场景 基本概念 构建方式 基本架构  最后将以 Rasa 为例，介绍一个真实的对话系统项目。 背景知识  ℹ️ 本节内容主要来自">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/rule-based.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/corpus-based.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/general-architecture.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/rasa-architecture.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/from-input-to-output.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/policy.png">
+<meta property="article:published_time" content="2021-07-24T09:37:30.000Z">
+<meta property="article:modified_time" content="2021-07-25T09:12:39.905Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="system design">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/rule-based.png">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>对话系统调研报告 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-172943223-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          对话系统调研报告
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-07-24 09:37:30" itemprop="dateCreated datePublished" datetime="2021-07-24T09:37:30+00:00">2021-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-07-25 09:12:39" itemprop="dateModified" datetime="2021-07-25T09:12:39+00:00">2021-07-25</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/07/24/dialogue-system-research/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/07/24/dialogue-system-research/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：</p>
+<ul>
+<li>问题背景</li>
+<li>使用场景</li>
+<li>基本概念</li>
+<li>构建方式</li>
+<li>基本架构</li>
+</ul>
+<p>最后将以 <a href="https://github.com/RasaHQ/rasa" target="_blank" rel="noopener">Rasa</a> 为例，介绍一个真实的对话系统项目。</p>
+<h2 id="背景知识">背景知识</h2>
+<blockquote>
+<p>ℹ️ 本节内容主要来自于 Speech and Language Processing 这本书的<a href="https://web.stanford.edu/~jurafsky/slp3/24.pdf" target="_blank" rel="noopener">第 24 章</a></p>
+</blockquote>
+<p>对话系统，顾名思义是用来与真人对话的系统。要做好这样的系统，了解、学习和研究「人类对话的特点」很有必要。</p>
+<h3 id="人类对话的特点">人类对话的特点</h3>
+<p>人类对话的特点理论上属于自然语言学的研究范畴，内容丰富，这里仅摘取其中一些要点。但如果有一天你想要把对话系统做到极致，系统地学习更多自然语言研究成果肯定能自底向上地帮助到你。</p>
+<ul>
+<li>轮次 (turns)：典型的对话通常由以对话双方轮流发言的形式出现，一来一回合称一轮 (turn)，来回多次被称为多轮对话。</li>
+<li>对话行为 (dialogue acts)：人们的每次发言或多或少都会带着一些目的，即可以是粗粒度的，如表述 (constatives)、请求 (requests)、指令 (directives)、承诺 (commissives)、表态 (acknowledgements)、问题 (questions)，也可以是细粒度的，如询问天气、预约时间、预定机票等等。</li>
+<li>共识确认 (grounding)：在对话过程中，为了保证双方的认识一致，沟通过程中会通过各种方式确认对方的想法。确认方式大致可以分为显式和隐式两种，举例如下：
+<ul>
+<li>显式：
+<ul>
+<li>A：我肚子在叫……</li>
+<li>B：你是不是想吃午饭了？</li>
+</ul></li>
+<li>隐式：
+<ul>
+<li>A：我今天想快点去上海……</li>
+<li>B：好的，那你想从首都机场还是大兴机场出发？(隐含确认出行方式)</li>
+</ul></li>
+</ul></li>
+<li>对话结构 (dialogue structure)：通过分析不同的对话，我们会发现对话常常由基本问答加上一些特殊变化构成。特殊变化包括题外话 (side sequence)、前置语句 (presequences)、后置语句 (postsequence)、重复确认 (clarification) 等等。</li>
+<li>主导性 (initiative)：当对话中有一方一直在单向获取另一方信息时，我们称前者为主动方，后者为被动方。在对话系统中，对话双方是用户 (user) 和系统 (system)，那么从主导性触发，对话系统可以被分为三类：用户主导 (user-initiative)、系统主导 (system-initiative) 和混合主导 (mixed initiative)。</li>
+<li>推理和隐喻 (inference &amp; implicature)：所谓含沙射影、话中带刺、指桑骂槐、拐弯抹角都是推理和隐喻的艺术。当然，推理和隐喻也可用于表达非负面的含义，这里就不展开描述。</li>
+</ul>
+<h3 id="常见使用场景">常见使用场景</h3>
+<p>对话系统最常见的三个使用场景是：问答、助手和聊天，三者从前往后难度、复杂度逐渐增加。</p>
+<h4 id="问答">问答</h4>
+<p>问答场景常见于智能客服系统，问题和答案都比较固定，背后常常与知识库挂钩。我们甚至可以将问答系统理解成是用对话的方式快速检索使用文档中的 frequent asked question (FAQ)。在问答场景中，用户明确地知道与之对话的不是真人，因此也不会使用复杂的对话结构，主要以单轮对话的形式呈现，用户占主导。</p>
+<h4 id="助手">助手</h4>
+<p>助手场景常见于智能设备上的语音助手，如 <a href="https://www.apple.com/siri/" target="_blank" rel="noopener">Siri</a>、<a href="https://developer.amazon.com/en-US/alexa" target="_blank" rel="noopener">Alexa</a> 和 <a href="https://assistant.google.com/" target="_blank" rel="noopener">Google Assistant</a> 等，它的问题和答案相对固定，背后也可能与知识库挂钩。同时，助手需要和许多三方服务对接，以完成用户交付的任务，因此也常常被称为任务机器人 (task bot)。</p>
+<p>但与问答场景不同，助手面对问题给出的答案或做出的行动可能随着用户输入的信息变化而变化。比如用户要订机票，助手需要知道出发地、目的地、时间、舱位等信息，这些信息不同，助手最终完成的任务不同。此外，在人们的真实对话中，将这些信息在一句话中说出并不符合人们说话的习惯，因此助手与用户之间往往要进行多轮对话。</p>
+<p>在助手场景中，尽管用户明确知道对方是机器人，但对话过程相比于问答更加自然一些。</p>
+<h4 id="聊天">聊天</h4>
+<p>聊天场景指的是像人一样与人交谈，市面上存在的系统有贤二机器僧、微软小冰等。理论上，聊天不存在固定内容，天南海北都可以侃。著名的<a href="https://en.wikipedia.org/wiki/Turing_test" target="_blank" rel="noopener">图灵测试</a>就是用于验证机器是否可以让人无法分辨他是在和人聊天还是在和机器聊天。</p>
+<p>在聊天场景中，对话系统面对的挑战与前二者相比要复杂很多，如自然语言理解能力、记忆能力、知识面，甚至语气、性格等等，但它提供的对话体验也最接近与真人交谈。</p>
+<h3 id="构建方式">构建方式</h3>
+<h4 id="基于规则">基于规则</h4>
+<p><img src="./rule-based.png" /></p>
+<p>简而言之，基于规则的构建方式就是预先根据领域知识设定一些规则，用户输入文本后，系统根据规则的优先级逐条比对，符合规则条件后，根据预设的模板拼接出响应。我们来看临床心理机器人 <a href="https://en.wikipedia.org/wiki/ELIZA" target="_blank" rel="noopener">ELIZA</a> (1966) 的一段对话：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># U → 用户，E → ELIZA</span><br><span class="line">...</span><br><span class="line">U: You hate me.</span><br><span class="line">E: What makes you think I hate you?</span><br><span class="line">...</span><br><span class="line">U: I know everybody laughed at me.</span><br><span class="line">E: You say you know everybody laughed at you.</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这里实际上背后匹配了两条规则：</p>
+<ol type="1">
+<li><code>(0 You 0 Me) → (What makes you think I 3 You)</code></li>
+<li><code>(I *) → (You say you 2)</code></li>
+</ol>
+<p>当发言和 left hand side (LHS) 匹配时，就用 right hand side (RHS) 回复，并且用发言中对应位置的内容替换掉回复模板中的变量。当然，实际上 ELIZA 背后的采用的规则和匹配方式更加复杂，如果感兴趣可以阅读<a href="https://dl.acm.org/doi/10.1145/365153.365168" target="_blank" rel="noopener">论文原文</a> (cited by 5220)。</p>
+<p>基于规则的方式优点包括：</p>
+<ul>
+<li>开发速度快、成本低、易集成</li>
+<li>行为稳定、可解释，安全可控风险小</li>
+<li>能发送多媒体信息、图片、视频</li>
+<li>推理时间短、速度快</li>
+<li>...</li>
+</ul>
+<p>其缺点包括：</p>
+<ul>
+<li>维护成本高，需要人工维护规则和优先级，复杂度高了以后难以管理</li>
+<li>不具备自然语言理解能力，同义语句无法触类旁通，需要穷举规则</li>
+<li>新增语言支持成本高</li>
+<li>...</li>
+</ul>
+<h4 id="基于语料">基于语料</h4>
+<p><img src="./corpus-based.png" /></p>
+<p>基于语料，顾名思义在构建系统之前需要准备大量真实环境的对话数据，根据这些数据训练出对话模型再投入使用。在对话时，服务会把用户的发言输入到预训练好的模型中，模型给出推理的结果返回给用户。这里的模型可以分为两类：</p>
+<p>信息检索：这类模型会将所有对话转化成常用的自然语言特征，如基于词频的 <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf" target="_blank" rel="noopener">tf-idf</a> 或基于语义的 <a href="https://en.wikipedia.org/wiki/Word_embedding" target="_blank" rel="noopener">embedding</a>，然后将这些特征存入通用搜索引擎或向量检索引擎中。收到用户发言后，先将文本做相同的向量化处理，然后再通过上述引擎检索举例最近的对话，将回答返回给用户。基于信息检索的模型只能生成训练数据中已知的回答，相比基于规则的模型，它不需要逐条地维护规则，而是将规则通过穷举的方式沉淀在数据集中。</p>
+<p>统计模型：这类模型会将所有对话输入到统计机器学习模型中，如 <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Transformer</a>，通过有监督训练得到语言模型，这类语言模型可以通过预测的方式生成回答，尽管这些回答源自于训练数据，但这些回答可能从众多对话中博采众长，而不是择其一而用，因此它的回答中可能出现训练数据中不存在的语句。</p>
+<p>不论是信息检索还是模型生成，只要是基于语料构建的对话系统都存在一个问题，就是「garbage in garbage out」，如果语料有问题，对话系统就有问题。</p>
+<p>基于语料的方式优点包括：</p>
+<ul>
+<li>系统维护成本低，训练完后无需其它维护成本</li>
+<li>具备自然语言理解能力，能识别同义语句的不同表达</li>
+<li>新增语言支持成本低，因为开源社区中已存在不同自然语言预训练好的特征提取工具</li>
+<li>...</li>
+</ul>
+<p>其缺点包括：</p>
+<ul>
+<li>开发周期长、成本高、需要大量训练数据</li>
+<li>训练数据问题可能导致系统行为不稳定，风险不可控</li>
+<li>线上模型推理时间长，占用资源多</li>
+<li>不支持多媒体消息，只能发送文本或文本合成的语音</li>
+</ul>
+<h4 id="混合方案">混合方案</h4>
+<p>混合方案，其实就是将基于规则和基于语料的方案融合。融合的方式千变万化，一个典型的例子是：使用统计模型做句子中的内容提取，对话行为识别，使用规则生成回答。这种做法既可以保持对内容的语义级别理解，又能够控制回答的风险，避免生成行为的不稳定。其优缺点需要具体分析，理想状况下是能达到前两种方案的取长补短。</p>
+<h4 id="小结">小结</h4>
+<p>构建方式与使用场景二者并没有直接关系，是不同抽象层级上的概念，任意使用场景都可以使用任意构建方式来实现。你既可以穷尽世上所有对话，将它们转化成规则，用基于规则的方式构建聊天机器人，也可以使用基于语料的方式将知识库输入到统计模型中得到客服机器人。但无论使用哪种方案，面对难度越大的场景，投入的资源越多，遇到的挑战越多，方案的复杂性越大。复杂场景的解决方案同样能用于简单场景，比如一个面向助手场景的对话系统，通常也能适用于问答场景，只不过是「割鸡用牛刀」而已。</p>
+<h2 id="对话系统">对话系统</h2>
+<blockquote>
+<p>⚠️ 在下文中，我们会将讨论范围缩小到<strong>使用混合方案构建的、用于助手场景的对话系统</strong>，我们同样将之称为对话系统。这里虽然有一点名词滥用，但是为了行文更流畅，暂且这样处理。</p>
+</blockquote>
+<h3 id="基本概念">基本概念</h3>
+<h4 id="领域-domain">领域 (Domain)</h4>
+<p>通常对话系统只解决某个具体领域问题，如网约车客服、新生入学助手、语音助手等等。不同领域可能拥有各自的概念、对话特点、甚至机器人的性格、语气等等，但它们共享底层的能力，比如自然语言理解、对话状态管理、对话策略管理、自然语言生成等等。</p>
+<h4 id="对话代理人-agent">对话代理人 (Agent)</h4>
+<p>对话代理人既可以是真人，如客服人员、客户支持代表，也可以是虚拟人，如机器人。在对话系统内部，你可以简单地将对话代理人理解成机器人。机器人因其设计目的不同，既可用于解决单领域 (single-domain) 问题，也可用于解决多领域 (multi-domain) 问题。</p>
+<h4 id="会话-session">会话 (Session)</h4>
+<p>会话是对话代理人与用户之间发生的一次连续对话，不同对话系统可以有自己对「连续」的定义。通常用户在开启会话时会带着明确的目的，会话结束时，目的即可能达成，也可能未达成，而未达成目的的对话就是对话设计者需要重点关注的内容。</p>
+<h4 id="剧本-story">剧本 (Story)</h4>
+<p>剧本是在对话设计中设定的模板，比如：</p>
+<ul>
+<li>询问天气</li>
+<li>预定车票</li>
+<li>取消订单</li>
+<li>修改地址</li>
+<li>…</li>
+</ul>
+<p>通常一个会话对应一个剧本，比较灵活的对话系统可以支持在一个会话中通过上下文切换 (context switch) 演绎多个剧本。</p>
+<p>每个剧本在演绎的过程中需要记录一些供机器人决策使用的上下文信息，这些信息包括但不限于：</p>
+<ul>
+<li>双方的对话历史</li>
+<li>系统和外部注入的事件</li>
+<li>表单 (form) 信息</li>
+<li>…</li>
+</ul>
+<h4 id="发言-utterance">发言 (Utterance)</h4>
+<p>在对话中，机器人与用户任何一方说出的任意一句话。</p>
+<h4 id="对话策略-dialogue-policy">对话策略 (Dialogue policy)</h4>
+<p>在收到用户的发言之后，机器人要决定回复什么内容，这个决定的根据就是系统中设定的对话策略。剧本是对话策略的一种，一个复杂的对话系统还可能包含其它类型的对话策略。</p>
+<h4 id="意图-intent">意图 (Intent)</h4>
+<p>意图是系统能够识别的最小的用户目的，是系统决策的基本元素之一。只有在识别用户 utterance 背后的含义之后，机器人才能决定回复什么。剧本中的每一章节由用户意图的识别和机器人采用的回答构成。从发言的角度出发，意图约等价于发言中的动词。如「下周我要飞去上海」中的「飞」就是意图。</p>
+<h4 id="实体-entity">实体 (Entity)</h4>
+<p>实体可以认为是发言中的名词，如「我想订 7 月 20 日从北京飞到云南的机票」中的「7 月 20 日」、「北京」、「云南」和「机票」对应着时间、出发地、目的地和票据，四者都是实体。有些实体和领域息息相关，如票据这样的实体几乎不会出现在点餐机器人系统中；有些实体则比较通用，比如时间、地点、数字等等。和领域相关的实体需要单独定义，通用实体则可以由平台统一支持。</p>
+<h4 id="槽位-slot">槽位 (Slot)</h4>
+<p>在剧本的上下文信息中，我们提到过表单，后者记录着与决策有关的数据，如购买机票所需的「出发地」、「目的地」、「时间」等信息。我们称盛放这些信息的容器为槽位，信息本身为槽位填充物 (slot filler)。想象去打疫苗时填写的表格，表中的每个空就是槽位，你填写的内容就是槽位填充物。</p>
+<blockquote>
+<p>🙋🏻 槽位和实体的区别是什么？</p>
+<p>实体指的是从单句发言中提取到的信息，而槽位存储整个会话过程中提取到的所有信息，前者是后者的数据来源，槽位存储的信息会被用于后续对话系统决策的过程中。</p>
+</blockquote>
+<h4 id="动作-action">动作 (Action)</h4>
+<p>理解用户的意图后，对话代理人除了回复消息外，可能需要帮助用户去做一些动作，比如：</p>
+<ul>
+<li>修改日程</li>
+<li>注销账号</li>
+<li>修改套餐</li>
+<li>查询天气</li>
+<li>…</li>
+</ul>
+<p>不同领域的对话代理人需要执行的动作不同，需要定制化开发。在设计中，机器人回复消息通常也会被认为是一种动作。举一个简单的例子：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">story:</span></span><br><span class="line">  <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">intent:</span> <span class="string">arrange_meeting</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">action:</span> <span class="string">update_calendar</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">action:</span> <span class="string">utter_arrange_meeting</span></span><br></pre></td></tr></table></figure>
+<p>上面这个剧本说的就是：机器人在识别用户发言中的意图是举办会议 (arrange_meeting) 时，先执行更新日历 (update_calendar) 的动作，再执行回复用户 (utter_arrange_meeting) 的动作。</p>
+<h4 id="对接渠道-channel">对接渠道 (Channel)</h4>
+<p>对话代理人本身只负责对话逻辑，并不包含对话载体，如钉钉、美洽、飞书、Slack 等等，后面列举的这些载体就是对接渠道。</p>
+<h3 id="一般架构">一般架构</h3>
+<p>对话系统的一般架构图如下所示：</p>
+<p><img src="./general-architecture.png" /></p>
+<h4 id="automatic-speech-recognition-asr">Automatic Speech Recognition (ASR)</h4>
+<p>ASR 模块负责将用户输入的<strong>音频转化为文本</strong>，得到用户发言的文本。这个模块既可以采用通用型 ASR 服务，也可以在领域内通过迁移学习定制化开发。ASR 的识别准确度将对后续所有模块的处理产生深远的影响，就好比在传话游戏中，越靠前的表述错误会被放得越大。</p>
+<blockquote>
+<p>⚠️ 如果对话系统仅需支持文本对话则无需 ASR 模块，因此在架构图中用虚线表示</p>
+</blockquote>
+<h4 id="natural-language-understanding-nlu">Natural Language Understanding (NLU)</h4>
+<p>NLU 模块负责从用户的发言中解析出对话中包含的关键信息，如领域、意图、实体等等。在早期的对话系统中，主要依靠基于规则匹配的方式提取信息，而现代对话系统则主要采用统计机器学习模型，基于大量语料训练得到。用于领域、意图识别和实体提取的模型通常会共享文本特征，在预测模块中区分。当然，也存在混合解决方案的 NLU，如同时支持基于规则和基于语料的实体提取。</p>
+<p>NLU 模块有时也会被用于从粗筛后的备选答案中做精筛，比如根据发言与语料中备选回复的特征距离来做出最终选择。</p>
+<h4 id="dialogue-management-dm">Dialogue Management (DM)</h4>
+<p>DM 模块负责管理当前对话的状态 (State) 和策略 (Policy)，其中对话状态包括用户与对话代理人之间的历史聊天记录以及关键信息，策略是根据状态输出回复的函数。</p>
+<h4 id="natural-language-generation-nlg">Natural Language Generation (NLG)</h4>
+<p>当对话代理人做完决定后，需要把它想回复的内容转化成自然语言，这一步骤就由 NLG 模块负责完成。NLG 有两种方案：基于模板和基于统计。</p>
+<h5 id="基于模板">基于模板</h5>
+<p>基于模板的生成方案中，对话代理人的所有发言都由对话设计师设计而成，然后将剧本中的上下文信息，如槽位填充物，填入模板。举例如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> template = <span class="string">"What time do you want to leave %s"</span></span><br><span class="line"><span class="keyword">const</span> slotCityOrig = <span class="string">"Beijing"</span></span><br><span class="line"><span class="keyword">const</span> uterrance = fmt.Sprintf(template, slotCityOrig)</span><br></pre></td></tr></table></figure>
+<p>通常为了让回复不那么呆板，会为同一个回答预置多个模板，然后在回复时通过一些策略选取一个。</p>
+<h5 id="基于统计">基于统计</h5>
+<p>基于统计生成的目标就是在大量标注语料训练后，能够自动生成含义相同、表述不同的发言，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. Au Midi is in Midtown and serves French food.</span><br><span class="line">2. There is a French restaurant in Midtown called Au Midi.</span><br></pre></td></tr></table></figure>
+<p>基于统计的生成方案需要大量的训练数据，这些数据本身很难获取，难度体现在两方面：</p>
+<ol type="1">
+<li>在某领域的对话代理人上线之前，很难获得和生产环境相近的数据</li>
+<li>以上面的句子为例，如果要训练一个点餐机器人，那么要找到包含所有饭店、地点和菜色组合的语料几乎不可能</li>
+</ol>
+<p>因此有一种比较常用的技术叫 delexicalization，即将句子中的实体替换成实体类型，如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. $restaurant_name is in $neighborhood and serves $cuisine food.</span><br><span class="line">2. There is a $cuisine restaurant in $neighborhood called $restaurant_name.</span><br></pre></td></tr></table></figure>
+<p>在训练时使用实体类型，预测时将实体真实取值填入即可，后者被称为 relexicalize。</p>
+<h4 id="text-to-speech-tts">Text To Speech (TTS)</h4>
+<p>TTS 模块负责将对话代理人的回复发言转化成语音。</p>
+<blockquote>
+<p>⚠️ 如果对话系统仅需支持文本对话则无需 TTS 模块，因此在架构图中用虚线表示</p>
+</blockquote>
+<h2 id="案例分析rasa">案例分析：Rasa</h2>
+<p>Rasa 不仅是一个开源对话系统的名字，也是其背后的<a href="https://www.crunchbase.com/organization/rasa" target="_blank" rel="noopener">创业公司</a>名称。截止到调研结束，该公司已经拥有 221 人的<a href="https://rasa.com/about/" target="_blank" rel="noopener">创业团队</a>，其中<a href="https://rasa.com/research/" target="_blank" rel="noopener">算法团队</a> 12 人，工程师 33 人，使用它就相当于拥有 221 人在背后帮忙做产品、工程、算法的优化。此外，Rasa 的<a href="https://blog.rasa.com/" target="_blank" rel="noopener">技术博客</a>也相当活跃，最近更新的文章也发布于 2021 年 7 月。</p>
+<p>Rasa 旗下有两个核心产品：Rasa OpenSource 和 Rasa X。Rasa OpenSource，顾名思义是开源软件，它提供的开发框架可支持开发者灵活定制对话系统，<a href="https://github.com/RasaHQ/rasa#license" target="_blank" rel="noopener">授权协议</a>为 Apache 2.0；而 Rasa X 为闭源项目，是基于 Rasa OpenSource 之上提供的一些优化构建工作流的有页面交互的外围服务，如开发调试、分享试用、模型管理、对话数据管理等等。虽然代码不开源，但 Rasa X 的编译产物已开放使用，授权协议为 <a href="https://storage.googleapis.com/rasa-x-releases/rasa_x_ce_license_agreement.pdf" target="_blank" rel="noopener">Rasa X Community Edition License</a>，大意就是不可基于此提供 SaaS 服务。一言以蔽之，没有 Rasa X，开发者也能利用 Rasa OpenSource 构建对话系统，有了 Rasa X，开发者可以更高效地构建对话系统。本文只讨论与对话系统核心逻辑相关的 Rasa OpenSource。</p>
+<h3 id="系统架构-rasa-opensource">系统架构 (Rasa OpenSource)</h3>
+<blockquote>
+<p>ℹ️ 本节内容源自这篇<a href="https://rasa.com/docs/rasa/arch-overview/" target="_blank" rel="noopener">文档</a></p>
+</blockquote>
+<p><img src="./rasa-architecture.png" /></p>
+<p>各个模块的说明罗列如下：</p>
+<ul>
+<li>NLU Pipeline：用于意图识别、实体提取、响应检索，具体原理可以阅读<a href="https://blog.rasa.com/intents-entities-understanding-the-rasa-nlu-pipeline/" target="_blank" rel="noopener">这篇博客</a>，以及观看<a href="https://www.youtube.com/playlist?list=PL75e0qA87dlG-za8eLI6t0_Pbxafk-cxb" target="_blank" rel="noopener">这组视频</a></li>
+<li>Dialogue Policies：用于管理对话策略，具体原理可以阅读<a href="https://blog.rasa.com/dialogue-policies-rasa-2/" target="_blank" rel="noopener">这篇博客</a></li>
+<li>Tracker Stores：负责对话数据的读写，支持使用不同的存储引擎</li>
+<li>Lock Stores：通过抢锁来确定单个对话中发言的顺序，从而支持对话系统的横向可扩展性</li>
+<li>Model Storage：支持从本地磁盘、HTTP 服务以及对象存储获取训练好的模型</li>
+<li>Action Server：既可以用于帮助机器人对接三方服务，执行用户期望的任务，也可以用于更灵活地控制对话逻辑</li>
+<li>Event Brokers：可以将对话过程中发生的事情异步通知给第三方服务，与外部服务分享对话数据</li>
+</ul>
+<h3 id="对话过程">对话过程</h3>
+<blockquote>
+<p>ℹ️ 本节内容源自这篇<a href="https://arxiv.org/pdf/1712.05181.pdf" target="_blank" rel="noopener">论文</a></p>
+</blockquote>
+<p><img src="./from-input-to-output.png" /></p>
+<ol type="1">
+<li>用户发送消息给服务，先进入 interpreter，后者利用 NLU 从文本中提取意图等结构化信息</li>
+<li>Tracker 拿到消息本身以及 NLU 分析后的结果，将必要的信息持久化到存储引擎中</li>
+<li>Policy 从 Tracker 中拿到当前状态</li>
+<li>Policy 根据当前状态和历史对话数据以及预先设置好的对话策略，决定下一步动作</li>
+<li>选中动作后，记录一条动作日志到 Tracker 中</li>
+<li>执行动作，这个动作可能是发送响应数据给用户，可能是请求 Action Server 调用第三方服务接口，也可能是阻塞等待用户输入</li>
+<li>如果待执行的动作不是 "listen"，即阻塞等待用户输入，则回到步骤 3</li>
+</ol>
+<h3 id="决策过程">决策过程</h3>
+<blockquote>
+<p>ℹ️ 本节内容源自这篇<a href="https://blog.rasa.com/dialogue-policies-rasa-2/" target="_blank" rel="noopener">博客</a>，想详细了解可阅读全文</p>
+</blockquote>
+<p>Rasa OpenSource 提供三种回复策略：</p>
+<ul>
+<li>RulePolicy：基于规则的策略，但这个规则具备 NLU 理解能力，这种策略通常没有记忆能力，只负责单轮对话</li>
+<li>MemoizationPolicy：基于剧本的策略，根据预先写好的剧本，逐步推进对话。剧本之间无法切换，常用于助手场景</li>
+<li>TEDPolicy：根据提供的剧本数据来预测下一个行为，具备剧本泛化能力，使得对话系统更加智能</li>
+</ul>
+<p>三种策略的优先级依次递减，决策过程如下图所示：</p>
+<p><img src="./policy.png" /></p>
+<h3 id="其它对话系统">其它对话系统</h3>
+<p>除 Rasa 之外，市面上也存在一些抽象层级更高，面向非研发人员的对话系统构建平台，如 Google 的 <a href="https://cloud.google.com/dialogflow" target="_blank" rel="noopener">DialogueFlow</a>、AWS 的 <a href="https://aws.amazon.com/cn/lex/" target="_blank" rel="noopener">Lex</a>、Microsoft 的 <a href="https://www.botframework.com/" target="_blank" rel="noopener">Bot Framework</a>、百度的 <a href="https://ai.baidu.com/unit/home" target="_blank" rel="noopener">UNIT</a> 以及阿里的<a href="https://helpcdn.aliyun.com/product/59495.html" target="_blank" rel="noopener">云小蜜</a>等等，这些平台都是闭源系统，能获取的文档主要以如何使用为主，因此不属于本文的探索重点。但从产品角度出发，它们依然有很高的调研价值。</p>
+<h2 id="后记">后记</h2>
+<p>完成本篇文章，算是对这段时间调研的一个交代。后续我们将继续探索对话系统的实践，以期在对话设计、构建，以及智能化项目中工程团队与算法团队合作等方面获得更多的经验和洞见。</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><a href="https://web.stanford.edu/~jurafsky/slp3/24.pdf" target="_blank" rel="noopener">Speech and Language Processing - Chapter 24: Chatbots &amp; Dialogue Systems</a></li>
+<li>Rasa：
+<ul>
+<li><a href="https://rasa.com/docs/" target="_blank" rel="noopener">docs</a></li>
+<li><a href="https://github.com/RasaHQ" target="_blank" rel="noopener">github organization</a></li>
+<li><a href="https://blog.rasa.com/" target="_blank" rel="noopener">blogs</a>
+<ul>
+<li><a href="https://blog.rasa.com/intents-entities-understanding-the-rasa-nlu-pipeline/" target="_blank" rel="noopener">Intents &amp; Entities: Understanding the Rasa NLU Pipeline</a></li>
+<li><a href="https://blog.rasa.com/dialogue-policies-rasa-2/" target="_blank" rel="noopener">Zooming in on Dialogue Management in Rasa 2.0</a></li>
+<li><a href="https://blog.rasa.com/introducing-dual-intent-and-entity-transformer-diet-state-of-the-art-performance-on-a-lightweight-architecture/" target="_blank" rel="noopener">Introducing DIET: state-of-the-art architecture that outperforms fine-tuning BERT and is 6X faster to train</a></li>
+<li><a href="https://blog.rasa.com/conversational-ai-your-guide-to-five-levels-of-ai-assistants-in-enterprise/" target="_blank" rel="noopener">Conversational AI: Your Guide to Five Levels of AI Assistants in Enterprise</a></li>
+</ul></li>
+<li>Youtube
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PL75e0qA87dlG-za8eLI6t0_Pbxafk-cxb" target="_blank" rel="noopener">Algorithm Whiteboard</a></li>
+</ul></li>
+</ul></li>
+<li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Turing_test" target="_blank" rel="noopener">Turing test</a>, <a href="https://en.wikipedia.org/wiki/ELIZA" target="_blank" rel="noopener">ELIZA</a>, <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf" target="_blank" rel="noopener">tf-idf</a>, <a href="https://en.wikipedia.org/wiki/Word_embedding" target="_blank" rel="noopener">word embedding</a></li>
+<li>Papers
+<ul>
+<li><a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Attention Is All You Need</a></li>
+<li><a href="https://arxiv.org/pdf/1712.05181.pdf" target="_blank" rel="noopener">Rasa: Open Source Language Understanding and Dialogue Management</a></li>
+<li><a href="https://arxiv.org/abs/2004.09936" target="_blank" rel="noopener">DIET: Lightweight Language Understanding for Dialogue Systems</a></li>
+</ul></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/system-design/" rel="tag"># system design</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/05/23/born-a-crime/" rel="prev" title="「Born a Crime」读后感">
+      <i class="fa fa-chevron-left"></i> 「Born a Crime」读后感
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景知识"><span class="nav-number">1.</span> <span class="nav-text">背景知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#人类对话的特点"><span class="nav-number">1.1.</span> <span class="nav-text">人类对话的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见使用场景"><span class="nav-number">1.2.</span> <span class="nav-text">常见使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#问答"><span class="nav-number">1.2.1.</span> <span class="nav-text">问答</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#助手"><span class="nav-number">1.2.2.</span> <span class="nav-text">助手</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#聊天"><span class="nav-number">1.2.3.</span> <span class="nav-text">聊天</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建方式"><span class="nav-number">1.3.</span> <span class="nav-text">构建方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基于规则"><span class="nav-number">1.3.1.</span> <span class="nav-text">基于规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于语料"><span class="nav-number">1.3.2.</span> <span class="nav-text">基于语料</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#混合方案"><span class="nav-number">1.3.3.</span> <span class="nav-text">混合方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">1.3.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对话系统"><span class="nav-number">2.</span> <span class="nav-text">对话系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#领域-domain"><span class="nav-number">2.1.1.</span> <span class="nav-text">领域 (Domain)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对话代理人-agent"><span class="nav-number">2.1.2.</span> <span class="nav-text">对话代理人 (Agent)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#会话-session"><span class="nav-number">2.1.3.</span> <span class="nav-text">会话 (Session)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#剧本-story"><span class="nav-number">2.1.4.</span> <span class="nav-text">剧本 (Story)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#发言-utterance"><span class="nav-number">2.1.5.</span> <span class="nav-text">发言 (Utterance)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对话策略-dialogue-policy"><span class="nav-number">2.1.6.</span> <span class="nav-text">对话策略 (Dialogue policy)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#意图-intent"><span class="nav-number">2.1.7.</span> <span class="nav-text">意图 (Intent)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实体-entity"><span class="nav-number">2.1.8.</span> <span class="nav-text">实体 (Entity)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#槽位-slot"><span class="nav-number">2.1.9.</span> <span class="nav-text">槽位 (Slot)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动作-action"><span class="nav-number">2.1.10.</span> <span class="nav-text">动作 (Action)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对接渠道-channel"><span class="nav-number">2.1.11.</span> <span class="nav-text">对接渠道 (Channel)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一般架构"><span class="nav-number">2.2.</span> <span class="nav-text">一般架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#automatic-speech-recognition-asr"><span class="nav-number">2.2.1.</span> <span class="nav-text">Automatic Speech Recognition (ASR)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#natural-language-understanding-nlu"><span class="nav-number">2.2.2.</span> <span class="nav-text">Natural Language Understanding (NLU)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#dialogue-management-dm"><span class="nav-number">2.2.3.</span> <span class="nav-text">Dialogue Management (DM)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#natural-language-generation-nlg"><span class="nav-number">2.2.4.</span> <span class="nav-text">Natural Language Generation (NLG)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#基于模板"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">基于模板</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#基于统计"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">基于统计</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#text-to-speech-tts"><span class="nav-number">2.2.5.</span> <span class="nav-text">Text To Speech (TTS)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#案例分析rasa"><span class="nav-number">3.</span> <span class="nav-text">案例分析：Rasa</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#系统架构-rasa-opensource"><span class="nav-number">3.1.</span> <span class="nav-text">系统架构 (Rasa OpenSource)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对话过程"><span class="nav-number">3.2.</span> <span class="nav-text">对话过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策过程"><span class="nav-number">3.3.</span> <span class="nav-text">决策过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它对话系统"><span class="nav-number">3.4.</span> <span class="nav-text">其它对话系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#后记"><span class="nav-number">4.</span> <span class="nav-text">后记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/";
+    this.page.identifier = "2021/07/24/dialogue-system-research/";
+    this.page.title = "对话系统调研报告";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
