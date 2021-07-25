@@ -68,11 +68,11 @@ Trevor 母亲生下他后，给他取了这个在当时的南非社会中没有�
 
 它并不令人悲伤，或者无力，它就是杵在那儿的一个事实，与之和解就好。更何况，幸福与否与这些事实并无直接关系，人的自我调节能力可以让我们在任何景况下适应生活。
 
-> When you shit, as you first sit down, you’re not fully in the experience yet. You are not yet a shitting person. You’re transitioning from a person about to shit to a person who is shitting. You don’t whip out your smartphone or a newspaper right away. It takes a minute to get the first shit out of the way and get in the zone and get comfortable. Once you reach that moment, that’s when it gets really nice. It’s a powerful experience, shitting. There’s something magical about it, profound even. I think God made humans shit in the way we do because it brings us back down to earth and gives us humility. I don’t care who you are, we all shit the same. Beyoncé shits. The pope shits. The Queen of England shits. When we shit we forget our airs and our graces, we forget how famous or how rich we are. All of that goes away. You
+> When you shit, as you first sit down, you’re not fully in the experience yet. You are not yet a shitting person. You’re transitioning from a person about to shit to a person who is shitting. You don’t whip out your smartphone or a newspaper right away. It takes a minute to get the first shit out of the way and get in the zone and get comfortable. Once you reach that moment, that’s when it gets really nice. It’s a powerful experience, shitting. There’s something magical about it, profound even. I think God made humans shit in the way we do because it brings us back down to earth and gives us humility. I don’t care who you are, we all shit the same. Beyoncé shits. The pope shits. The Queen of England shits. When we shit we forget our airs and our graces, we forget how famous or how rich we are. All of that goes away. You are never more yourself than when you’re taking a shit. You have that moment where you realize, This is me. This is who I am.
 
 只能说这段是我读过的最有意思的对「拉粑粑」过程的描述，我就用 [DeepL](https://www.deepl.com/en/translator) 直接翻译一下：
 
-"当你拉屎时，当你第一次坐下来时，你还没有完全进入这种体验。你还不是一个拉屎的人。你正在从一个即将拉屎的人过渡到一个正在拉屎的人。你不会马上拿出你的智能手机或报纸。它需要一分钟的时间来摆脱第一次拉屎的方式，进入状态并获得舒适。一旦你到达那一刻，那就是它变得非常好的时候。这是一个强大的经验，拉屎。它有一些神奇之处，甚至是深刻的。我认为上帝让人类以我们的方式拉屎，因为它让我们回到地面，给我们以谦卑。我不关心你是谁，我们都在拉屎。碧昂斯拉屎。教皇也拉屎。英国女王也拉屎。当我们拉屎时，我们忘记了我们的架子和恩惠，我们忘记了我们有多出名或多富有。所有这些都会消失。你"
+"当你拉屎时，当你第一次坐下来时，你还没有完全进入这种体验。你还不是一个拉屎的人。你正在从一个即将拉屎的人过渡到一个正在拉屎的人。你不会马上拿出你的智能手机或报纸。它需要一分钟的时间来摆脱第一次拉屎的方式，进入状态并获得舒适。一旦你到达那一刻，那就是它变得非常好的时候。这是一个强大的经验，拉屎。它有一些神奇之处，甚至是深刻的。我认为上帝让人类以我们的方式拉屎，因为它让我们回到地面，给我们以谦卑。我不关心你是谁，我们都在拉屎。碧昂斯拉屎。教皇也拉屎。英国女王也拉屎。当我们拉屎时，我们忘记了我们的架子和恩惠，我们忘记了我们有多出名或多富有。所有这些都会消失。当你拉屎的时候，你永远不会更像你自己。在那一刻你会意识到，这就是我。这就是我，我是谁。"
 
 ## 参考资料
 
