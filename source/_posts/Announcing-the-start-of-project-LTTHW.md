@@ -53,7 +53,9 @@ tags:
 第一阶段将以软件工程师为目标用户：
 
 1. 用户访谈：邀请 10 名软件工程师体验「笨学指南」的「兴趣阅读」，并根据 [How to Talk to Users](https://youtu.be/MT4Ig2uqjTc) 的建议完成用户访谈
-2. 内容生产：[吃自己的狗粮](https://en.wikipedia.org/wiki/Eating_your_own_dog_food)，同时邀请 1-3 名工程师一起丰富资料
+2. 内容生产：
+   1. [吃自己的狗粮](https://en.wikipedia.org/wiki/Eating_your_own_dog_food)，同时邀请 1-3 名工程师一起丰富资料
+   2. 在 3 个非软件工程领域准备相应的示例，说明可能性
 3. 功能迭代：(待定)
 
 ## 寻人启事
