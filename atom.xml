@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-10-08T14:51:34.313Z</updated>
+  <updated>2021-10-09T15:40:11.612Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2021-10-08T14:51:34.313Z</updated>
+    <updated>2021-10-09T15:40:11.612Z</updated>
     
     <summary type="html">
     
@@ -29,16 +29,16 @@
 &lt;p&gt;今天，我终于可以很开心地宣布：&lt;strong&gt;笨学指南的&lt;a href=&quot;https://learn-things-the-hard-way.vercel.app/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;原型&lt;/a&gt;已经完成&lt;/strong&gt;。&lt;/p&gt;
 &lt;h2 id=&quot;为什么&quot;&gt;为什么&lt;/h2&gt;
 &lt;p&gt;我有一个观察：「学习本身是一种基本技能，对这项技能的掌握程度决定了每个人在各自专业知识领域可达的上限」。&lt;/p&gt;
-&lt;p&gt;我是一名软件工程师，就以软件开发为例展开。一位优秀的工程师，首先得是一名资深的搜索引擎用户，他需要具备寻找优质资料的能力，公开课、技术会议、经典教材、论文、开源项目、标准协议、原始技术文档等，都应该位于他的「射程范围」内；鉴于这些资料大多数由英语撰写，英语能力被迫成为优秀工程师的必备能力之一；最后就是资料的学习、理解并内化的能力。这项能力并没有什么神奇的地方，说白了就是「重复」，让大脑暴露在这些知识中，建立知识之间的联系，并不断地强化。总而言之，刨除个人软素质部分，成为一位优秀的软件工程师的必要条件是：&lt;/p&gt;
+&lt;p&gt;我是一名软件工程师，就以软件开发为例展开。一位优秀的工程师，首先得是一名资深的搜索引擎用户，他需要具备寻找优质资料的能力，公开课、技术会议、经典教材、论文、开源项目、标准协议、原始技术文档等，都应该位于他的「射程范围」内；鉴于这些资料大多数由英语撰写，英语能力被迫成为优秀工程师的必备能力之一；最后就是资料的学习、理解并内化的能力。这项能力并没有什么神奇的地方，说白了就是科学地「重复」，让大脑有效暴露在这些知识中，建立知识之间的联系，并合理地强化。总而言之，刨除个人软素质部分，成为一位优秀的软件工程师的必要条件是：&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;善于寻找资料&lt;/li&gt;
 &lt;li&gt;熟练使用英语&lt;/li&gt;
 &lt;li&gt;持续强化所学&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;这里的「熟练使用英语」是因为软件开发领域的特殊性所引入，在别的领域它不是必要条件，比如羽毛球运动。&lt;/p&gt;
-&lt;p&gt;我相信很多人都认识到了掌握学习能力本身的重要性，但没有去努力改善自己的学习能力。我想解决的问题就是「&lt;strong&gt;让每个人的学习更高效&lt;/strong&gt;」。&lt;/p&gt;
+&lt;p&gt;这里的「熟练使用英语」是因为软件开发领域的特殊性所引入，在别的领域它不是必要条件。有许多学者在人类认知领域做了许多&lt;a href=&quot;https://www.amazon.com/Make-Stick-Science-Successful-Learning/dp/0674729013&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;实证研究&lt;/a&gt;，通过严谨的实验证明：不同学习策略能对认知效率产生显著的影响。有很多人都认识到了掌握学习能力本身的重要性，但由于惯性使然，没有去努力改善自己的学习能力。我希望通过将高效的学习方法植入到限定过程中，实现「&lt;strong&gt;让每个人的学习更高效&lt;/strong&gt;」。&lt;/p&gt;
 &lt;h3 id=&quot;为什么要解决这个问题&quot;&gt;为什么要解决这个问题？&lt;/h3&gt;
-&lt;p&gt;学习新知总能让我持续感到兴奋，它是我自认为喜欢、擅长又乐在其中的事情。“知之者不如好之者，好之者不如乐之者”。举个例子：我夫人是个很喜欢出门游玩的人，而我喜欢周末宅在家里看书、听课。有一天，她建议我学习摄影，这样出门就不仅仅是游玩，还可以收获实践经验。我觉得很有道理，欣然接收并开始观看&lt;a href=&quot;https://zhenghe-md.github.io/opencourse-notes/DGMD-E-10/Lecture-1-Welcome/&quot;&gt;摄影课程&lt;/a&gt;。现在只要有模特，我很乐意出游。&lt;/p&gt;
+&lt;p&gt;学习新知总能让我持续感到兴奋，它是我自认为喜欢、擅长又乐在其中的事情。“知之者不如好之者，好之者不如乐之者”。举个例子：我家人喜欢出门游玩，而我喜欢宅在家里看书、听课。有一天，家人建议我学习摄影，这样出门就不仅仅是游玩，还可以收获实践经验。我觉得很有道理，欣然接收并开始观看&lt;a href=&quot;https://zhenghe-md.github.io/opencourse-notes/DGMD-E-10/Lecture-1-Welcome/&quot;&gt;摄影课程&lt;/a&gt;。现在只要有拍摄机会，我很乐意出游。&lt;/p&gt;
+&lt;p&gt;我希望未来，我的工作内容就是学习、分享和实践新知，并帮助更多人体验高效学习的快乐。&lt;/p&gt;
     
     </summary>
     
@@ -51,7 +51,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2021-10-08T14:51:34.369Z</updated>
+    <updated>2021-10-09T15:40:11.668Z</updated>
     
     <summary type="html">
     
@@ -106,7 +106,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2021-10-08T14:51:34.349Z</updated>
+    <updated>2021-10-09T15:40:11.648Z</updated>
     
     <summary type="html">
     
@@ -143,7 +143,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2021-10-08T14:51:34.377Z</updated>
+    <updated>2021-10-09T15:40:11.676Z</updated>
     
     <summary type="html">
     
@@ -186,7 +186,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2021-10-08T14:51:34.373Z</updated>
+    <updated>2021-10-09T15:40:11.672Z</updated>
     
     <summary type="html">
     
@@ -223,7 +223,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-10-08T14:51:34.349Z</updated>
+    <updated>2021-10-09T15:40:11.648Z</updated>
     
     <summary type="html">
     
@@ -258,7 +258,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-10-08T14:51:34.385Z</updated>
+    <updated>2021-10-09T15:40:11.684Z</updated>
     
     <summary type="html">
     
@@ -297,7 +297,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-10-08T14:51:34.317Z</updated>
+    <updated>2021-10-09T15:40:11.616Z</updated>
     
     <summary type="html">
     
@@ -376,7 +376,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-10-08T14:51:34.349Z</updated>
+    <updated>2021-10-09T15:40:11.648Z</updated>
     
     <summary type="html">
     
@@ -410,7 +410,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-10-08T14:51:34.389Z</updated>
+    <updated>2021-10-09T15:40:11.688Z</updated>
     
     <summary type="html">
     
@@ -443,7 +443,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-10-08T14:51:34.317Z</updated>
+    <updated>2021-10-09T15:40:11.616Z</updated>
     
     <summary type="html">
     
@@ -473,7 +473,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-10-08T14:51:34.325Z</updated>
+    <updated>2021-10-09T15:40:11.624Z</updated>
     
     <summary type="html">
     
@@ -508,7 +508,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-10-08T14:51:34.345Z</updated>
+    <updated>2021-10-09T15:40:11.644Z</updated>
     
     <summary type="html">
     
@@ -536,7 +536,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-10-08T14:51:34.345Z</updated>
+    <updated>2021-10-09T15:40:11.644Z</updated>
     
     <summary type="html">
     
@@ -566,7 +566,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-10-08T14:51:34.341Z</updated>
+    <updated>2021-10-09T15:40:11.640Z</updated>
     
     <summary type="html">
     
@@ -598,7 +598,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-10-08T14:51:34.349Z</updated>
+    <updated>2021-10-09T15:40:11.644Z</updated>
     
     <summary type="html">
     
@@ -632,7 +632,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-10-08T14:51:34.317Z</updated>
+    <updated>2021-10-09T15:40:11.616Z</updated>
     
     <summary type="html">
     
@@ -665,7 +665,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-10-08T14:51:34.325Z</updated>
+    <updated>2021-10-09T15:40:11.624Z</updated>
     
     <summary type="html">
     
@@ -701,7 +701,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-10-08T14:51:34.333Z</updated>
+    <updated>2021-10-09T15:40:11.632Z</updated>
     
     <summary type="html">
     
@@ -738,7 +738,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
     <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
     <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-10-08T14:51:34.341Z</updated>
+    <updated>2021-10-09T15:40:11.640Z</updated>
     
     <summary type="html">
     
