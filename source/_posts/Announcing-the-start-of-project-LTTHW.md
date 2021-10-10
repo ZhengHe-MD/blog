@@ -62,7 +62,7 @@ tags:
 
 ## 寻人启事
 
-如果你看完本文，心里想的是: ["Fuck, I wanna join their company"](https://www.ycombinator.com/library/6q-how-to-pitch-your-startup)，那么请[联系我](/blog/about/)。
+如果你看完本文，心里想的是: ["I wanna join their company"](https://www.ycombinator.com/library/6q-how-to-pitch-your-startup)，那么请[联系我](/blog/about/)。
 
 ## 鸣谢
 
