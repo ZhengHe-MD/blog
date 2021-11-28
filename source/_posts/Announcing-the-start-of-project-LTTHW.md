@@ -1,12 +1,12 @@
 ---
-title: 「笨学指南」
+title: 启动「笨学指南」项目
 date: 2021-10-06 19:55:53
 tags:
 ---
 
 国庆前夕，我利用业余时间过了一遍 YC 的 [Startup School 2019](https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG) 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。
 
-今天，我终于可以很开心地宣布：**笨学指南的[原型](https://learn-things-the-hard-way.vercel.app/)已经完成**。
+今天，我终于可以很开心地宣布：**笨学指南的[原型](https://learn-the-hard-way.cn/)已经完成**。
 
 ## 为什么
 
@@ -62,7 +62,7 @@ tags:
 
 ## 寻人启事
 
-如果你看完本文，心里想的是: ["I wanna join their company"](https://www.ycombinator.com/library/6q-how-to-pitch-your-startup)，那么请[联系我](/blog/about/)。
+如果你看完本文，对这个项目感兴趣，那么请[联系我](/blog/about/)。
 
 ## 鸣谢
 
