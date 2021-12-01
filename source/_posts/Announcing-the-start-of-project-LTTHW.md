@@ -2,6 +2,7 @@
 title: 启动「笨学指南」项目
 date: 2021-10-06 19:55:53
 tags:
+- 笨学指南
 ---
 
 国庆前夕，我利用业余时间过了一遍 YC 的 [Startup School 2019](https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG) 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。
