@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在启动「笨学指南」项目后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 Make It Stick: The Science of Successful Learning 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书">
+<meta property="og:type" content="article">
+<meta property="og:title" content="「Make It Stick」读后小结">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="在启动「笨学指南」项目后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 Make It Stick: The Science of Successful Learning 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-28T20:54:58.000Z">
+<meta property="article:modified_time" content="2021-12-01T01:45:15.745Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="笨学指南">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>「Make It Stick」读后小结 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-172943223-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/blog/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhengHe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right"></div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          「Make It Stick」读后小结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-28 20:54:58" itemprop="dateCreated datePublished" datetime="2021-11-28T20:54:58+00:00">2021-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-01 01:45:15" itemprop="dateModified" datetime="2021-12-01T01:45:15+00:00">2021-12-01</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/11/28/Make-It-Stick-Digest/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/11/28/Make-It-Stick-Digest/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在<a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">启动「笨学指南」项目</a>后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 <a href="https://www.goodreads.com/book/show/18770267-make-it-stick" target="_blank" rel="noopener">Make It Stick: The Science of Successful Learning</a> 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。</p>
+<h2 id="读后感">读后感</h2>
+<p>在这里我不会总结或重述原书的核心观点和主要内容，相信你有足够多的途径能够获得它们。我想简单谈谈看完全书后的三个思考：</p>
+<h3 id="从自举到吃自己的狗粮">从「自举」到「吃自己的狗粮」</h3>
+<p>在计算机科学中，如果一个编程语言的编译器可以用这个语言本身来构建，我们就称它可以自举 (bootstrapping)。换句话说，这个语言既可以用来表达实现任意目的的程序，也可以用来表达自己的工作原理。</p>
+<p>MIS 的作者在书的结构设计方面也加入了类似的巧思。既然这本书介绍的是人的认知特点，以及提高学习效率的一些方法论，那为什么不用书中推荐的方法论来讲述这些知识？MIS 在第一章将书中的所有核心观点串讲一遍，在之后各章陆续介绍各个核心观点。在每个章节中，既会有意引用之前讲述过的内容，也会有意让不同观点交叉出现。这样的组织正好与书中介绍的「检索练习」、「间隔练习」、「交叉练习」暗合。如果读者发现读完这本书后记忆、理解地比阅读其它书籍更加深刻，就正好证明了书中观点的合理性。</p>
+<p>类似的思路还出现在开发新产品的最佳实践——「吃自己的狗粮 (eating your own dog food)」中。「吃自己的狗粮」说的是在开发产品的过程中，自己也在体验和使用该产品。比如对工程师来说，开发一个面向研发的工具或服务，如 Git/GitHub，正是在「吃自己的狗粮」。</p>
+<h3 id="人脑与电脑">人脑与电脑</h3>
+<p>碳和硅同是元素周期表中的同族 (IVA) 元素，它们分别作为人脑和电脑的核心元素，大概不是巧合。在读完 MIS 后，我又发现了更多人脑和电脑相似的「证据」。</p>
+<h4 id="工作记忆-working-memory-与内存">工作记忆 (Working memory) 与内存</h4>
+<p>每个人在解决问题的过程中，可以在脑中临时存储有限容量的信息，我们称这部分记忆为工作记忆，工作记忆的容量大小与人的智商成正相关关系。这并不难理解，如果你能够在解决问题的过程中同时考虑更丰富的信息，就可能给出更明智的解决方案。有趣的是，工作记忆可能被大脑中的多个任务挤占，比如当你在考试的时候，因为紧张，你可能忽然解不出一道平时轻松就能解的题目，这可能是因为抑制紧张的情绪会占据一部分工作记忆，导致留给解题的工作记忆不足。</p>
+<p>电脑的内存是一种读写效率极高的易失性存储器，其读写效率是硬盘的几十到几百倍，但一旦电脑断电、重启，其中存储的内容就会消失。内存是衡量电脑性能的重要指标之一，它也可能被多个任务共享，使得相同任务在不同时刻表现出不同的执行效率。</p>
+<h4 id="记忆术-mnemonic-device-与多级存储管理-hierarchical-storage-management">记忆术 (Mnemonic device) 与多级存储管理 (Hierarchical storage management)</h4>
+<p>生活中，我们会用到许多顺口溜来辅助记忆，比如：</p>
+<ul>
+<li>「伸手要钱」：身份证、手机、钥匙、钱包</li>
+<li>「一韩一柳一欧阳，三苏曾巩带一王」：唐宋八大家</li>
+<li>「一三五七八十腊，三十一天永不差，其余都是三十日，只有二月二十八」：每月天数</li>
+<li>...</li>
+</ul>
+<p>这些就是最基本的记忆术。我们需要记忆术的原因是：原先的信息内容过多，且分布教散，缺乏好的方式将它们串联。比如身份证、手机、钥匙、钱包就是四种出门常带的物件，它们之间并没有明显的关系，但当我们需要这些信息的时候，又期望能够它们一起出现，缺一不可。那么记忆术在这里的作用就是充当一个线索，这个线索是压缩编码过后的原文内容，更方便记忆，只要记住线索，我们就能够利用它顺藤摸瓜地把全部信息提取出来。人脑中能支持快速检索的长期记忆容量是有限的；但人脑的总体信息容量目前还没有发现上限，即人脑中似乎存在一种二级存储结构，其中一级被快速检索，但容量有限；另一级检索速度慢，但容量尚未发现上限。</p>
+<p>电脑中同样存在这种多级存储管理结构，寄存器、缓存、内存、固态硬盘、磁盘、光盘、磁带，检索效率从高到低，存储容量由小到大。</p>
+<h4 id="思维模型-mental-model-与抽象-abstraction">思维模型 (Mental Model) 与抽象 (Abstraction)</h4>
+<p>当我们反复学习某个领域的知识或技能时，会逐渐形成一些稳定的思维模型，这些思维模型能够帮助我们在利用该知识解决类似问题的过程中，跳过思考、分析的过程，快速做出决策。比如在吉他弹唱的过程中，当我们需要从 C 和弦切换到 G 和弦时，不会去思考 C 和弦、G 和弦的组成音分别是什么，而只是告诉自己现在应该从 C 和弦换成 G 和弦，大脑会自动控制手指完成实际的切换。</p>
+<p><a href="https://mitpress.mit.edu/sites/default/files/sicp/index.html" target="_blank" rel="noopener">SICP</a> 中的很大篇幅是在教工程师如何管理复杂度 (manage complexity)，而抽象就是重要手段之一。将过程抽象成函数、将数据和读写数据的接口抽象成对象、将网络抽象成多个层级等等。当某个程序与其它抽象交互时，无需关心其内部实现。如此一来就可以有效减少工程师在解决复杂问题时所需的工作记忆容量，换句话说，用有限的工作记忆解决更复杂的问题。</p>
+<p>关于思维模型还有一个经典问题，就是在某领域深耕十年的人与接触该领域一两年的人，他们之间的差距在哪？其中一个解释就是思维模型的复杂度。更复杂的思维模型可以解决更多样场景中的问题。比如练习一年羽毛球的业余爱好者肯定能理解杀上网、吊上网这样的技战术，而专业运动员在真正比赛中使用的也是这样基本的技战术，二者之间的差距在哪呢？应对复杂情况的能力不一样，比如如何融汇贯通各种基本技战术，如何在赛场上随机应变处理各种变化的球路等等。我们在上大学的时候常常抱怨一些教授，科研做得很好，但是上课讲的内容过于深奥，对初学者不友好。其中一个解释也是思维模型的复杂度：这些教授在科研过程中已经在该领域建立了极其丰富多样的思维模型，可以加速他们的思考过程，而初学者则需要先把思维模型建立起后，才能逐渐提高思考领域问题的速度。</p>
+<p>明白了这个道理，你就会在学习过程中自动忽略「XX 天让你熟练掌握 YY」这样的速食材料，世上并不存在真正的速成学习，learn-the-hard-way 是每个人深入理解任何一个领域的必经之路。</p>
+<h3 id="元认知-metacognition">元认知 (Metacognition)</h3>
+<p>元 (Meta) 在希腊语中表示「超越」，即更加本质的内容。比如：</p>
+<ul>
+<li>元数据 (Metadata)：关于数据的数据</li>
+<li>元语言 (Metalanguage): 描述语言的语言</li>
+<li>...</li>
+</ul>
+<p>MIS 中出镜率很高的一个词是元认知，即关于认知本身的认知，比如：</p>
+<ul>
+<li>人的学习过程、特点以及高效的学习策略</li>
+<li>人思考过程的优势、劣势，如何扬长避短</li>
+<li>人对自己和他人认知水平的判断、评价</li>
+<li>...</li>
+</ul>
+<p>学习它有什么用呢？举个例子：在日常的认知过程中，我们倾向于采用自己舒服的方式去摄取养分，听公开课、看教材、读论文、听播客，或者上 B 站找一些 up 主的总结视频，关注一些细分领域的公众号，关注技术大 V 的 twitter 或微博，订阅它们的博客等等。这些方式大多数是令人舒适的方式，基本上你的学习越是被动，付出的努力越少，感到越舒适。但从学习质量和记忆效果角度出发，你的学习越是主动，付出的努力越多，会让你感到越不适，但学到的内容越扎实。</p>
+<p>如果你的学习目的只是消除自己的焦虑感，那么被动学习可能是最好的方法，它既让你觉得时间没有白费，又让你感觉自己都学懂了。但如果你的目的是真的把它学懂，变成你的思维武器库中的一部分，那你就必须离开舒适区。</p>
+<p>这本 MIS 其实就是在向你讲述元认知的内容，如果你想了解自己作为人类的学习特点以及如何提高学习效率，不妨一看。</p>
+<h3 id="小结">小结</h3>
+<p>电脑本身是人造的，所以电脑与人脑之间的相似也许只是一种自我实现预言 (<a href="https://en.wikipedia.org/wiki/Self-fulfilling_prophecy" target="_blank" rel="noopener">Self-fulfilling prophecy</a>)，如果看到上句话你不理解我在说什么，只是说明「自我实现预言」暂时还不是你脑中的思维模型而已。将新到的知识与已经固化在脑中的知识建立连结能够帮助二者相互加固，是 MIS 介绍的高效学习策略之一，本节的内容正是在实践这一策略。</p>
+<h2 id="与笨学指南">与笨学指南</h2>
+<p>笨学指南的愿景是「让每个人的学习更高效」，将 MIS 中提到的学习策略融入系统的设计交互中是之后迭代的一个方向。目前，笨学指南的 <a href="https://learn-the-hard-way.cn/" target="_blank" rel="noopener">MVP</a> 已经正式上线，我也整理了 <a href="https://learn-the-hard-way.cn/collections/make-it-stick" target="_blank" rel="noopener">MIS 的检索练习题</a> (retrieval practice) 供你在阅读原书后检验学习效果，如果你使用个人邮箱注册账号，我们还能够根据你的练习表现在一段时间后提醒你回顾练习，即所谓的间隔练习 (spaced practice)，欢迎试用、反馈。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="/blog/atom.xml">
+                <span class="icon">
+                  <i class="fa fa-rss"></i>
+                </span>
+
+                <span class="label">RSS</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/blog/tags/%E7%AC%A8%E5%AD%A6%E6%8C%87%E5%8D%97/" rel="tag"># 笨学指南</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/" rel="prev" title="启动「笨学指南」项目">
+      <i class="fa fa-chevron-left"></i> 启动「笨学指南」项目
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#读后感"><span class="nav-number">1.</span> <span class="nav-text">读后感</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从自举到吃自己的狗粮"><span class="nav-number">1.1.</span> <span class="nav-text">从「自举」到「吃自己的狗粮」</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#人脑与电脑"><span class="nav-number">1.2.</span> <span class="nav-text">人脑与电脑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工作记忆-working-memory-与内存"><span class="nav-number">1.2.1.</span> <span class="nav-text">工作记忆 (Working memory) 与内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#记忆术-mnemonic-device-与多级存储管理-hierarchical-storage-management"><span class="nav-number">1.2.2.</span> <span class="nav-text">记忆术 (Mnemonic device) 与多级存储管理 (Hierarchical storage management)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#思维模型-mental-model-与抽象-abstraction"><span class="nav-number">1.2.3.</span> <span class="nav-text">思维模型 (Mental Model) 与抽象 (Abstraction)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元认知-metacognition"><span class="nav-number">1.3.</span> <span class="nav-text">元认知 (Metacognition)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#与笨学指南"><span class="nav-number">2.</span> <span class="nav-text">与笨学指南</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ZhengHe"
+      src="/blog/images/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">ZhengHe</p>
+  <div class="site-description" itemprop="description">郑鹤的博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/blog/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/blog/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/blog/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/blog/lib/anime.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.min.js"></script>
+  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/blog/js/utils.js"></script>
+
+<script src="/blog/js/motion.js"></script>
+
+
+<script src="/blog/js/schemes/pisces.js"></script>
+
+
+<script src="/blog/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/";
+    this.page.identifier = "2021/11/28/Make-It-Stick-Digest/";
+    this.page.title = "「Make It Stick」读后小结";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

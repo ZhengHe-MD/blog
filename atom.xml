@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2021-11-28T12:50:04.692Z</updated>
+  <updated>2021-12-01T01:45:15.745Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>「Make It Stick」读后小结</title>
+    <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
+    <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
+    <published>2021-11-28T20:54:58.000Z</published>
+    <updated>2021-12-01T01:45:15.745Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在&lt;a href=&quot;/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/&quot;&gt;启动「笨学指南」项目&lt;/a&gt;后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。&lt;/p&gt;
+&lt;h2 id=&quot;读后感&quot;&gt;读后感&lt;/h2&gt;
+&lt;p&gt;在这里我不会总结或重述原书的核心观点和主要内容，相信你有足够多的途径能够获得它们。我想简单谈谈看完全书后的三个思考：&lt;/p&gt;
+&lt;h3 id=&quot;从自举到吃自己的狗粮&quot;&gt;从「自举」到「吃自己的狗粮」&lt;/h3&gt;
+&lt;p&gt;在计算机科学中，如果一个编程语言的编译器可以用这个语言本身来构建，我们就称它可以自举 (bootstrapping)。换句话说，这个语言既可以用来表达实现任意目的的程序，也可以用来表达自己的工作原理。&lt;/p&gt;
+&lt;p&gt;MIS 的作者在书的结构设计方面也加入了类似的巧思。既然这本书介绍的是人的认知特点，以及提高学习效率的一些方法论，那为什么不用书中推荐的方法论来讲述这些知识？MIS 在第一章将书中的所有核心观点串讲一遍，在之后各章陆续介绍各个核心观点。在每个章节中，既会有意引用之前讲述过的内容，也会有意让不同观点交叉出现。这样的组织正好与书中介绍的「检索练习」、「间隔练习」、「交叉练习」暗合。如果读者发现读完这本书后记忆、理解地比阅读其它书籍更加深刻，就正好证明了书中观点的合理性。&lt;/p&gt;
+&lt;p&gt;类似的思路还出现在开发新产品的最佳实践——「吃自己的狗粮 (eating your own dog food)」中。「吃自己的狗粮」说的是在开发产品的过程中，自己也在体验和使用该产品。比如对工程师来说，开发一个面向研发的工具或服务，如 Git/GitHub，正是在「吃自己的狗粮」。&lt;/p&gt;
+&lt;h3 id=&quot;人脑与电脑&quot;&gt;人脑与电脑&lt;/h3&gt;
+&lt;p&gt;碳和硅同是元素周期表中的同族 (IVA) 元素，它们分别作为人脑和电脑的核心元素，大概不是巧合。在读完 MIS 后，我又发现了更多人脑和电脑相似的「证据」。&lt;/p&gt;
+&lt;h4 id=&quot;工作记忆-working-memory-与内存&quot;&gt;工作记忆 (Working memory) 与内存&lt;/h4&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="笨学指南" scheme="https://zhenghe-md.github.io/blog/tags/%E7%AC%A8%E5%AD%A6%E6%8C%87%E5%8D%97/"/>
+    
+  </entry>
+  
+  <entry>
     <title>启动「笨学指南」项目</title>
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2021-11-28T12:50:04.692Z</updated>
+    <updated>2021-12-01T01:45:15.721Z</updated>
     
     <summary type="html">
     
@@ -44,6 +72,8 @@
     
     
     
+      <category term="笨学指南" scheme="https://zhenghe-md.github.io/blog/tags/%E7%AC%A8%E5%AD%A6%E6%8C%87%E5%8D%97/"/>
+    
   </entry>
   
   <entry>
@@ -51,7 +81,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2021-11-28T12:50:04.748Z</updated>
+    <updated>2021-12-01T01:45:15.777Z</updated>
     
     <summary type="html">
     
@@ -106,7 +136,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2021-11-28T12:50:04.732Z</updated>
+    <updated>2021-12-01T01:45:15.761Z</updated>
     
     <summary type="html">
     
@@ -143,7 +173,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2021-11-28T12:50:04.756Z</updated>
+    <updated>2021-12-01T01:45:15.785Z</updated>
     
     <summary type="html">
     
@@ -186,7 +216,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2021-11-28T12:50:04.752Z</updated>
+    <updated>2021-12-01T01:45:15.781Z</updated>
     
     <summary type="html">
     
@@ -223,7 +253,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2021-11-28T12:50:04.732Z</updated>
+    <updated>2021-12-01T01:45:15.761Z</updated>
     
     <summary type="html">
     
@@ -258,7 +288,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2021-11-28T12:50:04.764Z</updated>
+    <updated>2021-12-01T01:45:15.793Z</updated>
     
     <summary type="html">
     
@@ -297,7 +327,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2021-11-28T12:50:04.700Z</updated>
+    <updated>2021-12-01T01:45:15.725Z</updated>
     
     <summary type="html">
     
@@ -376,7 +406,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2021-11-28T12:50:04.732Z</updated>
+    <updated>2021-12-01T01:45:15.757Z</updated>
     
     <summary type="html">
     
@@ -410,7 +440,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2021-11-28T12:50:04.772Z</updated>
+    <updated>2021-12-01T01:45:15.797Z</updated>
     
     <summary type="html">
     
@@ -443,7 +473,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2021-11-28T12:50:04.700Z</updated>
+    <updated>2021-12-01T01:45:15.729Z</updated>
     
     <summary type="html">
     
@@ -473,7 +503,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2021-11-28T12:50:04.704Z</updated>
+    <updated>2021-12-01T01:45:15.733Z</updated>
     
     <summary type="html">
     
@@ -508,7 +538,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2021-11-28T12:50:04.728Z</updated>
+    <updated>2021-12-01T01:45:15.757Z</updated>
     
     <summary type="html">
     
@@ -536,7 +566,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2021-11-28T12:50:04.728Z</updated>
+    <updated>2021-12-01T01:45:15.753Z</updated>
     
     <summary type="html">
     
@@ -566,7 +596,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2021-11-28T12:50:04.720Z</updated>
+    <updated>2021-12-01T01:45:15.749Z</updated>
     
     <summary type="html">
     
@@ -598,7 +628,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2021-11-28T12:50:04.728Z</updated>
+    <updated>2021-12-01T01:45:15.757Z</updated>
     
     <summary type="html">
     
@@ -632,7 +662,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2021-11-28T12:50:04.696Z</updated>
+    <updated>2021-12-01T01:45:15.725Z</updated>
     
     <summary type="html">
     
@@ -665,7 +695,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2021-11-28T12:50:04.704Z</updated>
+    <updated>2021-12-01T01:45:15.733Z</updated>
     
     <summary type="html">
     
@@ -701,7 +731,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/</id>
     <published>2020-03-08T16:40:55.000Z</published>
-    <updated>2021-11-28T12:50:04.716Z</updated>
+    <updated>2021-12-01T01:45:15.745Z</updated>
     
     <summary type="html">
     
@@ -730,36 +760,6 @@
       <category term="kv" scheme="https://zhenghe-md.github.io/blog/tags/kv/"/>
     
       <category term="cache" scheme="https://zhenghe-md.github.io/blog/tags/cache/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>The Evolution of Prometheus Storage Layer</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/</id>
-    <published>2020-02-27T09:50:01.000Z</published>
-    <updated>2021-11-28T12:50:04.724Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Prometheus 是当下最流行的监控平台之一，它的主要职责是从各个目标节点中采集监控数据，后持久化到本地的时序数据库中，并向外部提供便捷的查询接口。本文尝试探讨 Prometheus 存储层的演进过程，信息源主要来自于 Prometheus 团队在历届 PromConf 上的分享。&lt;/p&gt;
-&lt;p&gt;时序数据库是 Promtheus 监控平台的一部分，在了解其存储层的演化过程之前，我们需要先了解时序数据库及其要解决的根本问题。&lt;/p&gt;
-&lt;h1 id=&quot;tsdb&quot;&gt;TSDB&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;时序数据库 (Time Series Database, TSDB)&lt;/strong&gt; 是数据库大家庭中的一员，专门存储随时间变化的数据，如股票价格、传感器数据、机器状态监控等等。&lt;strong&gt;时序 (Time Series)&lt;/strong&gt; 指的是某个变量随时间变化的所有历史，而&lt;strong&gt;样本 (Sample)&lt;/strong&gt; 指的是历史中该变量的瞬时值：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/ts-sample.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
-&lt;p&gt;每个样本由&lt;strong&gt;时序标识&lt;/strong&gt;、&lt;strong&gt;时间戳&lt;/strong&gt;和&lt;strong&gt;数值&lt;/strong&gt; 3 部分构成，其所属的时序就由一系列样本构成。由于时间是连续的，我们不可能、也没有必要记录时序在每个时刻的数值，因此&lt;strong&gt;采样间隔&lt;/strong&gt; (Interval) 也是时序的重要组成部分。采样间隔越小、样本总量越大、捕获细节越多；采样间隔越大、样本总量越小、遗漏细节越多。以服务器机器监控为例，通常采样间隔为 15 秒。&lt;/p&gt;
-&lt;p&gt;数据的高效查询离不开索引，对于时序数据而言，唯一的、天然的索引就是时间 (戳)。因此通常时序数据库的存储层相比于关系型数据库要简单得多。仔细思考，你可能会发现时序数据在某种程度上就是键值数据的一个子集，因此键值数据库天然地可以作为时序数据的载体。通常一个时序数据库能容纳百万量级以上的时序数据，要从其中搜索到其中少量的几个时序也非易事，因此对时序本身建立高效的索引也很重要。&lt;/p&gt;
-&lt;h1 id=&quot;the-fundamental-problem-of-tsdbs&quot;&gt;The Fundamental Problem of TSDBs&lt;/h1&gt;
-&lt;p&gt;TSDB 要解决的基本问题，可以概括为下图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/tsdb-fundamental-problem.jpg&quot; width=&quot;500px&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
-    
-    
-      <category term="tsdb" scheme="https://zhenghe-md.github.io/blog/tags/tsdb/"/>
     
   </entry>
   
