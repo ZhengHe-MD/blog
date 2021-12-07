@@ -37,7 +37,7 @@ tags:
 
 我将原型中的第一个学习功能称为「兴趣阅读」，它的使用方法很简单：
 
-1. 读资料：到[资料列表页](https://learn-things-the-hard-way.vercel.app/collections)选取感兴趣的资料，阅读其中的章节
+1. 读资料：到[资料列表页](https://learn-the-hard-way.cn/collections)选取感兴趣的资料，阅读其中的章节
 2. 做练习：每个章节附带推荐者设计的测验题，点击进行测验
 3. 时习之：相隔预设的一段时间后，系统会提醒你回来重做测验
 
