@@ -1,5 +1,5 @@
 ---
-title: 「Make It Stick」读后小结
+title: 「Make It Stick」读后感
 date: 2021-11-28 20:54:58
 tags:
 - 笨学指南
