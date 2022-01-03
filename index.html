@@ -285,6 +285,100 @@ mjx-container + br {
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/" class="post-title-link" itemprop="url">推荐一个系列 「Let's Build A Simple Interpreter」</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-01-03 19:43:37 / 修改时间：14:13:34" itemprop="dateCreated datePublished" datetime="2022-01-03T19:43:37+00:00">2022-01-03</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/03/On-Let-s-Build-A-Simple-Interpreter/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前阵子无意中发现了一个系列教程：「<a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 <a href="https://ruslanspivak.com/pages/about/" target="_blank" rel="noopener">Ruslan Spivak</a> 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。在的他个人简介中，有下面这句话，我深为认同：</p>
+<blockquote>
+<p>❝ I believe to become a better developer you MUST get a better understanding of the underlying software systems you use on a daily basis and that includes programming languages, compilers and interpreters, databases and operating systems, web servers and web frameworks. And to get a better and deeper understanding of those systems you MUST re-build them from scratch. ❞</p>
+</blockquote>
+<p>他推出的两个系列教程：</p>
+<ul>
+<li><a href="https://github.com/rspivak/lsbaws" target="_blank" rel="noopener">Let's Build A Web Server</a> (600+ stars)</li>
+<li><a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> (1500+ stars)</li>
+</ul>
+<p>都是在践行他的这一观点，即是帮助自己，也是帮助其它亟待成长的工程师。</p>
+<h2 id="简介">简介</h2>
+<p>lsbasi 的主要内容就是手把手地教你从 0 到 1 地用 Python 实现一个具备解释下面这段 Pascal 程序的解释器：</p>
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">program</span> factorial;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">factorial</span><span class="params">(n: integer)</span>:</span> longint;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">if</span> n = <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">        factorial := <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        factorial := n * factorial(n - <span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    n: integer;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span> <span class="keyword">to</span> <span class="number">16</span> <span class="keyword">do</span></span><br><span class="line">        writeln(n, <span class="string">'! = '</span>, factorial(n));</span><br><span class="line"><span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
+<p>当然，整个教程的大框架逃不出编译原理。如果你看过「<a href="(https://g.co/kgs/8wBfZM)">龙书</a>」或者「<a href="https://g.co/kgs/a2yikp" target="_blank" rel="noopener">SICP</a>」，你可以简单地将 lsbasi 当作它们的玩具版，那么此教程对你的帮助就比较有限。但如果相反，你没有学习过编译原理，没有看过「<a href="(https://g.co/kgs/8wBfZM)">龙书</a>」或者「<a href="https://g.co/kgs/a2yikp" target="_blank" rel="noopener">SICP</a>」，或者尽管学过，但你还记着的东西已经所剩无几，那我强烈建议你试试这个教程。</p>
+<p>遗憾的是，lsbasi 至今尚未完结。它最早的一篇教程发布于 2015 年 7 月 15 日，最近的一篇教程发布于 2020 年 3 月 19 日，前后跨越了 5 年。但值得庆幸的是，最后一篇教程离完结的距离并不太远。我们大可以将剩余部分当作思考练习去完成，别忘了「<a href="https://zhenghe-md.github.io/nerds-docs/docs/plan/metacognition/strategies/#%E7%94%9F%E6%88%90">生成</a>」也是一种很重要的高效学习策略。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -316,7 +410,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
 
           
@@ -413,7 +507,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
 
           
@@ -512,7 +606,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
 
           
@@ -634,7 +728,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -749,7 +843,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
 
           
@@ -859,7 +953,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -974,7 +1068,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1083,7 +1177,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1194,7 +1288,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-03 14:13:34" itemprop="dateModified" datetime="2022-01-03T14:13:34+00:00">2022-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1314,116 +1408,6 @@ mjx-container + br {
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/09/20/apache-arrow-summary/" class="post-title-link" itemprop="url">Apache Arrow 小结</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-09-20 21:14:48" itemprop="dateCreated datePublished" datetime="2020-09-20T21:14:48+00:00">2020-09-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 11:50:58" itemprop="dateModified" datetime="2022-01-03T11:50:58+00:00">2022-01-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/09/20/apache-arrow-summary/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/09/20/apache-arrow-summary/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Chunk stores multiple rows of data in Apache Arrow format.</span></span><br><span class="line"><span class="comment">// See https://arrow.apache.org/docs/format/Columnar.html#physical-memory-layout</span></span><br><span class="line"><span class="comment">// Values are appended in compact format and can be directly accessed without decoding.</span></span><br><span class="line"><span class="comment">// When the chunk is done processing, we can reuse the allocated memory by resetting it.</span></span><br><span class="line"><span class="keyword">type</span> Chunk <span class="keyword">struct</span> &#123; <span class="comment">/*...*/</span> &#125;</span><br></pre></td></tr></table></figure>
-<p>心里自然而然会产生疑问：为什么要使用这个项目规定的数据存储格式？于是在阅读完 TiDB 相关源码和单测后，顺便搜寻并浏览一些有趣的资料 (见文末参考部分)，现在将这次调研的收获小结在这篇博客中。</p>
-<p>本文简单地介绍一种内存列存数据格式：Apache Arrow，主要涉及的内容包括：</p>
-<ul>
-<li>Arrow 项目的来源</li>
-<li>Arrow 如何表示定长、变长和嵌套数据</li>
-<li>内存列存数据格式与磁盘列存数据格式的设计取舍</li>
-</ul>
-<p>注：Arrow 即可以指内存列存数据格式，也可以指 Apache Arrow 项目整体，因此下文中将用 「Arrow」 表示格式本身，「Arrow 项目」表示整体项目。</p>
-<h2 id="项目简介">项目简介</h2>
-<p>现存的大数据分析系统基本都基于各自不同的内存数据结构，这就会带来一系列的重复工作：从计算引擎上看，算法必须基于项目特有的数据结构、API 与算法之间出现不必要的耦合；从数据获取上看，数据加载时必须反序列化，而每一种数据源都需要单独实现相应的加载器；从生态系统上看，跨项目、跨语言的合作无形之中被阻隔。能否减少或消除数据在不同系统间序列化、反序列化的成本？能否跨项目复用算法及 IO 工具？能否推动更广义的合作，让数据分析系统的开发者联合起来？在这样的使命驱动下，Arrow 就诞生了。</p>
-<p>与其它项目不同，Arrow 项目的草台班子由 5 个 Apache Members、6 个 PMC Chairs 和一些其它项目的 PMC 及 committer 构成，他们直接找到 ASF 董事会，征得同意后直接以顶级 Apache 项目身份启动。想了解项目的详细历史可以阅读项目 Chair，Jacques Nadeau 写的这篇<a href="https://www.dremio.com/origin-history-of-apache-arrow/" target="_blank" rel="noopener">博客</a>。另外，这张 <a href="https://docs.google.com/spreadsheets/d/1q6UqluW6SLuMKRwW2TBGBzHfYLlXYm37eKJlIxWQGQM/edit#gid=0" target="_blank" rel="noopener">google sheet</a> 记录着项目的取名过程，取名为 Arrow 的原因是："math symbol for vector. and arrows are fast. also alphabetically will show up on top." 可以说考虑得相当全面 😂。</p>
-<p>Arrow 的愿景是提供内存数据分析 (in-memory analytics) 的开发平台，让数据在异构大数据系统间移动、处理地更快：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2020/09/20/apache-arrow-summary/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -1496,7 +1480,7 @@ mjx-container + br {
       <div class="site-state-item site-state-posts">
           <a href="/blog/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1509,7 +1493,7 @@ mjx-container + br {
       <div class="site-state-item site-state-tags">
             <a href="/blog/tags/">
           
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
