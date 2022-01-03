@@ -1,9 +1,11 @@
 ---
-title: 「Make It Stick」读后感
+title: 推荐一本书「Make It Stick：The Science of Successful Learning」
 date: 2021-11-28 20:54:58
 tags:
 - 笨学指南
 ---
+
+> Update: 关于这个话题，我还推出了一集播客，感兴趣欢迎[收听](https://zhenghe-md.github.io/nerds-docs/docs/plan/solution/promotion/podcasts/make-it-stick/)。
 
 在[启动「笨学指南」项目](/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/)后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 [Make It Stick: The Science of Successful Learning](https://www.goodreads.com/book/show/18770267-make-it-stick) 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。
 
@@ -80,3 +82,4 @@ MIS 中出镜率很高的一个词是元认知，即关于认知本身的认知�
 ## 与笨学指南
 
 笨学指南的愿景是「让每个人的学习更高效」，将 MIS 中提到的学习策略融入系统的设计交互中是之后迭代的一个方向。目前，笨学指南的 [MVP](https://learn-the-hard-way.cn/) 已经正式上线，我也整理了 [MIS 的检索练习题](https://learn-the-hard-way.cn/collections/make-it-stick) (retrieval practice) 供你在阅读原书后检验学习效果，如果你使用个人邮箱注册账号，我们还能够根据你的练习表现在一段时间后提醒你回顾练习，即所谓的间隔练习 (spaced practice)，欢迎试用、反馈。
+
