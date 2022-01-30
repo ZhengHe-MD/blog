@@ -9,6 +9,8 @@ mathjax:
 
 Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，[jaeger-client-go](https://github.com/jaegertracing/jaeger-client-go/)。
 
+<!-- more -->
+
 ## 简介
 
 jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：

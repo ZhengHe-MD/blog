@@ -11,6 +11,8 @@ mathjax:
 
 论文作者的贡献主要包含两部分：Consistent Hashing 和 Random Trees。Consistent Hashing 主要用于解决分布式哈希表 (Distributed Hash Table, DHT) 的桶增减带来的重新哈希问题；Random Trees 主要用于分布式缓存中的热点问题，它利用了 Consistent Hashing。下文主要关注 Consistent Hashing。
 
+<!-- more -->
+
 # Contribution
 
 在分布式环境下，单台机器的负载有限，我们需要将请求散列到不同的机器上，利用更多的机器实现服务的横向扩容。这时候就需要 Hash Function，好的 Hash Function 能够帮我们均匀地分布到不同的机器上。但传统的 Hash Function 通常是静态的，桶的数量固定。在多台机器组成的服务中，每台机器就是一个桶，但机器在运行的过程中很可能出现崩溃，在请求数量波动较大时，需要动态地增减机器。如果每次桶的数量发生变化时都需要重新散列所有请求，可能造成多方面影响：

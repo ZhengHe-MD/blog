@@ -13,6 +13,8 @@ mathjax:
 
 Linear Hashing 和 Spiral Storage 是两种动态哈希算法。这两种算法最初都是为了优化外部存储 (secondary/external storage) 数据访问而设计的。本文将这两种算法引入到内存中，即键值数据可以一次性读入内存的场景，对比、分析二者之间，以及与其它动态哈希算法的性能。实验结果表明：Linear Hashing 的性能上要优于 Spiral Storage，实现难度上要小于 Spiral Storage。其它纳入对比范围的动态哈希算法包括 Unbalanced Binary Tree 以及支持周期性 rehashing 版本的 Double Hashing。Linear Hashing 的查询时间与 Double Hashing 相当，同时远远优于 Unbalanced Binary Tree，即使在 tree 很小的场景上也如此；在载入键值数据的表现上，三者相当。总体而言，Linear Hashing 是一个简单、高效的动态哈希算法，非常适用于键空间未知的场景。
 
+<!-- more -->
+
 # 简介
 
 许多为外部文件存储而设计的动态哈希算法在过去的若干年中被提出，这些算法允许外部文件根据内部存储的纪录数量而优雅地扩大和缩小。在外部文件存储场景中，外部存储比内存读写慢很多，它的特点总结如下：

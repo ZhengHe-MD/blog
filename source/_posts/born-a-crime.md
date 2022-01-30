@@ -8,6 +8,8 @@ categories:
 
 因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在 Palfish App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。
 
+<!-- more -->
+
 「Born a Crime」记录了 Trevor Noah 在南非成长的经历，但它并不像一个传记，而是将成长中的事件按照主题串联，如：
 
 * 母亲对耶稣的绝对信仰

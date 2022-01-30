@@ -5,9 +5,11 @@ tags:
 - 笨学指南
 ---
 
-> Update: 关于这个话题，我还推出了一集播客，感兴趣欢迎[收听](https://zhenghe-md.github.io/nerds-docs/docs/plan/solution/promotion/podcasts/make-it-stick/)。
-
 在[启动「笨学指南」项目](/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/)后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 [Make It Stick: The Science of Successful Learning](https://www.goodreads.com/book/show/18770267-make-it-stick) 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。
+
+<!-- more -->
+
+> Update: 关于这个话题，我还推出了一集播客，感兴趣欢迎[收听](https://zhenghe-md.github.io/nerds-docs/docs/plan/solution/promotion/podcasts/make-it-stick/)。
 
 ## 读后感
 

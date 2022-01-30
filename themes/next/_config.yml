@@ -105,9 +105,9 @@ creative_commons:
 
 # Schemes
 # scheme: Muse
-# scheme: Mist
-scheme: Pisces
-#scheme: Gemini
+scheme: Mist
+# scheme: Pisces
+# scheme: Gemini
 
 
 # ---------------------------------------------------------------
@@ -121,10 +121,10 @@ scheme: Pisces
 # External url should start with http:// or https://
 menu:
   home: / || home
+  archives: /archives/ || archive
   about: /about/ || user
   tags: /tags/ || tags
   categories: /categories/ || th
-  archives: /archives/ || archive
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
@@ -155,7 +155,7 @@ sidebar:
   #  - always  expand for all pages automatically.
   #  - hide    expand only when click on the sidebar toggle icon.
   #  - remove  totally remove sidebar including sidebar toggle.
-  display: post
+  display: remove
 
   # Sidebar padding in pixels.
   padding: 18

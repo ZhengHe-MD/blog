@@ -10,13 +10,13 @@ mathjax:
 - true
 ---
 
-本文转自我个人的 [gitbook](https://zhenghe.gitbook.io/open-courses/database-design/log-structured-merge-lsm-tree-and-usages-in-kv-stores)。
-
 # Background
 
 数据库中的各种奇技淫巧，实际上都来自于内存与磁盘的读写模式和性能区别。
 
 <img src="/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/memory-disk.jpg" width="500px">
+
+<!-- more -->
 
 总结如下表：
 

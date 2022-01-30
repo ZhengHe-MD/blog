@@ -6,7 +6,11 @@ tags:
   - 笨学指南
 ---
 
-前阵子无意中发现了一个系列教程：「[Let's Build A Simple Interpreter](https://github.com/rspivak/lsbasi) 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 [Ruslan Spivak](https://ruslanspivak.com/pages/about/) 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。在的他个人简介中，有下面这句话，我深为认同：
+前阵子无意中发现了一个系列教程：「[Let's Build A Simple Interpreter](https://github.com/rspivak/lsbasi) 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 [Ruslan Spivak](https://ruslanspivak.com/pages/about/) 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。
+
+<!-- more -->
+
+在的他个人简介中，有下面这句话，我深为认同：
 
 > ❝ I believe to become a better developer you MUST get a better understanding of the underlying software systems you use on a daily basis and that includes programming languages, compilers and interpreters, databases and operating systems, web servers and web frameworks. And to get a better and deeper understanding of those systems you MUST re-build them from scratch. ❞
 

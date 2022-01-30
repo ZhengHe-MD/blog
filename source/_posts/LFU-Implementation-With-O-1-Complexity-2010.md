@@ -13,6 +13,8 @@ mathjax:
 
 缓存置换算法 (Cache Eviction Algorithm) 在操作系统、数据库以及其它系统中被广泛用于缓存置换模块，当缓存空间不足时，它利用局部性原理 (Principle of Locality) 预测未来数据的使用模式，将最不可能被访问的数据清出从而提高缓存命中率。目前已经存在的缓存置换算法包括 MRU (Most Recently Used)、MFU (Most Frequently Used)、LRU (Least Recently Used) 以及 LFU (Least Frequently Used) 等。每个算法都有其各自的适用场景。到目前为止，应用范围最广的是 LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloads)，同时 LRU 拥有 $O(1)$ 时间复杂度的成熟实现方案。与 LRU 类似，LFU 同样与大多数应用的负载模式相近，但目前 LFU 最佳实现方案的时间复杂度是$O(log_2{n})$ ，不如 LRU。本文，我们提出一种同样达到 $O(1)$ 时间复杂度的 LFU 实现方案，它支持的操作包括插入、访问以及删除。
 
+<!-- more -->
+
 # Introduction
 
 本文将按顺序介绍：

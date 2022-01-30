@@ -8,9 +8,9 @@ categories:
 - system design
 ---
 
-# TL;DR
-
 本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 [Database of Tracing Systems](https://github.com/ZhengHe-MD/database-of-tracing-systems) 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。
+
+<!-- more -->
 
 # 引言
 

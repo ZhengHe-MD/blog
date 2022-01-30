@@ -10,6 +10,8 @@ categories:
 
 在进入文章之前，应该先介绍两位重量级作者：[Andrew Pavlo](cs.cmu.edu/~pavlo/) 和 [Matthew Aslett](https://451research.com/analyst-team/analyst/Matt+Aslett)。Andrew 在 CMU 的计算机科学学院任教，主攻方向包括内存数据库、自动驾驶系统架构、事务处理系统和海量数据分析，他是 CMU Database Group 的核心成员，在 CMU 开设的两门课程 Database Systems (15-445/645) 和 Advanced Database System (15-721) 全是干货；Matthew 是 [451 research: Data, AI & Analytics channel](https://451research.com/about-us/our-research/research-channels/data-ai-analytics) 的 VP，他在 2011 年的一篇 [论文](http://cs.brown.edu/courses/cs227/archives/2012/papers/newsql/aslett-newsql.pdf) 中第一次用 **NewSQL** 指代提供类似 NoSQL 高吞吐、高可用支持，同时仍然保持 ACID 特性的新一代数据库系统。
 
+<!-- more-->
+
 相比于已经问世 40 多年的关系型数据库 (relational DBMS) ，我们不禁会问："**新兴的 NewSQL 究竟是一种市场营销还是确有其创新之处**？" 如果 NewSQL 确实能够在多方面达到更高的性能，那么下一个问题就是："**它的性能是来自于硬件的升级还是其系统设计有着科学上的创新**？" 
 
 要回答这两个问题，我们先讨论数据库系统的历史以及 NewSQL 的诞生，再讨论 NewSQL 在数据库系统各个重要设计方面的细节。

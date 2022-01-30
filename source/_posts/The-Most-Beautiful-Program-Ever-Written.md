@@ -11,6 +11,8 @@ tags:
 
 先假设你已经对 Scheme (Lisp 的一门方言) 的基本语法有一些了解。我们直奔主题，来看这个 "The Most Beautiful Program Ever Written" 究竟是什么程序。
 
+<!-- more -->
+
 ## A Lisp interpreter written in Lisp
 
 这个 List interpreter 的核心代码如下：

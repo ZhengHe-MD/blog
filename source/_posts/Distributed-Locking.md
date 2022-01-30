@@ -11,6 +11,8 @@ categories:
 
 因此我决定深究这个话题。
 
+<!-- more -->
+
 *备注：本文中，因为信息源使用的术语不同，Correctness 与 Safety 分别翻译成正确性和安全性，实际上二者在分布式锁话题的范畴中意思相同。*
 
 # Efficiency & Correctness

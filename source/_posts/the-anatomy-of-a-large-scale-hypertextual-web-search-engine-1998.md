@@ -12,6 +12,8 @@ mathjax:
 
 最近因为工作的关系接触 ElasticSearch，发现搜索引擎也是计算机应用的一个有意思的分支。于是通过 Freiburg 的 Information Retrieval 公开课开始系统地了解信息检索这个领域，感觉收获颇丰。周末一时兴起，上 Google Research 找到了 Google 的开山之作，近距离地感受一下 19800+ 引用量、造就如今 Google 万亿市值的这篇文章。
 
+<!-- more -->
+
 本文介绍会尽可能地忠于原文，但不是完全逐字逐句的翻译。
 
 ## 1. 简介

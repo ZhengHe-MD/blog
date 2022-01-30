@@ -13,6 +13,8 @@ mathjax:
 
 本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 **单集群 (Single Front-end Cluster)**、**多集群 (Multiple Front-end Clusters)**、**多区域 (Multiple Regions)** 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 redis、boltDB、levelDB 等其它服务作为缓存单元。
 
+<!-- more -->
+
 在下文中，需要注意两个词语的区别：
 
 * memcached：指 memcached 源码或运行时，即单机版

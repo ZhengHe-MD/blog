@@ -5,7 +5,9 @@ tags:
 - system design
 ---
 
-> 完整调研报告请见我个人的 Notion [笔记](https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7)
+"Google 内部曾对工程师做一次 [调研](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf)，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。"
+
+<!-- more -->
 
 # 0. 引入
 
@@ -534,6 +536,8 @@ Sourcegraph 在隔离代码和索引上更近了一步。在它的架构中存�
 | **Livegrep**           | [substring, regexp] + [modifier]             | Suffix Array                    | WebServer、IndexServer 隔离  |
 | **Zoekt**              | [substring, regexp] + [modifier]             | Positional Trigram, Ctags       | WebServer、IndexServer 隔离  |
 | **Sourcegraph**        | [substring, regexp, structural] + [modifier] | Positional Trigram, Ctags, LSIF | WebServer、IndexServer 隔离  |
+
+尾注：完整调研报告请见我个人的 Notion [笔记](https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7)
 
 # 6. 参考文献
 

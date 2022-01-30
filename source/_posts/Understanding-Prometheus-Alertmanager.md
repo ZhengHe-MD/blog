@@ -8,6 +8,8 @@ categories:
 
 Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。
 
+<!-- more -->
+
 ## 整体报警控制逻辑
 
 Alertmanager 将报警路由组织成树状结构：

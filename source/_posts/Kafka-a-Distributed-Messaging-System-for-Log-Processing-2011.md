@@ -14,6 +14,8 @@ mathjax:
 
 Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于 NetDB workshop，如今原文的三位作者，Jay Kreps、Neha Narkhede 以及 Jun Rao 一同离开 LinkedIn，创立 [Confluent.io](https://www.confluent.io/)，提供基于 Kafka 的企业级 Event Streaming Platform 服务。
 
+<!-- more -->
+
 除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication，exactly-once delivery 等。
 
 ## Introduction
