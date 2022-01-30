@@ -7,7 +7,7 @@ tags:
 
 "Google 内部曾对工程师做一次 [调研](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf)，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。"
 
-<!-- more -->
+<!--more-->
 
 # 0. 引入
 
