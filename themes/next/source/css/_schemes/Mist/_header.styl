@@ -1,9 +1,5 @@
 // Header
 // --------------------------------------------------
-.header {
-  background: $whitesmoke;
-}
-
 .header-inner {
   align-items: center;
   display: flex;
@@ -12,7 +8,6 @@
   +mobile() {
     display: block;
     padding: 10px 0;
-    width: auto;
   }
 }
 
@@ -20,7 +15,6 @@
   line-height: normal;
 
   .brand {
-    background: none;
     padding: 2px 1px;
 
     +mobile() {
@@ -33,35 +27,27 @@
   }
 }
 
-.logo-line-before, .logo-line-after {
+.logo-line {
+  background: var(--brand-color);
   display: block;
+  height: 2px;
   margin: 0 auto;
-  overflow: hidden;
   width: 75%;
 
   +mobile() {
     display: none;
   }
-
-  i {
-    background: $black-deep;
-    display: block;
-    height: 2px;
-    position: relative;
-
-    +mobile() {
-      height: 3px;
-    }
-  }
 }
 
 .use-motion {
-  .logo-line-before i {
-    left: -100%;
+  .logo-line:first-of-type {
+    transform: scaleX(0);
+    transform-origin: left;
   }
 
-  .logo-line-after i {
-    right: -100%;
+  .logo-line:last-of-type {
+    transform: scaleX(0);
+    transform-origin: right;
   }
 }
 

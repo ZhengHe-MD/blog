@@ -8,32 +8,23 @@
   }
 }
 
-.menu-item-active a {
-  background: $gray-lighter;
-}
-
 .menu {
-  margin: 0;
+  padding: 0;
 
   .menu-item {
     margin: 0;
 
     +mobile() {
-      display: block;
       margin-top: 5px;
     }
 
-    a, span.exturl {
+    a {
       border-radius: 2px;
       padding: 0 10px;
       transition-property: background;
 
       +mobile() {
         text-align: left;
-      }
-
-      &:hover {
-        @extend .menu-item-active a;
       }
     }
 
