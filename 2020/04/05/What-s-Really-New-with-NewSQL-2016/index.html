@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="在进入文章之前，应该先介绍两位重量级作者：Andrew Pavlo 和 Matthew Aslett。Andrew 在 CMU 的计算机科学学院任教，主攻方向包括内存数据库、自动驾驶系统架构、事务处理系统和海量数据分析，他是 CMU Database Group 的核心成员，在 CMU 开设的两门课程 Database Systems (15-445&#x2F;645) 和 Advanced Databas">
@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/tree-structure.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/newsql-summary.jpg">
 <meta property="article:published_time" content="2020-04-05T20:39:47.000Z">
-<meta property="article:modified_time" content="2022-01-03T14:22:53.549Z">
+<meta property="article:modified_time" content="2022-01-30T08:12:25.237Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="distributed system">
 <meta property="article:tag" content="database">
@@ -247,6 +247,11 @@ mjx-container + br {
     <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
         <li class="menu-item menu-item-about">
 
     <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
@@ -260,11 +265,6 @@ mjx-container + br {
         <li class="menu-item menu-item-categories">
 
     <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
 
   </li>
   </ul>
@@ -323,7 +323,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -363,6 +363,7 @@ mjx-container + br {
 
       
         <p>在进入文章之前，应该先介绍两位重量级作者：<a href="cs.cmu.edu/~pavlo/">Andrew Pavlo</a> 和 <a href="https://451research.com/analyst-team/analyst/Matt+Aslett" target="_blank" rel="noopener">Matthew Aslett</a>。Andrew 在 CMU 的计算机科学学院任教，主攻方向包括内存数据库、自动驾驶系统架构、事务处理系统和海量数据分析，他是 CMU Database Group 的核心成员，在 CMU 开设的两门课程 Database Systems (15-445/645) 和 Advanced Database System (15-721) 全是干货；Matthew 是 <a href="https://451research.com/about-us/our-research/research-channels/data-ai-analytics" target="_blank" rel="noopener">451 research: Data, AI &amp; Analytics channel</a> 的 VP，他在 2011 年的一篇 <a href="http://cs.brown.edu/courses/cs227/archives/2012/papers/newsql/aslett-newsql.pdf" target="_blank" rel="noopener">论文</a> 中第一次用 <strong>NewSQL</strong> 指代提供类似 NoSQL 高吞吐、高可用支持，同时仍然保持 ACID 特性的新一代数据库系统。</p>
+<a id="more"></a>
 <p>相比于已经问世 40 多年的关系型数据库 (relational DBMS) ，我们不禁会问："<strong>新兴的 NewSQL 究竟是一种市场营销还是确有其创新之处</strong>？" 如果 NewSQL 确实能够在多方面达到更高的性能，那么下一个问题就是："<strong>它的性能是来自于硬件的升级还是其系统设计有着科学上的创新</strong>？"</p>
 <p>要回答这两个问题，我们先讨论数据库系统的历史以及 NewSQL 的诞生，再讨论 NewSQL 在数据库系统各个重要设计方面的细节。</p>
 <blockquote>
@@ -631,80 +632,6 @@ mjx-container + br {
 </script>
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#a-brief-history-of-dbmss"><span class="nav-number">1.</span> <span class="nav-text">A Brief History of DBMSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-rise-of-newsql"><span class="nav-number">2.</span> <span class="nav-text">The Rise of NewSQL</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#categorization"><span class="nav-number">3.</span> <span class="nav-text">Categorization</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#new-architectures"><span class="nav-number">3.1.</span> <span class="nav-text">New Architectures</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transparent-sharding-middleware"><span class="nav-number">3.2.</span> <span class="nav-text">Transparent Sharding Middleware</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#database-as-a-service"><span class="nav-number">3.3.</span> <span class="nav-text">Database-as-a-Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-state-of-the-art"><span class="nav-number">4.</span> <span class="nav-text">The State of the Art</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main-memory-storage"><span class="nav-number">4.1.</span> <span class="nav-text">Main Memory Storage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#partitioningsharding"><span class="nav-number">4.2.</span> <span class="nav-text">Partitioning&#x2F;Sharding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#concurrency-control"><span class="nav-number">4.3.</span> <span class="nav-text">Concurrency Control</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#secondary-indexes"><span class="nav-number">4.4.</span> <span class="nav-text">Secondary Indexes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#replication"><span class="nav-number">4.5.</span> <span class="nav-text">Replication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crash-recovery"><span class="nav-number">4.6.</span> <span class="nav-text">Crash Recovery</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#future-trends"><span class="nav-number">5.</span> <span class="nav-text">Future Trends</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附表"><span class="nav-number">7.</span> <span class="nav-text">附表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhengHe"
-      src="/blog/images/avatar.jpeg">
-  <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description">郑鹤的博客</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
-        
-          <span class="site-state-item-count">30</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
-          
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -724,7 +651,7 @@ mjx-container + br {
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
   </div>
 
         
@@ -750,7 +677,7 @@ mjx-container + br {
 <script src="/blog/js/motion.js"></script>
 
 
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blog/js/schemes/muse.js"></script>
 
 
 <script src="/blog/js/next-boot.js"></script>

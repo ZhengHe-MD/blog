@@ -17,15 +17,15 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）足以证明其广泛的影响力：  本文主要讨论 3 个话题：  分布式系统中的事件偏序 利用逻辑时钟实现事件偏序 利用逻辑时钟实现事件全序  事件顺序 生活中的事件顺序 生活中">
+  <meta name="description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）足以证明其广泛的影响力：  本文主要讨论 3 个话题：  分布式系统中的事件偏序 利用逻辑时钟实现事件偏序 利用逻辑时钟实现事件全序   事件顺序 生活中的事件顺序 生活">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Time, Clocks, and the Ordering of Events in a Distributed System (1978)">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）足以证明其广泛的影响力：  本文主要讨论 3 个话题：  分布式系统中的事件偏序 利用逻辑时钟实现事件偏序 利用逻辑时钟实现事件全序  事件顺序 生活中的事件顺序 生活中">
+<meta property="og:description" content="简介 本文是分布式系统理论的开山鼻祖、2013 年图灵奖获得者 Lamport 的成名作，也是分布式计算领域杰出论文最佳影响力奖 Dijkstra Prize 的第一篇论文，高达 11692 的引用量（截至 2019&#x2F;12&#x2F;08）足以证明其广泛的影响力：  本文主要讨论 3 个话题：  分布式系统中的事件偏序 利用逻辑时钟实现事件偏序 利用逻辑时钟实现事件全序   事件顺序 生活中的事件顺序 生活">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LvXsiCfww2vR_HsaxRb%2F-LvXtSjgJb4u4T-v-7v6%2FScreen%20Shot%202019-12-08%20at%208.25.33%20AM.jpg?alt=media&amp;token=7acfd213-f92a-4947-9d19-18ef4a210bbd">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/p1-p2.jpg">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/partial-order.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/partial-order.jpg">
 <meta property="article:published_time" content="2020-02-17T18:25:14.000Z">
-<meta property="article:modified_time" content="2022-01-03T14:22:53.545Z">
+<meta property="article:modified_time" content="2022-01-30T08:12:25.237Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="distributed system">
 <meta name="twitter:card" content="summary">
@@ -249,6 +249,11 @@ mjx-container + br {
     <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
         <li class="menu-item menu-item-about">
 
     <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
@@ -262,11 +267,6 @@ mjx-container + br {
         <li class="menu-item menu-item-categories">
 
     <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
 
   </li>
   </ul>
@@ -325,7 +325,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -373,6 +373,7 @@ mjx-container + br {
 <li>利用逻辑时钟实现事件偏序</li>
 <li>利用逻辑时钟实现事件全序</li>
 </ul>
+
 <h1 id="事件顺序">事件顺序</h1>
 <h2 id="生活中的事件顺序">生活中的事件顺序</h2>
 <p>生活中，当两个事件 A 和 B 发生时，我们可以利用其发生的时刻来确定它们的先后关系，如：</p>
@@ -634,80 +635,6 @@ mjx-container + br {
 </script>
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#事件顺序"><span class="nav-number">2.</span> <span class="nav-text">事件顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#生活中的事件顺序"><span class="nav-number">2.1.</span> <span class="nav-text">生活中的事件顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算机中的事件顺序"><span class="nav-number">2.2.</span> <span class="nav-text">计算机中的事件顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式系统"><span class="nav-number">2.3.</span> <span class="nav-text">分布式系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#偏序"><span class="nav-number">3.</span> <span class="nav-text">偏序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#逻辑时钟"><span class="nav-number">4.</span> <span class="nav-text">逻辑时钟</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#全序"><span class="nav-number">5.</span> <span class="nav-text">全序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#场景举例"><span class="nav-number">5.1.</span> <span class="nav-text">场景举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调度中心方案"><span class="nav-number">5.1.1.</span> <span class="nav-text">调度中心方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全序方案"><span class="nav-number">5.1.2.</span> <span class="nav-text">全序方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#证明"><span class="nav-number">5.1.2.1.</span> <span class="nav-text">证明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方案对比"><span class="nav-number">5.1.3.</span> <span class="nav-text">方案对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#外部事件"><span class="nav-number">5.2.</span> <span class="nav-text">外部事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#物理时钟"><span class="nav-number">5.3.</span> <span class="nav-text">物理时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#容忍外部事件的全序"><span class="nav-number">5.3.1.</span> <span class="nav-text">容忍外部事件的全序</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhengHe"
-      src="/blog/images/avatar.jpeg">
-  <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description">郑鹤的博客</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
-        
-          <span class="site-state-item-count">30</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
-          
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -727,7 +654,7 @@ mjx-container + br {
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
   </div>
 
         
@@ -753,7 +680,7 @@ mjx-container + br {
 <script src="/blog/js/motion.js"></script>
 
 
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blog/js/schemes/muse.js"></script>
 
 
 <script src="/blog/js/next-boot.js"></script>

@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="郑鹤的博客">
@@ -239,6 +239,11 @@ mjx-container + br {
     <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
         <li class="menu-item menu-item-about">
 
     <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
@@ -252,11 +257,6 @@ mjx-container + br {
         <li class="menu-item menu-item-categories">
 
     <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
 
   </li>
   </ul>
@@ -308,10 +308,16 @@ mjx-container + br {
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-01-03 19:43:37 / 修改时间：14:22:53" itemprop="dateCreated datePublished" datetime="2022-01-03T19:43:37+00:00">2022-01-03</time>
+              <time title="创建时间：2022-01-03 19:43:37" itemprop="dateCreated datePublished" datetime="2022-01-03T19:43:37+00:00">2022-01-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
+              </span>
 
           
   
@@ -338,21 +344,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>前阵子无意中发现了一个系列教程：「<a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 <a href="https://ruslanspivak.com/pages/about/" target="_blank" rel="noopener">Ruslan Spivak</a> 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。在的他个人简介中，有下面这句话，我深为认同：</p>
-<blockquote>
-<p>❝ I believe to become a better developer you MUST get a better understanding of the underlying software systems you use on a daily basis and that includes programming languages, compilers and interpreters, databases and operating systems, web servers and web frameworks. And to get a better and deeper understanding of those systems you MUST re-build them from scratch. ❞</p>
-</blockquote>
-<p>他推出的两个系列教程：</p>
-<ul>
-<li><a href="https://github.com/rspivak/lsbaws" target="_blank" rel="noopener">Let's Build A Web Server</a> (600+ stars)</li>
-<li><a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> (1500+ stars)</li>
-</ul>
-<p>都是在践行他的这一观点，即是帮助自己，也是帮助其它亟待成长的工程师。</p>
-<h2 id="简介">简介</h2>
-<p>lsbasi 的主要内容就是手把手地教你从 0 到 1 地用 Python 实现一个具备解释下面这段 Pascal 程序能力的解释器：</p>
-<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">program</span> factorial;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">factorial</span><span class="params">(n: integer)</span>:</span> longint;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">if</span> n = <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">        factorial := <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        factorial := n * factorial(n - <span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    n: integer;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span> <span class="keyword">to</span> <span class="number">16</span> <span class="keyword">do</span></span><br><span class="line">        writeln(n, <span class="string">'! = '</span>, factorial(n));</span><br><span class="line"><span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
-<p>当然，整个教程的大框架逃不出编译原理。如果你看过「<a href="(https://g.co/kgs/8wBfZM)">龙书</a>」或者「<a href="https://g.co/kgs/a2yikp" target="_blank" rel="noopener">SICP</a>」，你可以简单地将 lsbasi 当作它们的玩具版，那么此教程对你的帮助就比较有限。但如果相反，你没有学习过编译原理，没有看过「<a href="(https://g.co/kgs/8wBfZM)">龙书</a>」或者「<a href="https://g.co/kgs/a2yikp" target="_blank" rel="noopener">SICP</a>」，或者尽管学过，但你还记着的东西已经所剩无几，那我强烈建议你试试这个教程。</p>
-<p>遗憾的是，lsbasi 至今尚未完结。它最早的一篇教程发布于 2015 年 7 月 15 日，最近的一篇教程发布于 2020 年 3 月 19 日，前后跨越了 5 年。但值得庆幸的是，最后一篇教程离完结的距离并不太远。我们大可以将剩余部分当作思考练习去完成，别忘了「<a href="https://zhenghe-md.github.io/nerds-docs/docs/plan/metacognition/strategies/#%E7%94%9F%E6%88%90">生成</a>」也是一种很重要的高效学习策略。</p>
+          <p>前阵子无意中发现了一个系列教程：「<a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 <a href="https://ruslanspivak.com/pages/about/" target="_blank" rel="noopener">Ruslan Spivak</a> 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/#more" rel="contents">
@@ -410,7 +402,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
 
           
@@ -438,18 +430,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>Update: 关于这个话题，我还推出了一集播客，感兴趣欢迎<a href="https://zhenghe-md.github.io/nerds-docs/docs/plan/solution/promotion/podcasts/make-it-stick/">收听</a>。</p>
-</blockquote>
-<p>在<a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">启动「笨学指南」项目</a>后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 <a href="https://www.goodreads.com/book/show/18770267-make-it-stick" target="_blank" rel="noopener">Make It Stick: The Science of Successful Learning</a> 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。</p>
-<h2 id="读后感">读后感</h2>
-<p>在这里我不会总结或重述原书的核心观点和主要内容，相信你有足够多的途径能够获得它们。我想简单谈谈看完全书后的三个思考：</p>
-<h3 id="从自举到吃自己的狗粮">从「自举」到「吃自己的狗粮」</h3>
-<p>在计算机科学中，如果一个编程语言的编译器可以用这个语言本身来构建，我们就称它可以自举 (bootstrapping)。换句话说，这个语言既可以用来表达实现任意目的的程序，也可以用来表达自己的工作原理。</p>
-<p>MIS 的作者在书的结构设计方面也加入了类似的巧思。既然这本书介绍的是人的认知特点，以及提高学习效率的一些方法论，那为什么不用书中推荐的方法论来讲述这些知识？MIS 在第一章将书中的所有核心观点串讲一遍，在之后各章陆续介绍各个核心观点。在每个章节中，既会有意引用之前讲述过的内容，也会有意让不同观点交叉出现。这样的组织正好与书中介绍的「检索练习」、「间隔练习」、「交叉练习」暗合。如果读者发现读完这本书后记忆、理解地比阅读其它书籍更加深刻，就正好证明了书中观点的合理性。</p>
-<p>类似的思路还出现在开发新产品的最佳实践——「吃自己的狗粮 (eating your own dog food)」中。「吃自己的狗粮」说的是在开发产品的过程中，自己也在体验和使用该产品。比如对工程师来说，开发一个面向研发的工具或服务，如 Git/GitHub，正是在「吃自己的狗粮」。</p>
-<h3 id="人脑与电脑">人脑与电脑</h3>
-<p>碳和硅同是元素周期表中的同族 (IVA) 元素，它们分别作为人脑和电脑的核心元素，大概不是巧合。在读完 MIS 后，我又发现了更多人脑和电脑相似的「证据」。</p>
+          <p>在<a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">启动「笨学指南」项目</a>后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 <a href="https://www.goodreads.com/book/show/18770267-make-it-stick" target="_blank" rel="noopener">Make It Stick: The Science of Successful Learning</a> 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/11/28/Make-It-Stick-Digest/#more" rel="contents">
@@ -507,7 +488,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
 
           
@@ -536,19 +517,6 @@ mjx-container + br {
 
       
           <p>国庆前夕，我利用业余时间过了一遍 YC 的 <a href="https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG" target="_blank" rel="noopener">Startup School 2019</a> 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。</p>
-<p>今天，我终于可以很开心地宣布：<strong>笨学指南的<a href="https://learn-the-hard-way.cn/" target="_blank" rel="noopener">原型</a>已经完成</strong>。</p>
-<h2 id="为什么">为什么</h2>
-<p>我有一个观察：「学习本身是一种基本技能，对这项技能的掌握程度决定了每个人在各自专业知识领域可达的上限」。</p>
-<p>我是一名软件工程师，就以软件开发为例展开。一位优秀的工程师，首先得是一名资深的搜索引擎用户，他需要具备寻找优质资料的能力，公开课、技术会议、经典教材、论文、开源项目、标准协议、原始技术文档等，都应该位于他的「射程范围」内；鉴于这些资料大多数由英语撰写，英语能力被迫成为优秀工程师的必备能力之一；最后就是资料的学习、理解并内化的能力。这项能力并没有什么神奇的地方，说白了就是科学地「重复」，让大脑有效暴露在这些知识中，建立知识之间的联系，并合理地强化。总而言之，刨除个人软素质部分，成为一位优秀的软件工程师的必要条件是：</p>
-<ul>
-<li>善于寻找资料</li>
-<li>熟练使用英语</li>
-<li>持续强化所学</li>
-</ul>
-<p>这里的「熟练使用英语」是因为软件开发领域的特殊性所引入，在别的领域它不是必要条件。有许多学者在人类认知领域做了许多<a href="https://www.amazon.com/Make-Stick-Science-Successful-Learning/dp/0674729013" target="_blank" rel="noopener">实证研究</a>，通过严谨的实验证明：不同学习策略能对认知效率产生显著的影响。有很多人都认识到了掌握学习能力本身的重要性，但由于惯性使然，没有去努力改善自己的学习能力。我希望通过将高效的学习方法植入到限定过程中，实现「<strong>让每个人的学习更高效</strong>」。</p>
-<h3 id="为什么要解决这个问题">为什么要解决这个问题？</h3>
-<p>学习新知总能让我持续感到兴奋，它是我自认为喜欢、擅长又乐在其中的事情。“知之者不如好之者，好之者不如乐之者”。举个例子：我家人喜欢出门游玩，而我喜欢宅在家里看书、听课。有一天，家人建议我学习摄影，这样出门就不仅仅是游玩，还可以收获实践经验。我觉得很有道理，欣然接收并开始观看<a href="https://zhenghe-md.github.io/opencourse-notes/DGMD-E-10/Lecture-1-Welcome/">摄影课程</a>。现在只要有拍摄机会，我很乐意出游。</p>
-<p>我希望未来，我的工作内容就是学习、分享和实践新知，并帮助更多人体验高效学习的快乐。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/#more" rel="contents">
@@ -606,7 +574,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
 
           
@@ -634,43 +602,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：</p>
-<ul>
-<li>问题背景</li>
-<li>使用场景</li>
-<li>基本概念</li>
-<li>构建方式</li>
-<li>基本架构</li>
-</ul>
-<p>最后将以 <a href="https://github.com/RasaHQ/rasa" target="_blank" rel="noopener">Rasa</a> 为例，介绍一个真实的对话系统项目。</p>
-<h2 id="背景知识">背景知识</h2>
-<blockquote>
-<p>ℹ️ 本节内容主要来自于 Speech and Language Processing 这本书的<a href="https://web.stanford.edu/~jurafsky/slp3/24.pdf" target="_blank" rel="noopener">第 24 章</a></p>
-</blockquote>
-<p>对话系统，顾名思义是用来与真人对话的系统。要做好这样的系统，了解、学习和研究「人类对话的特点」很有必要。</p>
-<h3 id="人类对话的特点">人类对话的特点</h3>
-<p>人类对话的特点理论上属于自然语言学的研究范畴，内容丰富，这里仅摘取其中一些要点。但如果有一天你想要把对话系统做到极致，系统地学习更多自然语言研究成果肯定能自底向上地帮助到你。</p>
-<ul>
-<li>轮次 (turns)：典型的对话通常由以对话双方轮流发言的形式出现，一来一回合称一轮 (turn)，来回多次被称为多轮对话。</li>
-<li>对话行为 (dialogue acts)：人们的每次发言或多或少都会带着一些目的，即可以是粗粒度的，如表述 (constatives)、请求 (requests)、指令 (directives)、承诺 (commissives)、表态 (acknowledgements)、问题 (questions)，也可以是细粒度的，如询问天气、预约时间、预定机票等等。</li>
-<li>共识确认 (grounding)：在对话过程中，为了保证双方的认识一致，沟通过程中会通过各种方式确认对方的想法。确认方式大致可以分为显式和隐式两种，举例如下：
-<ul>
-<li>显式：
-<ul>
-<li>A：我肚子在叫……</li>
-<li>B：你是不是想吃午饭了？</li>
-</ul></li>
-<li>隐式：
-<ul>
-<li>A：我今天想快点去上海……</li>
-<li>B：好的，那你想从首都机场还是大兴机场出发？(隐含确认出行方式)</li>
-</ul></li>
-</ul></li>
-<li>对话结构 (dialogue structure)：通过分析不同的对话，我们会发现对话常常由基本问答加上一些特殊变化构成。特殊变化包括题外话 (side sequence)、前置语句 (presequences)、后置语句 (postsequences)、重复确认 (clarification) 等等。</li>
-<li>主导性 (initiative)：当对话中有一方一直在单向获取另一方信息时，我们称前者为主动方，后者为被动方。在对话系统中，对话双方是用户 (user) 和系统 (system)，那么从主导性出发，对话系统可以被分为三类：用户主导 (user-initiative)、系统主导 (system-initiative) 和混合主导 (mixed initiative)。</li>
-<li>推理和隐喻 (inference &amp; implicature)：所谓含沙射影、话中带刺、指桑骂槐、拐弯抹角都是推理和隐喻的艺术。当然，推理和隐喻也可用于表达非负面的含义，这里就不展开描述。</li>
-</ul>
-<h3 id="常见使用场景">常见使用场景</h3>
+          <p>今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/07/24/dialogue-system-research/#more" rel="contents">
@@ -728,7 +660,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -768,24 +700,6 @@ mjx-container + br {
 
       
           <p>因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在 Palfish App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。</p>
-<p>「Born a Crime」记录了 Trevor Noah 在南非成长的经历，但它并不像一个传记，而是将成长中的事件按照主题串联，如：</p>
-<ul>
-<li>母亲对耶稣的绝对信仰</li>
-<li>出生前后及幼年时期成长因为特殊肤色 (colored) 不得不面对的问题</li>
-<li>母亲的独立，父亲的神秘</li>
-<li>...</li>
-</ul>
-<blockquote>
-<p>💡 完整的梗概可以移步 <a href="https://www.litcharts.com/lit/born-a-crime/summary" target="_blank" rel="noopener">这里</a> 阅读</p>
-</blockquote>
-<p>为什么人们会喜欢这本书？Trevor 在这个访谈里给出了他的看法。</p>
-<div class="video-container"><iframe src="https://www.youtube.com/embed/W79NnhLsosw" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
-<p>大概说的就是每个人在这本书的某一桥段都会找到共鸣。当然，这也是所有受欢迎内容的共同特点。</p>
-<h2 id="语录及感受">语录及感受</h2>
-<p>下面我想挑选书中一些我特别喜欢的话，分享给对此有兴趣的你，也算是对这本书以及花在阅读这本书上的时间一个交代。</p>
-<blockquote>
-<p>We tell people to follow their dreams, but you can only dream of what you can imagine, and, depending on where you come from, your imagination can be quite limited.</p>
-</blockquote>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/05/23/born-a-crime/#more" rel="contents">
@@ -843,7 +757,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
 
           
@@ -871,31 +785,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>完整调研报告请见我个人的 Notion <a href="https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7" target="_blank" rel="noopener">笔记</a></p>
-</blockquote>
-<h1 id="引入">0. 引入</h1>
-<p>最近，我们遇到了两个场景：</p>
-<ol type="1">
-<li>负责基础服务的工程师想下线一个接口但不知道有哪些服务调用</li>
-<li>负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方</li>
-</ol>
-<p>仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系统中维护的依赖关系在三个方面无法满足上述需求：</p>
-<ol type="1">
-<li>一些上古服务仍然在运行，但没有接入调用链追踪系统</li>
-<li>调用链追踪系统中维护的是「动态依赖关系」，即最近 N 天 (由 retention policy 决定) 捕获的调用关系</li>
-<li>调用链追踪系统中存储的是经采样策略过滤后的数据，可能存在漏采的情况</li>
-</ol>
-<p>于是我们开始思考另一个方向：<strong>通过代码搜索引擎提取静态依赖关系</strong>。恰好在 2020 Q4 末，我们将内部所有项目仓库从 Gerrit 迁移到了 Gitlab，为代码搜索引擎的落地铺平了道路。</p>
-<p>在下文中，我们将和大家分享代码搜索引擎的调研报告，期望能帮助读者了解代码搜索引擎如何工作。报告主要讨论以下话题：</p>
-<ul>
-<li>为什么做</li>
-<li>一般架构</li>
-<li>设计决定</li>
-<li>实现挑战</li>
-<li>开源项目</li>
-</ul>
-<h1 id="为什么做">1. 为什么做</h1>
+          <p>"Google 内部曾对工程师做一次 <a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf" target="_blank" rel="noopener">调研</a>，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。"</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/05/09/search-engine-for-codes-fundamentals/#more" rel="contents">
@@ -953,7 +843,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1000,17 +890,6 @@ mjx-container + br {
 <li>内部基础设施无需做跨语言支持</li>
 <li>技术选型会有轻微的语言倾向</li>
 </ol>
-<h2 id="早期实践">1. 早期实践</h2>
-<h3 id="对接-jaeger">1.1 对接 Jaeger</h3>
-<p>2019 年，公司内部的微服务数量逐步增加，调用关系日趋复杂，工程师做性能分析、问题排查的难度变大。这时亟需一套调用链追踪系统帮助我们增强对服务端全貌的了解。经过调研后，我们决定采用同样基于 Go 语言搭建的、由 CNCF 孵化的项目 <a href="https://www.jaegertracing.io/" target="_blank" rel="noopener">Jaeger</a>。当时，服务的开发和治理都尚未引入 <code>context</code>，不论进程内部调用还是跨进程调用，都没有上下文传递。因此早期引入调用链追踪的工作重心就落在了服务及服务治理框架的改造，包括：</p>
-<ul>
-<li>在 HTTP、Thrift 和 gRPC 的服务端和客户端注入上下文信息</li>
-<li>在数据库、缓存、消息队列的接入点上埋点</li>
-<li>快速往既有项目仓库中注入 <code>context</code> 的命令行工具</li>
-</ul>
-<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a href="https://www.jaegertracing.io/docs/1.22/architecture/" target="_blank" rel="noopener"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。</p>
-<p>下图是第一版调用链追踪系统的数据上报通路示意图。服务运行在容器中，通过 opentracing 的 sdk 埋点，Jaeger 的 go-sdk 上报到宿主机上的 Jaeger-agent，后者再将数据进一步上报到 Jaeger-collector，最终将调用链数据写入 ES，建立索引，即图中的 Jaeger backends。</p>
-<p><img src="./distributed-tracing-v1.png" alt="distributed-tracing-v1" style="zoom:50%;"></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/03/04/implementing-tail-based-sampling/#more" rel="contents">
@@ -1068,7 +947,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1107,19 +986,7 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="tldr">TL;DR</h1>
-<p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a href="https://github.com/ZhengHe-MD/database-of-tracing-systems" target="_blank" rel="noopener">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
-<h1 id="引言">引言</h1>
-<p>阅读本文并不要求读者具备任何调用链追踪系统相关的理论知识或实践经验，读者具备一定的微服务架构的概念或实践经验即可。期望读者看完这篇文章以后，能掌握调用链追踪系统的核心设计维度，理解其中的设计权衡，并能使用这些维度来分析市面上的新老调用链追踪系统实现，甚至帮助到自己在生产实践中根据使用场景进行技术选型和系统设计。</p>
-<h1 id="解决的问题">解决的问题</h1>
-<h2 id="微服务的可观测性">微服务的可观测性</h2>
-<blockquote>
-<p>Any organization that designs a system (defined broadly) will produce a design whose structure is a copy of the organization's communication structure.</p>
-<p>— Melvin E. Conway</p>
-</blockquote>
-<p>如果有一门学科叫软件社会学，那么康威定律 (Conway's law) 必定是其中的基本定律之一。如果把互联网公司内部的全体信息系统看作是一整个系统，那么这个系统模块结构会向公司的组织架构收敛。从组织架构层面看，公司结构从扁平向多层级演变，信息传递的环节增加，沟通效率随之下降，进而影响公司的行动效率。不论从组员之间的熟悉程度还是从部门目标一致性来看，部门内部的沟通效率要远远高于部门间的沟通效率。因此，如果系统模块结构与组织架构约趋近，公司的沟通效率就能接近极大值。团队的分化通常伴随着服务的拆分，这也是许多公司业务增长以后进行微服务化的动机。微服务化后，公司信息系统就被迫成为了分布式系统。尽管分布式系统带来了种种好处，如持续集成、增量部署、横向扩展、故障隔离，但系统可观测性比起单机系统下降了很多，甚至几乎没有人能够对公司信息系统有全局性的了解。</p>
-<p>任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心 (machine-centric) 走向以请求为中心 (workflow-centric)。调用链 (traces)、日志 (logs)、监控指标 (metrics)，三者合称 Telemetry，有了它们，微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。</p>
-<h2 id="使用场景">使用场景</h2>
+          <p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a href="https://github.com/ZhengHe-MD/database-of-tracing-systems" target="_blank" rel="noopener">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/12/20/design-dimensions-of-tracing-systems/#more" rel="contents">
@@ -1177,7 +1044,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1216,7 +1083,8 @@ mjx-container + br {
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>按：本文会尊从原论文的结构，但不是逐字翻译，以意译和加入个人理解的转述为主。</p>
+          <p>本文主要介绍一篇关于调用链追踪系统设计的论文。行文会尊从原论文的结构，但不是逐字翻译，以意译和加入个人理解的转述为主。</p>
+
 <h1 id="introduction">1. Introduction</h1>
 <p>如果把公司内部所有 IT 系统看作一个巨型分布式系统，通常其规模庞大、结构复杂，且拥有多层依赖和抽象，每层单拎出来也同样是个分布式系统。以 Google 的业务服务为例，如搜索、广告，会构建于内部基础服务之上，如 Bigtable；而 BigTable 又构建于 Google File System (GFS) 和 Chubby 之上。即便是业务服务本身，也可能存在多层 (multiple tiers) 结构，其中每层同样支持横向扩展。从巨石应用走向微服务，我们在组织架构和服务架构上都变得高效，但其代价就是下降的系统可观测性 (observability)。一个很现实的问题就是：几乎不存在一位工程师能够了解系统全貌，那么问题排查也将变得困难。从单机走向分布式，只关心单个进程、单台机器的性能指标已经远远不够，我们需要将监控的重心从以机器为中心 (machine-centric) 转向以流程为中心 (workflow-centric)，后者的核心方法便是调用链追踪系统。分布式系统的终极理想可以描述为：在获得横向扩展性的同时不暴露自己分布式的本质，即向外提供与单机系统相同的体验。调用链追踪系统概莫能外。</p>
 <p><em>按：原文将请求处理过程称为 workflow，下文会使用流程和请求来指代它；原文将以流程为中心的观测方法统称为 end-to-end tracing，由于现在分布式系统几乎是所有讨论的默认假设，本文将不再强调 end-to-end，将其直接译为调用链追踪。</em></p>
@@ -1288,7 +1156,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1328,64 +1196,6 @@ mjx-container + br {
 
       
           <p>自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。</p>
-<h2 id="术语说明">0. 术语说明</h2>
-<p>为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：</p>
-<table>
-<thead>
-<tr class="header">
-<th>英文</th>
-<th>中文</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>error</td>
-<td>错误</td>
-</tr>
-<tr class="even">
-<td>exception</td>
-<td>异常</td>
-</tr>
-<tr class="odd">
-<td>error-code-based</td>
-<td>基于错误码</td>
-</tr>
-<tr class="even">
-<td>exception-based</td>
-<td>基于异常</td>
-</tr>
-<tr class="odd">
-<td>package</td>
-<td>包 (Go 中 module 由多个 package 构成)</td>
-</tr>
-<tr class="even">
-<td>error wrapping/unwrapping</td>
-<td>包装错误/解包装</td>
-</tr>
-<tr class="odd">
-<td>error inspection</td>
-<td>错误检查</td>
-</tr>
-<tr class="even">
-<td>error formatting</td>
-<td>错误格式化</td>
-</tr>
-<tr class="odd">
-<td>error chain</td>
-<td>错误链表，即通过包装将错误组织成链表结构</td>
-</tr>
-<tr class="even">
-<td>error class</td>
-<td>错误类别、类型</td>
-</tr>
-</tbody>
-</table>
-<p>下文中，errors package 指代我们定制化的 error handling 方案。</p>
-<h2 id="文献综述">1. 文献综述</h2>
-<p>不同程序语言的 error handling 方案大致可以分为两种：error-code-based 和 exception-based。Raymond 在博客 [2] [3] 中指出 exception-based 错误处理更不利于写出优质的代码，也更难辨别优质和劣质的代码；Go 在设计时选择了 error-code-based error handling 方案，鼓励开发者显式地在 error 出现的地方直接处理 [4]；并在官博 [5] 中提出了 <strong>errors are values</strong> 的理念，只要实现 <code>Error</code> 接口的结构体就可以作为 error，不同的项目就能够按需定制 error handling 实现方案，并提出在一些特殊场景下可以利用非通用的代码重构技巧避免冗长、啰嗦的表达，如errWriter；许多来自 Java、Python 等语言的工程师习惯了 exception-based 的方案，遇到 Go 时感到十分不习惯 [6]，但如果我们总是希望在一门新语言中尝试套用自己熟悉语言的语法，就无法充分理解其它语言在这方面的设计理念。Go 核心工程师 Rob Pike 在 [7] 中描述了他如何在 <a href="https://upspin.io/" target="_blank" rel="noopener">Upspin</a> 项目中定制 error 信息和处理方案，使得项目对程序、用户及开发者更加友好；许多 error handling 项目都关注到了多层嵌套调用场景下的上下文注入问题，即所谓的 error wrapping，其中 Dave Cheney 的项目 pkg/errors [8] 被广泛使用，Go 在 1.13 后也提供类似的原生解决方案 [9]；受 [7] [8] 的启发，Ben Johnson，boltDB 的作者，结合自己多年的编码经验，在 [10] 中提出 <strong>Failure is your Domain</strong> 的观点，认为每个项目应当构建特有的 error handling package，并提出逻辑调用栈 (logical stack) 的概念，在 GopherCon 2019，还有工程师在推广类似的方案 [11]。</p>
-<p>error handling 可以细分为 checking、inspection 和 formatting 三部分，分别指判断 error 发生与否、检查 error 类型、打印 error 上下文。在发现 Go 社区的开发者们因为语言本身对 error handling 的支持不足，频繁创造各种各样的轮子之后，Russ Cox 在 2018 年末发布了两个新提议 [12] [13]，前者尝试解决 checking 代码冗长的问题；后者尝试解决 inspection 的信息丢失以及 formatting 的上下文信息不足问题。目前仅 inspection 的方案被整合到了 1.13 中，直到最近的 1.15 版本没有新的解决方案出现。</p>
-<h2 id="项目综述">2. 项目综述</h2>
-<p>发布之初，Go (&lt;1.13) 仅提供 <code>Error</code> 接口及 <code>errors.New</code>、<code>fmt.Errorf</code> 两个构建 error 的方法 [4]；Go 1.13 支持利用 <code>%w</code> 格式化符号实现 error wrapping，并提供 <code>Unwrap</code>、<code>errors.Is</code> 以及 <code>errors.As</code> 来解决 error wrapping 过程中上下文缺失的问题 [9]；spacemonkeygo 为了将大型 Python 仓库迁移到 Go 上，开发了 [14] ，模拟 Python 中 error class 的继承，支持自动记录日志、调用栈以及任意键值数据，支持 error inspection；juju errors [15] 因 juju 项目而诞生，在 wrap error 时，你可以选择保留或隐藏 error 产生的原因 (cause)，但它的 <code>Cause</code> 方法仅 unwrap 一层，而 [8] 会递归地遍历 error chain，[16] 中的概念与 [15] 类似，仅在 API 上有所不同；hashicorp 开源的 errwrap [16]，支持将 errors 组织成树状结构，并提供 <code>Walk</code> 方法遍历这棵树；pkg/errors [8] 提供 wrapping 和调用栈捕获的功能，并利用 <code>%+v</code> 格式化 error，展示更多的细节，它认为只有整个 error chain 最末端的 error 最有价值，pingcap/errors [18] 基于 [8] 二次开发，并且在 [19] 中增加了 error 类 (域) 的概念；upspin.io/errors [20] 是定制化 error 的实践范本，同时引入了 <code>errors.Is</code> 和 <code>errors.Match</code> 用于辅助检查 error 类型；[21] 考虑了 error 在进程间传递的场景，让 error handling 具备网络传播兼容能力。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/10/05/Go-Error-Handling-Research/#more" rel="contents">
@@ -1443,79 +1253,6 @@ mjx-container + br {
 </script>
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhengHe"
-      src="/blog/images/avatar.jpeg">
-  <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description">郑鹤的博客</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
-        
-          <span class="site-state-item-count">30</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
-          
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -1535,7 +1272,7 @@ mjx-container + br {
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
   </div>
 
         
@@ -1561,7 +1298,7 @@ mjx-container + br {
 <script src="/blog/js/motion.js"></script>
 
 
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blog/js/schemes/muse.js"></script>
 
 
 <script src="/blog/js/next-boot.js"></script>

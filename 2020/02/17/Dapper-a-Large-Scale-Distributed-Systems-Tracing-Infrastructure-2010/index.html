@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。 本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34">
 <meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54">
 <meta property="article:published_time" content="2020-02-17T18:16:20.000Z">
-<meta property="article:modified_time" content="2022-01-03T14:22:53.517Z">
+<meta property="article:modified_time" content="2022-01-30T08:12:25.205Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="distributed tracing">
 <meta name="twitter:card" content="summary">
@@ -247,6 +247,11 @@ mjx-container + br {
     <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
         <li class="menu-item menu-item-about">
 
     <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
@@ -260,11 +265,6 @@ mjx-container + br {
         <li class="menu-item menu-item-categories">
 
     <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
 
   </li>
   </ul>
@@ -323,7 +323,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -364,6 +364,7 @@ mjx-container + br {
       
         <p>早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
 <p>本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。</p>
+<a id="more"></a>
 <h1 id="why-design-goals">Why &amp; Design Goals</h1>
 <p>云原生环境中，一次请求的处理可能途径多个服务的任意实例，彻底理解系统就需要理解各服务内部的逻辑，理清这些服务之间的关系，甚至有时候还需要了解服务所在物理机的当时状态。系统出现异常时，如果其行为无法被追踪、被理解，就无法为解决异常快速提供线索。</p>
 <p>通常这些异常会被监控捕捉，如时延异常、错误日志、程序崩溃，在紧急处理之后，就需要调查案发现场，彻底解决问题。这时候就需要了解每个请求在整个微服务集群内部的行踪。</p>
@@ -543,80 +544,6 @@ mjx-container + br {
 </script>
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#why-design-goals"><span class="nav-number">1.</span> <span class="nav-text">Why &amp; Design Goals</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how"><span class="nav-number">2.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#general-approaches"><span class="nav-number">2.1.</span> <span class="nav-text">General Approaches</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#黑盒法"><span class="nav-number">2.1.1.</span> <span class="nav-text">黑盒法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标记法"><span class="nav-number">2.1.2.</span> <span class="nav-text">标记法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#data-models"><span class="nav-number">2.2.</span> <span class="nav-text">Data Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pipeline"><span class="nav-number">2.3.</span> <span class="nav-text">Pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#overhead"><span class="nav-number">2.4.</span> <span class="nav-text">Overhead</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-generation"><span class="nav-number">2.4.1.</span> <span class="nav-text">Trace generation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-collection"><span class="nav-number">2.4.2.</span> <span class="nav-text">Trace collection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#effect-on-production-workloads"><span class="nav-number">2.4.3.</span> <span class="nav-text">Effect on production workloads</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adaptive-sampling"><span class="nav-number">2.4.4.</span> <span class="nav-text">Adaptive Sampling</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#additional-sampling"><span class="nav-number">2.4.5.</span> <span class="nav-text">Additional Sampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#where"><span class="nav-number">3.</span> <span class="nav-text">Where</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#general-purpose-tools"><span class="nav-number">3.1.</span> <span class="nav-text">General-Purpose Tools</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dapper-depot-api"><span class="nav-number">3.1.1.</span> <span class="nav-text">Dapper Depot API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dapper-user-interface"><span class="nav-number">3.1.2.</span> <span class="nav-text">Dapper user interface</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#experiences"><span class="nav-number">3.2.</span> <span class="nav-text">Experiences</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#using-dapper-during-development"><span class="nav-number">3.2.1.</span> <span class="nav-text">Using Dapper during development</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addressing-long-tail-latency"><span class="nav-number">3.2.2.</span> <span class="nav-text">Addressing long tail latency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inferring-service-dependencies"><span class="nav-number">3.2.3.</span> <span class="nav-text">Inferring service dependencies</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#network-usage-of-different-services"><span class="nav-number">3.2.4.</span> <span class="nav-text">Network usage of different services</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#layered-and-shared-storage-systems"><span class="nav-number">3.2.5.</span> <span class="nav-text">Layered and Shared Storage Systems</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhengHe"
-      src="/blog/images/avatar.jpeg">
-  <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description">郑鹤的博客</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
-        
-          <span class="site-state-item-count">30</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
-          
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -636,7 +563,7 @@ mjx-container + br {
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
   </div>
 
         
@@ -662,7 +589,7 @@ mjx-container + br {
 <script src="/blog/js/motion.js"></script>
 
 
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blog/js/schemes/muse.js"></script>
 
 
 <script src="/blog/js/next-boot.js"></script>

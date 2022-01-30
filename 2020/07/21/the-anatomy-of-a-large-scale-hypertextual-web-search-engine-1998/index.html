@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="引言 最近因为工作的关系接触 ElasticSearch，发现搜索引擎也是计算机应用的一个有意思的分支。于是通过 Freiburg 的 Information Retrieval 公开课开始系统地了解信息检索这个领域，感觉收获颇丰。周末一时兴起，上 Google Research 找到了 Google 的开山之作，近距离地感受一下 19800+ 引用量、造就如今 Google 万亿市值的这篇文章。">
@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/repository-data-structure.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/forward-and-reverse-indexes-and-the-lexicon.jpg">
 <meta property="article:published_time" content="2020-07-21T23:35:09.000Z">
-<meta property="article:modified_time" content="2022-01-03T14:22:53.589Z">
+<meta property="article:modified_time" content="2022-01-30T08:12:25.281Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/page-rank.jpg">
@@ -246,6 +246,11 @@ mjx-container + br {
     <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
 
   </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
         <li class="menu-item menu-item-about">
 
     <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
@@ -259,11 +264,6 @@ mjx-container + br {
         <li class="menu-item menu-item-categories">
 
     <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
 
   </li>
   </ul>
@@ -322,7 +322,7 @@ mjx-container + br {
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-03 14:22:53" itemprop="dateModified" datetime="2022-01-03T14:22:53+00:00">2022-01-03</time>
+                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -363,6 +363,7 @@ mjx-container + br {
       
         <h2 id="引言">引言</h2>
 <p>最近因为工作的关系接触 ElasticSearch，发现搜索引擎也是计算机应用的一个有意思的分支。于是通过 Freiburg 的 Information Retrieval 公开课开始系统地了解信息检索这个领域，感觉收获颇丰。周末一时兴起，上 Google Research 找到了 Google 的开山之作，近距离地感受一下 19800+ 引用量、造就如今 Google 万亿市值的这篇文章。</p>
+
 <p>本文介绍会尽可能地忠于原文，但不是完全逐字逐句的翻译。</p>
 <h2 id="简介">1. 简介</h2>
 <p>近年来，网络中的信息量和非专业的用户都在快速增长，为信息检索领域带来了新的挑战。从行为上看，人们更倾向于以门户网站，如 Yahoo，或搜索引擎为起点，利用网页间的链接来浏览所需信息。门户网站的索引来自于人工维护，聚合效果好、主观性高、维护成本高、改进速度慢，且通常不会覆盖小众话题。自动化的搜索引擎则相反，其它都满足，但聚合效果差，依赖于关键词匹配的检索方式返回的匹配项质量过低。一些广告商为了获取更多的流量，通过逆向工程来误导搜索引擎，使其结果靠前，进一步加剧问题的严重性。我们搭建了一个大型搜索引擎来当前系统的这些已知问题，它通过重度利用网页文本中的特殊结构来提供更高质量的检索结果。<strong>我们为这个系统取名为 Google，因为它是 googol (即 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex" xmlns="http://www.w3.org/2000/svg" width="4.775ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 2110.7 886" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use xlink:href="#MJX-TEX-N-31"></use><use xlink:href="#MJX-TEX-N-30" transform="translate(500, 0)"></use></g><g data-mml-node="TeXAtom" transform="translate(1000, 393.1) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><use xlink:href="#MJX-TEX-N-31"></use><use xlink:href="#MJX-TEX-N-30" transform="translate(500, 0)"></use><use xlink:href="#MJX-TEX-N-30" transform="translate(1000, 0)"></use></g></g></g></g></g></svg></mjx-container></span> ) 的常用拼写，后者的含义恰好与构建大型搜索引擎的目标体量相契合</strong>。</p>
@@ -596,80 +597,6 @@ mjx-container + br {
 </script>
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">2.</span> <span class="nav-text">1. 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络搜索引擎的扩张1994---2000"><span class="nav-number">2.1.</span> <span class="nav-text">网络搜索引擎的扩张：1994 - 2000</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#google-与网络一同扩张"><span class="nav-number">2.2.</span> <span class="nav-text">Google: 与网络一同扩张</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计目标"><span class="nav-number">2.3.</span> <span class="nav-text">设计目标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#改善检索质量"><span class="nav-number">2.3.1.</span> <span class="nav-text">改善检索质量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#推进搜索引擎的学术研究"><span class="nav-number">2.3.2.</span> <span class="nav-text">推进搜索引擎的学术研究</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统特性"><span class="nav-number">3.</span> <span class="nav-text">2. 系统特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pagerank-为网页排序"><span class="nav-number">3.1.</span> <span class="nav-text">PageRank: 为网页排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#计算"><span class="nav-number">3.1.1.</span> <span class="nav-text">计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#直觉"><span class="nav-number">3.1.2.</span> <span class="nav-text">直觉</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接文本"><span class="nav-number">3.2.</span> <span class="nav-text">链接文本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它特性"><span class="nav-number">3.3.</span> <span class="nav-text">其它特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关工作"><span class="nav-number">4.</span> <span class="nav-text">3. 相关工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#信息检索系统"><span class="nav-number">4.1.</span> <span class="nav-text">信息检索系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络数据集与控制良好的数据集的区别"><span class="nav-number">4.2.</span> <span class="nav-text">网络数据集与控制良好的数据集的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统架构"><span class="nav-number">5.</span> <span class="nav-text">4. 系统架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#google-架构总览"><span class="nav-number">5.1.</span> <span class="nav-text">Google 架构总览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#主要的数据结构"><span class="nav-number">5.2.</span> <span class="nav-text">主要的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bigfiles"><span class="nav-number">5.2.1.</span> <span class="nav-text">BigFiles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#repository"><span class="nav-number">5.2.2.</span> <span class="nav-text">Repository</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#document-index"><span class="nav-number">5.2.3.</span> <span class="nav-text">Document Index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lexicon"><span class="nav-number">5.2.4.</span> <span class="nav-text">Lexicon</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hit-lists"><span class="nav-number">5.2.5.</span> <span class="nav-text">Hit Lists</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forward-index"><span class="nav-number">5.2.6.</span> <span class="nav-text">Forward Index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#inverted-index"><span class="nav-number">5.2.7.</span> <span class="nav-text">Inverted Index</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#爬取网络数据"><span class="nav-number">5.3.</span> <span class="nav-text">爬取网络数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建网络数据索引"><span class="nav-number">5.4.</span> <span class="nav-text">构建网络数据索引</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#parsing"><span class="nav-number">5.4.0.1.</span> <span class="nav-text">1. Parsing</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#indexing-documents-into-barrels"><span class="nav-number">5.4.0.2.</span> <span class="nav-text">2. Indexing Documents into Barrels</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sorting"><span class="nav-number">5.4.0.3.</span> <span class="nav-text">3. Sorting</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#搜索"><span class="nav-number">5.5.</span> <span class="nav-text">搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#排序系统"><span class="nav-number">5.5.1.</span> <span class="nav-text">排序系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反馈"><span class="nav-number">5.5.2.</span> <span class="nav-text">反馈</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="ZhengHe"
-      src="/blog/images/avatar.jpeg">
-  <p class="site-author-name" itemprop="name">ZhengHe</p>
-  <div class="site-description" itemprop="description">郑鹤的博客</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/blog/archives/">
-        
-          <span class="site-state-item-count">30</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/blog/categories/">
-          
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/blog/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/ZhengHe-MD" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ZhengHe-MD" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:ranchardzheng@gmail.com" title="E-Mail → mailto:ranchardzheng@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-  </div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -689,7 +616,7 @@ mjx-container + br {
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
   </div>
 
         
@@ -715,7 +642,7 @@ mjx-container + br {
 <script src="/blog/js/motion.js"></script>
 
 
-<script src="/blog/js/schemes/pisces.js"></script>
+<script src="/blog/js/schemes/muse.js"></script>
 
 
 <script src="/blog/js/next-boot.js"></script>
