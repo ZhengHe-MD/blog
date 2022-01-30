@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
@@ -13,14 +14,11 @@
 <link rel="stylesheet" href="/blog/css/main.css">
 
 
-<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
-  <meta name="description" content="简介 本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。  背景 报警平台是伴鱼内部各端、应用、基础设施等服务异常状态信息的集散中心。整体流程如下图所示：  信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式路由给理应关心它的人。总体而言，路由的需求可以">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="简介 本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。  背景 报警平台是伴鱼内部各端、应用、基础设施等服务异常状态信息的集散中心。整体流程如下图所示：  信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式路由给理应关心它的人。总体而言，路由的需求可以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="报警平台的匹配器演进">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/index.html">
@@ -32,63 +30,32 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/compile-process.jpg">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/lex-yacc-process.jpg">
 <meta property="article:published_time" content="2020-05-10T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-01-30T08:12:25.229Z">
+<meta property="article:modified_time" content="2022-01-30T12:12:39.344Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg">
 
+
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: false,
-    isPost: true
-  };
-</script>
 
-  <title>报警平台的匹配器演进 | ZhengHe</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/","path":"2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/","title":"报警平台的匹配器演进"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>报警平台的匹配器演进 | ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-172943223-1');
-      }
-    </script>
-
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
 
 
 
 
 
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -210,92 +177,80 @@ mjx-container + br {
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
-    <div>
-      <a href="/blog/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">ZhengHe</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZhengHe</p>
+      <i class="logo-line"></i>
+    </a>
   </div>
 
-  <div class="site-nav-right"></div>
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
   </ul>
-
 </nav>
+
+
+
+
 </div>
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-          <div class="content">
-            
 
-  <div class="posts-expand">
-      
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -308,40 +263,39 @@ mjx-container + br {
           报警平台的匹配器演进
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-05-10 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-10T00:00:00+00:00">2020-05-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2020-05-10 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-10T00:00:00+00:00">2020-05-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -351,6 +305,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -359,8 +314,6 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <h2 id="简介">简介</h2>
 <p>本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。</p>
 
@@ -385,15 +338,15 @@ mjx-container + br {
 <li><em>Service B Panic</em>：project_source 为 web，且 project_name 为 Service B，且 error_type 为 panic</li>
 </ul>
 <p>报警平台的用户需要亲自配置部分路由和规则，能否定制一套简单、易上手的 DSL？如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB"</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB"</span><br></pre></td></tr></table></figure>
 <p>这样即使用户不是工程师，看过几个例子后也能熟练地书写匹配表达式。</p>
 <h3 id="匹配表达式定义">匹配表达式定义</h3>
 <p>匹配器表达式由原始表达式和复合表达式构成。原始表达式是最小的匹配器，有<strong>完全匹配</strong>和<strong>正则匹配</strong>两种：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 完全匹配</span><br><span class="line">project_source = "web"</span><br><span class="line"># 正则匹配</span><br><span class="line">details =~ "duplicate key when insert"</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 完全匹配</span><br><span class="line">project_source = "web"</span><br><span class="line"># 正则匹配</span><br><span class="line">details =~ "duplicate key when insert"</span><br></pre></td></tr></table></figure>
 <p>原始表达式的左手边是报警信息的标签，不带双引号；原始表达式的右手边是匹配文本，带双引号。不同的原始表达式可通过二元关系运算，AND (且) 和 OR (或) ，组合成复合表达式如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB" OR "error_type" = "panic"</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB" OR "error_type" = "panic"</span><br></pre></td></tr></table></figure>
 <p>类似于乘除之于加减，AND 的优先级大于 OR，如果要改变优先级，可通过增加括号来实现，如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND (project_name = "ServiceB" OR "error_type" = "panic")</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND (project_name = "ServiceB" OR "error_type" = "panic")</span><br></pre></td></tr></table></figure>
 <h2 id="编译过程">编译过程</h2>
 <p>一个完整的编译过程大致分三阶段：</p>
 <p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/compile-process.jpg" height="350px"></p>
@@ -432,7 +385,7 @@ mjx-container + br {
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, word := <span class="keyword">range</span> m.words {</span><br><span class="line">  <span class="keyword">switch</span> strings.ToLower(word) {</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"="</span>:</span><br><span class="line">    	leftWord, rightWord, _ := m.tryFetchBothSideWord(i)</span><br><span class="line">      m.addElement(m.buildPrimitiveMatcher(leftWord, rightWord, <span class="literal">false</span>))</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"=~"</span>:</span><br><span class="line">    	leftWord, rightWord, _ := m.tryFetchBothSideWord(i)</span><br><span class="line">    	m.addElement(m.buildPrimitiveMatcher(leftWord, rightWord, <span class="literal">true</span>))</span><br><span class="line">    <span class="comment">// deal with more cases</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <p>这部分逻辑比较简单，遇到 <code>=</code> 或者 <code>=~</code> 时看一下前后的词语，看是否能构成原始表达式。</p>
 <h3 id="buildmatcher">buildMatcher</h3>
-<p><code>buildMatcher</code> 遍历 elements 数组，构建最终的树状复合表达式，其实就是中缀表达式的计算过程，是栈的典型<a href="https://www.geeksforgeeks.org/expression-evaluation/" target="_blank" rel="noopener">应用场景</a>，利用操作符栈和操作数栈即可实现，其整体过程如下：</p>
+<p><code>buildMatcher</code> 遍历 elements 数组，构建最终的树状复合表达式，其实就是中缀表达式的计算过程，是栈的典型<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">应用场景</a>，利用操作符栈和操作数栈即可实现，其整体过程如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">  valueStack Stack</span><br><span class="line">	opStack Stack</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, element := <span class="keyword">range</span> m.elements {</span><br><span class="line">  <span class="keyword">switch</span> e := element; {</span><br><span class="line">    <span class="keyword">case</span> e == <span class="string">"("</span>:</span><br><span class="line">      opStack.Push(<span class="string">"("</span>)</span><br><span class="line">    <span class="keyword">case</span> e == <span class="string">")"</span>:</span><br><span class="line">      <span class="keyword">for</span> op := opStack.Pop(); op != <span class="string">"("</span> {</span><br><span class="line">        rhs, lhs := valueStack.Pop(), valueStack.Pop()</span><br><span class="line">        <span class="comment">// apply</span></span><br><span class="line">      }</span><br><span class="line">    <span class="comment">// operators</span></span><br><span class="line">    <span class="keyword">case</span> isOp(e):</span><br><span class="line">      currOp = e</span><br><span class="line">      <span class="keyword">for</span> prevOp := opStack.Peek(); precedence[currOp] &lt;= precedence[prevOp] {</span><br><span class="line">        opStack.Pop()</span><br><span class="line">        rhs, lhs := valueStack.Pop(), valueStack.Pop()</span><br><span class="line">        <span class="comment">// apply prevOp</span></span><br><span class="line">      }</span><br><span class="line">      opStack.Push(currOp)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      valueStack.Push(e)</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// deal with the rest valueStack and opStack</span></span><br></pre></td></tr></table></figure>
 <h3 id="mcv1-小结">MCV1 小结</h3>
 <p>MCV1 是凭借工程师本能构建的一个模块，优势就在于可以迅速地搭建原型，验证想法。从代码健壮性角度看， <code>parseToken</code> 的状态管理比较脆弱；从可读性角度看，无法从逻辑中直接看出其所支持的语法，为后期维护造成障碍；从可扩展性角度看，<code>buildMatcher</code> 目前只支持中缀表达式，如果有语法变化将整体逻辑产生较大影响；从效率角度看，编译一次表达式需要 3 次遍历，如果将 <code>toElements</code> 与 <code>buildMatcher</code> 逻辑合并可以优化到 2 次。</p>
@@ -489,24 +442,24 @@ mjx-container + br {
 <h3 id="rob-pike-style-lexer">Rob Pike Style Lexer</h3>
 <p>完成上面的工作，本可以告一段落，但有一个问题还困扰着我们：”为什么 Go 只推出了 <code>yacc</code> 的移植版本，而不顺便推出 <code>lex</code> 的移植版本？“ 几经周折找到了 Rob Pike 2011 年的一次演讲： "Lexical Scanning in Go"。在演讲中他认为 ” <code>lex</code> 生成的代码太多，过于复杂，用 Go 语言实现一个并非难事，且 Go 的 channel 能方便地实现 <code>lex</code> 和 <code>yacc</code> 的流水线协作。“ 尽管这种观点也是在为 Go 站台，我们还是决定试一试他提出的 lexical scanning 方案。</p>
 <p>词法分析的过程，就是从输入字符流起点扫描至终点的线性过程，在扫描期间，词法分析器需要正确地判断自己所处的状态，以起点为例，刚开始扫描，可能进入 <code>LABEL</code> 状态，也可能进入 <code>(</code> 状态：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">↑</span><br><span class="line">在LABEL中</span><br><span class="line"></span><br><span class="line">(labela = "a") OR labelb = "b"</span><br><span class="line">↑</span><br><span class="line">在'('中</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">↑</span><br><span class="line">在LABEL中</span><br><span class="line"></span><br><span class="line">(labela = "a") OR labelb = "b"</span><br><span class="line">↑</span><br><span class="line">在'('中</span><br></pre></td></tr></table></figure>
 <p>扫描完 <code>VALUE</code> 后，可能进入<code>结束</code>状态，也可能进入 <code>)</code> 状态或 <code>关系运算符</code> 状态：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">             ↑</span><br><span class="line">            进入[关系运算符]状态</span><br><span class="line">(labela = "a")</span><br><span class="line">             ↑</span><br><span class="line">            进入 ')' 状态</span><br><span class="line">labela = "a"</span><br><span class="line">            ↑</span><br><span class="line">           进入[结束]状态</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">             ↑</span><br><span class="line">            进入[关系运算符]状态</span><br><span class="line">(labela = "a")</span><br><span class="line">             ↑</span><br><span class="line">            进入 ')' 状态</span><br><span class="line">labela = "a"</span><br><span class="line">            ↑</span><br><span class="line">           进入[结束]状态</span><br></pre></td></tr></table></figure>
 <p>不难看出，这实际上就是一个状态机，详细的状态转移过程如下图所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># start: [开始]; leftParen: '('; label: [标签]; eq: [匹配符]; value: [文本];</span><br><span class="line"># rightParen: ')'; binaryOp: [关系运算符]; end: [结束]</span><br><span class="line">                                                +------------+</span><br><span class="line">                                                | rightParen | -------------+</span><br><span class="line">                                                +------------+              |</span><br><span class="line">                                                  ^  |                      |</span><br><span class="line">                                                  |  |                      |</span><br><span class="line">  +----------------------+                        |  ----------------+      |</span><br><span class="line">  |                      v                        |                  v      |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |  |   start   | --&gt; | label | --&gt; | eq | --&gt; |   value    | --&gt; | end |  |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |    |                 ^                        |                         |</span><br><span class="line">  |    |                 |                        |                         |</span><br><span class="line">  |    v                 |                        v                         |</span><br><span class="line">  |  +-----------+       |                      +------------+              |</span><br><span class="line">  +- | leftParen |       +--------------------- |  binaryOp  | &lt;------------+</span><br><span class="line">     +-----------+                              +------------+</span><br><span class="line">       ^                                          |</span><br><span class="line">       +------------------------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># start: [开始]; leftParen: '('; label: [标签]; eq: [匹配符]; value: [文本];</span><br><span class="line"># rightParen: ')'; binaryOp: [关系运算符]; end: [结束]</span><br><span class="line">                                                +------------+</span><br><span class="line">                                                | rightParen | -------------+</span><br><span class="line">                                                +------------+              |</span><br><span class="line">                                                  ^  |                      |</span><br><span class="line">                                                  |  |                      |</span><br><span class="line">  +----------------------+                        |  ----------------+      |</span><br><span class="line">  |                      v                        |                  v      |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |  |   start   | --&gt; | label | --&gt; | eq | --&gt; |   value    | --&gt; | end |  |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |    |                 ^                        |                         |</span><br><span class="line">  |    |                 |                        |                         |</span><br><span class="line">  |    v                 |                        v                         |</span><br><span class="line">  |  +-----------+       |                      +------------+              |</span><br><span class="line">  +- | leftParen |       +--------------------- |  binaryOp  | &lt;------------+</span><br><span class="line">     +-----------+                              +------------+</span><br><span class="line">       ^                                          |</span><br><span class="line">       +------------------------------------------+</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>接下来就需要让这个状态机动起来：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> lexer <span class="keyword">struct</span> {</span><br><span class="line">  name  <span class="keyword">string</span>    <span class="comment">// used only for error reports.</span></span><br><span class="line">  input <span class="keyword">string</span>    <span class="comment">// the string being scanned.</span></span><br><span class="line">  start <span class="keyword">int</span>       <span class="comment">// start position of this item.</span></span><br><span class="line">  pos   <span class="keyword">int</span>       <span class="comment">// current position in the input.</span></span><br><span class="line">  width <span class="keyword">int</span>       <span class="comment">// width of last rune read from input.</span></span><br><span class="line">  items <span class="keyword">chan</span> item <span class="comment">// channel of scanned items.</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// stateFn represents the state of the scanner</span></span><br><span class="line"><span class="comment">// as a function that returns the next state.</span></span><br><span class="line"><span class="keyword">type</span> stateFn <span class="function"><span class="keyword">func</span><span class="params">(*lexer)</span> <span class="title">stateFn</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *lexer)</span> <span class="title">run</span><span class="params">()</span></span> {</span><br><span class="line">  <span class="keyword">for</span> state := lexStart; state != <span class="literal">nil</span>; {</span><br><span class="line">    state = state(l)</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">close</span>(l.items)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <p>其中 <code>stateFn</code> 就是状态转移方程，约定当 <code>stateFn == nil</code> 时，状态机停止，即 <code>nil</code> 就是结束状态的转移方程。接下来只需要定义各个状态转移方程即可：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexStart</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLabel</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLeftParen</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexRightParen</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexEq</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexValue</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexBinaryOp</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br></pre></td></tr></table></figure>
 <p>每当状态即将转移时，<code>stateFn</code> 内部就会将在本状态中扫描到的词语传给 <code>item channel</code>，这个 channel 就是 lexer 与 parser 之间通信的媒介。</p>
-<p>值得一提的是，Go 的模板引擎 template，就是按照上述方式构建的，感兴趣可以阅读<a href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go" target="_blank" rel="noopener">源码</a>。</p>
+<p>值得一提的是，Go 的模板引擎 template，就是按照上述方式构建的，感兴趣可以阅读<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">源码</a>。</p>
 <h2 id="参考文献">参考文献</h2>
 <ul>
-<li>Compilers: Principles, Techniques, and Tools, <a href="https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools" target="_blank" rel="noopener">the dragon book</a></li>
-<li>GeeksforGeeks: <a href="https://www.geeksforgeeks.org/expression-evaluation/" target="_blank" rel="noopener">Expression Evaluation Problem</a></li>
-<li>Lex &amp; Yacc, <a href="http://dinosaur.compilertools.net/" target="_blank" rel="noopener">website</a>, <a href="http://www.ora.com/catalog/lex/index.html" target="_blank" rel="noopener">book</a></li>
-<li>Lexical Scanning in Go by <a href="https://en.wikipedia.org/wiki/Rob_Pike" target="_blank" rel="noopener">Rob Pike</a>, <a href="https://www.youtube.com/watch?v=HxaD_trXwRE" target="_blank" rel="noopener">video</a>, <a href="https://talks.golang.org/2011/lex.slide#1" target="_blank" rel="noopener">slides</a>, <a href="https://blog.golang.org/sydney-gtug" target="_blank" rel="noopener">go blog</a></li>
-<li>Go Template, <a href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go" target="_blank" rel="noopener">source code</a></li>
+<li>Compilers: Principles, Techniques, and Tools, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools">the dragon book</a></li>
+<li>GeeksforGeeks: <a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">Expression Evaluation Problem</a></li>
+<li>Lex &amp; Yacc, <a target="_blank" rel="noopener" href="http://dinosaur.compilertools.net/">website</a>, <a target="_blank" rel="noopener" href="http://www.ora.com/catalog/lex/index.html">book</a></li>
+<li>Lexical Scanning in Go by <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Rob_Pike">Rob Pike</a>, <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=HxaD_trXwRE">video</a>, <a target="_blank" rel="noopener" href="https://talks.golang.org/2011/lex.slide#1">slides</a>, <a target="_blank" rel="noopener" href="https://blog.golang.org/sydney-gtug">go blog</a></li>
+<li>Go Template, <a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">source code</a></li>
 </ul>
 <svg style="display: none" id="MJX-SVG-global-cache"><defs></defs></svg>
     </div>
@@ -514,134 +467,81 @@ mjx-container + br {
     
     
     
-        
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-    <div class="social-list">
+  <div class="social-list">
 
-            <div class="social-item">
-              <a target="_blank" class="social-link" href="/blog/atom.xml">
-                <span class="icon">
-                  <i class="fa fa-rss"></i>
-                </span>
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/blog/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-                <span class="label">RSS</span>
-              </a>
-            </div>
-    </div>
-  </div>
-
-
-      <footer class="post-footer">
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="prev" title="What's Really New with NewSQL (2016)">
-      <i class="fa fa-chevron-left"></i> What's Really New with NewSQL (2016)
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/" rel="next" title="The Most Beautiful Program Ever Written">
-      The Most Beautiful Program Ever Written <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let activeClass = CONFIG.comments.activeClass;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
+          <span class="label">RSS</span>
+        </a>
       </div>
-    </main>
+  </div>
+</div>
 
-    <footer class="footer">
-      <div class="footer-inner">
+
         
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="prev" title="What's Really New with NewSQL (2016)">
+                  <i class="fa fa-chevron-left"></i> What's Really New with NewSQL (2016)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/" rel="next" title="The Most Beautiful Program Ever Written">
+                  The Most Beautiful Program Ever Written <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">ZhengHe</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/blog/lib/anime.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
 
-<script src="/blog/js/utils.js"></script>
+  
 
-<script src="/blog/js/motion.js"></script>
-
-
-<script src="/blog/js/schemes/muse.js"></script>
-
-
-<script src="/blog/js/next-boot.js"></script>
 
 
 
@@ -651,100 +551,14 @@ mjx-container + br {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
   
 
-  
-      
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
 
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
 
-    
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/";
-    this.page.identifier = "2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/";
-    this.page.title = "报警平台的匹配器演进";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
 
 </body>
 </html>

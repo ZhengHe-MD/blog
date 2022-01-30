@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
@@ -13,14 +14,11 @@
 <link rel="stylesheet" href="/blog/css/main.css">
 
 
-<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
-  <meta name="description" content="最近在阅读 TiDB 源码 util&#x2F;chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)： 12345&#x2F;&#x2F; Chunk stores multiple rows of data in Apache Arrow format.&#x2F;&#x2F; See https:&#x2F;&#x2F;arrow.apache.org&#x2F;docs&#x2F;format&#x2F;Columnar.html#ph">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="最近在阅读 TiDB 源码 util&#x2F;chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)： 12345&#x2F;&#x2F; Chunk stores multiple rows of data in Apache Arrow format.&#x2F;&#x2F; See https:&#x2F;&#x2F;arrow.apache.org&#x2F;docs&#x2F;format&#x2F;Columnar.html#ph">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Apache Arrow 小结">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/index.html">
@@ -32,64 +30,33 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/experiment-1.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/experiment-2.png">
 <meta property="article:published_time" content="2020-09-20T21:14:48.000Z">
-<meta property="article:modified_time" content="2022-01-30T08:12:25.241Z">
+<meta property="article:modified_time" content="2022-01-30T12:12:39.352Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="database">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/defragmenting-data.jpg">
 
+
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: false,
-    isPost: true
-  };
-</script>
 
-  <title>Apache Arrow 小结 | ZhengHe</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/","path":"2020/09/20/apache-arrow-summary/","title":"Apache Arrow 小结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Apache Arrow 小结 | ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-172943223-1');
-      }
-    </script>
-
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
 
 
 
 
 
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -211,92 +178,80 @@ mjx-container + br {
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
-    <div>
-      <a href="/blog/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">ZhengHe</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZhengHe</p>
+      <i class="logo-line"></i>
+    </a>
   </div>
 
-  <div class="site-nav-right"></div>
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
   </ul>
-
 </nav>
+
+
+
+
 </div>
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-          <div class="content">
-            
 
-  <div class="posts-expand">
-      
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -309,40 +264,39 @@ mjx-container + br {
           Apache Arrow 小结
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-09-20 21:14:48" itemprop="dateCreated datePublished" datetime="2020-09-20T21:14:48+00:00">2020-09-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2020-09-20 21:14:48" itemprop="dateCreated datePublished" datetime="2020-09-20T21:14:48+00:00">2020-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -352,6 +306,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -360,12 +315,10 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Chunk stores multiple rows of data in Apache Arrow format.</span></span><br><span class="line"><span class="comment">// See https://arrow.apache.org/docs/format/Columnar.html#physical-memory-layout</span></span><br><span class="line"><span class="comment">// Values are appended in compact format and can be directly accessed without decoding.</span></span><br><span class="line"><span class="comment">// When the chunk is done processing, we can reuse the allocated memory by resetting it.</span></span><br><span class="line"><span class="keyword">type</span> Chunk <span class="keyword">struct</span> &#123; <span class="comment">/*...*/</span> &#125;</span><br></pre></td></tr></table></figure>
 <p>心里自然而然会产生疑问：为什么要使用这个项目规定的数据存储格式？于是在阅读完 TiDB 相关源码和单测后，顺便搜寻并浏览一些有趣的资料 (见文末参考部分)，现在将这次调研的收获小结在这篇博客中。</p>
-<a id="more"></a>
+<span id="more"></span>
 <p>本文简单地介绍一种内存列存数据格式：Apache Arrow，主要涉及的内容包括：</p>
 <ul>
 <li>Arrow 项目的来源</li>
@@ -375,7 +328,7 @@ mjx-container + br {
 <p>注：Arrow 即可以指内存列存数据格式，也可以指 Apache Arrow 项目整体，因此下文中将用 「Arrow」 表示格式本身，「Arrow 项目」表示整体项目。</p>
 <h2 id="项目简介">项目简介</h2>
 <p>现存的大数据分析系统基本都基于各自不同的内存数据结构，这就会带来一系列的重复工作：从计算引擎上看，算法必须基于项目特有的数据结构、API 与算法之间出现不必要的耦合；从数据获取上看，数据加载时必须反序列化，而每一种数据源都需要单独实现相应的加载器；从生态系统上看，跨项目、跨语言的合作无形之中被阻隔。能否减少或消除数据在不同系统间序列化、反序列化的成本？能否跨项目复用算法及 IO 工具？能否推动更广义的合作，让数据分析系统的开发者联合起来？在这样的使命驱动下，Arrow 就诞生了。</p>
-<p>与其它项目不同，Arrow 项目的草台班子由 5 个 Apache Members、6 个 PMC Chairs 和一些其它项目的 PMC 及 committer 构成，他们直接找到 ASF 董事会，征得同意后直接以顶级 Apache 项目身份启动。想了解项目的详细历史可以阅读项目 Chair，Jacques Nadeau 写的这篇<a href="https://www.dremio.com/origin-history-of-apache-arrow/" target="_blank" rel="noopener">博客</a>。另外，这张 <a href="https://docs.google.com/spreadsheets/d/1q6UqluW6SLuMKRwW2TBGBzHfYLlXYm37eKJlIxWQGQM/edit#gid=0" target="_blank" rel="noopener">google sheet</a> 记录着项目的取名过程，取名为 Arrow 的原因是："math symbol for vector. and arrows are fast. also alphabetically will show up on top." 可以说考虑得相当全面 😂。</p>
+<p>与其它项目不同，Arrow 项目的草台班子由 5 个 Apache Members、6 个 PMC Chairs 和一些其它项目的 PMC 及 committer 构成，他们直接找到 ASF 董事会，征得同意后直接以顶级 Apache 项目身份启动。想了解项目的详细历史可以阅读项目 Chair，Jacques Nadeau 写的这篇<a target="_blank" rel="noopener" href="https://www.dremio.com/origin-history-of-apache-arrow/">博客</a>。另外，这张 <a target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1q6UqluW6SLuMKRwW2TBGBzHfYLlXYm37eKJlIxWQGQM/edit#gid=0">google sheet</a> 记录着项目的取名过程，取名为 Arrow 的原因是："math symbol for vector. and arrows are fast. also alphabetically will show up on top." 可以说考虑得相当全面 😂。</p>
 <p>Arrow 的愿景是提供内存数据分析 (in-memory analytics) 的开发平台，让数据在异构大数据系统间移动、处理地更快：</p>
 <p><img src="/blog/2020/09/20/apache-arrow-summary/defragmenting-data.jpg" /></p>
 <p>项目主要由 3 部分构成：</p>
@@ -391,7 +344,7 @@ mjx-container + br {
 <li>硬件感知 (hardware-aware)</li>
 </ul>
 <h2 id="基于内存的列存格式">基于内存的列存格式</h2>
-<p>详细、准确的格式定义请阅读官方<a href="https://arrow.apache.org/docs/format/Columnar.html" target="_blank" rel="noopener">文档</a>，本节内容参考了官方文档及 Daniel Abadi 的这篇<a href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html" target="_blank" rel="noopener">博客</a>。</p>
+<p>详细、准确的格式定义请阅读官方<a target="_blank" rel="noopener" href="https://arrow.apache.org/docs/format/Columnar.html">文档</a>，本节内容参考了官方文档及 Daniel Abadi 的这篇<a target="_blank" rel="noopener" href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html">博客</a>。</p>
 <p>在实践中，工程师通常会将系统中的数据通过多个二维数据表建模，每张数据表的一行表示一个实体 (entity)，一列表示同一属性。然而，在硬件中存储器通常是一维的，即计算机程序只能线性地、沿同一方向地从内存或硬盘中读取数据，因此存储二维数据表就有两种典型方案：<strong>行存</strong>和<strong>列存</strong>。通常前者适用于 OLTP 场景，后者适用于 OLAP 场景，Arrow 是面向数据分析开发的，因此采用后者。</p>
 <p><img src="/blog/2020/09/20/apache-arrow-summary/row-col.jpg" alt="rowcol" width="600px"/></p>
 <p>任何一张数据表都可能由不类型的数据列构成。以某张用户表为例，表中可能包含如年龄 (integer)、姓名 (varchar)、出生日期 (date) 等属性。Arrow 将数据表中所有可能的列数据分成两类，定长和变长，并基于定长和变长数据类型构建出更复杂的嵌套数据类型。</p>
@@ -405,7 +358,7 @@ mjx-container + br {
 <li>null 位图 (nullBitmap)</li>
 </ul>
 <p>以 Int32 数组：<code>[1, null, 2, 4, 8]</code> 为例，它的结构如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">length: 5, nullCount: 1</span><br><span class="line">nullBitmap:</span><br><span class="line">|Byte 0 (null bitmap) | Bytes 1-63            |</span><br><span class="line">|---------------------|-----------------------|</span><br><span class="line">| 00011101            | 0 (padding)           |</span><br><span class="line">data:</span><br><span class="line">|Bytes 0-3   | Bytes 4-7   | Bytes 8-11  | Bytes 12-15 | Bytes 16-19 | Bytes 20-63 |</span><br><span class="line">|------------|-------------|-------------|-------------|-------------|-------------|</span><br><span class="line">| 1          | unspecified | 2           | 4           | 8           | unspecified |</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">length: 5, nullCount: 1</span><br><span class="line">nullBitmap:</span><br><span class="line">|Byte 0 (null bitmap) | Bytes 1-63            |</span><br><span class="line">|---------------------|-----------------------|</span><br><span class="line">| 00011101            | 0 (padding)           |</span><br><span class="line">data:</span><br><span class="line">|Bytes 0-3   | Bytes 4-7   | Bytes 8-11  | Bytes 12-15 | Bytes 16-19 | Bytes 20-63 |</span><br><span class="line">|------------|-------------|-------------|-------------|-------------|-------------|</span><br><span class="line">| 1          | unspecified | 2           | 4           | 8           | unspecified |</span><br></pre></td></tr></table></figure>
 <p>这里有一个值得关注的设计决定，无论数组中的某个元素 (cell) 是否是 null，在定长数据格式中 Arrow 都会让该元素占据规定长度的空间；另一种备选方案就是不给 null 元素分配任何空间。前者可以利用指针代数支持 O(1) 的随机访问，后者在随机访问时需要先利用 nullBitmap 计算出位移。如果是顺序访问，后者需要的内存带宽更小，性能更优，因此这里主要体现的是存储空间与随机访问性能的权衡，Arrow 选择倾向是后者。</p>
 <p>从 nullBitmap 的结构可以看出，Arrow 采用 little-endian 存储字节数据。</p>
 <h3 id="variable-width-data-types">Variable-width data types</h3>
@@ -416,9 +369,9 @@ mjx-container + br {
 <p>另一种备选方案是在 data 中利用特殊的字符分隔不同元素，在个别查询场景下，后者能取得更优的性能。如扫描字符串列中包含某两个连续字母的所有列：利用 Arrow 的格式需要频繁地访问 offsets 来遍历 data，但利用特殊分隔符的解决方案直接遍历一次 data 即可。而在其它场景下，如查询某字符串列中值和 "hello world" 相等的字符串，这时利用 offsets 能过滤掉所有长度不为 11 的列，因此利用 Arrow 的格式能获取更优的性能。</p>
 <h3 id="nested-data">Nested Data</h3>
 <p>数据处理过程中，一些复杂数据类型如 JSON、struct、union 都很受开发者欢迎，我们可以将这些数据类型归类为嵌套数据类型。Arrow 处理嵌套数据类型的方式很优雅，并未引入定长和变长数据列之外的概念，而是直接利用二者来构建。假设以一所大学的班级 (Class) 信息数据列为例，该列中有以下两条数据：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1</span><br><span class="line">Name:       Introduction to Database Systems</span><br><span class="line">Instructor: Daniel Abadi</span><br><span class="line">Students:   Alice, Bob, Charlie</span><br><span class="line">Year:       2019</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2</span><br><span class="line">Name:       Advanced Topics in Database Systems</span><br><span class="line">Instructor: Daniel Abadi</span><br><span class="line">Students:   Andrew, Beatrice</span><br><span class="line">Year:       2020</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 1</span><br><span class="line">Name:       Introduction to Database Systems</span><br><span class="line">Instructor: Daniel Abadi</span><br><span class="line">Students:   Alice, Bob, Charlie</span><br><span class="line">Year:       2019</span><br><span class="line"></span><br><span class="line">// 2</span><br><span class="line">Name:       Advanced Topics in Database Systems</span><br><span class="line">Instructor: Daniel Abadi</span><br><span class="line">Students:   Andrew, Beatrice</span><br><span class="line">Year:       2020</span><br></pre></td></tr></table></figure>
 <p>我们可以将改嵌套数据结构分成 4 列：Name、Instructor、Students 以及 Year，其中 Name 和 Instructor 是变长字符串列，Year 是定长整数列，Students 是字符串数组列 (二维数组)，它们的存储结构分别如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">Name Column:</span><br><span class="line">data:      Introduction to Database SystemsAdvanced Topics in Database Systems</span><br><span class="line">offsets:   0, 32, 67</span><br><span class="line">length:    2</span><br><span class="line">nullCount: 0</span><br><span class="line">nullBitmap: </span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Instructor Column:</span><br><span class="line">data:      Daniel AbadiDaniel Abadi</span><br><span class="line">offsets:   0, 12, 24</span><br><span class="line">length:    2</span><br><span class="line">nullCount: 0</span><br><span class="line">nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Students Column</span><br><span class="line">data:                        AliceBobCharlieAndrewBeatrice</span><br><span class="line">students offsets:            0, 5, 8, 15, 21, 29</span><br><span class="line">students length:             5</span><br><span class="line">students nullCount:          0</span><br><span class="line">students nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00011111 | 0 (padding)|</span><br><span class="line">nested student list offsets:   0, 3, 5</span><br><span class="line">nested student list length:    2</span><br><span class="line">nested student list nullCount: 0</span><br><span class="line">nested student list nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line">Year Column</span><br><span class="line">data:       2019|2019</span><br><span class="line">length:     2</span><br><span class="line">nullCount:  0</span><br><span class="line">nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">Name Column:</span><br><span class="line">data:      Introduction to Database SystemsAdvanced Topics in Database Systems</span><br><span class="line">offsets:   0, 32, 67</span><br><span class="line">length:    2</span><br><span class="line">nullCount: 0</span><br><span class="line">nullBitmap: </span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Instructor Column:</span><br><span class="line">data:      Daniel AbadiDaniel Abadi</span><br><span class="line">offsets:   0, 12, 24</span><br><span class="line">length:    2</span><br><span class="line">nullCount: 0</span><br><span class="line">nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Students Column</span><br><span class="line">data:                        AliceBobCharlieAndrewBeatrice</span><br><span class="line">students offsets:            0, 5, 8, 15, 21, 29</span><br><span class="line">students length:             5</span><br><span class="line">students nullCount:          0</span><br><span class="line">students nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00011111 | 0 (padding)|</span><br><span class="line">nested student list offsets:   0, 3, 5</span><br><span class="line">nested student list length:    2</span><br><span class="line">nested student list nullCount: 0</span><br><span class="line">nested student list nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br><span class="line"></span><br><span class="line">Year Column</span><br><span class="line">data:       2019|2019</span><br><span class="line">length:     2</span><br><span class="line">nullCount:  0</span><br><span class="line">nullBitmap:</span><br><span class="line">| Byte 0   | Bytes 1-63 |</span><br><span class="line">|----------|------------|</span><br><span class="line">| 00000011 | 0 (padding)|</span><br></pre></td></tr></table></figure>
 <p>这里的 Students 列本身就是嵌套数据结构，而外层的 Class 表包含了 Students 列，可以看出这种巧思能支持无限嵌套，是很值得称赞的设计。</p>
 <h3 id="buffer-alignment-and-padding">Buffer alignment and padding</h3>
 <p>Arrow 列存格式的所有实现都需要考虑数据内存地址的对齐 (alignment) 以及填充 (padding)，通常推荐将地址按 8 或 64 字节对齐，若不足 8 或 64 字节的整数倍则按需补全。这主要是为了利用现代 CPU 的 SIMD 指令，将计算向量化。</p>
@@ -429,10 +382,10 @@ mjx-container + br {
 <li>存储格式：行存 (row-wise/row-based)、列存 (column-wise/column-based/columnar)</li>
 <li>主要存储器：面向磁盘 (disk-oriented)、面向内存 (memory-oriented)</li>
 </ul>
-<p>尽管三者都采用列存格式，但 Parquet 和 ORC 是面向磁盘设计，而 Arrow 是面向内存设计。为了理解面向磁盘设计与面向内存设计的区别，我们来看 Daniel Abadi 做的一个<a href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html" target="_blank" rel="noopener">实验</a>。</p>
+<p>尽管三者都采用列存格式，但 Parquet 和 ORC 是面向磁盘设计，而 Arrow 是面向内存设计。为了理解面向磁盘设计与面向内存设计的区别，我们来看 Daniel Abadi 做的一个<a target="_blank" rel="noopener" href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html">实验</a>。</p>
 <h3 id="daniel-abadi-的实验">Daniel Abadi 的实验</h3>
 <p>在一台 Amazon EC2 的 t2.medium 实例上，创建一张包含 60,000,000 行数据的表，每行包含 6 个属性，每个属性值都是 int32 类型的数据，因此每行需要 24 字节空间，整张表占用约 1.5GB 空间。我们将这张表分别用行存格式和列存格式保存一份，然后执行一个简单的查询：在第一列中查找与特定值相等的数据，即：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> a <span class="keyword">FROM</span> t <span class="keyword">WHERE</span> t.a = <span class="number">477638700</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> a <span class="keyword">FROM</span> t <span class="keyword">WHERE</span> t.a <span class="operator">=</span> <span class="number">477638700</span>;</span><br></pre></td></tr></table></figure>
 <p>不论是行存还是列存版本，CPU 的工作都是获取整数与目标整数进行比较。但在行存版本中执行该查询需要扫描每行，即全部 1.5GB 数据，而在列存版本中执行该查询只需扫描第一列，即 0.25GB 数据，因此后者的执行效率理论上应该是前者的 6 倍。然而，实际的结果如下所示：</p>
 <p><img src="/blog/2020/09/20/apache-arrow-summary/experiment-1.png" /></p>
 <p>列存版本与行存版本的性能竟然相差无几！原因在于实验执行时关闭了所有 CPU 优化 (vectorization/SIMD processing)，使得该查询的瓶颈出现在 CPU 处理上。我们来一起分析一下其中的原因：根据经验，从内存扫描数据到 CPU 中的吞吐能达到 30GB/s，现代 CPU 的处理频率能达到 3GHz，即每秒 30 亿 CPU指令，因此即便处理器可以在一个 CPU 周期执行 32 位整数比较，它的吞吐最多为 12 GB/s，远远小于内存输送数据的吞吐。因此不论是行存还是列存，从内存中输送 0.25GB 还是 1.5GB 数据到 CPU 中，都不会对结果有大的影响。</p>
@@ -447,13 +400,13 @@ mjx-container + br {
 <p>TiDB 本身就是基于内存的计算引擎，那么既然 TiDB 有意向 HTAP 方向发展，AP 场景自然也是它的目标场景。既然 Arrow 的列存格式是这个领域的事实标准，那么拥抱行业标准也就是一个不难做的决定了！</p>
 <h2 id="参考">参考</h2>
 <ul>
-<li><a href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html" target="_blank" rel="noopener">DBMS Musings: Apache Arrow vs. Parquet and ORC: Do we really need a third Apache project for columnar data representation?</a></li>
-<li><a href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html" target="_blank" rel="noopener">DBMS Musings: An analysis of the strengths and weaknesses of Apache Arrow</a></li>
-<li><a href="https://www.dremio.com/origin-history-of-apache-arrow/" target="_blank" rel="noopener">Dremio blog: The Origin &amp; History of Apache Arrow</a></li>
-<li><a href="https://www.youtube.com/watch?v=fyj4FyH3XdU" target="_blank" rel="noopener">ACM: Apache Arrow and the Future of Data Frames</a>, <a href="https://learning.acm.org/binaries/content/assets/leaning-center/webinar-slides/2020/wesmckinney_techtalk_slides.pdf" target="_blank" rel="noopener">slides</a></li>
-<li><a href="https://arrow.apache.org/docs/" target="_blank" rel="noopener">Apache Arrow: official docs</a>, <a href="https://arrow.apache.org/committers/" target="_blank" rel="noopener">committers</a></li>
-<li><a href="http://www.vldb.org/pvldb/vol13/p3072-huang.pdf" target="_blank" rel="noopener">TiDB: A Raft-based HTAP Database</a></li>
-<li><a href="https://pingcap.com/blog-cn/tidb-source-code-reading-10/" target="_blank" rel="noopener">TiDB 源码阅读系列文章 (十) Chunk 和执行框架简介</a></li>
+<li><a target="_blank" rel="noopener" href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html">DBMS Musings: Apache Arrow vs. Parquet and ORC: Do we really need a third Apache project for columnar data representation?</a></li>
+<li><a target="_blank" rel="noopener" href="http://dbmsmusings.blogspot.com/2017/10/apache-arrow-vs-parquet-and-orc-do-we.html">DBMS Musings: An analysis of the strengths and weaknesses of Apache Arrow</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.dremio.com/origin-history-of-apache-arrow/">Dremio blog: The Origin &amp; History of Apache Arrow</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=fyj4FyH3XdU">ACM: Apache Arrow and the Future of Data Frames</a>, <a target="_blank" rel="noopener" href="https://learning.acm.org/binaries/content/assets/leaning-center/webinar-slides/2020/wesmckinney_techtalk_slides.pdf">slides</a></li>
+<li><a target="_blank" rel="noopener" href="https://arrow.apache.org/docs/">Apache Arrow: official docs</a>, <a target="_blank" rel="noopener" href="https://arrow.apache.org/committers/">committers</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.vldb.org/pvldb/vol13/p3072-huang.pdf">TiDB: A Raft-based HTAP Database</a></li>
+<li><a target="_blank" rel="noopener" href="https://pingcap.com/blog-cn/tidb-source-code-reading-10/">TiDB 源码阅读系列文章 (十) Chunk 和执行框架简介</a></li>
 </ul>
 
     </div>
@@ -461,137 +414,84 @@ mjx-container + br {
     
     
     
-        
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-    <div class="social-list">
+  <div class="social-list">
 
-            <div class="social-item">
-              <a target="_blank" class="social-link" href="/blog/atom.xml">
-                <span class="icon">
-                  <i class="fa fa-rss"></i>
-                </span>
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/blog/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-                <span class="label">RSS</span>
-              </a>
-            </div>
-    </div>
+          <span class="label">RSS</span>
+        </a>
+      </div>
   </div>
+</div>
 
-
-      <footer class="post-footer">
           <div class="post-tags">
               <a href="/blog/tags/database/" rel="tag"># database</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/" rel="prev" title="The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)">
-      <i class="fa fa-chevron-left"></i> The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/blog/2020/10/05/Go-Error-Handling-Research/" rel="next" title="Go Error Handling 方案调研">
-      Go Error Handling 方案调研 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/" rel="prev" title="The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)">
+                  <i class="fa fa-chevron-left"></i> The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2020/10/05/Go-Error-Handling-Research/" rel="next" title="Go Error Handling 方案调研">
+                  Go Error Handling 方案调研 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
           </div>
-          
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
     
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
   </div>
   
+</div>
+  </main>
 
-<script>
-  window.addEventListener('tabs:register', () => {
-    let activeClass = CONFIG.comments.activeClass;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
+  <footer class="footer">
+    <div class="footer-inner">
 
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">ZhengHe</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/blog/lib/anime.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
 
-<script src="/blog/js/utils.js"></script>
+  
 
-<script src="/blog/js/motion.js"></script>
-
-
-<script src="/blog/js/schemes/muse.js"></script>
-
-
-<script src="/blog/js/next-boot.js"></script>
 
 
 
@@ -601,53 +501,14 @@ mjx-container + br {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
   
 
-  
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
 
-  
 
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/";
-    this.page.identifier = "2020/09/20/apache-arrow-summary/";
-    this.page.title = "Apache Arrow 小结";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
 
 </body>
 </html>

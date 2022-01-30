@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
@@ -13,19 +14,16 @@
 <link rel="stylesheet" href="/blog/css/main.css">
 
 
-<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
-  <meta name="description" content="此文同时发表在伴鱼技术博客上  在 理论篇 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：  内部基础设施无需做跨语言支持 技术选型会有轻微的语言倾向">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="此文同时发表在伴鱼技术博客上  在 理论篇 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：  内部基础设施无需做跨语言支持 技术选型会有轻微的语言倾向   1. 早期实践 1.1 对接 Jaeger 2019 年，公司内部的微服">
 <meta property="og:type" content="article">
 <meta property="og:title" content="调用链追踪系统在伴鱼：实践篇">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="此文同时发表在伴鱼技术博客上  在 理论篇 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：  内部基础设施无需做跨语言支持 技术选型会有轻微的语言倾向">
+<meta property="og:description" content="此文同时发表在伴鱼技术博客上  在 理论篇 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：  内部基础设施无需做跨语言支持 技术选型会有轻微的语言倾向   1. 早期实践 1.1 对接 Jaeger 2019 年，公司内部的微服">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/distributed-tracing-v1.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/open-telemetry-collector-architecture.png">
@@ -35,63 +33,32 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/tailsamplingprocessor-ticker.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/span-distribution.png">
 <meta property="article:published_time" content="2021-03-04T17:03:51.000Z">
-<meta property="article:modified_time" content="2022-01-30T08:12:25.265Z">
+<meta property="article:modified_time" content="2022-01-30T12:12:39.376Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/distributed-tracing-v1.png">
 
+
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: false,
-    isPost: true
-  };
-</script>
 
-  <title>调用链追踪系统在伴鱼：实践篇 | ZhengHe</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/","path":"2021/03/04/implementing-tail-based-sampling/","title":"调用链追踪系统在伴鱼：实践篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>调用链追踪系统在伴鱼：实践篇 | ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-172943223-1');
-      }
-    </script>
-
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
 
 
 
 
 
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -213,92 +180,80 @@ mjx-container + br {
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
-    <div>
-      <a href="/blog/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">ZhengHe</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZhengHe</p>
+      <i class="logo-line"></i>
+    </a>
   </div>
 
-  <div class="site-nav-right"></div>
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
   </ul>
-
 </nav>
+
+
+
+
 </div>
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-          <div class="content">
-            
 
-  <div class="posts-expand">
-      
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -311,40 +266,39 @@ mjx-container + br {
           调用链追踪系统在伴鱼：实践篇
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-04 17:03:51" itemprop="dateCreated datePublished" datetime="2021-03-04T17:03:51+00:00">2021-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2021-03-04 17:03:51" itemprop="dateCreated datePublished" datetime="2021-03-04T17:03:51+00:00">2021-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -354,6 +308,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -362,36 +317,34 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <blockquote>
-<p>此文同时发表在<a href="https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/" target="_blank" rel="noopener">伴鱼技术博客</a>上</p>
+<p>此文同时发表在<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/">伴鱼技术博客</a>上</p>
 </blockquote>
 <p>在 <a href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">理论篇</a> 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：</p>
 <ol type="1">
 <li>内部基础设施无需做跨语言支持</li>
 <li>技术选型会有轻微的语言倾向</li>
 </ol>
-<a id="more"></a>
+<span id="more"></span>
 <h2 id="早期实践">1. 早期实践</h2>
 <h3 id="对接-jaeger">1.1 对接 Jaeger</h3>
-<p>2019 年，公司内部的微服务数量逐步增加，调用关系日趋复杂，工程师做性能分析、问题排查的难度变大。这时亟需一套调用链追踪系统帮助我们增强对服务端全貌的了解。经过调研后，我们决定采用同样基于 Go 语言搭建的、由 CNCF 孵化的项目 <a href="https://www.jaegertracing.io/" target="_blank" rel="noopener">Jaeger</a>。当时，服务的开发和治理都尚未引入 <code>context</code>，不论进程内部调用还是跨进程调用，都没有上下文传递。因此早期引入调用链追踪的工作重心就落在了服务及服务治理框架的改造，包括：</p>
+<p>2019 年，公司内部的微服务数量逐步增加，调用关系日趋复杂，工程师做性能分析、问题排查的难度变大。这时亟需一套调用链追踪系统帮助我们增强对服务端全貌的了解。经过调研后，我们决定采用同样基于 Go 语言搭建的、由 CNCF 孵化的项目 <a target="_blank" rel="noopener" href="https://www.jaegertracing.io/">Jaeger</a>。当时，服务的开发和治理都尚未引入 <code>context</code>，不论进程内部调用还是跨进程调用，都没有上下文传递。因此早期引入调用链追踪的工作重心就落在了服务及服务治理框架的改造，包括：</p>
 <ul>
 <li>在 HTTP、Thrift 和 gRPC 的服务端和客户端注入上下文信息</li>
 <li>在数据库、缓存、消息队列的接入点上埋点</li>
 <li>快速往既有项目仓库中注入 <code>context</code> 的命令行工具</li>
 </ul>
-<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a href="https://www.jaegertracing.io/docs/1.22/architecture/" target="_blank" rel="noopener"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。</p>
+<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a target="_blank" rel="noopener" href="https://www.jaegertracing.io/docs/1.22/architecture/"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。</p>
 <p>下图是第一版调用链追踪系统的数据上报通路示意图。服务运行在容器中，通过 opentracing 的 sdk 埋点，Jaeger 的 go-sdk 上报到宿主机上的 Jaeger-agent，后者再将数据进一步上报到 Jaeger-collector，最终将调用链数据写入 ES，建立索引，即图中的 Jaeger backends。</p>
 <p><img src="./distributed-tracing-v1.png" alt="distributed-tracing-v1" style="zoom:50%;" /></p>
 <h3 id="遇到的问题">1.2 遇到的问题</h3>
-<p>在 <a href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/" target="_blank" rel="noopener">理论篇</a> 中，我们介绍过 Jaeger 支持三种采样方式：</p>
+<p>在 <a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/">理论篇</a> 中，我们介绍过 Jaeger 支持三种采样方式：</p>
 <ul>
 <li>Const：要么全采样，要么不采样</li>
 <li>Probabilistic：按固定概率采样</li>
 <li>Rate Limiting：限流采样，即保证每个进程在固定时间内最多采 k 个</li>
 </ul>
-<p>这些采样方式都属于头部连贯采样 (head-based coherent sampling)，我们在 <a href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/" target="_blank" rel="noopener">理论篇</a> 中曾讨论过其优劣势。伴鱼的生产环境中使用的是限流采样策略：每个进程每秒最多采 1 条 trace。这种策略虽然很节省资源，但其缺点在一次次线上问题排查中逐渐暴露：</p>
+<p>这些采样方式都属于头部连贯采样 (head-based coherent sampling)，我们在 <a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/">理论篇</a> 中曾讨论过其优劣势。伴鱼的生产环境中使用的是限流采样策略：每个进程每秒最多采 1 条 trace。这种策略虽然很节省资源，但其缺点在一次次线上问题排查中逐渐暴露：</p>
 <ol type="1">
 <li>一个进程中包含多个接口：不论按固定概率采样还是限流采样，都会导致<strong>小流量接口一直采集不到调用链数据而饿死 (starving)</strong></li>
 <li>线上服务出错是小概率事件，导致出错的请求被采中的概率更小，就导致<strong>采到的调用链信息量不大，引发问题的调用链却丢失</strong>的问题</li>
@@ -400,9 +353,9 @@ mjx-container + br {
 <h3 id="使用场景">2.1 使用场景</h3>
 <p>2020 年，我们不断收到业务研发的反馈：<strong>能不能全量采集 trace？</strong></p>
 <p>这促使我们开始重新思考如何改进调用链追踪系统。我们做了一个简单的容量预估：目前 Jaeger 每天写入 ES 的数据量接近 100GB/天，如果要全量采集 trace 数据，保守假设平均每个 HTTP API 服务的总 QPS 为 100，那么完整存下全量数据需要 10TB/天；乐观假设 100 名服务器研发每人每天查看 1 条 trace，每条 trace 的平均大小为 1KB，则整体信噪比千万分之一。可以看出，这件事情本身的 ROI 很低，考虑到未来业务会持续增长，存储这些数据的价值也会继续降低，因此全量采集的方案被放弃。退一步想：全量采集真的是本质需求吗？实际上并非如此，我们想要的其实是<strong>「有意思」的 trace 全采，「没意思」的 trace 不采</strong>。</p>
-<p>根据 <a href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/" target="_blank" rel="noopener">理论篇</a> 中介绍的应用场景，实际上第一版调用链追踪系统只支持了稳态分析，而业务研发亟需的是异常检测。要同时支持这两种场景，我们必须借助尾部连贯采样 (tail-based coherent sampling)。相对于头部连贯采样在第一个 span 处就做出是否采样的决定，尾部连贯采样可以让我们在获取 (接近) 完整的 trace 信息后再做出判断。理想情况下，只要能合理地制定采样的判断逻辑，我们的调用链追踪系统就能做到「有意思」的 trace 全采，「没意思」的 trace 不采。</p>
+<p>根据 <a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/12/29/design-dimensions-of-tracing-systems/">理论篇</a> 中介绍的应用场景，实际上第一版调用链追踪系统只支持了稳态分析，而业务研发亟需的是异常检测。要同时支持这两种场景，我们必须借助尾部连贯采样 (tail-based coherent sampling)。相对于头部连贯采样在第一个 span 处就做出是否采样的决定，尾部连贯采样可以让我们在获取 (接近) 完整的 trace 信息后再做出判断。理想情况下，只要能合理地制定采样的判断逻辑，我们的调用链追踪系统就能做到「有意思」的 trace 全采，「没意思」的 trace 不采。</p>
 <h3 id="架构设计">2.2 架构设计</h3>
-<p>Jaeger 团队从 2017 年就开始<a href="https://github.com/jaegertracing/jaeger/issues/425" target="_blank" rel="noopener">讨论</a>引入 tail-based sampling 的可能性，但至今未有定论。在一次与 Jaeger 工程师 <a href="https://github.com/jpkrohling" target="_blank" rel="noopener">jpkrohling</a> 的一对一沟通中，对方也证实了目前 Jaeger 尚没有相关的支持计划。因此，我们不得不另辟蹊径。经过一番调研，我们找到了刚刚进驻 CNCF SandBox 的 <a href="https://github.com/open-telemetry" target="_blank" rel="noopener">OpenTelemetry</a>，它的 <a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" rel="noopener">opentelemetry-collector</a> 子项目恰好能支持我们在现有架构上引入尾部连贯采样。</p>
+<p>Jaeger 团队从 2017 年就开始<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger/issues/425">讨论</a>引入 tail-based sampling 的可能性，但至今未有定论。在一次与 Jaeger 工程师 <a target="_blank" rel="noopener" href="https://github.com/jpkrohling">jpkrohling</a> 的一对一沟通中，对方也证实了目前 Jaeger 尚没有相关的支持计划。因此，我们不得不另辟蹊径。经过一番调研，我们找到了刚刚进驻 CNCF SandBox 的 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry">OpenTelemetry</a>，它的 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector">opentelemetry-collector</a> 子项目恰好能支持我们在现有架构上引入尾部连贯采样。</p>
 <h4 id="opentelemetry-collector">2.2.1 OpenTelemetry Collector</h4>
 <p>整个 OpenTelemetry 项目目的在于统一市面上可观测性数据 (telemetry data) 的标准，同时提供推动这些标准实施的组件和工具。opentelemetry-collector 就是这个生态中的一个重要组件，它的架构图如下：</p>
 <p><img src="./open-telemetry-collector-architecture.png" alt="otelcol-architecture" style="zoom:40%;" /></p>
@@ -414,14 +367,14 @@ mjx-container + br {
 <li>Extensions：提供一些核心流程之外的插件，如分析性能问题的 pprof，健康监测的 health 等等</li>
 </ul>
 <p>利用不同的 Receivers、Processors、Exporters，我们可以组装出一个或多个 Pipelines。</p>
-<p>opentelemetry-collector 项目被拆成两部分：主项目 <a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" rel="noopener">opentelemetry-collector</a> 和社区贡献项目 <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib" target="_blank" rel="noopener">opentelemetry-collector-contrib</a>，前者负责管理核心逻辑、数据结构以及通用的 Receivers、Processors、Exporters、Extensions 实现，后者则负责接收一些社区贡献的组件，当然贡献者主要都来自于可观测性 SaaS 解决方案供应商，如 DataDog、Splunk、LightStep 以及一些公有云厂商。opentelemtry-collector 项目的插件化管理方式，使得<strong>定制化开发 Receiver、Processor、Exporter 的成本很低</strong>，我们在做概念验证时，基本可以在一两个小时内开发并测试完毕一个组件。除此之外，opentelemetry-collector-contrib 还提供了开箱即用的 <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor" target="_blank" rel="noopener">tailsamplingprocessor</a>。</p>
-<p>由于 opentelemetry-collector 是 OpenTelemetry 团队推动标准实施的重要组件，且 OpenTelemetry 本身并没有提供独立的数据存储、索引实现的计划，因此它在与市面上流行的调用链追踪框架，如 Zipkin、Jaeger、OpenCensus，的兼容性上下了很大功夫。通过 Receivers 和 Exporters 的使用，我们可以用它替换 jaeger-agent，也可以放在 jaeger-agent 与 jaeger-collector 之间，必要时还可以在 jaeger-agent 和 jaeger-collector 之间部署多层 collectors。除此之外，如果有一天想换掉 jaeger-backend，比如新发布的 <a href="https://grafana.com/oss/tempo/" target="_blank" rel="noopener">Grafana Tempo</a>，我们也能很轻松的完成，并且利用多个 Pipelines 或一个 Pipeline 多个 Exporters 灰度上线，逐步替换。</p>
+<p>opentelemetry-collector 项目被拆成两部分：主项目 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector">opentelemetry-collector</a> 和社区贡献项目 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib">opentelemetry-collector-contrib</a>，前者负责管理核心逻辑、数据结构以及通用的 Receivers、Processors、Exporters、Extensions 实现，后者则负责接收一些社区贡献的组件，当然贡献者主要都来自于可观测性 SaaS 解决方案供应商，如 DataDog、Splunk、LightStep 以及一些公有云厂商。opentelemtry-collector 项目的插件化管理方式，使得<strong>定制化开发 Receiver、Processor、Exporter 的成本很低</strong>，我们在做概念验证时，基本可以在一两个小时内开发并测试完毕一个组件。除此之外，opentelemetry-collector-contrib 还提供了开箱即用的 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor">tailsamplingprocessor</a>。</p>
+<p>由于 opentelemetry-collector 是 OpenTelemetry 团队推动标准实施的重要组件，且 OpenTelemetry 本身并没有提供独立的数据存储、索引实现的计划，因此它在与市面上流行的调用链追踪框架，如 Zipkin、Jaeger、OpenCensus，的兼容性上下了很大功夫。通过 Receivers 和 Exporters 的使用，我们可以用它替换 jaeger-agent，也可以放在 jaeger-agent 与 jaeger-collector 之间，必要时还可以在 jaeger-agent 和 jaeger-collector 之间部署多层 collectors。除此之外，如果有一天想换掉 jaeger-backend，比如新发布的 <a target="_blank" rel="noopener" href="https://grafana.com/oss/tempo/">Grafana Tempo</a>，我们也能很轻松的完成，并且利用多个 Pipelines 或一个 Pipeline 多个 Exporters 灰度上线，逐步替换。</p>
 <h4 id="上报通路">2.2.2 上报通路</h4>
 <p>基于以上的调研和现有的架构，我们设计了第二版调用链追踪的架构，如下图所示：</p>
 <p><img src="./distributed-tracing-v2.png" alt="distributed-tracing-v2" style="zoom:45%;" /></p>
 <p>用一组 opentelemetry-collector 替换 jaeger-agent，即图中的 otel-agent；同时在 otel-agent 与 jaeger-collector 之间增加另一组 opentelemetry-collector，即图中的 otel-collector。otel-agent 收集宿主机上不同服务上报的 trace 数据，打包批量发送给 otel-collector，后者负责做尾部连贯采样，将<strong>「有意思」</strong>的 trace 继续输出到原始架构中的 jaeger-collector，后者负责将数据投入 ElasticSearch 中，建立索引。</p>
 <p>这里还有一个问题需要解决：整个架构要做到高可用，势必要部署多个 otel-collector 实例，如果使用简单的负载均衡策略，不同 otel-agents、以及单个 otel-agent 不同时刻上报的数据，可能被随机上报到某个 otel-collector 实例，这就意味着，同一个 trace 的不同 spans 无法集中到同一个 otel-collector 实例上，既会导致同一个 trace 的不同 spans 的决定不一致，即不是连贯采样；也会导致尾部采样时提供判断的数据不全。解决方案很简单：<strong>让 otel-agent 按照 traceID 做负载均衡</strong>。</p>
-<p>在调研阶段我们正好看到 opentelemetry-collector 社区也有此支持<a href="https://github.com/open-telemetry/opentelemetry-collector/issues/1724" target="_blank" rel="noopener">计划</a>，并且前面提到的工程师 jpkrohling 正在通过增加 <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/loadbalancingexporter" target="_blank" rel="noopener">loadbalancingexporter</a> 解决它，虽然直接使用 bleeding edge 的版本有一定的风险，我们还是决定尝试。在概念验证阶段，我们也的确发现了新功能的若干问题，但通过反馈 (<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1621" target="_blank" rel="noopener">#1621</a>) 和贡献 (<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1677" target="_blank" rel="noopener">#1677</a>、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1690" target="_blank" rel="noopener">#1690</a>) 的方式一一解决，最终获得了可以按预期执行尾部连贯采样的调用链追踪系统。</p>
+<p>在调研阶段我们正好看到 opentelemetry-collector 社区也有此支持<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector/issues/1724">计划</a>，并且前面提到的工程师 jpkrohling 正在通过增加 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/loadbalancingexporter">loadbalancingexporter</a> 解决它，虽然直接使用 bleeding edge 的版本有一定的风险，我们还是决定尝试。在概念验证阶段，我们也的确发现了新功能的若干问题，但通过反馈 (<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1621">#1621</a>) 和贡献 (<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1677">#1677</a>、<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/1690">#1690</a>) 的方式一一解决，最终获得了可以按预期执行尾部连贯采样的调用链追踪系统。</p>
 <h3 id="采样规则">2.3 采样规则</h3>
 <p>尾部连贯采样的数据通路已经准备就绪，下一步就是确定和实施采样规则。</p>
 <h4 id="有意思的调用链">2.3.1 「有意思」的调用链</h4>
@@ -434,7 +387,7 @@ mjx-container + br {
 <p>满足任意条件，就认为这个调用链「有意思」。在伴鱼，只要服务打印了 ERROR 级别的日志就会触发报警，研发人员就会收到 im 消息或电话报警，如果能保证触发报警的调用链数据必采，研发人员的排障体验就会有很大的提升；我们的 DBA 团队认为超过 200ms 的查询请求都被判定为慢查询，如果能保证这些请求的调用链必采，就能大大方便研发排查导致慢查询的请求；对于在线服务来说，时延过高会令用户体验下降，但具体高到什么程度会引发明显的体验下降我们暂时没有数据支撑，因此先配置为 1s，支持随时修改阈值。</p>
 <p>当然，以上条件并不绝对，我们完全可以在之后的实践中根据反馈调整、新增规则，如单个请求引起的数据库、缓存查询次数超过某阈值等。</p>
 <h4 id="采样流水线">2.3.2 采样流水线</h4>
-<p>在第二版系统中，我们期望同时支持稳态分析与异常检测，因此采样过程既要按概率或限流方式采集一部分 trace，也需要按上文拟定的「有意思」规则采集令一部分 trace。截止到本文撰写前，<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor" target="_blank" rel="noopener">tailsamplingprocessor</a> 支持 4 种策略：</p>
+<p>在第二版系统中，我们期望同时支持稳态分析与异常检测，因此采样过程既要按概率或限流方式采集一部分 trace，也需要按上文拟定的「有意思」规则采集令一部分 trace。截止到本文撰写前，<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor">tailsamplingprocessor</a> 支持 4 种策略：</p>
 <ul>
 <li><code>always_sample</code>：全采样</li>
 <li><code>numeric_attribute</code>：某数值属性位于 <code>[min_value, max_value]</code> 之间</li>
@@ -447,14 +400,14 @@ mjx-container + br {
 <p>经过再三分析，我们最终决定利用 Processors 的链式结构，组合多个 Processor 完成采样，流水线如下图所示：</p>
 <p><img src="./sampling-pipeline.png" alt="sampling-pipeline" style="zoom:50%;" /></p>
 <p>其中 <code>probattr</code> 负责在 trace 级别按概率抽样，<code>anomaly</code> 负责分析每个 trace 是否符合「有意思」的规则，如果命中二者之一，trace 就会被打上标记，即 <code>sampling.priority</code>。最后在 <code>tailsamplingprocessor</code> 上配置一条规则即可，如下所示：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tail_sampling:</span></span><br><span class="line">   <span class="attr">policies:</span></span><br><span class="line">     <span class="string">[</span></span><br><span class="line">       <span class="string">&#123;</span></span><br><span class="line">         <span class="attr">name:</span> <span class="string">sample_with_high_priority,</span></span><br><span class="line">         <span class="attr">type:</span> <span class="string">numeric_attribute,</span></span><br><span class="line">         <span class="attr">numeric_attribute:</span> <span class="string">&#123;</span> <span class="attr">key:</span> <span class="string">"sampling.priority"</span><span class="string">,</span> <span class="attr">min_value:</span> <span class="number">1</span><span class="string">,</span> <span class="attr">max_value:</span> <span class="number">1</span> <span class="string">&#125;</span></span><br><span class="line">       <span class="string">&#125;</span></span><br><span class="line">     <span class="string">]</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">tail_sampling:</span></span><br><span class="line">   <span class="attr">policies:</span></span><br><span class="line">     [</span><br><span class="line">       &#123;</span><br><span class="line">         <span class="attr">name:</span> <span class="string">sample_with_high_priority</span>,</span><br><span class="line">         <span class="attr">type:</span> <span class="string">numeric_attribute</span>,</span><br><span class="line">         <span class="attr">numeric_attribute:</span> &#123; <span class="attr">key:</span> <span class="string">&quot;sampling.priority&quot;</span>, <span class="attr">min_value:</span> <span class="number">1</span>, <span class="attr">max_value:</span> <span class="number">1</span> &#125;</span><br><span class="line">       &#125;</span><br><span class="line">     ]</span><br></pre></td></tr></table></figure>
 <p>这里 <code>sampling.priority</code> 是整数类型，当前取值只有 0 和 1。按上面的配置，所以 <code>sampling.priority = 1</code> 的trace 都会被采集。后期可以增加更多的采集优先级，在必要的时候可以多采样 (upsampling) 或降采样 (downsampling)。</p>
 <h2 id="部署实施">3. 部署实施</h2>
 <p>采样规则确立后，整个解决方案就已跑通，下一步就是进入部署实施阶段。</p>
 <h3 id="上线准备">3.1 上线准备</h3>
 <h4 id="基础库改造">3.1.1 基础库改造</h4>
 <h5 id="动态更新-tracer">动态更新 Tracer</h5>
-<p>在第一版系统中，每个进程启动时会从 <a href="https://github.com/ctripcorp/apollo" target="_blank" rel="noopener">apollo</a> 上获取采样配置，传递给 Jaeger sdk，后者利用配置初始化 GlobalTracer。GlobalTracer 会在 trace 的第一个 span 出现时，决定是否采集，并把这个决定传递下去，即头部连贯采样。在实施新架构时，我们需要 Jaeger sdk 将所有 trace 数据尽数上报。为了让这个过程更加平滑，我们对 Jaeger sdk 配置做出两方面改造：</p>
+<p>在第一版系统中，每个进程启动时会从 <a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo">apollo</a> 上获取采样配置，传递给 Jaeger sdk，后者利用配置初始化 GlobalTracer。GlobalTracer 会在 trace 的第一个 span 出现时，决定是否采集，并把这个决定传递下去，即头部连贯采样。在实施新架构时，我们需要 Jaeger sdk 将所有 trace 数据尽数上报。为了让这个过程更加平滑，我们对 Jaeger sdk 配置做出两方面改造：</p>
 <ul>
 <li>支持对每个服务下发不同的采样配置，方便灰度发布</li>
 <li>支持动态更新采样配置，使采样策略配置不依赖发布</li>
@@ -462,11 +415,11 @@ mjx-container + br {
 <h5 id="日志库改造">日志库改造</h5>
 <p>为了保证打印过 ERROR 级别日志的调用链必采，我们也在通用日志库的相应位置上给 span 打上 error 标签。</p>
 <h4 id="监控看板配置">3.1.2 监控看板配置</h4>
-<p>opentelemetry-collector 内部利用 OpenCensus sdk 埋了很多有用的监控指标，并按照 <a href="https://github.com/OpenObservability/OpenMetrics/blob/master/specification/OpenMetrics.md" target="_blank" rel="noopener">Open Metrics</a> 规范暴露数据。因为指标数量并不多，我们将大多数指标都配置了到 Grafana 看板中，包括：</p>
+<p>opentelemetry-collector 内部利用 OpenCensus sdk 埋了很多有用的监控指标，并按照 <a target="_blank" rel="noopener" href="https://github.com/OpenObservability/OpenMetrics/blob/master/specification/OpenMetrics.md">Open Metrics</a> 规范暴露数据。因为指标数量并不多，我们将大多数指标都配置了到 Grafana 看板中，包括：</p>
 <ul>
-<li>Receivers：<a href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_receiver.go" target="_blank" rel="noopener">obsreport_receiver</a></li>
-<li>Processors： <a href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_processor.go" target="_blank" rel="noopener">obsreport_processor</a>, <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/tailsamplingprocessor/metrics.go" target="_blank" rel="noopener">tailsamplingprocessor</a></li>
-<li>Exporters：<a href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_exporter.go" target="_blank" rel="noopener">obsreport_exporter</a></li>
+<li>Receivers：<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_receiver.go">obsreport_receiver</a></li>
+<li>Processors： <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_processor.go">obsreport_processor</a>, <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/tailsamplingprocessor/metrics.go">tailsamplingprocessor</a></li>
+<li>Exporters：<a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector/blob/68c5961f7bc2d8d55fd431ab07367fc16f8b26d0/obsreport/obsreport_exporter.go">obsreport_exporter</a></li>
 </ul>
 <p>下面介绍几个在实践中我们认为比较重要的指标：</p>
 <h5 id="xxx_receiver_acceptedrefused_spans">xxx_receiver_accepted/refused_spans</h5>
@@ -474,7 +427,7 @@ mjx-container + br {
 <h5 id="xxx_exporter_sendfailed_spans">xxx_exporter_send(failed)_spans</h5>
 <p>这里的 xxx 指代任意一个 pipeline 中使用的 exporter。实际上这里有两个具体指标：exporter 发送成功的 spans 数量和 exporter 发送失败的 spans 数量。二者可以与其它指标结合，分析系统在当前状况下的出口流量瓶颈。</p>
 <h5 id="otelcol_processor_tail_sampling_sampling_trace_dropped_too_early">otelcol_processor_tail_sampling_sampling_trace_dropped_too_early</h5>
-<p>要介绍上面这个指标，需要简单了解 tailsamplingprocessor 的工作原理。在分布式环境中，tailsamplingprocessor 永远无法确定一个 trace 的所有 spans 在当前时刻是否收集完毕，因此需要设置一个超时时间，即 <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor" target="_blank" rel="noopener">这里</a> 的 <code>decision_wait</code>，下面假设 <code>decision_wait = 5s</code>。Trace Data 进入 processor 后，会被分别放入两个数据结构：</p>
+<p>要介绍上面这个指标，需要简单了解 tailsamplingprocessor 的工作原理。在分布式环境中，tailsamplingprocessor 永远无法确定一个 trace 的所有 spans 在当前时刻是否收集完毕，因此需要设置一个超时时间，即 <a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor">这里</a> 的 <code>decision_wait</code>，下面假设 <code>decision_wait = 5s</code>。Trace Data 进入 processor 后，会被分别放入两个数据结构：</p>
 <p><img src="./tailsamplingprocessor-traces.png" alt="tailsamplingprocessor-traces" style="zoom:50%;" /></p>
 <p>一个固定大小的队列和一个哈希表，二者合起来实现 trace data 的 LRU cache。同时 processor 会将所有进入到其中的 traces 按照每秒一个 batch 组织起来，内部一共维持 5 个 batch (<code>decision_wait</code>)。每隔一秒钟，将最老的 batch 取出来，对其中的 traces 分别判断是否符合采样规则，符合则将其传递给后续的 processors：</p>
 <p><img src="./tailsamplingprocessor-ticker.png" alt="tailsamplingprocessor-ticker" style="zoom:50%;" /></p>
@@ -518,7 +471,7 @@ mjx-container + br {
 </tr>
 <tr class="odd">
 <td>查询</td>
-<td><code>sum(alertmanager_alert_total{trace_exists="true"})/sum(alertmanager_alert_total)</code></td>
+<td><code>sum(alertmanager_alert_total&#123;trace_exists="true"&#125;)/sum(alertmanager_alert_total)</code></td>
 </tr>
 <tr class="even">
 <td>目标</td>
@@ -531,14 +484,14 @@ mjx-container + br {
 <p>借助开源项目，我们得以通过花费极少的人力，解决当前伴鱼内部调用链追踪应用的稳态分析及异常检测需求，同时也为开源项目和社区做出微小的贡献。调用链追踪是可观测性平台的重要组件，未来我们将继续把一些精力放在 telemetry data 的整合上，为研发提供更全面、一致的服务观测分析体验。</p>
 <h2 id="参考">5. 参考</h2>
 <ul>
-<li><a href="https://www.infoq.cn/article/NVdIDI5lZBfmaIHWNVxS" target="_blank" rel="noopener">调用链追踪系统在伴鱼：理论篇</a></li>
-<li><a href="https://medium.com/opentelemetry/building-your-own-opentelemetry-collector-distribution-42337e994b63" target="_blank" rel="noopener">Building your own OpenTelemetry Collector distribution</a></li>
-<li><a href="https://www.cncf.io/blog/2019/05/21/a-brief-history-of-opentelemetry-so-far/" target="_blank" rel="noopener">A brief history of OpenTelemetry (So Far)</a></li>
-<li><a href="https://www.youtube.com/watch?v=cHiFSprUqa0" target="_blank" rel="noopener">OpenTelemetry Agent and Collector: Telemetry Built-in into All Services</a></li>
-<li><a href="https://github.com/open-telemetry" target="_blank" rel="noopener">Github: OpenTelemetry-CNCF</a>
+<li><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/NVdIDI5lZBfmaIHWNVxS">调用链追踪系统在伴鱼：理论篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/opentelemetry/building-your-own-opentelemetry-collector-distribution-42337e994b63">Building your own OpenTelemetry Collector distribution</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cncf.io/blog/2019/05/21/a-brief-history-of-opentelemetry-so-far/">A brief history of OpenTelemetry (So Far)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=cHiFSprUqa0">OpenTelemetry Agent and Collector: Telemetry Built-in into All Services</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/open-telemetry">Github: OpenTelemetry-CNCF</a>
 <ul>
-<li><a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" rel="noopener">opentelemetry-collector</a></li>
-<li><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib" target="_blank" rel="noopener">opentelemetry-collector-contrib</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector">opentelemetry-collector</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/open-telemetry/opentelemetry-collector-contrib">opentelemetry-collector-contrib</a></li>
 </ul></li>
 </ul>
 
@@ -547,134 +500,81 @@ mjx-container + br {
     
     
     
-        
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-    <div class="social-list">
+  <div class="social-list">
 
-            <div class="social-item">
-              <a target="_blank" class="social-link" href="/blog/atom.xml">
-                <span class="icon">
-                  <i class="fa fa-rss"></i>
-                </span>
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/blog/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-                <span class="label">RSS</span>
-              </a>
-            </div>
-    </div>
-  </div>
-
-
-      <footer class="post-footer">
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/blog/2020/12/20/design-dimensions-of-tracing-systems/" rel="prev" title="调用链追踪系统的设计维度">
-      <i class="fa fa-chevron-left"></i> 调用链追踪系统的设计维度
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/blog/2021/05/09/search-engine-for-codes-fundamentals/" rel="next" title="代码搜索引擎：基础篇">
-      代码搜索引擎：基础篇 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-  
-  
-  
-
-  </div>
-
-
-          </div>
-          
-    
-  <div class="comments">
-    <div id="disqus_thread">
-      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
-    </div>
-  </div>
-  
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let activeClass = CONFIG.comments.activeClass;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
+          <span class="label">RSS</span>
+        </a>
       </div>
-    </main>
+  </div>
+</div>
 
-    <footer class="footer">
-      <div class="footer-inner">
+
         
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2020/12/20/design-dimensions-of-tracing-systems/" rel="prev" title="调用链追踪系统的设计维度">
+                  <i class="fa fa-chevron-left"></i> 调用链追踪系统的设计维度
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/blog/2021/05/09/search-engine-for-codes-fundamentals/" rel="next" title="代码搜索引擎：基础篇">
+                  代码搜索引擎：基础篇 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">ZhengHe</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/blog/lib/anime.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
 
-<script src="/blog/js/utils.js"></script>
+  
 
-<script src="/blog/js/motion.js"></script>
-
-
-<script src="/blog/js/schemes/muse.js"></script>
-
-
-<script src="/blog/js/next-boot.js"></script>
 
 
 
@@ -684,53 +584,14 @@ mjx-container + br {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
   
 
-  
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
 
-  
 
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
-<script>
-  var disqus_config = function() {
-    this.page.url = "https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/";
-    this.page.identifier = "2021/03/04/implementing-tail-based-sampling/";
-    this.page.title = "调用链追踪系统在伴鱼：实践篇";
-    };
-  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
-    if (window.DISQUS) {
-      DISQUS.reset({
-        reload: true,
-        config: disqus_config
-      });
-    } else {
-      var d = document, s = d.createElement('script');
-      s.src = 'https://zhenghe-hexo-blog.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', '' + +new Date());
-      (d.head || d.body).appendChild(s);
-    }
-  });
-</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
 
 </body>
 </html>

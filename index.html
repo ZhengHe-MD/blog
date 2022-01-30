@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
@@ -13,14 +14,11 @@
 <link rel="stylesheet" href="/blog/css/main.css">
 
 
-<link rel="stylesheet" href="/blog/lib/font-awesome/css/font-awesome.min.css">
 
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"zhenghe-md.github.io","root":"/blog/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
-  <meta name="description" content="郑鹤的博客">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="郑鹤的博客">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ZhengHe">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/index.html">
@@ -30,58 +28,27 @@
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 
+
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/">
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome: true,
-    isPost: false
-  };
-</script>
 
-  <title>ZhengHe</title>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-172943223-1');
-      }
-    </script>
-
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
 
 
 
 
 
   <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -203,92 +170,79 @@ mjx-container + br {
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+  <div class="headband"></div>
 
+  <main class="main">
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
-    <div>
-      <a href="/blog/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">ZhengHe</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ZhengHe</h1>
+      <i class="logo-line"></i>
+    </a>
   </div>
 
-  <div class="site-nav-right"></div>
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/blog/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/blog/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/blog/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/blog/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/blog/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
   </ul>
-
 </nav>
+
+
+
+
 </div>
     </header>
 
     
-  <div class="back-to-top">
+  <div class="back-to-top" role="button" aria-label="返回顶部">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
 
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-          <div class="content">
-            
 
-  <div class="posts-expand">
-        
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -297,34 +251,34 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/" class="post-title-link" itemprop="url">推荐一个系列 「Let's Build A Simple Interpreter」</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/" class="post-title-link" itemprop="url">推荐一个系列 「Let's Build A Simple Interpreter」</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-03 19:43:37" itemprop="dateCreated datePublished" datetime="2022-01-03T19:43:37+00:00">2022-01-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
+      <time title="创建时间：2022-01-03 19:43:37" itemprop="dateCreated datePublished" datetime="2022-01-03T19:43:37+00:00">2022-01-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -334,6 +288,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -342,9 +297,21 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-          <p>前阵子无意中发现了一个系列教程：「<a href="https://github.com/rspivak/lsbasi" target="_blank" rel="noopener">Let's Build A Simple Interpreter</a> 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 <a href="https://ruslanspivak.com/pages/about/" target="_blank" rel="noopener">Ruslan Spivak</a> 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。</p>
+          <p>前阵子无意中发现了一个系列教程：「<a target="_blank" rel="noopener" href="https://github.com/rspivak/lsbasi">Let's Build A Simple Interpreter</a> 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 <a target="_blank" rel="noopener" href="https://ruslanspivak.com/pages/about/">Ruslan Spivak</a> 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。</p>
+<span id="more"></span>
+<p>在的他个人简介中，有下面这句话，我深为认同：</p>
+<blockquote>
+<p>❝ I believe to become a better developer you MUST get a better understanding of the underlying software systems you use on a daily basis and that includes programming languages, compilers and interpreters, databases and operating systems, web servers and web frameworks. And to get a better and deeper understanding of those systems you MUST re-build them from scratch. ❞</p>
+</blockquote>
+<p>他推出的两个系列教程：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/rspivak/lsbaws">Let's Build A Web Server</a> (600+ stars)</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rspivak/lsbasi">Let's Build A Simple Interpreter</a> (1500+ stars)</li>
+</ul>
+<p>都是在践行他的这一观点，即是帮助自己，也是帮助其它亟待成长的工程师。</p>
+<h2 id="简介">简介</h2>
+<p>lsbasi 的主要内容就是手把手地教你从 0 到 1 地用 Python 实现一个具备解释下面这段 Pascal 程序能力的解释器：</p>
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">program</span> factorial;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">factorial</span><span class="params">(n: integer)</span>:</span> longint;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">if</span> n = <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">        factorial := <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        factorial := n * factorial(n - <span class="number">1</span>);</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    n: integer;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">for</span> n := <span class="number">0</span> <span class="keyword">to</span> <span class="number">16</span> <span class="keyword">do</span></span><br><span class="line">        writeln(n, <span class="string">&#x27;! = &#x27;</span>, factorial(n));</span><br><span class="line"><span class="keyword">end</span>.</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/#more" rel="contents">
@@ -359,22 +326,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -383,34 +357,34 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/11/28/Make-It-Stick-Digest/" class="post-title-link" itemprop="url">推荐一本书「Make It Stick：The Science of Successful Learning」</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/11/28/Make-It-Stick-Digest/" class="post-title-link" itemprop="url">推荐一本书「Make It Stick：The Science of Successful Learning」</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-11-28 20:54:58" itemprop="dateCreated datePublished" datetime="2021-11-28T20:54:58+00:00">2021-11-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
+      <time title="创建时间：2021-11-28 20:54:58" itemprop="dateCreated datePublished" datetime="2021-11-28T20:54:58+00:00">2021-11-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -420,6 +394,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -428,9 +403,18 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在<a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">启动「笨学指南」项目</a>后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 <a href="https://www.goodreads.com/book/show/18770267-make-it-stick" target="_blank" rel="noopener">Make It Stick: The Science of Successful Learning</a> 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。</p>
+          <p>在<a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">启动「笨学指南」项目</a>后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 <a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/18770267-make-it-stick">Make It Stick: The Science of Successful Learning</a> 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。</p>
+<span id="more"></span>
+<blockquote>
+<p>Update: 关于这个话题，我还推出了一集播客，感兴趣欢迎<a href="https://zhenghe-md.github.io/nerds-docs/docs/plan/solution/promotion/podcasts/make-it-stick/">收听</a>。</p>
+</blockquote>
+<h2 id="读后感">读后感</h2>
+<p>在这里我不会总结或重述原书的核心观点和主要内容，相信你有足够多的途径能够获得它们。我想简单谈谈看完全书后的三个思考：</p>
+<h3 id="从自举到吃自己的狗粮">从「自举」到「吃自己的狗粮」</h3>
+<p>在计算机科学中，如果一个编程语言的编译器可以用这个语言本身来构建，我们就称它可以自举 (bootstrapping)。换句话说，这个语言既可以用来表达实现任意目的的程序，也可以用来表达自己的工作原理。</p>
+<p>MIS 的作者在书的结构设计方面也加入了类似的巧思。既然这本书介绍的是人的认知特点，以及提高学习效率的一些方法论，那为什么不用书中推荐的方法论来讲述这些知识？MIS 在第一章将书中的所有核心观点串讲一遍，在之后各章陆续介绍各个核心观点。在每个章节中，既会有意引用之前讲述过的内容，也会有意让不同观点交叉出现。这样的组织正好与书中介绍的「检索练习」、「间隔练习」、「交叉练习」暗合。如果读者发现读完这本书后记忆、理解地比阅读其它书籍更加深刻，就正好证明了书中观点的合理性。</p>
+<p>类似的思路还出现在开发新产品的最佳实践——「吃自己的狗粮 (eating your own dog food)」中。「吃自己的狗粮」说的是在开发产品的过程中，自己也在体验和使用该产品。比如对工程师来说，开发一个面向研发的工具或服务，如 Git/GitHub，正是在「吃自己的狗粮」。</p>
+<h3 id="人脑与电脑">人脑与电脑</h3>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/11/28/Make-It-Stick-Digest/#more" rel="contents">
@@ -445,22 +429,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -469,34 +460,34 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/" class="post-title-link" itemprop="url">启动「笨学指南」项目</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/" class="post-title-link" itemprop="url">启动「笨学指南」项目</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-06 19:55:53" itemprop="dateCreated datePublished" datetime="2021-10-06T19:55:53+00:00">2021-10-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
+      <time title="创建时间：2021-10-06 19:55:53" itemprop="dateCreated datePublished" datetime="2021-10-06T19:55:53+00:00">2021-10-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -506,6 +497,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -514,9 +506,20 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-          <p>国庆前夕，我利用业余时间过了一遍 YC 的 <a href="https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG" target="_blank" rel="noopener">Startup School 2019</a> 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。</p>
+          <p>国庆前夕，我利用业余时间过了一遍 YC 的 <a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG">Startup School 2019</a> 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。</p>
+<span id="more"></span>
+<p>今天，我终于可以很开心地宣布：<strong>笨学指南的<a target="_blank" rel="noopener" href="https://learn-the-hard-way.cn/">原型</a>已经完成</strong>。</p>
+<h2 id="为什么">为什么</h2>
+<p>我有一个观察：「学习本身是一种基本技能，对这项技能的掌握程度决定了每个人在各自专业知识领域可达的上限」。</p>
+<p>我是一名软件工程师，就以软件开发为例展开。一位优秀的工程师，首先得是一名资深的搜索引擎用户，他需要具备寻找优质资料的能力，公开课、技术会议、经典教材、论文、开源项目、标准协议、原始技术文档等，都应该位于他的「射程范围」内；鉴于这些资料大多数由英语撰写，英语能力被迫成为优秀工程师的必备能力之一；最后就是资料的学习、理解并内化的能力。这项能力并没有什么神奇的地方，说白了就是科学地「重复」，让大脑有效暴露在这些知识中，建立知识之间的联系，并合理地强化。总而言之，刨除个人软素质部分，成为一位优秀的软件工程师的必要条件是：</p>
+<ul>
+<li>善于寻找资料</li>
+<li>熟练使用英语</li>
+<li>持续强化所学</li>
+</ul>
+<p>这里的「熟练使用英语」是因为软件开发领域的特殊性所引入，在别的领域它不是必要条件。有许多学者在人类认知领域做了许多<a target="_blank" rel="noopener" href="https://www.amazon.com/Make-Stick-Science-Successful-Learning/dp/0674729013">实证研究</a>，通过严谨的实验证明：不同学习策略能对认知效率产生显著的影响。有很多人都认识到了掌握学习能力本身的重要性，但由于惯性使然，没有去努力改善自己的学习能力。我希望通过将高效的学习方法植入到限定过程中，实现「<strong>让每个人的学习更高效</strong>」。</p>
+<h3 id="为什么要解决这个问题">为什么要解决这个问题？</h3>
+<p>学习新知总能让我持续感到兴奋，它是我自认为喜欢、擅长又乐在其中的事情。“知之者不如好之者，好之者不如乐之者”。举个例子：我家人喜欢出门游玩，而我喜欢宅在家里看书、听课。有一天，家人建议我学习摄影，这样出门就不仅仅是游玩，还可以收获实践经验。我觉得很有道理，欣然接收并开始观看<a href="https://zhenghe-md.github.io/opencourse-notes/DGMD-E-10/Lecture-1-Welcome/">摄影课程</a>。现在只要有拍摄机会，我很乐意出游。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/#more" rel="contents">
@@ -531,22 +534,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -555,34 +565,34 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/07/24/dialogue-system-research/" class="post-title-link" itemprop="url">对话系统调研报告</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/07/24/dialogue-system-research/" class="post-title-link" itemprop="url">对话系统调研报告</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-07-24 09:37:30" itemprop="dateCreated datePublished" datetime="2021-07-24T09:37:30+00:00">2021-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
+      <time title="创建时间：2021-07-24 09:37:30" itemprop="dateCreated datePublished" datetime="2021-07-24T09:37:30+00:00">2021-07-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -592,6 +602,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -600,9 +611,24 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。</p>
+<span id="more"></span>
+<p>如果你对这个领域没有过了解，正好你也对此感兴趣，希望本文能够帮助你从以下几个方面提升你对「对话系统」的理解：</p>
+<ul>
+<li>问题背景</li>
+<li>使用场景</li>
+<li>基本概念</li>
+<li>构建方式</li>
+<li>基本架构</li>
+</ul>
+<p>最后将以 <a target="_blank" rel="noopener" href="https://github.com/RasaHQ/rasa">Rasa</a> 为例，介绍一个真实的对话系统项目。</p>
+<h2 id="背景知识">背景知识</h2>
+<blockquote>
+<p>ℹ️ 本节内容主要来自于 Speech and Language Processing 这本书的<a target="_blank" rel="noopener" href="https://web.stanford.edu/~jurafsky/slp3/24.pdf">第 24 章</a></p>
+</blockquote>
+<p>对话系统，顾名思义是用来与真人对话的系统。要做好这样的系统，了解、学习和研究「人类对话的特点」很有必要。</p>
+<h3 id="人类对话的特点">人类对话的特点</h3>
+<p>人类对话的特点理论上属于自然语言学的研究范畴，内容丰富，这里仅摘取其中一些要点。但如果有一天你想要把对话系统做到极致，系统地学习更多自然语言研究成果肯定能自底向上地帮助到你。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/07/24/dialogue-system-research/#more" rel="contents">
@@ -617,22 +643,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -641,45 +674,43 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/05/23/born-a-crime/" class="post-title-link" itemprop="url">「Born a Crime」读后感</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/05/23/born-a-crime/" class="post-title-link" itemprop="url">「Born a Crime」读后感</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-23 09:04:37" itemprop="dateCreated datePublished" datetime="2021-05-23T09:04:37+00:00">2021-05-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/readings/" itemprop="url" rel="index">
-                    <span itemprop="name">readings</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2021-05-23 09:04:37" itemprop="dateCreated datePublished" datetime="2021-05-23T09:04:37+00:00">2021-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/readings/" itemprop="url" rel="index"><span itemprop="name">readings</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -689,6 +720,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -697,9 +729,23 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在 Palfish App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。</p>
+<span id="more"></span>
+<p>「Born a Crime」记录了 Trevor Noah 在南非成长的经历，但它并不像一个传记，而是将成长中的事件按照主题串联，如：</p>
+<ul>
+<li>母亲对耶稣的绝对信仰</li>
+<li>出生前后及幼年时期成长因为特殊肤色 (colored) 不得不面对的问题</li>
+<li>母亲的独立，父亲的神秘</li>
+<li>...</li>
+</ul>
+<blockquote>
+<p>💡 完整的梗概可以移步 <a target="_blank" rel="noopener" href="https://www.litcharts.com/lit/born-a-crime/summary">这里</a> 阅读</p>
+</blockquote>
+<p>为什么人们会喜欢这本书？Trevor 在这个访谈里给出了他的看法。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/W79NnhLsosw" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<p>大概说的就是每个人在这本书的某一桥段都会找到共鸣。当然，这也是所有受欢迎内容的共同特点。</p>
+<h2 id="语录及感受">语录及感受</h2>
+<p>下面我想挑选书中一些我特别喜欢的话，分享给对此有兴趣的你，也算是对这本书以及花在阅读这本书上的时间一个交代。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/05/23/born-a-crime/#more" rel="contents">
@@ -714,22 +760,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -738,34 +791,34 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/05/09/search-engine-for-codes-fundamentals/" class="post-title-link" itemprop="url">代码搜索引擎：基础篇</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/05/09/search-engine-for-codes-fundamentals/" class="post-title-link" itemprop="url">代码搜索引擎：基础篇</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-05-09 10:19:17" itemprop="dateCreated datePublished" datetime="2021-05-09T10:19:17+00:00">2021-05-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
+      <time title="创建时间：2021-05-09 10:19:17" itemprop="dateCreated datePublished" datetime="2021-05-09T10:19:17+00:00">2021-05-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -775,6 +828,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -783,9 +837,29 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-          <p>"Google 内部曾对工程师做一次 <a href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf" target="_blank" rel="noopener">调研</a>，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。"</p>
+          <p>"Google 内部曾对工程师做一次 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf">调研</a>，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。"</p>
+<span id="more"></span>
+<h1 id="引入">0. 引入</h1>
+<p>最近，我们遇到了两个场景：</p>
+<ol type="1">
+<li>负责基础服务的工程师想下线一个接口但不知道有哪些服务调用</li>
+<li>负责 APM 系统的工程师想知道任意 RPC 接口的所有上游调用方</li>
+</ol>
+<p>仔细分析不难发现，二者的本质都在于「维护微服务间的静态依赖关系」。等等！在调用链追踪系统中，我们不是已经获得了接口级别的依赖关系吗？为什么不能直接用那边的数据？目前伴鱼调用链追踪系统中维护的依赖关系在三个方面无法满足上述需求：</p>
+<ol type="1">
+<li>一些上古服务仍然在运行，但没有接入调用链追踪系统</li>
+<li>调用链追踪系统中维护的是「动态依赖关系」，即最近 N 天 (由 retention policy 决定) 捕获的调用关系</li>
+<li>调用链追踪系统中存储的是经采样策略过滤后的数据，可能存在漏采的情况</li>
+</ol>
+<p>于是我们开始思考另一个方向：<strong>通过代码搜索引擎提取静态依赖关系</strong>。恰好在 2020 Q4 末，我们将内部所有项目仓库从 Gerrit 迁移到了 Gitlab，为代码搜索引擎的落地铺平了道路。</p>
+<p>在下文中，我们将和大家分享代码搜索引擎的调研报告，期望能帮助读者了解代码搜索引擎如何工作。报告主要讨论以下话题：</p>
+<ul>
+<li>为什么做</li>
+<li>一般架构</li>
+<li>设计决定</li>
+<li>实现挑战</li>
+<li>开源项目</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/05/09/search-engine-for-codes-fundamentals/#more" rel="contents">
@@ -800,22 +874,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -824,45 +905,43 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2021/03/04/implementing-tail-based-sampling/" class="post-title-link" itemprop="url">调用链追踪系统在伴鱼：实践篇</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/03/04/implementing-tail-based-sampling/" class="post-title-link" itemprop="url">调用链追踪系统在伴鱼：实践篇</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-04 17:03:51" itemprop="dateCreated datePublished" datetime="2021-03-04T17:03:51+00:00">2021-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2021-03-04 17:03:51" itemprop="dateCreated datePublished" datetime="2021-03-04T17:03:51+00:00">2021-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -872,6 +951,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -880,16 +960,25 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <blockquote>
-<p>此文同时发表在<a href="https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/" target="_blank" rel="noopener">伴鱼技术博客</a>上</p>
+<p>此文同时发表在<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/">伴鱼技术博客</a>上</p>
 </blockquote>
 <p>在 <a href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">理论篇</a> 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：</p>
 <ol type="1">
 <li>内部基础设施无需做跨语言支持</li>
 <li>技术选型会有轻微的语言倾向</li>
 </ol>
+<span id="more"></span>
+<h2 id="早期实践">1. 早期实践</h2>
+<h3 id="对接-jaeger">1.1 对接 Jaeger</h3>
+<p>2019 年，公司内部的微服务数量逐步增加，调用关系日趋复杂，工程师做性能分析、问题排查的难度变大。这时亟需一套调用链追踪系统帮助我们增强对服务端全貌的了解。经过调研后，我们决定采用同样基于 Go 语言搭建的、由 CNCF 孵化的项目 <a target="_blank" rel="noopener" href="https://www.jaegertracing.io/">Jaeger</a>。当时，服务的开发和治理都尚未引入 <code>context</code>，不论进程内部调用还是跨进程调用，都没有上下文传递。因此早期引入调用链追踪的工作重心就落在了服务及服务治理框架的改造，包括：</p>
+<ul>
+<li>在 HTTP、Thrift 和 gRPC 的服务端和客户端注入上下文信息</li>
+<li>在数据库、缓存、消息队列的接入点上埋点</li>
+<li>快速往既有项目仓库中注入 <code>context</code> 的命令行工具</li>
+</ul>
+<p>部署方面：测试环境采用 <strong>all-in-one</strong>，线上环境采用 <a target="_blank" rel="noopener" href="https://www.jaegertracing.io/docs/1.22/architecture/"><strong>direct-to-storage</strong></a> 方案。整个过程前后大约耗时一个月，我们在 2019 年 Q3 上线了第一版调用链追踪系统。配合广泛被采用的 prometheus + grafana 以及 ELK，我们在微服务群的可观测性上终于凑齐了调用链 (traces)、日志 (logs) 和监控指标 (metrics) 三个要素。</p>
+<p>下图是第一版调用链追踪系统的数据上报通路示意图。服务运行在容器中，通过 opentracing 的 sdk 埋点，Jaeger 的 go-sdk 上报到宿主机上的 Jaeger-agent，后者再将数据进一步上报到 Jaeger-collector，最终将调用链数据写入 ES，建立索引，即图中的 Jaeger backends。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2021/03/04/implementing-tail-based-sampling/#more" rel="contents">
@@ -904,22 +993,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -928,45 +1024,43 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/12/20/design-dimensions-of-tracing-systems/" class="post-title-link" itemprop="url">调用链追踪系统的设计维度</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/12/20/design-dimensions-of-tracing-systems/" class="post-title-link" itemprop="url">调用链追踪系统的设计维度</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-12-20 23:03:14" itemprop="dateCreated datePublished" datetime="2020-12-20T23:03:14+00:00">2020-12-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/system-design/" itemprop="url" rel="index">
-                    <span itemprop="name">system design</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2020-12-20 23:03:14" itemprop="dateCreated datePublished" datetime="2020-12-20T23:03:14+00:00">2020-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -976,6 +1070,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -984,9 +1079,19 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a href="https://github.com/ZhengHe-MD/database-of-tracing-systems" target="_blank" rel="noopener">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
+          <p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
+<span id="more"></span>
+<h1 id="引言">引言</h1>
+<p>阅读本文并不要求读者具备任何调用链追踪系统相关的理论知识或实践经验，读者具备一定的微服务架构的概念或实践经验即可。期望读者看完这篇文章以后，能掌握调用链追踪系统的核心设计维度，理解其中的设计权衡，并能使用这些维度来分析市面上的新老调用链追踪系统实现，甚至帮助到自己在生产实践中根据使用场景进行技术选型和系统设计。</p>
+<h1 id="解决的问题">解决的问题</h1>
+<h2 id="微服务的可观测性">微服务的可观测性</h2>
+<blockquote>
+<p>Any organization that designs a system (defined broadly) will produce a design whose structure is a copy of the organization's communication structure.</p>
+<p>— Melvin E. Conway</p>
+</blockquote>
+<p>如果有一门学科叫软件社会学，那么康威定律 (Conway's law) 必定是其中的基本定律之一。如果把互联网公司内部的全体信息系统看作是一整个系统，那么这个系统模块结构会向公司的组织架构收敛。从组织架构层面看，公司结构从扁平向多层级演变，信息传递的环节增加，沟通效率随之下降，进而影响公司的行动效率。不论从组员之间的熟悉程度还是从部门目标一致性来看，部门内部的沟通效率要远远高于部门间的沟通效率。因此，如果系统模块结构与组织架构约趋近，公司的沟通效率就能接近极大值。团队的分化通常伴随着服务的拆分，这也是许多公司业务增长以后进行微服务化的动机。微服务化后，公司信息系统就被迫成为了分布式系统。尽管分布式系统带来了种种好处，如持续集成、增量部署、横向扩展、故障隔离，但系统可观测性比起单机系统下降了很多，甚至几乎没有人能够对公司信息系统有全局性的了解。</p>
+<p>任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心 (machine-centric) 走向以请求为中心 (workflow-centric)。调用链 (traces)、日志 (logs)、监控指标 (metrics)，三者合称 Telemetry，有了它们，微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。</p>
+<h2 id="使用场景">使用场景</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/12/20/design-dimensions-of-tracing-systems/#more" rel="contents">
@@ -1001,22 +1106,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -1025,45 +1137,43 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/" class="post-title-link" itemprop="url">So, you want to trace your distributed system? Key design insights from years of practical experience (2014)</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/" class="post-title-link" itemprop="url">So, you want to trace your distributed system? Key design insights from years of practical experience (2014)</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-29 21:28:32" itemprop="dateCreated datePublished" datetime="2020-11-29T21:28:32+00:00">2020-11-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index">
-                    <span itemprop="name">papers-we-love</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2020-11-29 21:28:32" itemprop="dateCreated datePublished" datetime="2020-11-29T21:28:32+00:00">2020-11-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index"><span itemprop="name">papers-we-love</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -1073,6 +1183,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -1081,8 +1192,6 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>本文主要介绍一篇关于调用链追踪系统设计的论文。行文会尊从原论文的结构，但不是逐字翻译，以意译和加入个人理解的转述为主。</p>
 
 <h1 id="introduction">1. Introduction</h1>
@@ -1113,22 +1222,29 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.jpeg">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
       <meta itemprop="description" content="郑鹤的博客">
     </span>
@@ -1137,45 +1253,43 @@ mjx-container + br {
       <meta itemprop="name" content="ZhengHe">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/2020/10/05/Go-Error-Handling-Research/" class="post-title-link" itemprop="url">Go Error Handling 方案调研</a>
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/10/05/Go-Error-Handling-Research/" class="post-title-link" itemprop="url">Go Error Handling 方案调研</a>
+        </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-05 16:20:00" itemprop="dateCreated datePublished" datetime="2020-10-05T16:20:00+00:00">2020-10-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-30 08:12:25" itemprop="dateModified" datetime="2022-01-30T08:12:25+00:00">2022-01-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/blog/categories/engineering/" itemprop="url" rel="index">
-                    <span itemprop="name">engineering</span>
-                  </a>
-                </span>
-            </span>
+      <time title="创建时间：2020-10-05 16:20:00" itemprop="dateCreated datePublished" datetime="2020-10-05T16:20:00+00:00">2020-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-01-30 12:12:39" itemprop="dateModified" datetime="2022-01-30T12:12:39+00:00">2022-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/engineering/" itemprop="url" rel="index"><span itemprop="name">engineering</span></a>
+        </span>
+    </span>
 
-          
+  
   
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
@@ -1185,6 +1299,7 @@ mjx-container + br {
   </span>
   
   
+</div>
 
         </div>
       </header>
@@ -1193,9 +1308,65 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
           <p>自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。</p>
+<span id="more"></span>
+<h2 id="术语说明">0. 术语说明</h2>
+<p>为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：</p>
+<table>
+<thead>
+<tr class="header">
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>error</td>
+<td>错误</td>
+</tr>
+<tr class="even">
+<td>exception</td>
+<td>异常</td>
+</tr>
+<tr class="odd">
+<td>error-code-based</td>
+<td>基于错误码</td>
+</tr>
+<tr class="even">
+<td>exception-based</td>
+<td>基于异常</td>
+</tr>
+<tr class="odd">
+<td>package</td>
+<td>包 (Go 中 module 由多个 package 构成)</td>
+</tr>
+<tr class="even">
+<td>error wrapping/unwrapping</td>
+<td>包装错误/解包装</td>
+</tr>
+<tr class="odd">
+<td>error inspection</td>
+<td>错误检查</td>
+</tr>
+<tr class="even">
+<td>error formatting</td>
+<td>错误格式化</td>
+</tr>
+<tr class="odd">
+<td>error chain</td>
+<td>错误链表，即通过包装将错误组织成链表结构</td>
+</tr>
+<tr class="even">
+<td>error class</td>
+<td>错误类别、类型</td>
+</tr>
+</tbody>
+</table>
+<p>下文中，errors package 指代我们定制化的 error handling 方案。</p>
+<h2 id="文献综述">1. 文献综述</h2>
+<p>不同程序语言的 error handling 方案大致可以分为两种：error-code-based 和 exception-based。Raymond 在博客 [2] [3] 中指出 exception-based 错误处理更不利于写出优质的代码，也更难辨别优质和劣质的代码；Go 在设计时选择了 error-code-based error handling 方案，鼓励开发者显式地在 error 出现的地方直接处理 [4]；并在官博 [5] 中提出了 <strong>errors are values</strong> 的理念，只要实现 <code>Error</code> 接口的结构体就可以作为 error，不同的项目就能够按需定制 error handling 实现方案，并提出在一些特殊场景下可以利用非通用的代码重构技巧避免冗长、啰嗦的表达，如errWriter；许多来自 Java、Python 等语言的工程师习惯了 exception-based 的方案，遇到 Go 时感到十分不习惯 [6]，但如果我们总是希望在一门新语言中尝试套用自己熟悉语言的语法，就无法充分理解其它语言在这方面的设计理念。Go 核心工程师 Rob Pike 在 [7] 中描述了他如何在 <a target="_blank" rel="noopener" href="https://upspin.io/">Upspin</a> 项目中定制 error 信息和处理方案，使得项目对程序、用户及开发者更加友好；许多 error handling 项目都关注到了多层嵌套调用场景下的上下文注入问题，即所谓的 error wrapping，其中 Dave Cheney 的项目 pkg/errors [8] 被广泛使用，Go 在 1.13 后也提供类似的原生解决方案 [9]；受 [7] [8] 的启发，Ben Johnson，boltDB 的作者，结合自己多年的编码经验，在 [10] 中提出 <strong>Failure is your Domain</strong> 的观点，认为每个项目应当构建特有的 error handling package，并提出逻辑调用栈 (logical stack) 的概念，在 GopherCon 2019，还有工程师在推广类似的方案 [11]。</p>
+<p>error handling 可以细分为 checking、inspection 和 formatting 三部分，分别指判断 error 发生与否、检查 error 类型、打印 error 上下文。在发现 Go 社区的开发者们因为语言本身对 error handling 的支持不足，频繁创造各种各样的轮子之后，Russ Cox 在 2018 年末发布了两个新提议 [12] [13]，前者尝试解决 checking 代码冗长的问题；后者尝试解决 inspection 的信息丢失以及 formatting 的上下文信息不足问题。目前仅 inspection 的方案被整合到了 1.13 中，直到最近的 1.15 版本没有新的解决方案出现。</p>
+<h2 id="项目综述">2. 项目综述</h2>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/10/05/Go-Error-Handling-Research/#more" rel="contents">
@@ -1210,98 +1381,48 @@ mjx-container + br {
     
     
     
-      <footer class="post-footer">
+
+    <footer class="post-footer">
         <div class="post-eof"></div>
-      </footer>
+      
+    </footer>
   </article>
-  
-  
-  
+</div>
 
-  </div>
 
-  
+
+
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/blog/page/2/">2</a><a class="page-number" href="/blog/page/3/">3</a><a class="extend next" rel="next" href="/blog/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
+</div>
+  </main>
 
+  <footer class="footer">
+    <div class="footer-inner">
 
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let activeClass = CONFIG.comments.activeClass;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
-        </div>
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
 
 <div class="copyright">
-  
   &copy; 
   <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">ZhengHe</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">主题 – <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
+    </div>
+  </footer>
 
   
-  <script src="/blog/lib/anime.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.min.js"></script>
-  <script src="/blog/lib/velocity/velocity.ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
 
-<script src="/blog/js/utils.js"></script>
+  
 
-<script src="/blog/js/motion.js"></script>
-
-
-<script src="/blog/js/schemes/muse.js"></script>
-
-
-<script src="/blog/js/next-boot.js"></script>
 
 
 
@@ -1311,80 +1432,14 @@ mjx-container + br {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
   
 
-  
-      
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
 
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
 
-    
-
-  
-
-<script>
-  function loadCount() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://zhenghe-hexo-blog.disqus.com/count.js';
-    s.id = 'dsq-count-scr';
-    (d.head || d.body).appendChild(s);
-  }
-  // defer loading until the whole page loading is completed
-  window.addEventListener('load', loadCount, false);
-</script>
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
 
 </body>
 </html>
