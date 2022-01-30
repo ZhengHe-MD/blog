@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-01-30T12:12:39.336Z</updated>
+  <updated>2022-01-30T12:35:50.204Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-01-30T12:12:39.336Z</updated>
+    <updated>2022-01-30T12:35:50.204Z</updated>
     
     <summary type="html">
     
@@ -56,7 +56,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-01-30T12:12:39.336Z</updated>
+    <updated>2022-01-30T12:35:50.204Z</updated>
     
     <summary type="html">
     
@@ -86,7 +86,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2022-01-30T12:12:39.316Z</updated>
+    <updated>2022-01-30T12:35:50.180Z</updated>
     
     <summary type="html">
     
@@ -118,7 +118,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-01-30T12:12:39.372Z</updated>
+    <updated>2022-01-30T12:35:50.240Z</updated>
     
     <summary type="html">
     
@@ -154,7 +154,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-01-30T12:12:39.356Z</updated>
+    <updated>2022-01-30T12:35:50.220Z</updated>
     
     <summary type="html">
     
@@ -189,7 +189,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-01-30T12:12:39.380Z</updated>
+    <updated>2022-01-30T12:35:50.248Z</updated>
     
     <summary type="html">
     
@@ -230,7 +230,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-01-30T12:12:39.376Z</updated>
+    <updated>2022-01-30T12:35:50.244Z</updated>
     
     <summary type="html">
     
@@ -267,7 +267,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-01-30T12:12:39.356Z</updated>
+    <updated>2022-01-30T12:35:50.220Z</updated>
     
     <summary type="html">
     
@@ -302,7 +302,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-01-30T12:12:39.388Z</updated>
+    <updated>2022-01-30T12:35:50.256Z</updated>
     
     <summary type="html">
     
@@ -342,7 +342,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-01-30T12:12:39.320Z</updated>
+    <updated>2022-01-30T12:35:50.188Z</updated>
     
     <summary type="html">
     
@@ -421,7 +421,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-01-30T12:12:39.352Z</updated>
+    <updated>2022-01-30T12:35:50.220Z</updated>
     
     <summary type="html">
     
@@ -455,7 +455,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-01-30T12:12:39.392Z</updated>
+    <updated>2022-01-30T12:35:50.260Z</updated>
     
     <summary type="html">
     
@@ -489,7 +489,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-01-30T12:12:39.320Z</updated>
+    <updated>2022-01-30T12:35:50.188Z</updated>
     
     <summary type="html">
     
@@ -517,7 +517,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-01-30T12:12:39.328Z</updated>
+    <updated>2022-01-30T12:35:50.192Z</updated>
     
     <summary type="html">
     
@@ -553,7 +553,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2022-01-30T12:12:39.352Z</updated>
+    <updated>2022-01-30T12:35:50.216Z</updated>
     
     <summary type="html">
     
@@ -581,7 +581,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2022-01-30T12:12:39.348Z</updated>
+    <updated>2022-01-30T12:35:50.216Z</updated>
     
     <summary type="html">
     
@@ -611,7 +611,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2022-01-30T12:12:39.344Z</updated>
+    <updated>2022-01-30T12:35:50.212Z</updated>
     
     <summary type="html">
     
@@ -644,7 +644,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2022-01-30T12:12:39.352Z</updated>
+    <updated>2022-01-30T12:35:50.220Z</updated>
     
     <summary type="html">
     
@@ -678,7 +678,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/</id>
     <published>2020-03-22T14:26:51.000Z</published>
-    <updated>2022-01-30T12:12:39.320Z</updated>
+    <updated>2022-01-30T12:35:50.184Z</updated>
     
     <summary type="html">
     
@@ -711,7 +711,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/"/>
     <id>https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/</id>
     <published>2020-03-15T19:05:46.000Z</published>
-    <updated>2022-01-30T12:12:39.328Z</updated>
+    <updated>2022-01-30T12:35:50.192Z</updated>
     
     <summary type="html">
     
