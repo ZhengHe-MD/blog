@@ -62,7 +62,7 @@ Ruslan 在写 lsbasi 系列时用的叙述结构，我认为可以说是教科�
 5. 给出一个实践题，是典型的「[生成](https://zhenghe-md.github.io/nerds-docs/docs/plan/metacognition/strategies/#%E7%94%9F%E6%88%90)」(或有)
 6. 给出可供读者阅读的拓展资料列表
 
-私以为这种结构值得任何一位内容教育领域的内容生产者参考。
+个人以为这种结构值得任何一位以传播知识为目的内容生产者参考。
 
 ### 子曾经曰过吗？
 
