@@ -83,12 +83,14 @@ open -a Google\ Chrome "https://translate.google.cn/?sl=en&tl=zh-CN&text=$1&op=t
 
 > 💡 如果你从未使用过 Automator，可能需要在「System Preferences」→「Security & Privacy」→「Accessibility」中添加 Automator
 
-## 后记
+## 使用合适的工具
 
-现在，在日常工作中，我会结合后两种方案来满足日常翻译需求：
+现在，在日常工作中，我会结合后两种方案来满足翻译需求：
 
 1. 想要翻译的文本更长，期望结果更加流畅，使用 DeepL
 2. 想要翻译的文本较短，期望翻译速度更快，使用 DeepL × Google
+
+## 后记
 
 我一直记着工作后的第一位[导师](https://www.jiayu.me/)说的话，原话我已经记不太清，意思大致是：**作为一名工程师，一旦发现自己在重复低效地做一件事情，就应该感到焦虑，并付诸行动去改善它**。当然，还有一种方式可以系统性地改善这个问题，那就是让自己的英语变得更好，这也是我最近在努力的方向 : )。
 
