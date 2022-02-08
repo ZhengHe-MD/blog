@@ -12,7 +12,7 @@ tags:
 
 <!-- more -->
 
-## 原始方案
+## 1. 原始方案
 
 如果翻译目标是一个单词，macOS 已经提供了比较完美的支持：
 
@@ -34,7 +34,7 @@ tags:
 
 整个过程需要约 3-5 秒，运气不好时需要 6-8 秒。
 
-## 进阶方案
+## 2. DeepL
 
 半年前，在和一位[同事](https://yiksanchan.com/)闲聊时，他提到 [「DeepL Translator」](https://www.deepl.com/en/translator)的翻译准确度[甚至超过了「Google 翻译」](https://revolutionized.com/deepl-translator-vs-google-translate)：
 
@@ -49,7 +49,7 @@ tags:
 
 这个瑕疵的产生原因可能是我的「梯子」速度不够快，或者是翻译任务在服务端排队、被限速，也可能是其它原因，对此我并未继续深究。但当「DeepL for Mac」的响应时延超过 5 秒、10 秒时，「瑕疵」已经不再是「瑕疵」，是「严重的问题」，**响应时间的不稳定延长让交互设计争取到的时间变得不值一提**。
 
-## 当前方案
+## 3. DeepL × Google
 
 相对「DeepL for Mac」，「Google 翻译」的响应时间相当稳定，很少出现响应时间过长的现象。于是我们很自然地可以想到：**是否可以将「DeepL for Mac」的交互与「Google 翻译」结合？**
 
@@ -79,15 +79,16 @@ open -a Google\ Chrome "https://translate.google.cn/?sl=en&tl=zh-CN&text=$1&op=t
 
 ##### 设定 keyboard shortcuts
 
-顺着「System Preferences」→「Keyboard」→「Shortcuts」进入快捷键配置，并在「Services」菜单中，找到刚刚保存的「Translation」，点击设置快捷键。由于 macOS 并不支持设置双击触发行为，我选择了「⌘+^+C」的组合键。
+顺着「System Preferences」→「Keyboard」→「Shortcuts」进入快捷键配置，并在「Services」菜单中，找到刚刚保存的「Translation」，点击设置快捷键。由于 macOS 不支持设置多次触发组合键，最后我选择了「⌘+^+C」的组合。尽管因为快捷键支持受限，尚未实现最完美的解决方案，但已经极大地优化了平时工作的翻译流程。最终效果可以参考我录制的一个 [Demo](https://recordit.co/0zTigZdffQ)。
 
 > 💡 如果你从未使用过 Automator，可能需要在「System Preferences」→「Security & Privacy」→「Accessibility」中添加 Automator
 
-尽管因为快捷键支持受限，尚未实现最完美的解决方案，但已经极大地优化了平时工作的翻译流程。[这里](https://recordit.co/0zTigZdffQ)可以看到我录制的一个 Demo。
-
 ## 后记
 
-现在，我在多数时候会使用最后介绍的方案来满足日常翻译需求，但同时也会保持对 DeepL 的期待，如果有一天它变得更稳定了，我也会重启对它的依赖 : )。
+现在，在日常工作中，我会结合后两种方案来满足日常翻译需求：
+
+1. 想要翻译的文本更长，期望结果更加流畅，使用 DeepL
+2. 想要翻译的文本较短，期望翻译速度更快，使用 DeepL × Google
 
 我一直记着工作后的第一位[导师](https://www.jiayu.me/)说的话，原话我已经记不太清，意思大致是：**作为一名工程师，一旦发现自己在重复低效地做一件事情，就应该感到焦虑，并付诸行动去改善它**。当然，还有一种方式可以系统性地改善这个问题，那就是让自己的英语变得更好，这也是我最近在努力的方向 : )。
 
