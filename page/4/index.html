@@ -21,7 +21,7 @@
 <meta name="description" content="郑鹤的博客">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ZhengHe">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/archives/2020/11/index.html">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/page/4/index.html">
 <meta property="og:site_name" content="ZhengHe">
 <meta property="og:description" content="郑鹤的博客">
 <meta property="og:locale" content="zh_CN">
@@ -29,14 +29,14 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://zhenghe-md.github.io/blog/archives/2020/11/">
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/page/4/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"archives/2020/11/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"page/4/index.html","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>归档 | ZhengHe</title>
+<title>ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
@@ -229,50 +229,127 @@ mjx-container + br {
 </noscript>
 
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner index posts-expand">
+
+    
 
 
+<div class="post-block">
   
   
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" class="post-title-link" itemprop="url">Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-16 22:46:29" itemprop="dateCreated datePublished" datetime="2020-02-16T22:46:29+00:00">2020-02-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index"><span itemprop="name">papers-we-love</span></a>
+        </span>
+    </span>
+
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="abstract">Abstract</h1>
+<p>在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是 Facebook 内部孵化的内存时序数据库，Gorilla。Facebook 团队发现：</p>
+<ol type="1">
+<li>监控系统的用户主要关注的是数据的聚合分析，而不是单个数据点</li>
+<li>对于线上问题的根源分析来说，最近的数据比过去的数据更有价值</li>
+</ol>
+<p>Gorilla 以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：</p>
+<ol type="1">
+<li>delta-of-delta timestamps</li>
+<li>XOR's floating point values</li>
+</ol>
+<p>相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。</p>
+<h1 id="introduction">Introduction</h1>
+<p>以下是 FB 内部对时序数据库的要求：</p>
+<h2 id="write-dominate">Write Dominate</h2>
+<p>对时序数据库的首要限制就是必须一直能够写入数据，即写数据的高可用。因为 FB 内部的服务集群每秒将产生 1 千万个采样数据点。相较之下，读数据比写数据要求通常要低好几个数量级，因为数据的消费者是一些运维、开发使用的控制面板以及自动化报警系统，它们的请求频率低且通常只关注部分时序数据。由于用户关注的往往是整组时序数据的聚合结果，而不是单个数据点，因此传统数据库中的 ACID 保证也并不是时序数据库的核心要求，即便在极端情况下，丢弃少量数据也不会影响核心用途。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
         
-        <span class="collection-header">还行! 目前共计 31 篇日志。 继续努力。</span>
-      </div>
-
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-11-29T21:28:32+00:00"
-              content="2020-11-29">
-          11-29
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/" itemprop="url">
-            <span itemprop="name">So, you want to trace your distributed system? Key design insights from years of practical experience (2014)</span>
-          </a>
-      </div>
-
+    <footer class="post-footer">
+        <div class="post-eof"></div>
       
-    </header>
+    </footer>
   </article>
+</div>
 
 
-    </div>
-  </div>
-  
-  
-  
+
+
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/3/">3</a><span class="page-number current">4</span>
+  </nav>
 
 </div>
   </main>
@@ -312,7 +389,7 @@ mjx-container + br {
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
 <script src="/blog/js/third-party/math/mathjax.js"></script>
 
 

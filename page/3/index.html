@@ -239,6 +239,121 @@ mjx-container + br {
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" class="post-title-link" itemprop="url">Kafka: a Distributed Messaging System for Log Processing (2011)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-03-15 19:05:46" itemprop="dateCreated datePublished" datetime="2020-03-15T19:05:46+00:00">2020-03-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index"><span itemprop="name">papers-we-love</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><em>论文引用量：744 (截止至 2020-03-15)</em></p>
+<p>Kafka 是开发者耳熟能详的开源项目，它已经成为近年来互联网公司必不可少的基础组件。Kafka 得名于作家 Franz Kafka，大概是因为二者都比较擅长写日志 : )。它孵化于 LinkedIn 内部，在 2011 年被捐赠给 Apache 基金会，2012 年末正式从 Apache Incubator 中毕业。本文于 2011 年发表于 NetDB workshop，如今原文的三位作者，Jay Kreps、Neha Narkhede 以及 Jun Rao 一同离开 LinkedIn，创立 <a target="_blank" rel="noopener" href="https://www.confluent.io/">Confluent.io</a>，提供基于 Kafka 的企业级 Event Streaming Platform 服务。</p>
+
+<p>除了翻译论文原文的核心内容之外，本文也会补充一些论文发表当时还未问世的话题，如 replication，exactly-once delivery 等。</p>
+<h2 id="introduction">Introduction</h2>
+<p>在规模较大的互联网公司中，每天都会产生大量的日志数据，如：</p>
+<ul>
+<li>用户事件：登录、访问、点击、分享、评论、搜索</li>
+<li>性能指标：时延、错误、QPS</li>
+<li>机器指标：CPU、Memory、Network、Disk Utilication</li>
+</ul>
+<p>这些日志数据常常被用于离线分析，帮助公司了解用户、产品，帮助开发者了解系统、服务。在初期，每当 LinkedIn 内部有服务需要使用这些日志数据时，研发人员就需要写新的数据传输脚本或在线传输逻辑，久而久之，内部服务的拓扑图就出现了类似完全图的形状：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/all-to-all-topology.jpg" width="600px"></p>
+<p>这种拓扑图对分布式系统很不友好，不仅可能造成网络资源浪费，维护成本也极高。有 DRY 精神的工程师肯定无法忍受这样的架构，这时就需要有一个服务能将日志数据的消费和生产隔离：</p>
+<p><img src="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/pub-sub-topology.jpg" width="600px"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -270,7 +385,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -384,7 +499,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -486,7 +601,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -621,7 +736,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -736,7 +851,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -855,7 +970,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -972,7 +1087,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1091,7 +1206,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1206,7 +1321,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
+      <time title="修改时间：2022-02-08 04:06:16" itemprop="dateModified" datetime="2022-02-08T04:06:16+00:00">2022-02-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1269,124 +1384,8 @@ mjx-container + br {
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" class="post-title-link" itemprop="url">Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-02-16 22:46:29" itemprop="dateCreated datePublished" datetime="2020-02-16T22:46:29+00:00">2020-02-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-31 02:45:03" itemprop="dateModified" datetime="2022-01-31T02:45:03+00:00">2022-01-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index"><span itemprop="name">papers-we-love</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="abstract">Abstract</h1>
-<p>在大型微服务架构中，服务监控和实时分析需要大量的时序数据。存储这些时序数据最高效的方案就是使用时序数据库 (TSDB)。设计时序数据库的重要挑战之一便是在效率、扩展性和可靠性中找到平衡。这篇论文介绍的是 Facebook 内部孵化的内存时序数据库，Gorilla。Facebook 团队发现：</p>
-<ol type="1">
-<li>监控系统的用户主要关注的是数据的聚合分析，而不是单个数据点</li>
-<li>对于线上问题的根源分析来说，最近的数据比过去的数据更有价值</li>
-</ol>
-<p>Gorilla 以可能抛弃少量数据为代价，在读写高可用方面做了优化。为了改进查询效率，开发团队使用了激进的压缩技术：</p>
-<ol type="1">
-<li>delta-of-delta timestamps</li>
-<li>XOR's floating point values</li>
-</ol>
-<p>相比基于 HBase 的方案，Gorilla 将内存消耗缩小 10 倍，并使得数据得以存放在内存中，进而将查询时延减少 73 倍，查询吞吐量提高了 14 倍。 这样的性能改进也解锁了更多的监控、调试工具，如相关性分析、密集可视化。Gorilla 甚至能够优雅的解决单点到整个可用区域故障的问题。</p>
-<h1 id="introduction">Introduction</h1>
-<p>以下是 FB 内部对时序数据库的要求：</p>
-<h2 id="write-dominate">Write Dominate</h2>
-<p>对时序数据库的首要限制就是必须一直能够写入数据，即写数据的高可用。因为 FB 内部的服务集群每秒将产生 1 千万个采样数据点。相较之下，读数据比写数据要求通常要低好几个数量级，因为数据的消费者是一些运维、开发使用的控制面板以及自动化报警系统，它们的请求频率低且通常只关注部分时序数据。由于用户关注的往往是整组时序数据的聚合结果，而不是单个数据点，因此传统数据库中的 ACID 保证也并不是时序数据库的核心要求，即便在极端情况下，丢弃少量数据也不会影响核心用途。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blog/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blog/">1</a><a class="page-number" href="/blog/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/blog/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/blog/">1</a><a class="page-number" href="/blog/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/blog/page/4/">4</a><a class="extend next" rel="next" href="/blog/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
