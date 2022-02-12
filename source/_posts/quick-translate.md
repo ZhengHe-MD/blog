@@ -83,6 +83,11 @@ open -a Google\ Chrome "https://translate.google.cn/?sl=en&tl=zh-CN&text=$1&op=t
 
 > 💡 如果你从未使用过 Automator，可能需要在「System Preferences」→「Security & Privacy」→「Accessibility」中添加 Automator
 
+利用类似方案，不难实现：
+
+* Google 快速搜索：打开 Google 并以剪贴板中的内容作为关键词触发搜索
+* Youtube 快速搜索：打开 Youtube 并以剪贴板中的内容作为关键词触发搜索
+
 ## 选择合适的工具
 
 现在，在日常工作中，我会结合上述三种方案来满足翻译需求：
