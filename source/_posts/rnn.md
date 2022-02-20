@@ -15,7 +15,7 @@ Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of R
 
 <!-- more -->
 
-> ⚠️ 本文假设读者有一定的深度学习理论基础和实践经验，同时阅读过上述的博客和脚本。但如果你不介意可能出现的理解障碍，也欢迎继续阅读本文。
+> ⚠️ 本文假设读者有一定的深度学习理论基础和实践经验，同时阅读过上述的博客和脚本。但如果不介意可能出现的理解障碍，也欢迎继续阅读本文。
 
 ## 理解 min-char-rnn
 
@@ -45,7 +45,7 @@ for t in xrange(len(inputs)):
 loss += -np.log(ps[t][targets[t],0])
 ```
 
-CrossEntropy 计算的是两个概率分布的差异程度，差异越大，熵值越大。这里的两个概率分布分别是 **RNN 预测的下一个字符的概率分布**和**实际下一个字符的概率分布**，由于后者是一件确定的事情，所以它的概率分布是 [0, 0, ..., 1, 0, 0]，即除一个字符的出现概率为 1 外，剩余字符的出现概率皆为 0，因此最终对损失函数产生贡献的只有一个字符出现的概率，即这里的 `ps[t][targets[t], 0]`。
+CrossEntropy 计算的是两个概率分布的差异程度，差异越大，熵值越大。这里的两个概率分布分别是「RNN 预测的下一个字符的概率分布」和「实际下一个字符的概率分布」，在监督学习过程中，后者是一件已经确定的事情，所以它的概率分布是 [0, 0, ..., 1, 0, 0]，即除一个确定字符的出现概率为 1 外，剩余字符的出现概率皆为 0。于是最终对损失函数产生贡献的只有一个字符出现的概率，即这里的 `ps[t][targets[t], 0]`。
 
 ### 反向传播
 
@@ -65,9 +65,9 @@ for t in reversed(xrange(len(inputs))):
     dhnext = np.dot(Whh.T, dhraw)
 ```
 
-如果你像我一样只对数学分析中最基本的单变量求导还留存有一定的记忆，那看这段代码会有种「表面上好像能看懂，仔细思考又觉得哪里对不上」的感觉。具体地说，我们很容易看出来这些代码是在将损失函数的变化按相反的方向一步一步地倒推回去，再加上脑海中尚存的单变量的「链式求导」规则，似乎一切顺理成章。但仔细思考会发现，这里面有标量、有向量，还有矩阵，我们学过「向量求导」或者「矩阵求导」吗？
+如果你像我一样只对数学分析中最基本的「单变量求导」还留存有一定的记忆，那看这段代码会有种「表面上好像能看懂，仔细思考又觉得哪里对不上」的感觉。具体地说，我们很容易看出来这些代码是在将损失函数的变化按相反的方向一步一步地倒推回去，再加上脑海中尚存的单变量「链式求导」规则，似乎一切顺理成章。但细思极「恐」，这里面有标量、有向量，还有矩阵，什么是「标量对矩阵求导」？什么是「向量对向量求导」？什么是「矩阵对向量求导」？什么是「矩阵对矩阵求导」？我们学过「向量求导」或者「矩阵求导」吗？
 
-为了消解脑海中尚不清晰的地方，我在搜索引擎中以类似「matrix calculus for engineer」的关键词，找到了一篇长文：[The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)，它正好是为像我这样**只记得单变量求导的人**量身定做的资料，于是我集中精力花了 3-4 个小时把全文通读。随后我在笔记本上将代码中的几个矩阵求导都推了一遍，终于云开雾散，事实证明这样的付出十分值得。
+为了消解脑海中尚不清晰的地方，我在搜索引擎中以类似「matrix calculus for engineer」的关键词，找到了一篇长文：[The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)，它正好是为像我这样**只记得「单变量求导」的人**量身定做的资料，于是我集中精力花了 3-4 个小时把全文通读，随后在笔记本上将代码中的几个标量 (损失函数)、向量、矩阵间的求导都推了一遍，终于云开雾散，事实证明这样的付出十分值得。
 
 Andrej 在反向传播 Softmax + CrossEntropy 时写了个备注：
 
@@ -77,9 +77,9 @@ Andrej 在反向传播 Softmax + CrossEntropy 时写了个备注：
 
 > It’s a fun exercise to the reader to use the chain rule to derive the gradient, but it turns out to be extremely simple and interpretible in the end, after a lot of things cancel out...
 
-真正看懂它，是我在阅读完上面那篇关于 Matrix Calculus 的扫盲文章后，继续阅读这篇博文 [The Softmax function and its derivative](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/) 之后。最终的答案很具有美感，但推导的过程很需要耐心。
+真正看懂它，是我在阅读完上面那篇关于 Matrix Calculus 的扫盲文章，紧接着继续阅读这篇博客 [The Softmax function and its derivative](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/) 之后。**最终的答案很具有美感，但推导的过程很需要耐心**。
 
-这里训练的时候还使用了「teacher forcing」：
+值得一提的是，这里在训练的时候还使用了「teacher forcing」的技巧：
 
 ```python
 dy = np.copy(ps[t])
@@ -94,7 +94,7 @@ dy[targets[t]] -= 1
 
 ![gradient check](./gradient-check.png)
 
-如果不知道 gradient check 是在做什么，自然无法理解这段代码的含义，刚看到这段评论的我就是一脸懵逼。在搜索引擎的帮助下，找到了斯坦福的教程 [Unsupervised Feature Learning and Deep Learning](http://ufldl.stanford.edu/tutorial/)，其中一节正是介绍 [Debugging: Gradient Checking](http://ufldl.stanford.edu/tutorial/supervised/DebuggingGradientChecking/)。所谓 gradient check(ing) 其实就是对比「通过反向传播计算出来的梯度」与「利用导数定义近似计算得到的梯度」，来判断自己的反向传播阶段代码是否写对了，是工程师构建神经网络时常用的一种简单有效的 debug 方法。由于每次训练都可能非常耗时，而且一些 bug 即便存在，表面上也可能看着一切正常，在构建完神经网络后，开始训练之前，执行一下 gradient check(ing) 很有必要。在实现 2-layer 和 n-layer RNN 的过程中，gradient check(ing) 就成功帮助我发现了代码中的逻辑问题。
+刚看到这段代码，我完全不知道 gradient check 是在做什么，自然无法理解这段代码的含义。不过在搜索引擎的帮助下，找到了斯坦福大学开放的教程 [Unsupervised Feature Learning and Deep Learning](http://ufldl.stanford.edu/tutorial/)，其中一节正是介绍 [Debugging: Gradient Checking](http://ufldl.stanford.edu/tutorial/supervised/DebuggingGradientChecking/)。所谓 gradient check(ing) 其实就是对比「通过反向传播计算出来的梯度」与「利用导数定义近似计算得到的梯度」，来判断自己的反向传播阶段代码是否写对了，是工程师构建神经网络时常用的一种简单有效的 debug 方法。由于每次训练都可能非常耗时，而且一些 bug 即便存在，表面上也可能看着一切正常，在构建完神经网络后，开始训练之前，执行一下 gradient check(ing) 很有必要。在实现 2-layer 和 n-layer RNN 的过程中，gradient check(ing) 就成功帮助我发现了代码中的若干逻辑问题，这样的逻辑问题通过传统的「print 调试」、「单点调试」、「眼神调试」都极难发现。
 
 ## 实现 2-layer 和 n-layer RNN
 
@@ -109,6 +109,10 @@ n-layer 的 RNN 结构如下图所示：
 ![The architecture of a n-layer RNN](./n-layer.png)
 
 源码可以在[这里](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_n_layers.py)找到，其中的变量命名与上图的结构一致。
+
+## 尾声
+
+后续我将继续在工作之余，尝试裸写 LSTM 和 GRU，然后逐步复现 Andrej 在七年前完成的其它实验 : )。
 
 ## 参考资料
 
