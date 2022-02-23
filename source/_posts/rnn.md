@@ -1,19 +1,36 @@
 ---
-title: 从头开始实现 RNN
+title: 从头开始实现 RNN (ing)
 date: 2022-02-20 15:03:20
 tags:
 ---
 
 > What I cannot create, I do not understand. -- Richard Feynman
 
-Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) 的博客，并配套开源了其中实验所用的[char-rnn 代码仓库](https://github.com/karpathy/char-rnn)，以及用 numpy 手写的 [gist: min-char-rnn](https://gist.github.com/karpathy/d4dee566867f8291f086)，阅读过后受益良多。于是这两天花了很多时间：
+Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) 的博客，并配套开源了其中实验所用的[char-rnn 代码仓库](https://github.com/karpathy/char-rnn)，以及用 numpy 手写的 [gist: min-char-rnn](https://gist.github.com/karpathy/d4dee566867f8291f086)，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：
 
-1. 逐行理解 min-char-rnn
-2. 基于理解和原脚本实现了 2-layer 和 n-layer 的 RNN
+1. 逐行理解 min-char-rnn，即 vanilla RNN
 
-整个探索过程充满了趣味和挑战，尤其是对于一位主营业务为服务端开发的软件工程师，因此特别将这个过程记录下来。
+2. 实现 N 层 vanilla RNN
+
+3. 实现 LSTM (Long Short-Term Memory) RNN
+
+4. 探索 RNN 的可能性
+
+   * 散文生成器 (Paul Graham 和东坑水哥)
+   * 生成 TiDB 和 K8s 代码
+
+   * 林丹的技战术剖析
+   * ... (待补充)
+
+整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。
 
 <!-- more -->
+
+在构思这篇博客前，我曾经想过写一个完整的、细致入微的、保姆式的从 0 - 1 实现 RNN 的教程。后来发现，在我自己阅读、理解和实现的过程中，至少投入数十个小时阅读大量资料，期间并没有发现任何一篇文章能做到这点，那么我又如何能期望写一篇博客做到这点？
+
+![standards](https://imgs.xkcd.com/comics/standards.png)
+
+那什么东西是值得分享的呢？我思考的结果是「学习路径」。在遇到理解障碍时，我尝试寻找并阅读了哪些资料，花费了多长时间，有什么心得体会，这些也许能够给到读者灵感。
 
 > ⚠️ 本文假设读者有一定的深度学习理论基础和实践经验，同时阅读过上述的博客和脚本。但如果不介意可能出现的理解障碍，也欢迎继续阅读本文。
 >
@@ -21,7 +38,7 @@ Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of R
 
 ## 理解 min-char-rnn
 
-min-char-rnn 实现的是单层的 Vanilla RNN，其整体结构如下图所示：
+min-char-rnn 实现的是单层的 vanilla RNN，其整体结构如下图所示：
 
 ![The architecture of min-char-rnn](./one-layer.png)
 
@@ -88,7 +105,7 @@ dy[targets[t]] -= 1
 
 即不管 RNN 在每次 unroll 都使用标准答案，而不是自身学到的结果 `np.argmax(ps[t])`。在其它教程中，我也看到过人们会给「teacher forcing」施加一个概率，就像 `dropout_p`，因为在推理过程中不会有任何字符的参考结果。据说通过降低这个概率可以一定程度上避免「学生在实际解题时过分依赖老师」。
 
-### Gradient Check
+### Gradient check
 
 在 min-char-rnn 脚本下的第一个评论，就是 Andrej 自己的：
 
@@ -98,23 +115,39 @@ dy[targets[t]] -= 1
 
 我在实现 2-layer 和 n-layer RNN 的过程中，就成功利用 gradient check(ing) 发现代码中的若干逻辑问题，这样的逻辑问题通过传统的「眼神调试」、「print 调试」、「单点调试」都极难发现。
 
-## 实现 2-layer 和 n-layer RNN
+## N 层 vanilla RNN
 
-2-layer 的 RNN 结构如下图所示：
+在阅读 min-char-rnn 时，我在心里就萌生了一个想法：能否依葫芦画瓢直接用 numpy 实现一个 N 层 vanilla RNN？但步子太大容易扯着蛋，先挑战一个 2 层的 vanilla RNN：
 
 ![The architecture of a 2-layer RNN](./two-layer.png)
 
-源码可以在[这里](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_two_layers.py)找到，其中的变量命名与上图的结构一致。
+在结构上，2 层的 vanilla RNN 多了一个 hidden layer，第二层 (h2) 的输入就是第一层 (h1) 的输出，主要区别在于两层的输入维度不同，因为这点不同，在代码中需要分开实现它们的传播逻辑。我的实现可以在[这里](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_two_layers.py)找到，代码中的变量命名与图中的标识保持一致。实现基本逻辑大约花费了半个小时时间，但由于对 numpy 的不熟悉以及一些矩阵的名字和结构相近导致的 typo，一开始并不是 bug-free。还好在阅读 min-char-rnn 的时候没有偷懒忽略 gradient check(ing)，多亏它告诉我实现有误，避免训练出人工智障。
 
-n-layer 的 RNN 结构如下图所示：
+有了上面的基础，从 2 层到 N 层的过程就比较胸有成竹。N 层 的 vanilla RNN 结构如下图所示：
 
 ![The architecture of a n-layer RNN](./n-layer.png)
 
-源码可以在[这里](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_n_layers.py)找到，其中的变量命名与上图的结构一致。
+结构上，第二层 (h2) 到第 N 层 (hn) 的传播逻辑一样，因此可以通过一个循环来实现。有了前面的经验，这次很快就通过了 gradient check(ing)，我的实现可以在[这里](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_n_layers.py)找到，代码中的变量命名与图中的标识保持一致。
 
-## 尾声
+## LSTM
 
-后续我将继续在工作之余，尝试从头开始实现 LSTM 和 GRU，然后逐步复现 Andrej 在七年前完成的其它实验 : )。
+从 vanilla RNN 到 LSTM 的过程比想象中更艰难。经过简单的关键词检索，不难发现 [nicodjimenez/lstm](https://github.com/nicodjimenez/lstm/) 项目，简单扫一眼它的 README：
+
+> A basic lstm network can be written from scratch in a few hundred lines of python, yet most of us have a hard time figuring out how lstm's actually work. The original Neural Computation paper is too technical for non experts. Most blogs online on the topic seem to be written by people who have never implemented lstm's for people who will not implement them either. Other blogs are written by experts ...
+
+基本可以断定这正是我所需。在这个项目中，作者提到一篇综述论文：[A Critical Review of Recurrent Neural Networks for Sequence Learning](https://arxiv.org/abs/1506.00019)，称赞这篇文章的同时也提到自己的[实现](https://github.com/nicodjimenez/lstm/blob/master/lstm.py)使用了文章中的数学符号。都已经看了一篇 matrix calculus，再看一篇综述文章那又如何？于是又是三四个小时过去了...
+
+读毕，我最大的感受是：比「直接学习它的结构，然后实现它」更重要的是理解它的提出是为了解决什么问题。如果时间不够，也可以阅读这篇博客 [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)。
+
+> 💡在学习的过程中，尝试自己用笔和纸画一些 LSTM 的结构有助于对网络结构整体的理解
+
+有了上面的储备，接下来就回到 nicodjimenez/lstm，把脚本看懂即可。事后分析，从测试用例出发有助于更快地理解代码结构。作者自己写了一篇博客 [Simple LSTM](https://nicodjimenez.github.io/2014/08/08/lstm.html) (发表时间早于 Andrej 的博客) 介绍代码中的反向传播部分，但只要彻底理解了 vanilla RNN 的反向传播原理，这里的推导在难度上并没有本质的提升，只是传播的流向比后者复杂一些。
+
+在花费将近一个小时后，依葫芦画瓢，我写出了 [min-char-rnn 的 lstm 版本](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_lstm.py)。同样地，利用 gradient check(ing) 确保反向传播部分的逻辑实现正确。
+
+## 探索 RNN 的可能性
+
+TODO
 
 ## 参考资料
 
@@ -125,4 +158,6 @@ n-layer 的 RNN 结构如下图所示：
 * [UFLDL Tutorial](http://ufldl.stanford.edu/tutorial/), [Debugging: Gradient Checking](http://ufldl.stanford.edu/tutorial/supervised/DebuggingGradientChecking/)
 * [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/index.html)
 * [eliben/deep-learning-samples/min-char-rnn](https://github.com/eliben/deep-learning-samples/blob/master/min-char-rnn/min-char-rnn.py)
+*  [nicodjimenez/lstm](https://github.com/nicodjimenez/lstm/)
+* [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 * [ZhengHe-MD/replay-nn-tutorials/min-char-rnn](https://github.com/ZhengHe-MD/replay-nn-tutorials/tree/main/min-char-rnn)
