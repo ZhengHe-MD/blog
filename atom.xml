@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-02-20T13:44:20.024Z</updated>
+  <updated>2022-02-23T01:28:26.855Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,23 +17,31 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>从头开始实现 RNN</title>
+    <title>从头开始实现 RNN (ing)</title>
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-02-20T13:44:20.024Z</updated>
+    <updated>2022-02-23T01:28:26.855Z</updated>
     
     <summary type="html">
     
       &lt;blockquote&gt;
 &lt;p&gt;What I cannot create, I do not understand. -- Richard Feynman&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Andrej Karpathy 在 2015 年发表了题为 &lt;a href=&quot;https://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt; 的博客，并配套开源了其中实验所用的&lt;a href=&quot;https://github.com/karpathy/char-rnn&quot;&gt;char-rnn 代码仓库&lt;/a&gt;，以及用 numpy 手写的 &lt;a href=&quot;https://gist.github.com/karpathy/d4dee566867f8291f086&quot;&gt;gist: min-char-rnn&lt;/a&gt;，阅读过后受益良多。于是这两天花了很多时间：&lt;/p&gt;
+&lt;p&gt;Andrej Karpathy 在 2015 年发表了题为 &lt;a href=&quot;https://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt; 的博客，并配套开源了其中实验所用的&lt;a href=&quot;https://github.com/karpathy/char-rnn&quot;&gt;char-rnn 代码仓库&lt;/a&gt;，以及用 numpy 手写的 &lt;a href=&quot;https://gist.github.com/karpathy/d4dee566867f8291f086&quot;&gt;gist: min-char-rnn&lt;/a&gt;，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;逐行理解 min-char-rnn&lt;/li&gt;
-&lt;li&gt;基于理解和原脚本实现了 2-layer 和 n-layer 的 RNN&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;逐行理解 min-char-rnn，即 vanilla RNN&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;实现 N 层 vanilla RNN&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;实现 LSTM (Long Short-Term Memory) RNN&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;探索 RNN 的可能性&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;散文生成器 (Paul Graham 和东坑水哥)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;生成 TiDB 和 K8s 代码&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;林丹的技战术剖析&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;... (待补充)&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;整个探索过程充满了趣味和挑战，尤其是对于一位主营业务为服务端开发的软件工程师，因此特别将这个过程记录下来。&lt;/p&gt;
+&lt;p&gt;整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。&lt;/p&gt;
     
     </summary>
     
@@ -46,7 +54,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-02-20T13:44:20.020Z</updated>
+    <updated>2022-02-23T01:28:26.851Z</updated>
     
     <summary type="html">
     
@@ -68,7 +76,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-02-20T13:44:19.977Z</updated>
+    <updated>2022-02-23T01:28:26.811Z</updated>
     
     <summary type="html">
     
@@ -89,7 +97,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-02-20T13:44:19.977Z</updated>
+    <updated>2022-02-23T01:28:26.811Z</updated>
     
     <summary type="html">
     
@@ -108,7 +116,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2022-02-20T13:44:19.957Z</updated>
+    <updated>2022-02-23T01:28:26.787Z</updated>
     
     <summary type="html">
     
@@ -127,7 +135,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-02-20T13:44:20.012Z</updated>
+    <updated>2022-02-23T01:28:26.843Z</updated>
     
     <summary type="html">
     
@@ -146,7 +154,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-02-20T13:44:19.996Z</updated>
+    <updated>2022-02-23T01:28:26.827Z</updated>
     
     <summary type="html">
     
@@ -165,7 +173,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-02-20T13:44:20.024Z</updated>
+    <updated>2022-02-23T01:28:26.855Z</updated>
     
     <summary type="html">
     
@@ -184,7 +192,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-02-20T13:44:20.016Z</updated>
+    <updated>2022-02-23T01:28:26.851Z</updated>
     
     <summary type="html">
     
@@ -210,7 +218,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-02-20T13:44:19.996Z</updated>
+    <updated>2022-02-23T01:28:26.827Z</updated>
     
     <summary type="html">
     
@@ -233,7 +241,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-02-20T13:44:20.032Z</updated>
+    <updated>2022-02-23T01:28:26.863Z</updated>
     
     <summary type="html">
     
@@ -273,7 +281,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-02-20T13:44:19.961Z</updated>
+    <updated>2022-02-23T01:28:26.791Z</updated>
     
     <summary type="html">
     
@@ -294,7 +302,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-02-20T13:44:19.992Z</updated>
+    <updated>2022-02-23T01:28:26.827Z</updated>
     
     <summary type="html">
     
@@ -317,7 +325,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-02-20T13:44:20.036Z</updated>
+    <updated>2022-02-23T01:28:26.871Z</updated>
     
     <summary type="html">
     
@@ -351,7 +359,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-02-20T13:44:19.961Z</updated>
+    <updated>2022-02-23T01:28:26.795Z</updated>
     
     <summary type="html">
     
@@ -370,7 +378,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-02-20T13:44:19.969Z</updated>
+    <updated>2022-02-23T01:28:26.799Z</updated>
     
     <summary type="html">
     
@@ -406,7 +414,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2022-02-20T13:44:19.992Z</updated>
+    <updated>2022-02-23T01:28:26.823Z</updated>
     
     <summary type="html">
     
@@ -425,7 +433,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2022-02-20T13:44:19.989Z</updated>
+    <updated>2022-02-23T01:28:26.823Z</updated>
     
     <summary type="html">
     
@@ -448,7 +456,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
     <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
     <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2022-02-20T13:44:19.985Z</updated>
+    <updated>2022-02-23T01:28:26.815Z</updated>
     
     <summary type="html">
     
@@ -481,7 +489,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/"/>
     <id>https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/</id>
     <published>2020-04-05T20:39:47.000Z</published>
-    <updated>2022-02-20T13:44:19.992Z</updated>
+    <updated>2022-02-23T01:28:26.823Z</updated>
     
     <summary type="html">
     
