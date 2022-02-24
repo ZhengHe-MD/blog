@@ -6,7 +6,7 @@ tags:
 
 > What I cannot create, I do not understand. -- Richard Feynman
 
-Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) 的博客，并配套开源了其中实验所用的[char-rnn 代码仓库](https://github.com/karpathy/char-rnn)，以及用 numpy 手写的 [gist: min-char-rnn](https://gist.github.com/karpathy/d4dee566867f8291f086)，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：
+Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) 的博客，并配套开源了其中实验所用的 [char-rnn 代码仓库](https://github.com/karpathy/char-rnn)，以及用 numpy 手写的 [gist: min-char-rnn](https://gist.github.com/karpathy/d4dee566867f8291f086)，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：
 
 1. 逐行理解 min-char-rnn，即 vanilla RNN
 2. 实现 N 层 vanilla RNN
@@ -144,23 +144,36 @@ dy[targets[t]] -= 1
 
 ## 探索 RNN 的可能性
 
-实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情。本文开篇提到过，Andrej 开放了他做实验所使用的 [char-rnn](https://github.com/karpathy/char-rnn) 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 [README.md](https://github.com/karpathy/char-rnn/blob/master/Readme.md) 中，Andrej 又推荐了 Justin Johnson 提供的性能更好的实现版本，[torch-rnn](https://github.com/jcjohnson/torch-rnn)，后者甚至提供了[容器化支持](https://github.com/crisbal/docker-torch-rnn)。在花费了若干小时搭建好 GPU 环境后，终于可以开始正式探索。
+实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情了。本文开篇提到过，Andrej 开放了他做实验所使用的 [char-rnn](https://github.com/karpathy/char-rnn) 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 [README.md](https://github.com/karpathy/char-rnn/blob/master/Readme.md) 中，Andrej 又推荐了来自 Justin Johnson 优化性能后的版本：[torch-rnn](https://github.com/jcjohnson/torch-rnn)，后者甚至提供了[容器化支持](https://github.com/crisbal/docker-torch-rnn)。在花费了若干小时搭建好 GPU 环境后，终于可以开始正式探索。
 
-如果你手边有 GPU，搭建环境时可能还需要这些资料：
-
-* [cuda-installation-guide](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
-* [nvidia-docker2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
-
-最后用 nvidia-docker 启动时可以把 torch-rnn 项目的本地路径用 Docker 的 volume 参数与容器内部的 `~/torch-rnn` 路径建立双向绑定，这样就可以在容器里自由地训练了。
+> 💡如果你手边有 GPU，搭建环境时可能还需要这些资料：
+>
+> * [cuda-installation-guide](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
+> * [nvidia-docker2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+>
+> 最后用 nvidia-docker 启动时可以把 torch-rnn 项目的本地路径用 Docker 的 volume 参数与容器内部的 `~/torch-rnn` 路径建立双向绑定，这样就可以在容器里自由地训练模型。
 
 ### Paul Graham generator
 
 先复现一下 Andrej 博客中的第一个实验，将 Paul Graham 的 essays 抓取到本地 ([我的脚本](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/paulgraham/dump_paulgraham_essays.py))，然后将其合并成一个文本文件，送入模型。实验参数与 Andrej 的保持一致，训练 50 个 epochs，下面是用模型采样出的段落示例：
 
 ```
-So there even a list of few things you're supposed to concipe of different startups—you need to convince customers that new gets painting is one of them at startups without taking that. They're a rare concopporation, that's within college.
-To a real way to addict you, but what you're expected.
-If you're capped in several programmers, what proves them-defend what you're working about. But you don't notice based on your generation: since he doesn't realize it: all much shouldn't be just that that, that is short of this actual audience. Open study new people they have shifting up a city. [ 7 ] This surprises still say here told it's a platazine. There seem to degree why formidable things we tend to volunteregal startups elity is in Grisk Fortle. Sometomes The other generations were proportionate at real implications to cogain. If there are working off you're working on simply to like that sharp it horter than you. How so hote-wealth to treates back of friends they to be doing. Most nived in a number is to concied our fioks companies.
+So there even a list of few things you're supposed to concipe of 
+different startups—you need to convince customers that new gets 
+painting is one of them at startups without taking that. They're a 
+rare concopporation, that's within college. To a real way to addict 
+you, but what you're expected.
+If you're capped in several programmers, what proves them-defend 
+what you're working about. But you don't notice based on your generation: 
+since he doesn't realize it: all much shouldn't be just that that, 
+that is short of this actual audience. Open study new people 
+they have shifting up a city. [ 7 ] This surprises still say here told 
+it's a platazine. There seem to degree why formidable things we tend to 
+volunteregal startups elity is in Grisk Fortle. Sometomes The 
+other generations were proportionate at real implications to cogain.
+If there are working off you're working on simply to like that sharp 
+it horter than you. How so hote-wealth to treates back of friends 
+they to be doing. Most nived in a number is to concied our fioks companies.
 ```
 
 中间的这句话让我很是喜欢：
@@ -174,20 +187,39 @@ If you're capped in several programmers, what proves them-defend what you're wor
 罗贯中的版权现在已经不受法律保护，于是我轻而易举地在百度搜到了三国演义的全文 txt。让我们一起看看 RNN 的文言文作品：
 
 ```
-太史云长闻之，即遣人马往全徐聚及关缚。斗时一将军马，欲取平郡；操轻勒弃衣弓甲，来夜身中。原马玄德回寨新中，勒法东飞未还，因虽带明一林而到。韦众将令军接后，折声桥剑于穿着。备入城十里，赵云拍马皆进，被给来迎之，布会绳帐落下命，引一马军无弩而走。百凉五路，杀之处，走由精营马也。次日，如柴把拥山白下阵。待我三月，手力顺从，直至白配。两十白得小枪粮住乱，砍拜军士相招烈，兴阵后料，高边卧打宝后一齐出，右图山草，山行至溪。又所通人打身平阵，兼见剿伙。马超在前扎下兵，一面有军卧洛百人，只被白首视之。操为归锋，丕败宣桥进走曰：“宋大浩于来水，未如能敢施；无歹染之兵，彼得生动谗以理辞己下大机也！”表云：“不可此常之，今与何意！”随从吕旷令西凉姜布有荆州，箭政跪身，军马挺南。曹操大不告离，何守而降。先主非士，又命关看。
+太史云长闻之，即遣人马往全徐聚及关缚。斗时一将军马，欲取平郡；
+操轻勒弃衣弓甲，来夜身中。原马玄德回寨新中，勒法东飞未还，因虽带明一林而到。
+韦众将令军接后，折声桥剑于穿着。备入城十里，赵云拍马皆进，被给来迎之，
+布会绳帐落下命，引一马军无弩而走。百凉五路，杀之处，走由精营马也。
+次日，如柴把拥山白下阵。待我三月，手力顺从，直至白配。两十白得小枪粮住乱，
+砍拜军士相招烈，兴阵后料，高边卧打宝后一齐出，右图山草，山行至溪。
+又所通人打身平阵，兼见剿伙。马超在前扎下兵，一面有军卧洛百人，只被白首视之。
+操为归锋，丕败宣桥进走曰：“宋大浩于来水，未如能敢施；无歹染之兵，
+彼得生动谗以理辞己下大机也！”表云：“不可此常之，今与何意！”
+随从吕旷令西凉姜布有荆州，箭政跪身，军马挺南。曹操大不告离，何守而降。先主非士，又命关看。
 
-    甫犹报关曹军师武俱山锋，休见玄德。坚功意久，立了刘备，嘉乃置臣谋长耳。荀瑁曰：““吴悌实雄违，休得逆我，难来用将。昨恐萧通为运。吾不以向计也，各有不可，名之。”瑜惊曰：“孤奉某驱反星不和！”丕大惊，乃下一面中调赖居，哨待曹公老父，乃诸县呈“热荒子因外谭自，引军人骑法。国秋引兵至涪坏寨，叫肃又退，威不想送芝如决，可使将过了玄德。军士义车绑交郡看。当日山戈从石汉中去了，言玄德已得家草，孙瓒便孙乾守而征。忽然一帜四山诸万将倾否：“两谋人皆裨宝饿河，四海有过所力；左看在金中，掣徐州皆上破营。祖首朝廷不受；势四股盟，并设猖峡：
+    甫犹报关曹军师武俱山锋，休见玄德。坚功意久，立了刘备，嘉乃置臣谋长耳。
+荀瑁曰：““吴悌实雄违，休得逆我，难来用将。昨恐萧通为运。吾不以向计也，各有不可，名之。”
+瑜惊曰：“孤奉某驱反星不和！”丕大惊，乃下一面中调赖居，哨待曹公老父，乃诸县呈“
+热荒子因外谭自，引军人骑法。国秋引兵至涪坏寨，叫肃又退，威不想送芝如决，
+可使将过了玄德。军士义车绑交郡看。当日山戈从石汉中去了，言玄德已得家草，
+孙瓒便孙乾守而征。忽然一帜四山诸万将倾否：“两谋人皆裨宝饿河，四海有过所力；
+左看在金中，掣徐州皆上破营。祖首朝廷不受；势四股盟，并设猖峡：
 
     却说植驱来，饱接也见，道感温校。只闻吾激透言城不然。
 
-    且军马报徐州渡寨，再收将催投“将分布、乔掌、韩仲。各、张仪刀手于军马。少败进，操问庞德曰：“汝平有真妙矣！”阿视之，拜便商议。瓒部商情：左右看鲁为太，计偿衡挟，提乏畏中。表料第氏受之情，未胜者报孔明，用然天下。孔明无在车仗至条厅亡，隐教转到周上。后人有诗赞一徒方诺，毗进入府基。先说孔明曰：“杀帝刘业，与卿六锋也！”孔明曰：“汝来说丞相夫战，亦何鼓降？”二人便同先阵器。
+    且军马报徐州渡寨，再收将催投“将分布、乔掌、韩仲。各、张仪刀手于军马。
+少败进，操问庞德曰：“汝平有真妙矣！”阿视之，拜便商议。瓒部商情：左右看鲁为太，
+计偿衡挟，提乏畏中。表料第氏受之情，未胜者报孔明，用然天下。
+孔明无在车仗至条厅亡，隐教转到周上。后人有诗赞一徒方诺，毗进入府基。
+先说孔明曰：“杀帝刘业，与卿六锋也！”孔明曰：“汝来说丞相夫战，亦何鼓降？”二人便同先阵器。
 ```
 
-你是否像我一样认认真真地读了一遍？虽然不知道它在写什么，但 RNN 对文言文的掌握应该比我掌握得牢靠一些。
+你是否也像我一样认认真真地读了一遍？虽然不知道它在写什么，但 RNN 对文言文的掌握我还是自愧不如。
 
 ### 老友记
 
-一位网友在 Github 上保存了老友记全 10 季的剧本：[fangj/friends](https://github.com/fangj/friends)，维护者应该不会想到有一天这个仓库会变成 AI 的「饲料」？写了一个 Python 脚本简单将 html 处理成了普通文本，送进模型训练。下面是得到的剧本节选：
+一位网友在 Github 上维护了老友记全 10 季的剧本：[fangj/friends](https://github.com/fangj/friends)，他应该不会想到有一天这个仓库会变成 AI 的「饲料」？写了一个脚本简单将 html 处理成了普通文本 (去掉标签，unescape 一些特殊字符)，送进模型训练。下面是得到的剧本节选：
 
 ```
 [Scene: Chandler and Joey's, Phoebe is answering from some gateen, the same assarent duck is
@@ -221,7 +253,7 @@ Rachel: Whoa, whoa whoa, day! What a duving dollars!!!!
 Rachel: Whoa, whoa whoa, day! What a duving dollars!!!!
 ```
 
-显然，从「 `a` 和 `dollars` 同时出现」可以断定，它的语法还没学到位，不过说成这样还不值得我们鼓励一下？
+显然，从「 `a` 和 `dollars` 同时出现」可以了解到它的语法还未学到位，不过说成这样还不值得我们鼓励一下？
 
 ### Kubernetes
 
@@ -269,17 +301,15 @@ func (s *symconfig) DescribeRestore(ctx context.Context, m file.Info) (bool, err
 }
 ```
 
-显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件接收了！甚至还学会了写注释。除此之外，在 `gofmt` 或 `goimports` 的帮助下，它应该能写出更整洁的代码。
+显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件认可了！甚至还学会了写注释。除此之外，它似乎还需要 `gofmt` 或 `goimports` 帮助，我们工程师尚且喜欢偷懒，遑论 AI 呢！
 
 ### 林丹的技战术
 
-这是一个我尚未有精力去完成的实验。因为它的数据预处理工作量太大，在这里我仅介绍一下想法。
+这是一个我尚未有精力去完成的实验，因为它的前期数据处理工作量太大，在这里我仅介绍一下想法：
 
 喜欢看/打羽毛球的朋友都知道，球员在场上步伐 (并步、跑步、交叉步)、击球方式 (高、吊、杀、搓、放等)、球的落点 (前、中、后、左、中、右 9 个点) 的选择，共同组成球员的技战术、打法。这些选择来自于球员对场上局势的判断 (之前的来回、对方球员的选择以及双方的身心状态)。
 
-如果我们能将这些信息编码成离散的状态，就能将羽毛球比赛抽象成时序数据。当然，要学就要从最好的学。所以我想做的是：获取林丹巅峰时期的所有比赛视频，记录下他和所有对手在每个回合做出的球路选择，然后送进 RNN。是不是有助于新的运动员快速掌握「超级丹」的球路？
-
-希望有一天能有闲暇时间来完成这项工作。如果看到这篇博客的你是国家羽毛球训练中心的工作人员，欢迎联系我。
+如果我们能将这些信息编码成离散的状态，就能将羽毛球比赛抽象成时序数据。当然，要学就要从最好的学，所以我想做的是：获取林丹巅峰时期的所有比赛视频，记录下他和所有对手在每个回合做出的球路选择，然后送进 RNN。是不是有助于新的运动员快速掌握「超级丹」的球路？希望我有一天能有闲暇时间来完成这项工作。如果看到这篇博客的你是国家羽毛球训练中心的工作人员，欢迎联系我 : ) Kidding。
 
 ## 参考资料
 
