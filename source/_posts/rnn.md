@@ -303,7 +303,7 @@ func (s *symconfig) DescribeRestore(ctx context.Context, m file.Info) (bool, err
 
 显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件认可了！甚至还学会了写注释。除此之外，它似乎还需要 `gofmt` 或 `goimports` 帮助，我们工程师尚且喜欢偷懒，遑论 AI 呢！
 
-### 超级的技战术
+### 超级丹的技战术
 
 这是一个我尚未有精力去完成的实验，因为它的前期数据处理工作量太大，在这里我仅介绍一下想法：
 
