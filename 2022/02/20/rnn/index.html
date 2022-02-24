@@ -31,7 +31,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/02/20/rnn/two-layer.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/02/20/rnn/n-layer.png">
 <meta property="article:published_time" content="2022-02-20T15:03:20.000Z">
-<meta property="article:modified_time" content="2022-02-24T13:24:15.216Z">
+<meta property="article:modified_time" content="2022-02-24T14:30:35.028Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://imgs.xkcd.com/comics/standards.png">
@@ -279,7 +279,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 13:24:15" itemprop="dateModified" datetime="2022-02-24T13:24:15+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-24 14:30:35" itemprop="dateModified" datetime="2022-02-24T14:30:35+00:00">2022-02-24</time>
     </span>
 
   
@@ -320,14 +320,14 @@ mjx-container + br {
 <li>三国演义</li>
 <li>老友记</li>
 <li>Kubernetes 源码</li>
-<li>林丹技战术</li>
+<li>超级丹的技战术</li>
 </ul></li>
 </ol>
 <p>整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。</p>
 <span id="more"></span>
 <p>在构思这篇博客前，我曾经想过写一个完整的、细致入微的、保姆式的从 0 - 1 实现 RNN 的教程。后来发现，在我自己阅读、理解和实现的过程中，至少投入数十个小时阅读大量资料，期间并没有发现任何一篇文章能做到这点，那么我又如何能期望写一篇博客做到这点？</p>
 <figure>
-<img src="https://imgs.xkcd.com/comics/standards.png" alt="" /><figcaption>standards</figcaption>
+<img src="https://imgs.xkcd.com/comics/standards.png" alt="" /><figcaption>xkcd-standards</figcaption>
 </figure>
 <p>那什么东西是值得分享的呢？我思考的结果是「学习路径」。在遇到理解障碍时，我尝试寻找并阅读了哪些资料，花费了多长时间，有什么心得体会，这些也许能够给到读者灵感。</p>
 <blockquote>
@@ -393,7 +393,7 @@ mjx-container + br {
 <p>有了上面的储备，接下来就回到 nicodjimenez/lstm，把脚本看懂即可。事后分析，从测试用例出发有助于更快地理解代码结构。作者自己写了一篇博客 <a target="_blank" rel="noopener" href="https://nicodjimenez.github.io/2014/08/08/lstm.html">Simple LSTM</a> (发表时间早于 Andrej 的博客) 介绍代码中的反向传播部分，但只要彻底理解了 vanilla RNN 的反向传播原理，这里的推导在难度上并没有本质的提升，只是传播的流向比后者复杂一些。</p>
 <p>在花费将近一个小时后，依葫芦画瓢，我写出了 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/min_char_rnn_lstm.py">min-char-rnn 的 lstm 版本</a>。同样地，利用 gradient check(ing) 确保反向传播部分的逻辑实现正确。</p>
 <h2 id="探索-rnn-的可能性">探索 RNN 的可能性</h2>
-<p>实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情了。本文开篇提到过，Andrej 开放了他做实验所使用的 <a target="_blank" rel="noopener" href="https://github.com/karpathy/char-rnn">char-rnn</a> 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 <a target="_blank" rel="noopener" href="https://github.com/karpathy/char-rnn/blob/master/Readme.md">README.md</a> 中，Andrej 又推荐了来自 Justin Johnson 优化性能后的版本：<a target="_blank" rel="noopener" href="https://github.com/jcjohnson/torch-rnn">torch-rnn</a>，后者甚至提供了<a target="_blank" rel="noopener" href="https://github.com/crisbal/docker-torch-rnn">容器化支持</a>。在花费了若干小时搭建好 GPU 环境后，终于可以开始正式探索。</p>
+<p>实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情了。本文开篇提到过，Andrej 开放了他做实验所使用的 <a target="_blank" rel="noopener" href="https://github.com/karpathy/char-rnn">char-rnn</a> 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 <a target="_blank" rel="noopener" href="https://github.com/karpathy/char-rnn/blob/master/Readme.md">README.md</a> 中，Andrej 又推荐了来自 Justin Johnson 优化性能后的版本：<a target="_blank" rel="noopener" href="https://github.com/jcjohnson/torch-rnn">torch-rnn</a>，后者甚至提供了<a target="_blank" rel="noopener" href="https://github.com/crisbal/docker-torch-rnn">容器化支持</a>。在花费了若干小时 (尴尬的是，大部分时间花在了等待 <code>docker pull</code> 上) 搭建好 GPU 环境后，终于可以开始正式探索。</p>
 <blockquote>
 <p>💡如果你手边有 GPU，搭建环境时可能还需要这些资料：</p>
 <ul>
@@ -424,7 +424,7 @@ mjx-container + br {
 <p><a target="_blank" rel="noopener" href="https://copilot.github.com/">Codepilot</a> 和 <a target="_blank" rel="noopener" href="https://deepmind.com/blog/article/Competitive-programming-with-AlphaCode">AlphaCode</a> 已经向工程师们证明了 AI 写代码的能力，我也想看看 3 层 LSTM 能做到什么样的程度。于是我 clone 了 Kubernetes 仓库，将所有 Golang 源码聚合 (cat) 成一个文本 (你猜猜 Kubernetes 的 codebase 所占的空间有多大？评论区告诉你)，送进 torch-rnn，训练两个小时，采样出了下面这段代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Reporter kubeconfig bootstrap implementation back of ne non-best or proto</span></span><br><span class="line"><span class="comment">// callered present to a new iterator that are build to</span></span><br><span class="line"><span class="comment">// seriily region.</span></span><br><span class="line"><span class="keyword">type</span> Instances <span class="keyword">struct</span> &#123;</span><br><span class="line">	Interface framework.ClientVolumeInterface</span><br><span class="line">	wait MustInfoDefaultCreatePrivilegedValue</span><br><span class="line">	HostDNS    <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	<span class="comment">// Needed inshelt is data from bucket for checks, if the double with</span></span><br><span class="line">	<span class="comment">// this address group and needs used to less 4anology and https://github.com/policy/existing-storage/using/recevable-src image/shtge efility and intendaroping</span></span><br><span class="line">	<span class="comment">// store</span></span><br><span class="line">	decisionKey *<span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Prefer operations that successfully at I registry. See methods</span></span><br><span class="line">	<span class="comment">// instance (documentations) the console set4 are used.</span></span><br><span class="line">	Codes <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewPathParameter address taints of Server automatically.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pl *NormalGanglIngress)</span> <span class="title">GetAll</span><span class="params">(data <span class="keyword">interface</span>&#123;&#125;, contains *stderr.IsState)</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	key := &amp;zs.FreeCheck&#123;&#125;</span><br><span class="line">	_, err := d.info.CommandStatus(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	error := field.ErrorTypes()</span><br><span class="line">	<span class="keyword">return</span> withRegisterBackoff(indexing)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// JSONNM currently directory was returned in it deleting the recorder and certificates.</span></span><br><span class="line"><span class="keyword">type</span> Attacher <span class="keyword">struct</span> &#123;</span><br><span class="line">	obj <span class="keyword">uint32</span></span><br><span class="line">	cidr []*Decls.ParseMessage</span><br><span class="line">	sgip          io.SharedInformer</span><br><span class="line">	Snapshot       *Token</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *symconfig)</span> <span class="title">DescribeRestore</span><span class="params">(ctx context.Context, m file.Info)</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件认可了！甚至还学会了写注释。除此之外，它似乎还需要 <code>gofmt</code> 或 <code>goimports</code> 帮助，我们工程师尚且喜欢偷懒，遑论 AI 呢！</p>
-<h3 id="林丹的技战术">林丹的技战术</h3>
+<h3 id="超级的技战术">超级的技战术</h3>
 <p>这是一个我尚未有精力去完成的实验，因为它的前期数据处理工作量太大，在这里我仅介绍一下想法：</p>
 <p>喜欢看/打羽毛球的朋友都知道，球员在场上步伐 (并步、跑步、交叉步)、击球方式 (高、吊、杀、搓、放等)、球的落点 (前、中、后、左、中、右 9 个点) 的选择，共同组成球员的技战术、打法。这些选择来自于球员对场上局势的判断 (之前的来回、对方球员的选择以及双方的身心状态)。</p>
 <p>如果我们能将这些信息编码成离散的状态，就能将羽毛球比赛抽象成时序数据。当然，要学就要从最好的学，所以我想做的是：获取林丹巅峰时期的所有比赛视频，记录下他和所有对手在每个回合做出的球路选择，然后送进 RNN。是不是有助于新的运动员快速掌握「超级丹」的球路？希望我有一天能有闲暇时间来完成这项工作。如果看到这篇博客的你是国家羽毛球训练中心的工作人员，欢迎联系我 : ) Kidding。</p>
