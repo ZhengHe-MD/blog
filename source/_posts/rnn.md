@@ -17,7 +17,7 @@ Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of R
    * 三国演义
    * 老友记
    * Kubernetes 源码
-   * 林丹技战术
+   * 超级丹的技战术
 
 整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。
 
@@ -25,7 +25,7 @@ Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of R
 
 在构思这篇博客前，我曾经想过写一个完整的、细致入微的、保姆式的从 0 - 1 实现 RNN 的教程。后来发现，在我自己阅读、理解和实现的过程中，至少投入数十个小时阅读大量资料，期间并没有发现任何一篇文章能做到这点，那么我又如何能期望写一篇博客做到这点？
 
-![standards](https://imgs.xkcd.com/comics/standards.png)
+![xkcd-standards](https://imgs.xkcd.com/comics/standards.png)
 
 那什么东西是值得分享的呢？我思考的结果是「学习路径」。在遇到理解障碍时，我尝试寻找并阅读了哪些资料，花费了多长时间，有什么心得体会，这些也许能够给到读者灵感。
 
@@ -144,7 +144,7 @@ dy[targets[t]] -= 1
 
 ## 探索 RNN 的可能性
 
-实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情了。本文开篇提到过，Andrej 开放了他做实验所使用的 [char-rnn](https://github.com/karpathy/char-rnn) 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 [README.md](https://github.com/karpathy/char-rnn/blob/master/Readme.md) 中，Andrej 又推荐了来自 Justin Johnson 优化性能后的版本：[torch-rnn](https://github.com/jcjohnson/torch-rnn)，后者甚至提供了[容器化支持](https://github.com/crisbal/docker-torch-rnn)。在花费了若干小时搭建好 GPU 环境后，终于可以开始正式探索。
+实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情了。本文开篇提到过，Andrej 开放了他做实验所使用的 [char-rnn](https://github.com/karpathy/char-rnn) 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 [README.md](https://github.com/karpathy/char-rnn/blob/master/Readme.md) 中，Andrej 又推荐了来自 Justin Johnson 优化性能后的版本：[torch-rnn](https://github.com/jcjohnson/torch-rnn)，后者甚至提供了[容器化支持](https://github.com/crisbal/docker-torch-rnn)。在花费了若干小时 (尴尬的是，大部分时间花在了等待 `docker pull` 上) 搭建好 GPU 环境后，终于可以开始正式探索。
 
 > 💡如果你手边有 GPU，搭建环境时可能还需要这些资料：
 >
@@ -303,7 +303,7 @@ func (s *symconfig) DescribeRestore(ctx context.Context, m file.Info) (bool, err
 
 显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件认可了！甚至还学会了写注释。除此之外，它似乎还需要 `gofmt` 或 `goimports` 帮助，我们工程师尚且喜欢偷懒，遑论 AI 呢！
 
-### 林丹的技战术
+### 超级的技战术
 
 这是一个我尚未有精力去完成的实验，因为它的前期数据处理工作量太大，在这里我仅介绍一下想法：
 
