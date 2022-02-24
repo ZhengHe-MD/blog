@@ -9,18 +9,15 @@ tags:
 Andrej Karpathy 在 2015 年发表了题为 [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) 的博客，并配套开源了其中实验所用的[char-rnn 代码仓库](https://github.com/karpathy/char-rnn)，以及用 numpy 手写的 [gist: min-char-rnn](https://gist.github.com/karpathy/d4dee566867f8291f086)，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：
 
 1. 逐行理解 min-char-rnn，即 vanilla RNN
-
 2. 实现 N 层 vanilla RNN
-
 3. 实现 LSTM (Long Short-Term Memory) RNN
-
 4. 探索 RNN 的可能性
 
-   * 散文生成器 (Paul Graham 和东坑水哥)
-   * 生成 TiDB 和 K8s 代码
-
-   * 林丹的技战术剖析
-   * ... (待补充)
+   * Paul Graham generator
+   * 三国演义
+   * 老友记
+   * Kubernetes 源码
+   * 林丹技战术 (想法)
 
 整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。
 
@@ -113,7 +110,7 @@ dy[targets[t]] -= 1
 
 刚看到这段代码，我完全不知道 gradient check 是在做什么，自然也无法理解这段代码的含义。不过在搜索引擎的帮助下，我还是找到了斯坦福大学开放的教程 [Unsupervised Feature Learning and Deep Learning](http://ufldl.stanford.edu/tutorial/)，其中一节正是介绍 [Debugging: Gradient Checking](http://ufldl.stanford.edu/tutorial/supervised/DebuggingGradientChecking/)。所谓 gradient check(ing) 其实就是对比「通过反向传播计算出来的梯度」与「利用导数定义近似计算得到的梯度」，来判断自己的反向传播阶段代码是否写对了，是工程师构建神经网络时常用的一种简单有效的 debug 方法。由于每次训练都可能非常耗时，而且一些问题即便存在，表面上也可能看着一切正常。在构建完神经网络后，开始训练之前，执行 gradient check(ing) 很有必要。
 
-我在实现 2-layer 和 n-layer RNN 的过程中，就成功利用 gradient check(ing) 发现代码中的若干逻辑问题，这样的逻辑问题通过传统的「眼神调试」、「print 调试」、「单点调试」都极难发现。
+在实现 2 层、 n 层 RNN 的过程中，我就利用 gradient check(ing) 成功发现了代码中的若干逻辑问题。这些问题不会导致程序崩溃，通过传统的「眼神调试」、「print 调试」、「单点调试」都极难发现。
 
 ## N 层 vanilla RNN
 
@@ -147,7 +144,142 @@ dy[targets[t]] -= 1
 
 ## 探索 RNN 的可能性
 
-TODO
+实现完玩具版 RNN，理解已经足够到位，可以开始做一些有意思的事情。本文开篇提到过，Andrej 开放了他做实验所使用的 [char-rnn](https://github.com/karpathy/char-rnn) 代码仓库，提供了 RNN、LSTM 和 GRU (另一种 RNN) 的实现以及一整套训练、推理的流程。在项目 [README.md](https://github.com/karpathy/char-rnn/blob/master/Readme.md) 中，Andrej 又推荐了 Justin Johnson 提供的性能更好的实现版本，[torch-rnn](https://github.com/jcjohnson/torch-rnn)，后者甚至提供了[容器化支持](https://github.com/crisbal/docker-torch-rnn)。在花费了若干小时搭建好 GPU 环境后，终于可以开始正式探索。
+
+如果你手边有 GPU，搭建环境时可能还需要这些资料：
+
+* [cuda-installation-guide](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/)
+* [nvidia-docker2](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+
+最后用 nvidia-docker 启动时可以把 torch-rnn 项目的本地路径用 Docker 的 volume 参数与容器内部的 `~/torch-rnn` 路径建立双向绑定，这样就可以在容器里自由地训练了。
+
+### Paul Graham generator
+
+先复现一下 Andrej 博客中的第一个实验，将 Paul Graham 的 essays 抓取到本地 ([我的脚本](https://github.com/ZhengHe-MD/replay-nn-tutorials/blob/main/min-char-rnn/paulgraham/dump_paulgraham_essays.py))，然后将其合并成一个文本文件，送入模型。实验参数与 Andrej 的保持一致，训练 50 个 epochs，下面是用模型采样出的段落示例：
+
+```
+So there even a list of few things you're supposed to concipe of different startups—you need to convince customers that new gets painting is one of them at startups without taking that. They're a rare concopporation, that's within college.
+To a real way to addict you, but what you're expected.
+If you're capped in several programmers, what proves them-defend what you're working about. But you don't notice based on your generation: since he doesn't realize it: all much shouldn't be just that that, that is short of this actual audience. Open study new people they have shifting up a city. [ 7 ] This surprises still say here told it's a platazine. There seem to degree why formidable things we tend to volunteregal startups elity is in Grisk Fortle. Sometomes The other generations were proportionate at real implications to cogain. If there are working off you're working on simply to like that sharp it horter than you. How so hote-wealth to treates back of friends they to be doing. Most nived in a number is to concied our fioks companies.
+```
+
+中间的这句话让我很是喜欢：
+
+> To a real way to addict you, but what you're expected.
+
+可以翻译成「让你上瘾，甚至用你期望的方式」吗？
+
+### 三国演义
+
+罗贯中的版权现在已经不受法律保护，于是我轻而易举地在百度搜到了三国演义的全文 txt。让我们一起看看 RNN 的文言文作品：
+
+```
+太史云长闻之，即遣人马往全徐聚及关缚。斗时一将军马，欲取平郡；操轻勒弃衣弓甲，来夜身中。原马玄德回寨新中，勒法东飞未还，因虽带明一林而到。韦众将令军接后，折声桥剑于穿着。备入城十里，赵云拍马皆进，被给来迎之，布会绳帐落下命，引一马军无弩而走。百凉五路，杀之处，走由精营马也。次日，如柴把拥山白下阵。待我三月，手力顺从，直至白配。两十白得小枪粮住乱，砍拜军士相招烈，兴阵后料，高边卧打宝后一齐出，右图山草，山行至溪。又所通人打身平阵，兼见剿伙。马超在前扎下兵，一面有军卧洛百人，只被白首视之。操为归锋，丕败宣桥进走曰：“宋大浩于来水，未如能敢施；无歹染之兵，彼得生动谗以理辞己下大机也！”表云：“不可此常之，今与何意！”随从吕旷令西凉姜布有荆州，箭政跪身，军马挺南。曹操大不告离，何守而降。先主非士，又命关看。
+
+    甫犹报关曹军师武俱山锋，休见玄德。坚功意久，立了刘备，嘉乃置臣谋长耳。荀瑁曰：““吴悌实雄违，休得逆我，难来用将。昨恐萧通为运。吾不以向计也，各有不可，名之。”瑜惊曰：“孤奉某驱反星不和！”丕大惊，乃下一面中调赖居，哨待曹公老父，乃诸县呈“热荒子因外谭自，引军人骑法。国秋引兵至涪坏寨，叫肃又退，威不想送芝如决，可使将过了玄德。军士义车绑交郡看。当日山戈从石汉中去了，言玄德已得家草，孙瓒便孙乾守而征。忽然一帜四山诸万将倾否：“两谋人皆裨宝饿河，四海有过所力；左看在金中，掣徐州皆上破营。祖首朝廷不受；势四股盟，并设猖峡：
+
+    却说植驱来，饱接也见，道感温校。只闻吾激透言城不然。
+
+    且军马报徐州渡寨，再收将催投“将分布、乔掌、韩仲。各、张仪刀手于军马。少败进，操问庞德曰：“汝平有真妙矣！”阿视之，拜便商议。瓒部商情：左右看鲁为太，计偿衡挟，提乏畏中。表料第氏受之情，未胜者报孔明，用然天下。孔明无在车仗至条厅亡，隐教转到周上。后人有诗赞一徒方诺，毗进入府基。先说孔明曰：“杀帝刘业，与卿六锋也！”孔明曰：“汝来说丞相夫战，亦何鼓降？”二人便同先阵器。
+```
+
+你是否像我一样认认真真地读了一遍？虽然不知道它在写什么，但 RNN 对文言文的掌握应该比我掌握得牢靠一些。
+
+### 老友记
+
+一位网友在 Github 上保存了老友记全 10 季的剧本：[fangj/friends](https://github.com/fangj/friends)，维护者应该不会想到有一天这个仓库会变成 AI 的「饲料」？写了一个 Python 脚本简单将 html 处理成了普通文本，送进模型训练。下面是得到的剧本节选：
+
+```
+[Scene: Chandler and Joey's, Phoebe is answering from some gateen, the same assarent duck is
+smile.]
+
+
+Ross: Seriously, I can’t…I play larny?
+
+
+All: Oh, guys. This, this is where it’s such some Agenton on the missay I could take
+the bean in your side to me.
+
+Phoebe: What? What do you think he’s gonna see you?
+
+Rachel: Really?! The only bay idea, but that’s okay! You gotta get rome,
+tell me!
+
+Rachel: Wow! What are you laughing after anything women?
+
+Ross: Monnica told me about! This is beautiful that turts familiar. So I get a
+button, fine. What are you doing?
+
+Ross: Da me. (Pretends in door) I decided to cold use that.
+
+Rachel: Whoa, whoa whoa, day! What a duving dollars!!!!
+```
+
+很明显，RNN 掌握了剧本的结构：场景、人物、对话、动作。虽然对话看起来有些空洞，但令人惊讶的是，它甚至学会了 Rachel 的语气：
+
+```
+Rachel: Whoa, whoa whoa, day! What a duving dollars!!!!
+```
+
+显然，从「 `a` 和 `dollars` 同时出现」可以断定，它的语法还没学到位，不过说成这样还不值得我们鼓励一下？
+
+### Kubernetes
+
+[Codepilot](https://copilot.github.com/) 和 [AlphaCode](https://deepmind.com/blog/article/Competitive-programming-with-AlphaCode) 已经向工程师们证明了 AI 写代码的能力，我也想看看 3 层 LSTM 能做到什么样的程度。于是我 clone 了 Kubernetes 仓库，将所有 Golang 源码聚合 (cat) 成一个文本 (你猜猜 Kubernetes 的 codebase 所占的空间有多大？评论区告诉你)，送进 torch-rnn，训练两个小时，采样出了下面这段代码：
+
+```go
+// Reporter kubeconfig bootstrap implementation back of ne non-best or proto
+// callered present to a new iterator that are build to
+// seriily region.
+type Instances struct {
+	Interface framework.ClientVolumeInterface
+	wait MustInfoDefaultCreatePrivilegedValue
+	HostDNS    interface{}
+	// Needed inshelt is data from bucket for checks, if the double with
+	// this address group and needs used to less 4anology and https://github.com/policy/existing-storage/using/recevable-src image/shtge efility and intendaroping
+	// store
+	decisionKey *string
+
+	// Prefer operations that successfully at I registry. See methods
+	// instance (documentations) the console set4 are used.
+	Codes bool
+}
+
+// NewPathParameter address taints of Server automatically.
+func (pl *NormalGanglIngress) GetAll(data interface{}, contains *stderr.IsState) (bool, error) {
+	key := &zs.FreeCheck{}
+	_, err := d.info.CommandStatus(ctx)
+	if err != nil {
+		return err
+	}
+	error := field.ErrorTypes()
+	return withRegisterBackoff(indexing)
+}
+
+// JSONNM currently directory was returned in it deleting the recorder and certificates.
+type Attacher struct {
+	obj uint32
+	cidr []*Decls.ParseMessage
+	sgip          io.SharedInformer
+	Snapshot       *Token
+}
+
+func (s *symconfig) DescribeRestore(ctx context.Context, m file.Info) (bool, error) {
+	return nil
+}
+```
+
+显然，我们的模型还没发现返回参数的数量需要与函数定义保持一致。但至少我们的模型被 Golang 的语法高亮插件接收了！甚至还学会了写注释。除此之外，在 `gofmt` 或 `goimports` 的帮助下，它应该能写出更整洁的代码。
+
+### 林丹的技战术
+
+这是一个我尚未有精力去完成的实验。因为它的数据预处理工作量太大，在这里我仅介绍一下想法。
+
+喜欢看/打羽毛球的朋友都知道，球员在场上步伐 (并步、跑步、交叉步)、击球方式 (高、吊、杀、搓、放等)、球的落点 (前、中、后、左、中、右 9 个点) 的选择，共同组成球员的技战术、打法。这些选择来自于球员对场上局势的判断 (之前的来回、对方球员的选择以及双方的身心状态)。
+
+如果我们能将这些信息编码成离散的状态，就能将羽毛球比赛抽象成时序数据。当然，要学就要从最好的学。所以我想做的是：获取林丹巅峰时期的所有比赛视频，记录下他和所有对手在每个回合做出的球路选择，然后送进 RNN。是不是有助于新的运动员快速掌握「超级丹」的球路？
+
+希望有一天能有闲暇时间来完成这项工作。如果看到这篇博客的你是国家羽毛球训练中心的工作人员，欢迎联系我。
 
 ## 参考资料
 
