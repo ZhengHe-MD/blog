@@ -239,6 +239,107 @@ mjx-container + br {
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/12/20/design-dimensions-of-tracing-systems/" class="post-title-link" itemprop="url">调用链追踪系统的设计维度</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-20 23:03:14" itemprop="dateCreated datePublished" datetime="2020-12-20T23:03:14+00:00">2020-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/system-design/" itemprop="url" rel="index"><span itemprop="name">system design</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/12/20/design-dimensions-of-tracing-systems/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/12/20/design-dimensions-of-tracing-systems/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2020/12/20/design-dimensions-of-tracing-systems/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -270,7 +371,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -386,7 +487,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -487,7 +588,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -590,7 +691,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -706,7 +807,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -807,7 +908,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -925,7 +1026,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1026,7 +1127,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
 
   
@@ -1122,7 +1223,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
+      <time title="修改时间：2022-02-27 10:46:49" itemprop="dateModified" datetime="2022-02-27T10:46:49+00:00">2022-02-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1176,107 +1277,6 @@ mjx-container + br {
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" class="post-title-link" itemprop="url">What's Really New with NewSQL (2016)</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-04-05 20:39:47" itemprop="dateCreated datePublished" datetime="2020-04-05T20:39:47+00:00">2020-04-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-02-24 23:47:01" itemprop="dateModified" datetime="2022-02-24T23:47:01+00:00">2022-02-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/papers-we-love/" itemprop="url" rel="index"><span itemprop="name">papers-we-love</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/05/What-s-Really-New-with-NewSQL-2016/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在进入文章之前，应该先介绍两位重量级作者：<a href="cs.cmu.edu/~pavlo/">Andrew Pavlo</a> 和 <a target="_blank" rel="noopener" href="https://451research.com/analyst-team/analyst/Matt+Aslett">Matthew Aslett</a>。Andrew 在 CMU 的计算机科学学院任教，主攻方向包括内存数据库、自动驾驶系统架构、事务处理系统和海量数据分析，他是 CMU Database Group 的核心成员，在 CMU 开设的两门课程 Database Systems (15-445/645) 和 Advanced Database System (15-721) 全是干货；Matthew 是 <a target="_blank" rel="noopener" href="https://451research.com/about-us/our-research/research-channels/data-ai-analytics">451 research: Data, AI &amp; Analytics channel</a> 的 VP，他在 2011 年的一篇 <a target="_blank" rel="noopener" href="http://cs.brown.edu/courses/cs227/archives/2012/papers/newsql/aslett-newsql.pdf">论文</a> 中第一次用 <strong>NewSQL</strong> 指代提供类似 NoSQL 高吞吐、高可用支持，同时仍然保持 ACID 特性的新一代数据库系统。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
