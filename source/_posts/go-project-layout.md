@@ -11,17 +11,17 @@ tags:
 
 ![https://skeptics.stackexchange.com/questions/6828/was-the-experiment-with-five-monkeys-a-ladder-a-banana-and-a-water-spray-condu](./monkey.jpeg)
 
-接下来将讨论的就是 Go 的项目布局。本篇布局指南的主体内容来源于 Ben Johnson 在 2016 年写的文章 [Standard Package Layout](https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1)，阅读它和阅读本文的效果可以认为是等同的。在我负责的团队内部，我们已经在大大小小数十个项目上实践和验证超过一年的时间，解决了我们平时编码过程中的两大问题：
+本文想讨论的就是 Go 的项目布局。这份布局指南并非原创，其主体内容来源于 Ben Johnson 在 2016 年写的文章 [Standard Package Layout](https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1)，阅读它和阅读本文的效果可以认为是等同的。我们研发小组已经在大大小小数十个项目上实践超过一年的时间，通过经验证实它确实能够解决我们平时在使用 Go 语言编码过程中的两大常见问题：
 
 - 因循环依赖修改代码结构
 
 - 无法优雅地构建单元测试
 
-需要特别声明的是，它并非公司内部通用的规范，因此也不能代表伴鱼的服务端团队实践规范。
+> ⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表我司服务端团队的实践方式
 
 ## 有缺陷的布局方案
 
-在正式介绍最佳实践之前，我们有必要先了解常见的**有缺陷的**布局方案。这些布局方案常常是许多工程师从其它编程语言社区迁徙过来时夹带的习惯，我们也可以视之为一种文化交融的产物。需要说明的是：它们的缺陷是针对 Go 语言环境而言，在其原生语言中并不一定存在，
+在正式介绍最佳实践之前，我们有必要先了解常见的**有缺陷的**布局方案。这些布局方案常常是许多工程师从其它编程语言社区迁徙过来时夹带的习惯，也算是一种文化交融的产物。需要说明的是：它们的缺陷是针对 Go 语言环境而言，在其原生语言中并不一定存在。
 
 ### 扁平式布局
 
@@ -77,7 +77,7 @@ Rails 风格的布局方案将项目按照功能拆分，比如将 controller，
 
 在企业管理中，有的公司会把组织架构按照职能划分成人力行政、设计、产品、研发、市场、财务等部门，而有的公司则会先按照业务划分成不同的业务单元 (Business Unit)，然后在每个业务单元内部再划分出各自的职能部门。如果说前者对应的是 Rails 布局，那么后者就是业务单元布局。
 
-由于在每个业务单元中采用的是 Rails 布局，这种方案天然地就继承了 Rails 布局的缺陷。除此之外，这种方案还有一个问题：**同名不同义**。假设有 crawler 和 search engine 两个业务单元，它们都有一个 model package，crawler 和 search engine 的 model package 可能恰好都包含 WebPage 这个数据结构，由于 Go 语言在引用其它 package 的时候并不会带上完整的路径，两个业务单元中就可能存在同名结构体 `model.WebPage`。对于工程师来说，在一个项目中同名结构体存在两种含义是额外的负担。
+由于在每个业务单元中采用的是 Rails 布局，这种方案天然地就继承了 Rails 布局的缺陷。除此之外，这种方案还有一个潜在问题：**同名不同义**。假设有 crawler 和 search engine 两个业务单元，它们都有一个 model package，crawler 和 search engine 的 model package 可能恰好都包含 WebPage 这个数据结构，由于 Go 语言在引用其它 package 的时候只会带上最后一个文件夹的名称，即 package 名称，两个业务单元中就可能存在同名结构体 `model.WebPage`。对于工程师来说，在一个项目中同名结构体存在两种含义是额外的思考负担。
 
 ## 理想的布局方案
 
@@ -103,7 +103,7 @@ Rails 风格的布局方案将项目按照功能拆分，比如将 controller，
 
 每个应用所属的领域都会有自己的概念和过程，通常它们被统称为领域知识 (domain knowledge)。比如，一个电子商务应用可能包含的概念有顾客、账号、信用卡、库存、物流单等等，可能包含的过程有下单、付款、发货、退货、退款等等；一个社交网络应用可能包含的概念有用户、关注关系、文章、相册、活动等等，可能包含的过程有关注、发布、赞、踩、参与活动等等。领域知识本身与具体的实现无关。
 
-BPM 负责管理业务流程，其领域中包含的两个核心概念是工作流 (workflow) 及其实例 (instance)，以 workflow 为例，我们可以在 domain package 中定义它的数据结构：
+BPM 负责管理业务流程，其领域中包含的一个核心概念是工作流 (workflow)，以 workflow 为例，我们可以在 domain package 中定义它的数据结构：
 
 ```go
 // domain/workflow.go
@@ -137,7 +137,7 @@ type WorkflowService interface {
 
 我们定义了领域中的概念和行为，而不引入它们的具体实现。关于 domain 应该放什么内容，一个很重要的判断规则是：
 
-> 💡 不依赖项目中的其它任何 package，也不依赖外部服务或中间件
+> 💡 domain 中的任何内容既不依赖项目中的其它任何 package，也不依赖外部服务或中间件
 
 从下文中，你将理解 domain 是所有其它 package 互相依赖的支点，这么做的一大好处就是彻底消除循环依赖。为了方便理解上下文，我们接着在 domain 中定义两个行为：
 
@@ -158,7 +158,7 @@ type DBManager interface {
 
 > 🙋🏻 你刚刚不是说 domain 里只包含领域知识吗？怎么还有数据存取相关的内容？
 
-是的，其实我们不仅会在 domain 中放入业务领域知识，也会放入技术领域知识，因为究其本质，domain 的独特性是因其**支点**地位而存在的，它的存在实际上是为了更好的项目搭建。
+是的，其实我们不仅会在 domain 中放入业务领域知识，也会放入技术领域知识，因为究其本质，domain 的独特性是因其**支点**地位而存在的，它的存在实际上是为了更合理的项目布局。
 
 ### 2. 按照依赖关系组织不同的 package
 
@@ -168,7 +168,7 @@ type DBManager interface {
 
 ```go
 // mysql/workflow.go
-package tidb
+package mysql
 
 import (/*...*/)
 
@@ -180,17 +180,17 @@ func (m *WorkflowService) Add(ctx context.Context, wf *domain.Workflow) (lastIns
 // ...
 ```
 
-由于每个 workflow 的详细配置信息存放在一个独立的 xml 文件中，它不会被存放在关系型数据库中，因此 WorkflowService 还将依赖 XMLStorageService：
+由于每个 workflow 的详细配置信息存放在一个独立的 xml 文件中，它不会被存放在关系型数据库中，因此 WorkflowService 还需要依赖 XMLStorageService：
 
 ```go
-// tidb/workflow.go
+// mysql/workflow.go
 type WorkflowService struct {
   db 							  *sql.DB
   xmlStorageService domain.XMLStorageService
 }
 ```
 
-那 XMLStorageService 怎么实现呢？如果是存在对象存储服务 (OSS) 中，是放在阿里云还是 AWS？这些问题 tidb package 并不关心，也无需关心。
+那 XMLStorageService 怎么实现呢？如果是存在对象存储服务 (OSS) 中，是放在阿里云还是 AWS？这些问题 mysql package 并不关心，也无需关心。
 
 如果有一天我们想为 workflow 元数据 (非配置数据) 换一个持久化存储，比如 MongoDB，BoltDB，就可以类似地再引入一个 mongo package 或者 bolt package。
 
