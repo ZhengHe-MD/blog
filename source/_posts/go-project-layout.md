@@ -194,7 +194,7 @@ type WorkflowService struct {
 
 如果有一天我们想为 workflow 元数据 (非配置数据) 换一个持久化存储，比如 MongoDB，BoltDB，就可以类似地再引入一个 mongo package 或者 bolt package。
 
-此外，我们还可以利用这种方式确定 package 之间的依赖关系。假如你想在 MySQL 前面添加一个缓存层，那么可以引入另一个 memory package，后者以 MySQL 为持久化存储，在内存中基于 LRU 实现缓存逻辑：
+此外，我们还可以利用这种方式引入 package 之间的依赖关系。假如你想在 MySQL 前面添加一个缓存层，那么可以新增另一个 memory package，后者以 MySQL 为持久化存储，在内存中基于 LRU 实现缓存逻辑：
 
 ```go
 // memory/user.go
@@ -220,7 +220,9 @@ func (m *WorkflowCache) Add(ctx context.Context, wf *domain.Workflow) (lastInser
 
 #### Package 间的依赖关系
 
-package 之间不仅只存在线性的层次依赖，即 A 依赖 B、B 依赖 C，还可能存在嵌套依赖，如 A 依赖 B 和 C，如上文中的 WorkflowService 同时依赖 DBManager 以及 XMLStorageService。其中 XMLStorageService 通过 OSS 来实现。当我们想要更换 XMLStorageService 实现时，无需修改任何 WorkflowService 的实现代码逻辑；当我们想要更换 WorkflowService 实现时，无需修改任何 XMLStorageService 的实现，二者之间的依赖关系仅靠 domain package 定义的领域过程维系，耦合度很低。
+package 之间不仅只存在线性的层次依赖，即 A 依赖 B、B 依赖 C，还可能存在多重依赖，如 A 依赖 B 和 C，如上文中的 WorkflowService 同时依赖 DBManager 以及 XMLStorageService。其中 XMLStorageService 通过 OSS 来实现。当我们想要更换 XMLStorageService 实现时，无需修改任何 WorkflowService 的实现代码逻辑；当我们想要更换 WorkflowService 实现时，无需修改任何 XMLStorageService 的实现，二者之间的依赖关系仅靠 domain package 定义的领域过程维系，耦合度很低。
+
+事实上，对任意两个 package X 和 Y，它们之间永远不会直接存在依赖关系，而是通过 domain package 实现一种弱依赖关系，这种方案能优雅地管理任何形式的网状依赖。
 
 #### 用 package 控制对标准包的依赖
 
@@ -243,8 +245,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 这总做法粗看起来很奇怪，为什么要取一个和标准包一样的名字，如果某个地方需要同时引用 http 和 net/http，岂不是很别扭？实际上这种设计是有意而为之，只要你不允许项目的其它地方引用 net/http，问题就不存在了，而这种限制恰恰能够帮助你从源头上将所有对 net/http 的依赖控制在 http package 中，项目的依赖关系也将变得更加清晰。
 
-现在，http.Handler 就成为领域类型与 HTTP 协议之间的适配器。
-
 #### 3. 利用每个 package 的 init 函数注入依赖
 
 设计好整体布局后，只需要一根线将它们串联起来。这根线就是每个 package 的 init 函数，以 grpc package 中的 init 函数为例：
@@ -259,13 +259,13 @@ import (
 	".../bpm/mysql"
 )
 
-var HandleGrpcBPM *GrpcBPM
+var DefaultBPMGrpcHandler *BPMGrpcHandler
 
 func init() {
 	var workflowCtl = NewWorkflowController(mysql.DefaultWorkflowService, oss.DefaultXMLStorageService)
 	var workflowInstanceCtl = NewWorkflowInstanceController(mysql.DefaultWorkflowService, mysql.DefaultWorkflowInstanceService)
 
-	HandleGrpcBPM = &GrpcBPM{
+	DefaultBPMGrpcHandler = &BPMGrpcHandler{
 		workflowCtl:            workflowCtl,
 		workflowInstanceCtl:    workflowInstanceCtl,
 	}
@@ -276,7 +276,7 @@ func init() {
 
 现在，所有的 package 之间都依靠 domain package 中的定义的领域知识和过程作为沟通的桥梁，我们就很容易通过依赖注入的方式实现 mock。
 
-假设我们希望利用本地的数据库来做简单的端到端测试，就可以引入共享的 mock package，在里面实现简单的 mock，同样以 WorkflowService 为例，引入 DBManager 的 mock：
+假设我们希望利用本地的数据库来做简单的端到端测试，就可以引入共享的 mock package，在里面实现本地连接逻辑，同样以 WorkflowService 为例，引入 DBManager 的 mock：
 
 ```go
 // mock/db_manager.go
@@ -299,11 +299,13 @@ func (m *DBManager) GetDB(ctx context.Context) (*manager.DB, error) {
 }
 ```
 
-剩下的工作就是在测试时，将数据库本地化的实现注入到 BeginFn 和 GetDBFn 中，然后在初始化测试时将 mockDBManager 传递给 WorkflowService 即可。通过这种方式，你可以精细化地控制每个依赖需要用什么样的实现，拥有对测试的完全控制力。
+剩下的工作就是在测试时，将数据库本地化的实现注入到 BeginFn 和 GetDBFn 中，然后在初始化测试时将 mock.DBManager 传递给 WorkflowService 即可。不难看出，mock.DBManager 实际上就是 domain.DBManager 的一个具体实现，只不过这个实现专供测试使用。
+
+通过这种方式，你可以精细化地控制每个依赖需要用什么样的实现，拥有对测试的完全控制力。
 
 ### 代码生成
 
-为了更好的实施这一布局方案，我们在内部搭建了相应的命令行工具用于生成代码。
+为了更好的实施这一布局方案，我们在内部搭建了相应的命令行工具用于生成相应的代码。
 
 ## 参考文献
 
