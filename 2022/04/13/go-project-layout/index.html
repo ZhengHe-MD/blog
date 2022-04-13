@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 项目布局指南">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/monkey.jpeg">
+<meta property="article:published_time" content="2022-04-13T11:18:50.000Z">
+<meta property="article:modified_time" content="2022-04-13T07:57:46.968Z">
+<meta property="article:author" content="ZhengHe">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/monkey.jpeg">
+
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/","path":"2022/04/13/go-project-layout/","title":"Go 项目布局指南"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Go 项目布局指南 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZhengHe</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Go 项目布局指南
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-04-13 11:18:50 / 修改时间：07:57:46" itemprop="dateCreated datePublished" datetime="2022-04-13T11:18:50+00:00">2022-04-13</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2022/04/13/go-project-layout/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/04/13/go-project-layout/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。</p>
+<span id="more"></span>
+<figure>
+<img src="./monkey.jpeg" alt="" /><figcaption>https://skeptics.stackexchange.com/questions/6828/was-the-experiment-with-five-monkeys-a-ladder-a-banana-and-a-water-spray-condu</figcaption>
+</figure>
+<p>接下来将讨论的就是 Go 的项目布局。本篇布局指南的主体内容来源于 Ben Johnson 在 2016 年写的文章 <a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout</a>，阅读它和阅读本文的效果可以认为是等同的。在我负责的团队内部，我们已经在大大小小数十个项目上实践和验证超过一年的时间，解决了我们平时编码过程中的两大问题：</p>
+<ul>
+<li><p>因循环依赖修改代码结构</p></li>
+<li><p>无法优雅地构建单元测试</p></li>
+</ul>
+<p>需要特别声明的是，它并非公司内部通用的规范，因此也不能代表伴鱼的服务端团队实践规范。</p>
+<h2 id="有缺陷的布局方案">有缺陷的布局方案</h2>
+<p>在正式介绍最佳实践之前，我们有必要先了解常见的<strong>有缺陷的</strong>布局方案。这些布局方案常常是许多工程师从其它编程语言社区迁徙过来时夹带的习惯，我们也可以视之为一种文化交融的产物。需要说明的是：它们的缺陷是针对 Go 语言环境而言，在其原生语言中并不一定存在，</p>
+<h3 id="扁平式布局">扁平式布局</h3>
+<p>扁平式布局就是把项目的所有文件放在同一个 package 内部。这种方案的优势就是简单，永远不存在循环依赖，常见于一些小微型项目或者一次性脚本中。在公司内部的一些早期项目中就存在扁平式布局的身影，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── docker</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── logic</span><br><span class="line">│   ├── config.go</span><br><span class="line">│   ├── dbitem.go</span><br><span class="line">│   └── logic.go</span><br><span class="line">└── main.go</span><br></pre></td></tr></table></figure>
+<p>所有代码逻辑都放在一个拍平的 <code>logic</code> 文件夹中。这种布局方案的缺陷也很明显：当项目规模变大时，单个文件内代码量变大，文件之间形成网状依赖，可维护性将呈指数趋势下降，甚至对于 IDE 来说也是不小的挑战。</p>
+<h3 id="rails-布局">Rails 布局</h3>
+<p>Rails 风格的布局方案将项目按照功能拆分，比如将 controller，service，model，cache， config 分别放到不同的 package 中。这种方案我们也曾在项目中使用过，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Dockerfile</span><br><span class="line">├── common</span><br><span class="line">│   └── env.go</span><br><span class="line">├── controller</span><br><span class="line">│   ├── httpcontroller</span><br><span class="line">│   └── thriftcontroller</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── main.go</span><br><span class="line">├── model</span><br><span class="line">│   ├── dao</span><br><span class="line">│   ├── daoimpl</span><br><span class="line">│   ├── domain</span><br><span class="line">│   ├── error.go</span><br><span class="line">│   └── model.go</span><br><span class="line">├── pkg</span><br><span class="line">│   ├── cache</span><br><span class="line">│   └── config</span><br><span class="line">└── router</span><br><span class="line">    ├── httprouter</span><br><span class="line">    └── thriftrouter</span><br></pre></td></tr></table></figure>
+<p>这种方案最大的问题在于功能之间容易产生循环依赖。比如 cache 和 config 之间、service 和 cache 之间、config 和 service 之间都可能存在相互依赖的情况。</p>
+<h3 id="业务单元布局">业务单元布局</h3>
+<p>在企业管理中，有的公司会把组织架构按照职能划分成人力行政、设计、产品、研发、市场、财务等部门，而有的公司则会先按照业务划分成不同的业务单元 (Business Unit)，然后在每个业务单元内部再划分出各自的职能部门。如果说前者对应的是 Rails 布局，那么后者就是业务单元布局。</p>
+<p>由于在每个业务单元中采用的是 Rails 布局，这种方案天然地就继承了 Rails 布局的缺陷。除此之外，这种方案还有一个问题：<strong>同名不同义</strong>。假设有 crawler 和 search engine 两个业务单元，它们都有一个 model package，crawler 和 search engine 的 model package 可能恰好都包含 WebPage 这个数据结构，由于 Go 语言在引用其它 package 的时候并不会带上完整的路径，两个业务单元中就可能存在同名结构体 <code>model.WebPage</code>。对于工程师来说，在一个项目中同名结构体存在两种含义是额外的负担。</p>
+<h2 id="理想的布局方案">理想的布局方案</h2>
+<p>理想的布局方案应该满足哪些要求？我认为至少有以下几点：</p>
+<ul>
+<li>易上手、可维护、可扩展</li>
+<li>避免循环依赖</li>
+<li>方便构建单元测试</li>
+</ul>
+<p>根据 Ben Johnson 的方案以及公司内部的基础设施特点，我们团队提出了一个改良版的布局方案，可以用四句话概括：</p>
+<ol type="1">
+<li><p>将领域类型放在名为 domain 的 package 中</p></li>
+<li><p>按照依赖关系组织不同的 package</p></li>
+<li><p>利用每个 package 的 init 函数注入依赖</p></li>
+<li><p>使用共享的 mock package</p></li>
+</ol>
+<p>这里以一个内部项目 — 业务流程管理 (Business Process Management, BPM) 为例，分别介绍这 4 句话。</p>
+<h3 id="将领域类型放在名为-domain-的-package-中">1. 将领域类型放在名为 domain 的 package 中</h3>
+<p>每个应用所属的领域都会有自己的概念和过程，通常它们被统称为领域知识 (domain knowledge)。比如，一个电子商务应用可能包含的概念有顾客、账号、信用卡、库存、物流单等等，可能包含的过程有下单、付款、发货、退货、退款等等；一个社交网络应用可能包含的概念有用户、关注关系、文章、相册、活动等等，可能包含的过程有关注、发布、赞、踩、参与活动等等。领域知识本身与具体的实现无关。</p>
+<p>BPM 负责管理业务流程，其领域中包含的两个核心概念是工作流 (workflow) 及其实例 (instance)，以 workflow 为例，我们可以在 domain package 中定义它的数据结构：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// domain/workflow.go</span></span><br><span class="line"><span class="keyword">type</span> Workflow <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID           <span class="keyword">int64</span>                    <span class="string">`json:&quot;id&quot; bdb:&quot;id&quot;`</span></span><br><span class="line">	Name         <span class="keyword">string</span>                   <span class="string">`json:&quot;name&quot; bdb:&quot;name&quot;`</span></span><br><span class="line">	Version      <span class="keyword">int64</span>                    <span class="string">`json:&quot;version&quot; bdb:&quot;version&quot;`</span></span><br><span class="line">	ProjectID    <span class="keyword">int64</span>                    <span class="string">`json:&quot;project_id&quot; bdb:&quot;project_id&quot;`</span></span><br><span class="line">	ProjectName  <span class="keyword">string</span>                   <span class="string">`json:&quot;project_name&quot; bdb:&quot;project_name&quot;`</span></span><br><span class="line">	DeployStatus bpm.WorkflowDeployStatus <span class="string">`json:&quot;deploy_status&quot; bdb:&quot;deploy_status&quot;`</span></span><br><span class="line">	XMLUri       <span class="keyword">string</span>                   <span class="string">`json:&quot;xml_uri&quot; bdb:&quot;xml_uri&quot;`</span></span><br><span class="line">	CreatedBy    <span class="keyword">string</span>                   <span class="string">`json:&quot;created_by&quot; bdb:&quot;created_by&quot;`</span></span><br><span class="line">	UpdatedBy    <span class="keyword">string</span>                   <span class="string">`json:&quot;updated_by&quot; bdb:&quot;updated_by&quot;`</span></span><br><span class="line">	CreatedAt    time.Time                <span class="string">`json:&quot;created_at&quot; bdb:&quot;created_at&quot;`</span></span><br><span class="line">	UpdatedAt    time.Time                <span class="string">`json:&quot;updated_at&quot; bdb:&quot;updated_at&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 BPM 中，管理员应该可以对工作流执行增、删、改、查，即下面的过程：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// domain/workflow.go</span></span><br><span class="line"><span class="keyword">type</span> WorkflowService <span class="keyword">interface</span> &#123;</span><br><span class="line">	Add(ctx context.Context, workflow *Workflow) (lastInsertID <span class="keyword">int64</span>, err error)</span><br><span class="line">	Get(ctx context.Context, where <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;) (workflow *Workflow, err error)</span><br><span class="line">	Set(ctx context.Context, workflow *Workflow) (rowsAffected <span class="keyword">int64</span>, err error)</span><br><span class="line">	Del(ctx context.Context, where <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;) (rowsAffected <span class="keyword">int64</span>, err error)</span><br><span class="line">	List(ctx context.Context, where <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;) (workflows []*Workflow, total <span class="keyword">int64</span>, err error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们定义了领域中的概念和行为，而不引入它们的具体实现。关于 domain 应该放什么内容，一个很重要的判断规则是：</p>
+<blockquote>
+<p>💡 不依赖项目中的其它任何 package，也不依赖外部服务或中间件</p>
+</blockquote>
+<p>从下文中，你将理解 domain 是所有其它 package 互相依赖的支点，这么做的一大好处就是彻底消除循环依赖。为了方便理解上下文，我们接着在 domain 中定义两个行为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// domain/xml_storage_service.go</span></span><br><span class="line"><span class="keyword">type</span> XMLStorageService <span class="keyword">struct</span> &#123;</span><br><span class="line">  UploadXML(ctx context.Context, data []<span class="keyword">byte</span>) (uri <span class="keyword">string</span>, err error)</span><br><span class="line">	LoadXML(ctx context.Context, uri <span class="keyword">string</span>) (data []<span class="keyword">byte</span>, err error)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// domain/db_manager.go</span></span><br><span class="line"><span class="keyword">type</span> DBManager <span class="keyword">interface</span> &#123;</span><br><span class="line">	Begin(ctx context.Context) (*manager.Tx, error)</span><br><span class="line">	GetDB(ctx context.Context) (*manager.DB, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，XMLStorageService 负责存储和读取 xml 格式的文件，DBManager 负责管理数据库连接。这里敏锐的你可能会有这样的疑问：</p>
+<blockquote>
+<p>🙋🏻 你刚刚不是说 domain 里只包含领域知识吗？怎么还有数据存取相关的内容？</p>
+</blockquote>
+<p>是的，其实我们不仅会在 domain 中放入业务领域知识，也会放入技术领域知识，因为究其本质，domain 的独特性是因其<strong>支点</strong>地位而存在的，它的存在实际上是为了更好的项目搭建。</p>
+<h3 id="按照依赖关系组织不同的-package">2. 按照依赖关系组织不同的 package</h3>
+<p>既然 domain package 没有任何外部依赖，那些过程的实现就应该被推入其它 package 中，这些 package 将作为领域过程的适配器。</p>
+<p>假设 WorflowService 背后的持久化存储是 MySQL，我们就可以引入一个 mysql package，后者负责实现 WorkflowService 的行为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mysql/workflow.go</span></span><br><span class="line"><span class="keyword">package</span> tidb</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (<span class="comment">/*...*/</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> WorkflowService <span class="keyword">struct</span> &#123;</span><br><span class="line">  db *sql.DB</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *WorkflowService)</span> <span class="title">Add</span><span class="params">(ctx context.Context, wf *domain.Workflow)</span> <span class="params">(lastInsertID <span class="keyword">int64</span>, err error)</span></span> &#123;<span class="comment">/*...*/</span>&#125;</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+<p>由于每个 workflow 的详细配置信息存放在一个独立的 xml 文件中，它不会被存放在关系型数据库中，因此 WorkflowService 还将依赖 XMLStorageService：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// tidb/workflow.go</span></span><br><span class="line"><span class="keyword">type</span> WorkflowService <span class="keyword">struct</span> &#123;</span><br><span class="line">  db 							  *sql.DB</span><br><span class="line">  xmlStorageService domain.XMLStorageService</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那 XMLStorageService 怎么实现呢？如果是存在对象存储服务 (OSS) 中，是放在阿里云还是 AWS？这些问题 tidb package 并不关心，也无需关心。</p>
+<p>如果有一天我们想为 workflow 元数据 (非配置数据) 换一个持久化存储，比如 MongoDB，BoltDB，就可以类似地再引入一个 mongo package 或者 bolt package。</p>
+<p>此外，我们还可以利用这种方式确定 package 之间的依赖关系。假如你想在 MySQL 前面添加一个缓存层，那么可以引入另一个 memory package，后者以 MySQL 为持久化存储，在内存中基于 LRU 实现缓存逻辑：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// memory/user.go</span></span><br><span class="line"><span class="keyword">package</span> memory</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (<span class="comment">/**/</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> WorkflowCache <span class="keyword">struct</span> &#123;</span><br><span class="line">  cache   <span class="keyword">map</span>[<span class="keyword">int</span>]*domain.Workflow</span><br><span class="line">  service domain.WorkflowService</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *WorkflowCache)</span> <span class="title">Add</span><span class="params">(ctx context.Context, wf *domain.Workflow)</span> <span class="params">(lastInsertID <span class="keyword">int64</span>, err error)</span></span> &#123;<span class="comment">/*...*/</span>&#125;</span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p>理解的关键点在于：</p>
+<ul>
+<li>其它 package 都是 domain package 的适配器</li>
+<li>其它 package 之间的依赖都以 domain package 为<strong>支点</strong>中转</li>
+</ul>
+<p>这样就能有效地消除 package 之间的循环依赖。我们也可以从 Go 的标准库中看到这种布局，如：io.Reader 是 io 的领域知识，tar.Reader、gzip.Reader 以及 multipart.Reader 这些都是 io.Reader 的实现，同时这些实现之间也存在依赖关系，我们会看到 os.File 被包裹在 bufio.Reader 中、bufio.Reader 被包裹在 gzip.Reader 中、gzip.Reader 被包裹在 tar.Reader 中。</p>
+<h4 id="package-间的依赖关系">Package 间的依赖关系</h4>
+<p>package 之间不仅只存在线性的层次依赖，即 A 依赖 B、B 依赖 C，还可能存在嵌套依赖，如 A 依赖 B 和 C，如上文中的 WorkflowService 同时依赖 DBManager 以及 XMLStorageService。其中 XMLStorageService 通过 OSS 来实现。当我们想要更换 XMLStorageService 实现时，无需修改任何 WorkflowService 的实现代码逻辑；当我们想要更换 WorkflowService 实现时，无需修改任何 XMLStorageService 的实现，二者之间的依赖关系仅靠 domain package 定义的领域过程维系，耦合度很低。</p>
+<h4 id="用-package-控制对标准包的依赖">用 package 控制对标准包的依赖</h4>
+<p>上述这种技巧并不局限于控制外部依赖，我们也可以用它来控制对标准包的依赖。比如，net/http package 属于标准包，我们也可以在项目中引入 http package，来控制对 net/http 的依赖：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// http/handler.go</span></span><br><span class="line"><span class="keyword">package</span> http</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (<span class="comment">/*...*/</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Handler <span class="keyword">struct</span> &#123;</span><br><span class="line">  WorkflowService bpm.WorkflowService</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *Handler)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">  <span class="comment">// handle request</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这总做法粗看起来很奇怪，为什么要取一个和标准包一样的名字，如果某个地方需要同时引用 http 和 net/http，岂不是很别扭？实际上这种设计是有意而为之，只要你不允许项目的其它地方引用 net/http，问题就不存在了，而这种限制恰恰能够帮助你从源头上将所有对 net/http 的依赖控制在 http package 中，项目的依赖关系也将变得更加清晰。</p>
+<p>现在，http.Handler 就成为领域类型与 HTTP 协议之间的适配器。</p>
+<h4 id="利用每个-package-的-init-函数注入依赖">3. 利用每个 package 的 init 函数注入依赖</h4>
+<p>设计好整体布局后，只需要一根线将它们串联起来。这根线就是每个 package 的 init 函数，以 grpc package 中的 init 函数为例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// grpc/init.go</span></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;.../bpm/engine&quot;</span></span><br><span class="line">	<span class="string">&quot;.../bpm/notifier&quot;</span></span><br><span class="line">	<span class="string">&quot;.../bpm/oss&quot;</span></span><br><span class="line">	<span class="string">&quot;.../bpm/rpc&quot;</span></span><br><span class="line">	<span class="string">&quot;.../bpm/mysql&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> HandleGrpcBPM *GrpcBPM</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> workflowCtl = NewWorkflowController(mysql.DefaultWorkflowService, oss.DefaultXMLStorageService)</span><br><span class="line">	<span class="keyword">var</span> workflowInstanceCtl = NewWorkflowInstanceController(mysql.DefaultWorkflowService, mysql.DefaultWorkflowInstanceService)</span><br><span class="line"></span><br><span class="line">	HandleGrpcBPM = &amp;GrpcBPM&#123;</span><br><span class="line">		workflowCtl:            workflowCtl,</span><br><span class="line">		workflowInstanceCtl:    workflowInstanceCtl,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用共享的-mock-package">4. 使用共享的 mock package</h4>
+<p>现在，所有的 package 之间都依靠 domain package 中的定义的领域知识和过程作为沟通的桥梁，我们就很容易通过依赖注入的方式实现 mock。</p>
+<p>假设我们希望利用本地的数据库来做简单的端到端测试，就可以引入共享的 mock package，在里面实现简单的 mock，同样以 WorkflowService 为例，引入 DBManager 的 mock：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mock/db_manager.go</span></span><br><span class="line"><span class="keyword">type</span> DBManager <span class="keyword">struct</span> &#123;</span><br><span class="line">	BeginFn      <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.Tx, error)</span></span></span><br><span class="line">	BeginInvoked <span class="keyword">bool</span></span><br><span class="line"></span><br><span class="line">	GetDBFn      <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.DB, error)</span></span></span><br><span class="line">	GetDBInvoked <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *DBManager)</span> <span class="title">Begin</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.Tx, error)</span></span> &#123;</span><br><span class="line">	m.BeginInvoked = <span class="literal">true</span></span><br><span class="line">	<span class="keyword">return</span> m.BeginFn(ctx)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *DBManager)</span> <span class="title">GetDB</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.DB, error)</span></span> &#123;</span><br><span class="line">	m.GetDBInvoked = <span class="literal">true</span></span><br><span class="line">	<span class="keyword">return</span> m.GetDBFn(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>剩下的工作就是在测试时，将数据库本地化的实现注入到 BeginFn 和 GetDBFn 中，然后在初始化测试时将 mockDBManager 传递给 WorkflowService 即可。通过这种方式，你可以精细化地控制每个依赖需要用什么样的实现，拥有对测试的完全控制力。</p>
+<h3 id="代码生成">代码生成</h3>
+<p>为了更好的实施这一布局方案，我们在内部搭建了相应的命令行工具用于生成代码。</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout — Ben Johnson</a></li>
+<li><a target="_blank" rel="noopener" href="https://dave.cheney.net/practical-go/presentations/gophercon-singapore-2019.html#_package_design">Practical Go: package design — Dave Cheney</a></li>
+<li><a target="_blank" rel="noopener" href="https://gitlab.pri.ibanyu.com/server/bpm/service/commit/e231bcd3032b46f896a09c6ecd9d9ae36133adc1">Gitlab: server/bpm/service</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/wtf-dial/wtf-dial-domain-model-9655cd523182">Building WTF Dial</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/wtf-dial/wtf-dial-boltdb-a62af02b8955">WTF Dial: Data storage with BoltDB</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/blog/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/blog/tags/Go/" rel="tag"># Go</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2022/02/26/compound-interest-in-life/" rel="prev" title="复利的隐喻">
+                  <i class="fa fa-chevron-left"></i> 复利的隐喻
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

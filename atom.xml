@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-04-02T06:56:45.260Z</updated>
+  <updated>2022-04-13T07:57:46.968Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,30 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Go 项目布局指南</title>
+    <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
+    <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
+    <published>2022-04-13T11:18:50.000Z</published>
+    <updated>2022-04-13T07:57:46.968Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="Go" scheme="https://zhenghe-md.github.io/blog/tags/Go/"/>
+    
+  </entry>
+  
+  <entry>
     <title>复利的隐喻</title>
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-04-02T06:56:45.260Z</updated>
+    <updated>2022-04-13T07:57:46.944Z</updated>
     
     <summary type="html">
     
@@ -44,7 +63,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-04-02T06:56:45.288Z</updated>
+    <updated>2022-04-13T07:57:46.972Z</updated>
     
     <summary type="html">
     
@@ -78,7 +97,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-04-02T06:56:45.288Z</updated>
+    <updated>2022-04-13T07:57:46.972Z</updated>
     
     <summary type="html">
     
@@ -100,7 +119,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-04-02T06:56:45.244Z</updated>
+    <updated>2022-04-13T07:57:46.928Z</updated>
     
     <summary type="html">
     
@@ -121,7 +140,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-04-02T06:56:45.244Z</updated>
+    <updated>2022-04-13T07:57:46.928Z</updated>
     
     <summary type="html">
     
@@ -140,7 +159,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2022-04-02T06:56:45.220Z</updated>
+    <updated>2022-04-13T07:57:46.904Z</updated>
     
     <summary type="html">
     
@@ -159,7 +178,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-04-02T06:56:45.280Z</updated>
+    <updated>2022-04-13T07:57:46.964Z</updated>
     
     <summary type="html">
     
@@ -178,7 +197,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-04-02T06:56:45.260Z</updated>
+    <updated>2022-04-13T07:57:46.944Z</updated>
     
     <summary type="html">
     
@@ -197,7 +216,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-04-02T06:56:45.292Z</updated>
+    <updated>2022-04-13T07:57:46.976Z</updated>
     
     <summary type="html">
     
@@ -216,7 +235,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-04-02T06:56:45.284Z</updated>
+    <updated>2022-04-13T07:57:46.968Z</updated>
     
     <summary type="html">
     
@@ -242,7 +261,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-04-02T06:56:45.260Z</updated>
+    <updated>2022-04-13T07:57:46.944Z</updated>
     
     <summary type="html">
     
@@ -265,7 +284,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-04-02T06:56:45.300Z</updated>
+    <updated>2022-04-13T07:57:46.984Z</updated>
     
     <summary type="html">
     
@@ -305,7 +324,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-04-02T06:56:45.228Z</updated>
+    <updated>2022-04-13T07:57:46.908Z</updated>
     
     <summary type="html">
     
@@ -326,7 +345,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-04-02T06:56:45.260Z</updated>
+    <updated>2022-04-13T07:57:46.944Z</updated>
     
     <summary type="html">
     
@@ -349,7 +368,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-04-02T06:56:45.304Z</updated>
+    <updated>2022-04-13T07:57:46.988Z</updated>
     
     <summary type="html">
     
@@ -383,7 +402,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-04-02T06:56:45.228Z</updated>
+    <updated>2022-04-13T07:57:46.908Z</updated>
     
     <summary type="html">
     
@@ -402,7 +421,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-04-02T06:56:45.232Z</updated>
+    <updated>2022-04-13T07:57:46.916Z</updated>
     
     <summary type="html">
     
@@ -438,7 +457,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
     <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2022-04-02T06:56:45.256Z</updated>
+    <updated>2022-04-13T07:57:46.940Z</updated>
     
     <summary type="html">
     
@@ -457,7 +476,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/</id>
     <published>2020-06-07T10:04:15.000Z</published>
-    <updated>2022-04-02T06:56:45.256Z</updated>
+    <updated>2022-04-13T07:57:46.940Z</updated>
     
     <summary type="html">
     
@@ -472,39 +491,6 @@
     
     
       <category term="papers-we-love" scheme="https://zhenghe-md.github.io/blog/tags/papers-we-love/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>报警平台的匹配器演进</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/</id>
-    <published>2020-05-10T00:00:00.000Z</published>
-    <updated>2022-04-02T06:56:45.252Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;简介&quot;&gt;简介&lt;/h2&gt;
-&lt;p&gt;本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。&lt;/p&gt;
-
-&lt;h3 id=&quot;背景&quot;&gt;背景&lt;/h3&gt;
-&lt;p&gt;报警平台是伴鱼内部各端、应用、基础设施等&lt;strong&gt;服务异常状态信息的集散中心&lt;/strong&gt;。整体流程如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg&quot; height=&quot;150px&quot;&gt;&lt;/p&gt;
-&lt;p&gt;信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式&lt;strong&gt;路由&lt;/strong&gt;给理应关心它的人。总体而言，路由的需求可以分为以下几种：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;路由给服务的负责人及其团队&lt;/li&gt;
-&lt;li&gt;路由给服务依赖方人员及其团队&lt;/li&gt;
-&lt;li&gt;路由给所有值班人员所在的即时消息群&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;为了满足这样的需求，报警平台采用树状结构组织路由信息，如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/route-tree.jpg&quot; height=&quot;350px&quot;&gt;&lt;/p&gt;
-&lt;p&gt;每个节点是一个路由节点，节点上可以挂载不同的规则，如抑制规则、通知规则；也可以存放不同的配置信息，如触发报警的阈值，以及相关负责人及其团队的联系方式。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
-    
     
   </entry>
   
