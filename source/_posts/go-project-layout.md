@@ -11,13 +11,15 @@ tags:
 
 ![https://skeptics.stackexchange.com/questions/6828/was-the-experiment-with-five-monkeys-a-ladder-a-banana-and-a-water-spray-condu](./monkey.jpeg)
 
-本文想讨论的就是 Go 的项目布局。这份布局指南并非原创，其主体内容来源于 Ben Johnson 在 2016 年写的文章 [Standard Package Layout](https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1)，阅读它和阅读本文的效果可以认为是等同的。我们研发小组已经在大大小小数十个项目上实践超过一年的时间，通过经验证实它确实能够解决我们平时在使用 Go 语言编码过程中的两大常见问题：
+本文想讨论的就是 Go 的项目布局。这份布局指南并非原创，其主体内容来源于 Ben Johnson 在 2016 年写的文章 [Standard Package Layout](https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1)，阅读它和阅读本文的效果可以认为是等同的。我们研发小组已经在大大小小数十个项目上实践超过一年的时间，通过经验证实它确实能够解决我们平时在编码过程中的两大常见问题：
 
 - 因循环依赖修改代码结构
 
 - 无法优雅地构建单元测试
 
-> ⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表我司服务端团队的实践方式
+> ⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表伴鱼服务端团队的项目布局方案。
+
+如果你了解过 Uncle Bob 的博客 [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) 或者他的书 [Clean Code](https://g.co/kgs/iqcpdc)，你可以将这篇指南提出的布局结构理解为 Clean Architecture 适配到小、中型 go 语言项目上的一种方案，对于大型项目可以考虑更复杂的 [evrone/go-clean-template](https://github.com/evrone/go-clean-template/)、[golang-standards/project-layout](https://github.com/golang-standards/project-layout)。
 
 ## 有缺陷的布局方案
 
@@ -303,9 +305,19 @@ func (m *DBManager) GetDB(ctx context.Context) (*manager.DB, error) {
 
 通过这种方式，你可以精细化地控制每个依赖需要用什么样的实现，拥有对测试的完全控制力。
 
-### 代码生成
+## The Clean Architecture
 
-为了更好的实施这一布局方案，我们在内部搭建了相应的命令行工具用于生成相应的代码。
+Uncle Bob 2012 年在自己的[博客](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)中提出了下面这个项目结构：
+
+![CleanArchitecture](./CleanArchitecture.jpg)
+
+这里每一层具体可以是什么，应该有几层并不重要，重要的是：
+
+* 外层只会依赖内层，内层不会依赖外层
+* 越往外层越具体，越易变；越往内层越抽象，越稳固
+* 同一层内的不同模块互相不认识对方，通过依赖注入实现同层代码复用
+
+我们可以将本文提出的布局方案理解成 2 层的 Clean Architecture，domain 里的内容对应的就是 Entities 和用于实现依赖注入的 interface 定义；剩下的模块就是外层，外层模块之间的代码复用通过 init 中的依赖注入来实现。所以，你可以将其理解成 Clean Architecture 的最简版，更复杂的版本则可以参考文章开头提到的两个项目： [evrone/go-clean-template](https://github.com/evrone/go-clean-template/) 和 [golang-standards/project-layout](https://github.com/golang-standards/project-layout)。
 
 ## 参考文献
 
@@ -314,3 +326,7 @@ func (m *DBManager) GetDB(ctx context.Context) (*manager.DB, error) {
 - [Gitlab: server/bpm/service](https://gitlab.pri.ibanyu.com/server/bpm/service/commit/e231bcd3032b46f896a09c6ecd9d9ae36133adc1)
 - [Building WTF Dial](https://medium.com/wtf-dial/wtf-dial-domain-model-9655cd523182)
 - [WTF Dial: Data storage with BoltDB](https://medium.com/wtf-dial/wtf-dial-boltdb-a62af02b8955)
+- [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Clean Code](https://g.co/kgs/iqcpdc)
+- [evrone/go-clean-template](https://github.com/evrone/go-clean-template/)
+- [golang-standards/project-layout](https://github.com/golang-standards/project-layout)
