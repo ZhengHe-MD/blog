@@ -26,8 +26,9 @@
 <meta property="og:description" content="每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/monkey.jpeg">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/CleanArchitecture.jpg">
 <meta property="article:published_time" content="2022-04-13T11:18:50.000Z">
-<meta property="article:modified_time" content="2022-05-16T14:12:24.467Z">
+<meta property="article:modified_time" content="2022-05-17T13:02:09.651Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="Go">
 <meta name="twitter:card" content="summary">
@@ -276,7 +277,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-05-16 14:12:24" itemprop="dateModified" datetime="2022-05-16T14:12:24+00:00">2022-05-16</time>
+      <time title="修改时间：2022-05-17 13:02:09" itemprop="dateModified" datetime="2022-05-17T13:02:09+00:00">2022-05-17</time>
     </span>
 
   
@@ -308,14 +309,15 @@ mjx-container + br {
 <figure>
 <img src="./monkey.jpeg" alt="" /><figcaption>https://skeptics.stackexchange.com/questions/6828/was-the-experiment-with-five-monkeys-a-ladder-a-banana-and-a-water-spray-condu</figcaption>
 </figure>
-<p>本文想讨论的就是 Go 的项目布局。这份布局指南并非原创，其主体内容来源于 Ben Johnson 在 2016 年写的文章 <a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout</a>，阅读它和阅读本文的效果可以认为是等同的。我们研发小组已经在大大小小数十个项目上实践超过一年的时间，通过经验证实它确实能够解决我们平时在使用 Go 语言编码过程中的两大常见问题：</p>
+<p>本文想讨论的就是 Go 的项目布局。这份布局指南并非原创，其主体内容来源于 Ben Johnson 在 2016 年写的文章 <a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout</a>，阅读它和阅读本文的效果可以认为是等同的。我们研发小组已经在大大小小数十个项目上实践超过一年的时间，通过经验证实它确实能够解决我们平时在编码过程中的两大常见问题：</p>
 <ul>
 <li><p>因循环依赖修改代码结构</p></li>
 <li><p>无法优雅地构建单元测试</p></li>
 </ul>
 <blockquote>
-<p>⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表我司服务端团队的实践方式</p>
+<p>⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表伴鱼服务端团队的项目布局方案。</p>
 </blockquote>
+<p>如果你了解过 Uncle Bob 的博客 <a target="_blank" rel="noopener" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Architecture</a> 或者他的书 <a target="_blank" rel="noopener" href="https://g.co/kgs/iqcpdc">Clean Code</a>，你可以将这篇指南提出的布局结构理解为 Clean Architecture 适配到小、中型 go 语言项目上的一种方案，对于大型项目可以考虑更复杂的 <a target="_blank" rel="noopener" href="https://github.com/evrone/go-clean-template/">evrone/go-clean-template</a>、<a target="_blank" rel="noopener" href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a>。</p>
 <h2 id="有缺陷的布局方案">有缺陷的布局方案</h2>
 <p>在正式介绍最佳实践之前，我们有必要先了解常见的<strong>有缺陷的</strong>布局方案。这些布局方案常常是许多工程师从其它编程语言社区迁徙过来时夹带的习惯，也算是一种文化交融的产物。需要说明的是：它们的缺陷是针对 Go 语言环境而言，在其原生语言中并不一定存在。</p>
 <h3 id="扁平式布局">扁平式布局</h3>
@@ -393,8 +395,18 @@ mjx-container + br {
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// mock/db_manager.go</span></span><br><span class="line"><span class="keyword">type</span> DBManager <span class="keyword">struct</span> &#123;</span><br><span class="line">	BeginFn      <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.Tx, error)</span></span></span><br><span class="line">	BeginInvoked <span class="keyword">bool</span></span><br><span class="line"></span><br><span class="line">	GetDBFn      <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.DB, error)</span></span></span><br><span class="line">	GetDBInvoked <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *DBManager)</span> <span class="title">Begin</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.Tx, error)</span></span> &#123;</span><br><span class="line">	m.BeginInvoked = <span class="literal">true</span></span><br><span class="line">	<span class="keyword">return</span> m.BeginFn(ctx)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *DBManager)</span> <span class="title">GetDB</span><span class="params">(ctx context.Context)</span> <span class="params">(*manager.DB, error)</span></span> &#123;</span><br><span class="line">	m.GetDBInvoked = <span class="literal">true</span></span><br><span class="line">	<span class="keyword">return</span> m.GetDBFn(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>剩下的工作就是在测试时，将数据库本地化的实现注入到 BeginFn 和 GetDBFn 中，然后在初始化测试时将 mock.DBManager 传递给 WorkflowService 即可。不难看出，mock.DBManager 实际上就是 domain.DBManager 的一个具体实现，只不过这个实现专供测试使用。</p>
 <p>通过这种方式，你可以精细化地控制每个依赖需要用什么样的实现，拥有对测试的完全控制力。</p>
-<h3 id="代码生成">代码生成</h3>
-<p>为了更好的实施这一布局方案，我们在内部搭建了相应的命令行工具用于生成相应的代码。</p>
+<h2 id="the-clean-architecture">The Clean Architecture</h2>
+<p>Uncle Bob 2012 年在自己的<a target="_blank" rel="noopener" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">博客</a>中提出了下面这个项目结构：</p>
+<figure>
+<img src="./CleanArchitecture.jpg" alt="" /><figcaption>CleanArchitecture</figcaption>
+</figure>
+<p>这里每一层具体可以是什么，应该有几层并不重要，重要的是：</p>
+<ul>
+<li>外层只会依赖内层，内层不会依赖外层</li>
+<li>越往外层越具体，越易变；越往内层越抽象，越稳固</li>
+<li>同一层内的不同模块互相不认识对方，通过依赖注入实现同层代码复用</li>
+</ul>
+<p>我们可以将本文提出的布局方案理解成 2 层的 Clean Architecture，domain 里的内容对应的就是 Entities 和用于实现依赖注入的 interface 定义；剩下的模块就是外层，外层模块之间的代码复用通过 init 中的依赖注入来实现。所以，你可以将其理解成 Clean Architecture 的最简版，更复杂的版本则可以参考文章开头提到的两个项目： <a target="_blank" rel="noopener" href="https://github.com/evrone/go-clean-template/">evrone/go-clean-template</a> 和 <a target="_blank" rel="noopener" href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a>。</p>
 <h2 id="参考文献">参考文献</h2>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1">Standard Package Layout — Ben Johnson</a></li>
@@ -402,6 +414,10 @@ mjx-container + br {
 <li><a target="_blank" rel="noopener" href="https://gitlab.pri.ibanyu.com/server/bpm/service/commit/e231bcd3032b46f896a09c6ecd9d9ae36133adc1">Gitlab: server/bpm/service</a></li>
 <li><a target="_blank" rel="noopener" href="https://medium.com/wtf-dial/wtf-dial-domain-model-9655cd523182">Building WTF Dial</a></li>
 <li><a target="_blank" rel="noopener" href="https://medium.com/wtf-dial/wtf-dial-boltdb-a62af02b8955">WTF Dial: Data storage with BoltDB</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Architecture</a></li>
+<li><a target="_blank" rel="noopener" href="https://g.co/kgs/iqcpdc">Clean Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/evrone/go-clean-template/">evrone/go-clean-template</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/golang-standards/project-layout">golang-standards/project-layout</a></li>
 </ul>
 
     </div>
@@ -441,8 +457,8 @@ mjx-container + br {
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/blog/2022/05/15/x-and-y-sounds-in-language/" rel="next" title="一图胜千言|为什么有些人分不清拼音中的 l 和 r">
-                  一图胜千言|为什么有些人分不清拼音中的 l 和 r <i class="fa fa-chevron-right"></i>
+                <a href="/blog/2022/05/15/x-and-y-sounds-in-language/" rel="next" title="一图中的|为什么有些人分不清拼音中的 l 和 r">
+                  一图中的|为什么有些人分不清拼音中的 l 和 r <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
