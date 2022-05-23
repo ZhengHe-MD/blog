@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-05-17T13:02:09.675Z</updated>
+  <updated>2022-05-23T01:39:41.576Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,30 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>一图中的 | 准确度 vs. 精确度</title>
+    <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
+    <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
+    <published>2022-05-23T07:39:41.000Z</published>
+    <updated>2022-05-23T01:39:41.576Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;之前在阅读机器学习领域相关文献的过程中，我对 accuracy 和 precision 这两个概念有些疑惑，并且它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大，甚至帮了倒忙。直到有一天在 &lt;a href=&quot;https://brilliant.org/&quot;&gt;BRILLIANT&lt;/a&gt; 上看到下面这张图：&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="一图中的" scheme="https://zhenghe-md.github.io/blog/tags/%E4%B8%80%E5%9B%BE%E4%B8%AD%E7%9A%84/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一图中的|为什么有些人分不清拼音中的 l 和 r</title>
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2022-05-17T13:02:09.675Z</updated>
+    <updated>2022-05-23T01:39:41.628Z</updated>
     
     <summary type="html">
     
@@ -31,9 +50,9 @@
     
     
     
-      <category term="languages" scheme="https://zhenghe-md.github.io/blog/tags/languages/"/>
-    
       <category term="一图中的" scheme="https://zhenghe-md.github.io/blog/tags/%E4%B8%80%E5%9B%BE%E4%B8%AD%E7%9A%84/"/>
+    
+      <category term="languages" scheme="https://zhenghe-md.github.io/blog/tags/languages/"/>
     
   </entry>
   
@@ -42,7 +61,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2022-05-17T13:02:09.651Z</updated>
+    <updated>2022-05-23T01:39:41.604Z</updated>
     
     <summary type="html">
     
@@ -61,7 +80,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-05-17T13:02:09.627Z</updated>
+    <updated>2022-05-23T01:39:41.580Z</updated>
     
     <summary type="html">
     
@@ -84,7 +103,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-05-17T13:02:09.659Z</updated>
+    <updated>2022-05-23T01:39:41.612Z</updated>
     
     <summary type="html">
     
@@ -118,7 +137,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-05-17T13:02:09.655Z</updated>
+    <updated>2022-05-23T01:39:41.608Z</updated>
     
     <summary type="html">
     
@@ -140,7 +159,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-05-17T13:02:09.611Z</updated>
+    <updated>2022-05-23T01:39:41.560Z</updated>
     
     <summary type="html">
     
@@ -161,7 +180,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-05-17T13:02:09.611Z</updated>
+    <updated>2022-05-23T01:39:41.560Z</updated>
     
     <summary type="html">
     
@@ -180,7 +199,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
     <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
     <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2022-05-17T13:02:09.587Z</updated>
+    <updated>2022-05-23T01:39:41.540Z</updated>
     
     <summary type="html">
     
@@ -199,7 +218,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-05-17T13:02:09.647Z</updated>
+    <updated>2022-05-23T01:39:41.600Z</updated>
     
     <summary type="html">
     
@@ -218,7 +237,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-05-17T13:02:09.627Z</updated>
+    <updated>2022-05-23T01:39:41.580Z</updated>
     
     <summary type="html">
     
@@ -237,7 +256,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-05-17T13:02:09.659Z</updated>
+    <updated>2022-05-23T01:39:41.612Z</updated>
     
     <summary type="html">
     
@@ -256,7 +275,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-05-17T13:02:09.651Z</updated>
+    <updated>2022-05-23T01:39:41.604Z</updated>
     
     <summary type="html">
     
@@ -282,7 +301,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-05-17T13:02:09.627Z</updated>
+    <updated>2022-05-23T01:39:41.580Z</updated>
     
     <summary type="html">
     
@@ -305,7 +324,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-05-17T13:02:09.667Z</updated>
+    <updated>2022-05-23T01:39:41.620Z</updated>
     
     <summary type="html">
     
@@ -345,7 +364,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-05-17T13:02:09.595Z</updated>
+    <updated>2022-05-23T01:39:41.544Z</updated>
     
     <summary type="html">
     
@@ -366,7 +385,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-05-17T13:02:09.627Z</updated>
+    <updated>2022-05-23T01:39:41.580Z</updated>
     
     <summary type="html">
     
@@ -389,7 +408,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-05-17T13:02:09.671Z</updated>
+    <updated>2022-05-23T01:39:41.624Z</updated>
     
     <summary type="html">
     
@@ -423,7 +442,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-05-17T13:02:09.595Z</updated>
+    <updated>2022-05-23T01:39:41.544Z</updated>
     
     <summary type="html">
     
@@ -442,7 +461,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-05-17T13:02:09.599Z</updated>
+    <updated>2022-05-23T01:39:41.552Z</updated>
     
     <summary type="html">
     
@@ -464,25 +483,6 @@
 &lt;h2 id=&quot;进程内调用链追踪信息管理&quot;&gt;进程内调用链追踪信息管理&lt;/h2&gt;
 &lt;h3 id=&quot;tracer&quot;&gt;Tracer&lt;/h3&gt;
 &lt;p&gt;Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="open source project" scheme="https://zhenghe-md.github.io/blog/categories/open-source-project/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Prometheus Alertmanager Walkthrough</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
-    <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2022-05-17T13:02:09.623Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。&lt;/p&gt;
     
     </summary>
     
