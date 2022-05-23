@@ -18,16 +18,16 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="之前在阅读机器学习领域相关文献的过程中，我对 accuracy 和 precision 这两个概念有些疑惑，并且它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大，甚至帮了倒忙。直到有一天看到下面这张图：">
+<meta name="description" content="在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一图中的 | 准确度 vs. 精确度">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="之前在阅读机器学习领域相关文献的过程中，我对 accuracy 和 precision 这两个概念有些疑惑，并且它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大，甚至帮了倒忙。直到有一天看到下面这张图：">
+<meta property="og:description" content="在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/accuracy-and-precision.png">
 <meta property="article:published_time" content="2022-05-23T07:39:41.000Z">
-<meta property="article:modified_time" content="2022-05-23T01:40:39.197Z">
+<meta property="article:modified_time" content="2022-05-23T14:08:07.888Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="一图中的">
 <meta name="twitter:card" content="summary">
@@ -270,7 +270,7 @@ mjx-container + br {
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-05-23 07:39:41 / 修改时间：01:40:39" itemprop="dateCreated datePublished" datetime="2022-05-23T07:39:41+00:00">2022-05-23</time>
+      <time title="创建时间：2022-05-23 07:39:41 / 修改时间：14:08:07" itemprop="dateCreated datePublished" datetime="2022-05-23T07:39:41+00:00">2022-05-23</time>
     </span>
 
   
@@ -297,7 +297,7 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>之前在阅读机器学习领域相关文献的过程中，我对 accuracy 和 precision 这两个概念有些疑惑，并且它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大，甚至帮了倒忙。直到有一天看到下面这张图：</p>
+        <p>在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：</p>
 <span id="more"></span>
 <figure>
 <img src="./accuracy-and-precision.png" alt="" /><figcaption>accuracy-vs-precision</figcaption>
@@ -315,53 +315,62 @@ mjx-container + br {
 <tr class="odd">
 <td>左上</td>
 <td>准确且精确</td>
-<td>全部命中靶心且命中点间距离很近</td>
+<td>全部命中靶心且命中点集中</td>
 </tr>
 <tr class="even">
 <td>右上</td>
 <td>准确不精确</td>
-<td>大致命中靶心但命中点间存在一定距离</td>
+<td>离靶心较近但命中点分散</td>
 </tr>
 <tr class="odd">
 <td>左下</td>
 <td>不准确但精确</td>
-<td>全部偏出靶心，但命中点间距离很近</td>
+<td>全部偏出靶心，但命中点集中</td>
 </tr>
 <tr class="even">
 <td>右下</td>
-<td>不准确不精确</td>
-<td>全部偏出靶心，且命中点间距离较大</td>
+<td>不准确且不精确</td>
+<td>全部偏出靶心，且命中点分散</td>
 </tr>
 </tbody>
 </table>
-<p>简单地说，准确度高说明枪手瞄得挺准，精确度高说明枪手发挥很稳定。这四张图在我眼中，也分别隐喻着学习的四种状态：</p>
+<p>简单地说，准确度高说明射击者掌握了一定的瞄准技术，但发挥不太稳定；精确度高说明枪手发挥很稳定，但不保证是稳定在靶心处。我个人对这四张图有另一层理解 —— 这四张图分别对应着学习的四种状态：</p>
 <table>
 <thead>
 <tr class="header">
 <th>靶纸位置</th>
 <th>学习状态</th>
+<th>描述</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>左上</td>
+<td>出类拔萃</td>
 <td>掌握核心思想、基本功扎实、拥有丰富且有效的实践经验</td>
 </tr>
 <tr class="even">
 <td>右上</td>
-<td>掌握核心思想、基本功扎实，但需要更多的实践经验锻炼</td>
+<td>学有所成</td>
+<td>理解核心思想、基本功尚可，但需要更多的实践经验磨炼</td>
 </tr>
 <tr class="odd">
 <td>左下</td>
-<td>核心思想理解不充分、基本功薄弱，参与很多实践项目，强化了错误的认识和手段</td>
+<td>误入歧途</td>
+<td>核心思想理解不充分、基本功薄弱，但参与了很多实践项目，强化了错误的认知和实践方式</td>
 </tr>
 <tr class="even">
 <td>右下</td>
-<td>萌新</td>
+<td>初出茅庐</td>
+<td>一张白纸，尚没有相关知识和实践经验，具有较高的可塑性</td>
 </tr>
 </tbody>
 </table>
-<p>在我眼中，一个系统性的学习路径应该是「右下 → 右上 → 左上」，宁「右下」不「左下」。身处「左下」如果还好为人师，那麻烦就更大了一些。</p>
+<p>无论在哪个领域学习，一条系统性的学习路径应该是「初出茅庐 → 学有所成 → 出类拔萃」，是否达到出类拔萃取决于你的天赋、热爱和投入程度。但对于像我一样平凡的人，只要有热爱，付出足够的努力达到学有所成并非难事。但如果在学习过程中缺乏对领域的敬畏之心，学到一点皮毛便骄傲自满、急于表现，丧失了钻研精神，就容易误入歧途。</p>
+<p>最后，与君共勉一句话：</p>
+<blockquote>
+<p>💡 准确度和精确度，两手都要抓，两手都要硬。</p>
+</blockquote>
 
     </div>
 
