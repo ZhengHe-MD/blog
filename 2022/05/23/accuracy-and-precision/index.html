@@ -18,30 +18,35 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：">
+<meta name="description" content="Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一图中的 | 准确度 vs. 精确度">
+<meta property="og:title" content="一图中的 | Accuracy vs. Precision">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：">
+<meta property="og:description" content="Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/translation-accuracy.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/translation-precision.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/zhunque.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/jingque.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/accuracy-and-precision.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/accuracy-vs-precision-wikipedia.png">
 <meta property="article:published_time" content="2022-05-23T07:39:41.000Z">
-<meta property="article:modified_time" content="2022-05-24T01:29:34.048Z">
+<meta property="article:modified_time" content="2022-05-26T01:41:22.132Z">
 <meta property="article:author" content="ZhengHe">
 <meta property="article:tag" content="一图中的">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/accuracy-and-precision.png">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/translation-accuracy.png">
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/","path":"2022/05/23/accuracy-and-precision/","title":"一图中的 | 准确度 vs. 精确度"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/","path":"2022/05/23/accuracy-and-precision/","title":"一图中的 | Accuracy vs. Precision"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>一图中的 | 准确度 vs. 精确度 | ZhengHe</title>
+<title>一图中的 | Accuracy vs. Precision | ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
@@ -258,7 +263,7 @@ mjx-container + br {
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          一图中的 | 准确度 vs. 精确度
+          一图中的 | Accuracy vs. Precision
         </h1>
 
         <div class="post-meta-container">
@@ -276,7 +281,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-05-24 01:29:34" itemprop="dateModified" datetime="2022-05-24T01:29:34+00:00">2022-05-24</time>
+      <time title="修改时间：2022-05-26 01:41:22" itemprop="dateModified" datetime="2022-05-26T01:41:22+00:00">2022-05-26</time>
     </span>
 
   
@@ -303,8 +308,25 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>在阅读机器学习领域相关文献的过程中，我曾对 accuracy 和 precision 这两个概念感到很疑惑，再加上它们的中文翻译 —— 准确度和精确度，对于分辨二者帮助并不大。直到有一天看到下面这张图：</p>
+        <p>Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。</p>
 <span id="more"></span>
+<h2 id="为什么容易混淆">为什么容易混淆</h2>
+<p>以百度翻译为例，我将 accuracy 和 precision 分别作为关键词搜索，得到的结果如下：</p>
+<figure>
+<img src="./translation-accuracy.png" alt="" /><figcaption>translation-accuracy</figcaption>
+</figure>
+<figure>
+<img src="./translation-precision.png" alt="" /><figcaption>translation-precision</figcaption>
+</figure>
+<p>两个词的翻译结果中都出现了精确、准确等字样。接着，继续以准确和精确分别作为关键词搜索：</p>
+<figure>
+<img src="./zhunque.png" alt="" /><figcaption>zhunque</figcaption>
+</figure>
+<figure>
+<img src="./jingque.png" alt="" /><figcaption>jingque</figcaption>
+</figure>
+<p>从精确的释义中我们看到了「准确」字样，这也难怪有些文献会把 accuracy 翻译成「准确度」，而有些文献翻译成「精确度」。</p>
+<h2 id="一图中的">一图中的</h2>
 <figure>
 <img src="./accuracy-and-precision.png" alt="" /><figcaption>accuracy-vs-precision</figcaption>
 </figure>
@@ -313,34 +335,44 @@ mjx-container + br {
 <thead>
 <tr class="header">
 <th>靶纸位置</th>
-<th>准确度和精确度</th>
+<th>Accurate</th>
+<th>Precise</th>
 <th>描述</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>左上</td>
-<td>准确且精确</td>
-<td>全部命中靶心且命中点集中</td>
+<td>✅</td>
+<td>✅</td>
+<td>全部命中靶心附近且命中点集中</td>
 </tr>
 <tr class="even">
 <td>右上</td>
-<td>准确不精确</td>
-<td>离靶心较近但命中点分散</td>
+<td>✅</td>
+<td>❌</td>
+<td>命中点的统计中心与靶心较近</td>
 </tr>
 <tr class="odd">
 <td>左下</td>
-<td>不准确但精确</td>
+<td>❌</td>
+<td>✅</td>
 <td>全部偏出靶心，但命中点集中</td>
 </tr>
 <tr class="even">
 <td>右下</td>
-<td>不准确且不精确</td>
-<td>全部偏出靶心，且命中点分散</td>
+<td>❌</td>
+<td>❌</td>
+<td>全部偏出靶心，且命中点统计中心与靶心较远</td>
 </tr>
 </tbody>
 </table>
-<p>简单地说，准确度高说明射击者掌握了一定的瞄准技术，但发挥不太稳定；精确度高说明枪手发挥很稳定，但不保证是稳定在靶心处。我个人对这四张图有另一层理解 —— 这四张图分别对应着学习的四种状态：</p>
+<p>如果将一次射击理解为一次对射手射击水平的测量，那么 accuracy 衡量的是测量值的中心 (如均值) 离真实值的距离，是绝对关系；而 precision 衡量的是多次测量值之间的距离，是相对关系。如果你不排斥概率密度图，可以参考下面这张图：</p>
+<figure>
+<img src="./accuracy-vs-precision-wikipedia.png" alt="" /><figcaption>accuracy-vs-precision-wikipedia</figcaption>
+</figure>
+<h2 id="隐喻">隐喻</h2>
+<p>我个人对这四张图有另一种理解 —— 这四张图分别对应着学习的四种状态：</p>
 <table>
 <thead>
 <tr class="header">
@@ -358,12 +390,12 @@ mjx-container + br {
 <tr class="even">
 <td>右上</td>
 <td>学有所成</td>
-<td>理解核心思想、基本功尚可，但需要更多的实践经验磨炼</td>
+<td>掌握核心思想、基本功扎实，但需要更多的实践锻炼让输出更稳定</td>
 </tr>
 <tr class="odd">
 <td>左下</td>
 <td>误入歧途</td>
-<td>理解粗浅、基本功薄弱，但参与了很多实践项目<br />强化了错误的认知和实践方式</td>
+<td>理解粗浅、基本功薄弱，但参与了很多实践项目<br />强化了错误的认知和实践方式，可塑性低</td>
 </tr>
 <tr class="even">
 <td>右下</td>
@@ -372,11 +404,10 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>无论在哪个领域学习，一条系统性的学习路径应该是「初出茅庐 → 学有所成 → 出类拔萃」，是否达到出类拔萃取决于你的天赋、热爱和投入程度。但对于像我一样的普通人，只要有热爱，付出足够的努力，在目标领域达到学有所成并非难事。但如果在学习过程中缺乏对领域的敬畏之心，学到一点皮毛便骄傲自满、急于表现，丧失了钻研精神，就容易误入歧途。</p>
-<p>最后来个简单的总结：</p>
-<blockquote>
-<p>💡 准确度和精确度，两手都要抓，两手都要硬。</p>
-</blockquote>
+<p>无论在哪个领域学习，一条高效、系统的学习路径应该是「初出茅庐 → 学有所成 → 出类拔萃」，是否达到出类拔萃取决于你的天赋、热爱和持续投入的程度。但对于像我这样的普通人，只要有热爱，并能持续付出努力，在目标领域达到学有所成并非难事。但如果在学习过程中缺乏对目标领域的敬畏之心，学到一点皮毛便骄傲自满、急于表现，丧失了钻研精神，就容易误入歧途。</p>
+<h2 id="例外">例外</h2>
+<p>在信息检索领域和机器学习的分类问题中，有一种衡量算法性能的指标被命名为 precision。需要格外注意的是，在这两个领域中，precision 的定义与我们上文提到的并不相同，其定义更接近 accuracy，如果你在这个领域深耕多年，希望这篇文章不会扰乱你已经建立好的思维模型 : )。</p>
+<p><em>感谢何希僖帮忙审校</em></p>
 
     </div>
 
