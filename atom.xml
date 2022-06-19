@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-05-26T04:07:36.992Z</updated>
+  <updated>2022-06-19T13:55:28.463Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>一图中的 | Accuracy vs. Precision</title>
+    <title>捋一捋 Accuracy 与 Precision 间的区别和联系</title>
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2022-05-26T04:07:36.992Z</updated>
+    <updated>2022-06-19T13:55:28.463Z</updated>
     
     <summary type="html">
     
@@ -36,15 +36,15 @@
   </entry>
   
   <entry>
-    <title>一图中的|为什么有些人分不清拼音中的 l 和 r</title>
+    <title>我明明是福建人，为什么别人以为我是胡建人？</title>
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2022-05-26T04:07:37.045Z</updated>
+    <updated>2022-06-19T13:55:28.511Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;在和不同地区的人用普通话交流时，我们也许会有这样的疑惑，为什么有些人说话时分不清 x 和 y？这里的 x 和 y 可能是拼音中的 l 和 n，l 和 r，z 和 zh，ang 和 an 等等。在最近刚刚读完的一本书《Fluent Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;
+      &lt;p&gt;在和不同地区的人聊天时，我们常常会有疑惑：为什么有些人说话时分不清 x 和 y？这里的 x 和 y 可能是拼音中的 f 和 h，l 和 n，l 和 r，z 和 zh，ang 和 an。比如，我明明是福建人，为什么别人以为我是胡建人？在最近刚刚读完的一本书《Fluent Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;
     
     </summary>
     
@@ -57,11 +57,11 @@
   </entry>
   
   <entry>
-    <title>Go 项目布局指南</title>
+    <title>中小型 Go 语言项目应该如何布局？</title>
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2022-05-26T04:07:37.021Z</updated>
+    <updated>2022-06-19T13:55:28.487Z</updated>
     
     <summary type="html">
     
@@ -80,7 +80,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-05-26T04:07:36.996Z</updated>
+    <updated>2022-06-19T13:55:28.467Z</updated>
     
     <summary type="html">
     
@@ -103,7 +103,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-05-26T04:07:37.029Z</updated>
+    <updated>2022-06-19T13:55:28.495Z</updated>
     
     <summary type="html">
     
@@ -133,11 +133,11 @@
   </entry>
   
   <entry>
-    <title>让翻译触手可及</title>
+    <title>翻译能有多快？在 Mac 上实现一键翻译</title>
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-05-26T04:07:37.025Z</updated>
+    <updated>2022-06-19T13:55:28.495Z</updated>
     
     <summary type="html">
     
@@ -155,15 +155,15 @@
   </entry>
   
   <entry>
-    <title>推荐一个系列 「Let&#39;s Build A Simple Interpreter」</title>
+    <title>从头开始构建一个 Pascal 的解释器</title>
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-05-26T04:07:36.976Z</updated>
+    <updated>2022-06-19T13:55:28.447Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let&#39;s Build A Simple Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan Spivak&lt;/a&gt; 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着比较深入的理解。&lt;/p&gt;
+      &lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let&#39;s Build A Simple Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan Spivak&lt;/a&gt; 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。&lt;/p&gt;
     
     </summary>
     
@@ -176,34 +176,15 @@
   </entry>
   
   <entry>
-    <title>推荐一本书「Make It Stick：The Science of Successful Learning」</title>
+    <title>学习本身是一件值得思考的事情</title>
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-05-26T04:07:36.976Z</updated>
+    <updated>2022-06-19T13:55:28.447Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;在&lt;a href=&quot;/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/&quot;&gt;启动「笨学指南」项目&lt;/a&gt;后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="笨学指南" scheme="https://zhenghe-md.github.io/blog/tags/%E7%AC%A8%E5%AD%A6%E6%8C%87%E5%8D%97/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>启动「笨学指南」项目</title>
-    <link href="https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/"/>
-    <id>https://zhenghe-md.github.io/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/</id>
-    <published>2021-10-06T19:55:53.000Z</published>
-    <updated>2022-05-26T04:07:36.952Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;国庆前夕，我利用业余时间过了一遍 YC 的 &lt;a href=&quot;https://www.youtube.com/playlist?list=PLQ-uHSnFig5OMuEYI4rnNz08BIHxhxdHG&quot;&gt;Startup School 2019&lt;/a&gt; 的系列课程，甚至煞有介事地写了一份 YC application，这样便算是完成了所有准备工作。而国庆期间，我哪也没去，希望能集中精力完成「笨学指南」的原型，并在国庆后利用闲暇时间 (目前有全职工作) 执行下一步计划。&lt;/p&gt;
+      &lt;p&gt;前段时间，我的朋友「肚子」向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：&lt;strong&gt;学习本身是一件值得思考的事情&lt;/strong&gt;。&lt;/p&gt;
     
     </summary>
     
@@ -218,7 +199,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-05-26T04:07:37.017Z</updated>
+    <updated>2022-06-19T13:55:28.483Z</updated>
     
     <summary type="html">
     
@@ -237,7 +218,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-05-26T04:07:36.996Z</updated>
+    <updated>2022-06-19T13:55:28.467Z</updated>
     
     <summary type="html">
     
@@ -256,7 +237,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-05-26T04:07:37.029Z</updated>
+    <updated>2022-06-19T13:55:28.499Z</updated>
     
     <summary type="html">
     
@@ -275,7 +256,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-05-26T04:07:37.021Z</updated>
+    <updated>2022-06-19T13:55:28.491Z</updated>
     
     <summary type="html">
     
@@ -301,7 +282,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-05-26T04:07:36.996Z</updated>
+    <updated>2022-06-19T13:55:28.467Z</updated>
     
     <summary type="html">
     
@@ -324,7 +305,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-05-26T04:07:37.037Z</updated>
+    <updated>2022-06-19T13:55:28.507Z</updated>
     
     <summary type="html">
     
@@ -364,7 +345,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-05-26T04:07:36.960Z</updated>
+    <updated>2022-06-19T13:55:28.431Z</updated>
     
     <summary type="html">
     
@@ -385,7 +366,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-05-26T04:07:36.996Z</updated>
+    <updated>2022-06-19T13:55:28.467Z</updated>
     
     <summary type="html">
     
@@ -408,7 +389,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-05-26T04:07:37.041Z</updated>
+    <updated>2022-06-19T13:55:28.511Z</updated>
     
     <summary type="html">
     
@@ -442,7 +423,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-05-26T04:07:36.960Z</updated>
+    <updated>2022-06-19T13:55:28.431Z</updated>
     
     <summary type="html">
     
@@ -461,7 +442,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-05-26T04:07:36.964Z</updated>
+    <updated>2022-06-19T13:55:28.435Z</updated>
     
     <summary type="html">
     
@@ -483,6 +464,25 @@
 &lt;h2 id=&quot;进程内调用链追踪信息管理&quot;&gt;进程内调用链追踪信息管理&lt;/h2&gt;
 &lt;h3 id=&quot;tracer&quot;&gt;Tracer&lt;/h3&gt;
 &lt;p&gt;Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="open source project" scheme="https://zhenghe-md.github.io/blog/categories/open-source-project/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Prometheus Alertmanager Walkthrough</title>
+    <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
+    <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
+    <published>2020-06-13T22:21:27.000Z</published>
+    <updated>2022-06-19T13:55:28.459Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。&lt;/p&gt;
     
     </summary>
     
