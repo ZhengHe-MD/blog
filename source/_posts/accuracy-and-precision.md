@@ -1,5 +1,5 @@
 ---
-title: 一图中的 | Accuracy vs. Precision
+title: 捋一捋 Accuracy 与 Precision 间的区别和联系
 date: 2022-05-23 07:39:41
 tags:
 - 一图中的

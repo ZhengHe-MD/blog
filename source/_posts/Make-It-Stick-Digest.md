@@ -1,11 +1,11 @@
 ---
-title: 推荐一本书「Make It Stick：The Science of Successful Learning」
+title: 学习本身是一件值得思考的事情
 date: 2021-11-28 20:54:58
 tags:
 - 笨学指南
 ---
 
-在[启动「笨学指南」项目](/blog/2021/10/06/Announcing-the-start-of-project-LTTHW/)后，我和许多朋友聊了我想做的事，他们中的一位——「肚子」，向我推荐了 [Make It Stick: The Science of Successful Learning](https://www.goodreads.com/book/show/18770267-make-it-stick) 这本书 (以下简称 MIS)。MIS 从认知心理学的角度出发分析了人的认知特点，以及如何利用它们来提高学习效率。MIS 让我意识到：之前关于「笨学指南」的想法主要还是构建在一种冲动之上，没有理论支撑，而这本书正好作为这方面的补充。
+前段时间，我的朋友「肚子」向我推荐了 [Make It Stick: The Science of Successful Learning](https://www.goodreads.com/book/show/18770267-make-it-stick) 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：**学习本身是一件值得思考的事情**。
 
 <!-- more -->
 
@@ -77,11 +77,7 @@ MIS 中出镜率很高的一个词是元认知，即关于认知本身的认知�
 
 这本 MIS 其实就是在向你讲述元认知的内容，如果你想了解自己作为人类的学习特点以及如何提高学习效率，不妨一看。
 
-### 小结
+### 尾声
 
 电脑本身是人造的，所以电脑与人脑之间的相似也许只是一种自我实现预言 ([Self-fulfilling prophecy](https://en.wikipedia.org/wiki/Self-fulfilling_prophecy))，如果看到上句话你不理解我在说什么，只是说明「自我实现预言」暂时还不是你脑中的思维模型而已。将新到的知识与已经固化在脑中的知识建立连结能够帮助二者相互加固，是 MIS 介绍的高效学习策略之一，本节的内容正是在实践这一策略。
-
-## 与笨学指南
-
-笨学指南的愿景是「让每个人的学习更高效」，将 MIS 中提到的学习策略融入系统的设计交互中是之后迭代的一个方向。目前，笨学指南的 [MVP](https://learn-the-hard-way.cn/) 已经正式上线，我也整理了 [MIS 的检索练习题](https://learn-the-hard-way.cn/collections/make-it-stick) (retrieval practice) 供你在阅读原书后检验学习效果，如果你使用个人邮箱注册账号，我们还能够根据你的练习表现在一段时间后提醒你回顾练习，即所谓的间隔练习 (spaced practice)，欢迎试用、反馈。
 

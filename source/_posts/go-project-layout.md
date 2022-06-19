@@ -1,5 +1,5 @@
 ---
-title: Go 项目布局指南
+title: 中小型 Go 语言项目应该如何布局？
 date: 2022-04-13 11:18:50
 tags:
 - Go
@@ -19,7 +19,7 @@ tags:
 
 > ⚠️ 注意，本指南并非我司内部通用的规范，因此也不能代表伴鱼服务端团队的项目布局方案。
 
-如果你了解过 Uncle Bob 的博客 [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) 或者他的书 [Clean Code](https://g.co/kgs/iqcpdc)，你可以将这篇指南提出的布局结构理解为 Clean Architecture 适配到小、中型 go 语言项目上的一种方案，对于大型项目可以考虑更复杂的 [evrone/go-clean-template](https://github.com/evrone/go-clean-template/)、[golang-standards/project-layout](https://github.com/golang-standards/project-layout)。
+如果你了解过 Uncle Bob 的博客 [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) 或者他的书 [Clean Code](https://g.co/kgs/iqcpdc)，你可以将这篇指南提出的布局结构理解为 Clean Architecture 适配到中小型 go 语言项目上的一种方案，对于大型项目可以考虑更复杂的 [evrone/go-clean-template](https://github.com/evrone/go-clean-template/)、[golang-standards/project-layout](https://github.com/golang-standards/project-layout)。
 
 ## 有缺陷的布局方案
 
