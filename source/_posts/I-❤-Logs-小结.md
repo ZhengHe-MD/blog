@@ -1,5 +1,5 @@
 ---
-title: I ❤ Logs 小结
+title: 重新思考日志：以日志为中心的系统设计理念 ——「I ❤ Logs」读后小记
 date: 2020-07-12 18:06:15
 tags:
 categories:
@@ -205,4 +205,3 @@ Lambda Architecture 的劣势在于需要维护两份类似的处理逻辑，一
 * [I ❤ Logs](https://www.confluent.io/ebook/i-heart-logs-event-data-stream-processing-and-data-integration/)
 * [Big Data: Principles and best practices of scalable realtime data systems](https://www.manning.com/books/big-data)
 * [Building real-time data products at LinkedIn with Apache Samza](https://www.youtube.com/watch?v=yO3SBU6vVKA&t=2233s)
-

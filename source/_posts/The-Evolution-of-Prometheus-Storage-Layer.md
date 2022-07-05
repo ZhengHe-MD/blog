@@ -1,5 +1,5 @@
 ---
-title: The Evolution of Prometheus Storage Layer
+title: Prometheus 的存储层演进 —— PromConf 演讲笔记
 date: 2020-02-27 09:50:01
 tags:
 - tsdb
@@ -36,7 +36,7 @@ TSDB 要解决的基本问题，可以概括为下图：
 时序数据库也是数据库的一种，只要它想持久化，自然不能例外。但与键值数据库相比，时序数据库存储的数据有更特殊的读写特征，Björn Rabenstein 将称其为：
 
 > Vertical writes, horizontal(-ish) reads
->
+> 
 > > 垂直写，水平读
 
 图中每条横线就是一个时序，每个时序由按照 (准) 固定间隔采集的样本数据构成，通常在时序数据库中会有很多活跃时序，因此数据写入可以用一个垂直的窄方框表示，即每个时序都要写入新的样本数据；用户在查询时，通常会观察某个、某几个时序在某个时间段内的变化趋势，或对其进行聚合计算，因此数据读取可以用一个水平的方框表示。是谓 "垂直写、水平读"。
@@ -157,13 +157,13 @@ Prometheus 的查询引擎的查询过程必须完全在内存中进行。因此
 
 正因为 Prometheus V1 与 Gorilla 的设计理念、需求有所不同，我们可以通过对比二者来理解其设计过程中使用不同决策的原因。
 
-| Features/Settings | Prometheus V1                                                | Gorilla                                                      |
-| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Storage           | Demultiplexing to local disk<br />尽量单机、无依赖、支持大量时序存储 | In-memory only<br />为了查询快，必须全部在内存，可以分片     |
-| Resolution        | 1ms                                                          | 1s                                                           |
-| Chunks            | Fixed-size chunks (1KB)<br />优化 I/O                        | Fixed-time blocks (2h)<br />优化 I/O，同时方便检索 blocks    |
+| Features/Settings | Prometheus V1                                                                 | Gorilla                                              |
+| ----------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Storage           | Demultiplexing to local disk<br />尽量单机、无依赖、支持大量时序存储                           | In-memory only<br />为了查询快，必须全部在内存，可以分片               |
+| Resolution        | 1ms                                                                           | 1s                                                   |
+| Chunks            | Fixed-size chunks (1KB)<br />优化 I/O                                           | Fixed-time blocks (2h)<br />优化 I/O，同时方便检索 blocks     |
 | Decoding          | Random accessibility & decoding<br />希望用户不用关心编解码<br />直接通过 HTTP API 获取易于理解的数据 | Not concerned with decoding<br />为了查询快，减少网络延迟，在客户端解码 |
-| Compression       | 3.3 bytes/sample<br />够用的压缩率                           | 1.37 bytes/sample<br />极致的压缩率，内存更昂贵              |
+| Compression       | 3.3 bytes/sample<br />够用的压缩率                                                  | 1.37 bytes/sample<br />极致的压缩率，内存更昂贵                  |
 
 ## 3rd Generation: Prometheus V2
 
@@ -275,4 +275,3 @@ $ tree ./data
 * [Prometheus 1.8 doc: storage](https://prometheus.io/docs/prometheus/1.8/storage/)
 * [Prometheus 2.16 doc: storage](https://prometheus.io/docs/prometheus/latest/storage/)
 * [Google Cloud: Schema Design for Time Series Data](https://cloud.google.com/bigtable/docs/schema-design-time-series?hl=en#server_metrics)
-

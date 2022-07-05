@@ -1,5 +1,5 @@
 ---
-title: Distributed Locking
+title: 分布式锁方案：效率与正确的权衡
 date: 2020-03-22 14:26:51
 tags:
 - redis
@@ -187,6 +187,7 @@ Redlock 问世后，引起了 Martin Kleppman 的 [异议](http://martin.kleppma
 # References
 
 * [Martin Kleppmann: How to do distributed locking](http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)
+
 * [redis: Distributed locks with Redis](https://redis.io/topics/distlock)
 
 * [Is Redlock safe?](http://antirez.com/news/101)

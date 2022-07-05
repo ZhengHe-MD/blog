@@ -1,5 +1,5 @@
 ---
-title: Prometheus Alertmanager Walkthrough
+title: Prometheus Alertmanager 的源码导读
 date: 2020-06-13 22:21:27
 tags:
 categories:
@@ -45,17 +45,17 @@ model 层中定义了 Alertmanager 的主要数据模型，报警 (Alert)、路�
 ```go
 // Alert is a generic representation of an alert in the Prometheus eco-system.
 type Alert struct {
-	// Label value pairs for purpose of aggregation, matching, and disposition
-	// dispatching. This must minimally include an "alertname" label.
-	Labels LabelSet `json:"labels"`
+    // Label value pairs for purpose of aggregation, matching, and disposition
+    // dispatching. This must minimally include an "alertname" label.
+    Labels LabelSet `json:"labels"`
 
-	// Extra key/value information which does not define alert identity.
-	Annotations LabelSet `json:"annotations"`
+    // Extra key/value information which does not define alert identity.
+    Annotations LabelSet `json:"annotations"`
 
-	// The known time range for this alert. Both ends are optional.
-	StartsAt     time.Time `json:"startsAt,omitempty"`
-	EndsAt       time.Time `json:"endsAt,omitempty"`
-	GeneratorURL string    `json:"generatorURL"`
+    // The known time range for this alert. Both ends are optional.
+    StartsAt     time.Time `json:"startsAt,omitempty"`
+    EndsAt       time.Time `json:"endsAt,omitempty"`
+    GeneratorURL string    `json:"generatorURL"`
 }
 
 type LabelSet map[LabelName]LabelValue
@@ -70,16 +70,16 @@ Labels 是 Alert 的特征描述，它可以被用来区分不同的 Alert，也
 ```go
 // A Route is a node that contains definitions of how to handle alerts.
 type Route struct {
-	parent *Route
-	// The configuration parameters for matches of this route.
-	RouteOpts RouteOpts
-	// Equality or regex matchers an alert has to fulfill to match
-	// this route.
-	Matchers types.Matchers
-	// If true, an alert matches further routes on the same level.
-	Continue bool
-	// Children routes of this route.
-	Routes []*Route
+    parent *Route
+    // The configuration parameters for matches of this route.
+    RouteOpts RouteOpts
+    // Equality or regex matchers an alert has to fulfill to match
+    // this route.
+    Matchers types.Matchers
+    // If true, an alert matches further routes on the same level.
+    Continue bool
+    // Children routes of this route.
+    Routes []*Route
 }
 ```
 
@@ -89,17 +89,17 @@ Route 是树状结构，parent 和 Routes 就是每个节点的父节点和子�
 // RouteOpts holds various routing options necessary for processing alerts
 // that match a given route.
 type RouteOpts struct {
-	// The identifier of the associated notification configuration.
-	Receiver string
-	// What labels to group alerts by for notifications.
-	GroupBy map[model.LabelName]struct{}
-	// Use all alert labels to group.
-	GroupByAll bool
-	// How long to wait to group matching alerts before sending
-	// a notification.
-	GroupWait      time.Duration
-	GroupInterval  time.Duration
-	RepeatInterval time.Duration
+    // The identifier of the associated notification configuration.
+    Receiver string
+    // What labels to group alerts by for notifications.
+    GroupBy map[model.LabelName]struct{}
+    // Use all alert labels to group.
+    GroupByAll bool
+    // How long to wait to group matching alerts before sending
+    // a notification.
+    GroupWait      time.Duration
+    GroupInterval  time.Duration
+    RepeatInterval time.Duration
 }
 ```
 
@@ -118,11 +118,11 @@ Matcher 用于匹配报警信息，可以被用在多个地方，如：
 ```go
 // Matcher defines a matching rule for the value of a given label.
 type Matcher struct {
-	Name    string `json:"name"`
-	Value   string `json:"value"`
-	IsRegex bool   `json:"isRegex"`
+    Name    string `json:"name"`
+    Value   string `json:"value"`
+    IsRegex bool   `json:"isRegex"`
 
-	regex *regexp.Regexp
+    regex *regexp.Regexp
 }
 ```
 
@@ -139,6 +139,7 @@ Store 是内存中的一组 Alerts 集合，它支持往集合中添加、删除
 * Aggregation Group：作为单个 Route 中每个 Group 的 Alerts 容器
 
 * Mem Provider：作为单个 Alertmanager 实例内部存放全量 Alerts 的容器
+
 * Inhibitor：作为每条 Inhibitor Rule 中缓存的 Source Alerts 缓存容器
 
 #### Notification Log
@@ -154,17 +155,17 @@ Provider 向 Alertmanager 提供 Alerts 信息的中心存储。Alertmanager 将
 ```go
 // Alerts gives access to a set of alerts. All methods are goroutine-safe.
 type Alerts interface {
-	// Subscribe returns an iterator over active alerts that have not been
-	// resolved and successfully notified about.
-	// They are not guaranteed to be in chronological order.
-	Subscribe() AlertIterator
-	// GetPending returns an iterator over all alerts that have
-	// pending notifications.
-	GetPending() AlertIterator
-	// Get returns the alert for a given fingerprint.
-	Get(model.Fingerprint) (*types.Alert, error)
-	// Put adds the given alert to the set.
-	Put(...*types.Alert) error
+    // Subscribe returns an iterator over active alerts that have not been
+    // resolved and successfully notified about.
+    // They are not guaranteed to be in chronological order.
+    Subscribe() AlertIterator
+    // GetPending returns an iterator over all alerts that have
+    // pending notifications.
+    GetPending() AlertIterator
+    // Get returns the alert for a given fingerprint.
+    Get(model.Fingerprint) (*types.Alert, error)
+    // Put adds the given alert to the set.
+    Put(...*types.Alert) error
 }
 ```
 
@@ -173,7 +174,6 @@ Provider 仅仅是定义了接口，但这个中心存储可以有多种实现�
 #### Dispatcher
 
 Dispatcher 负责串联 Alertmanager 的核心报警控制逻辑，是 Alertmanager 的指挥中枢。其处理流程如下图所示：
-
 
 <img src="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/dispatcher.jpg" alt="dispatcher" />
 
@@ -186,7 +186,7 @@ Notifier 负责消息的去重、抑制、发送、同步，整个过程被组�
 ```go
 // A Stage processes alerts under the constraints of the given context.
 type Stage interface {
-	Exec(ctx context.Context, l log.Logger, alerts ...*types.Alert) (context.Context, []*types.Alert, error)
+    Exec(ctx context.Context, l log.Logger, alerts ...*types.Alert) (context.Context, []*types.Alert, error)
 }
 ```
 
@@ -264,4 +264,3 @@ Alertmanager 是对中、大型研发团队中报警分发逻辑的一次抽象�
 * [Github: prometheus/alertmanager](https://github.com/prometheus/alertmanager)
 * [PromCon EU 2019: Fun and Profit with Alertmanager](https://www.youtube.com/watch?v=VgsM8pOyN5s&t=1161s)
 * [PromCon 2017: Alertmanager and High Availability](https://www.youtube.com/watch?v=i6Hmc0bKHAY)
-

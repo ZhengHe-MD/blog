@@ -1,5 +1,5 @@
 ---
-title: Log Structured Merge (LSM) Tree & Usages in KV Stores
+title: 用 LSM Tree 实现一个键值数据库 —— GopherConf 2017 演讲笔记
 date: 2020-02-26 23:23:03
 tags:
 - kv
@@ -118,7 +118,7 @@ bloom filter 则是在 fence pointers 之前的一层过滤器，通过其较低
 
 # Case Study: couchbase/moss
 
-moss 是由 couchbase 的工程师开发的键值数据库，本节的 case study 来自于 Marty Schoch 在 GopherConn 2017 上的分享：[Building a High-Performance Key/Value Store in Go](https://www.youtube.com/watch?v=ttebJcN5bgQ)。
+moss 是由 couchbase 的工程师开发的键值数据库，本节的 case study 来自于 Marty Schoch 在 GopherConf 2017 上的分享：[Building a High-Performance Key/Value Store in Go](https://www.youtube.com/watch?v=ttebJcN5bgQ)。
 
 ## General Purpose Key-Value Stores
 
@@ -172,7 +172,7 @@ GoLevelDB 是 LevelDB 的 Go 语言原生实现，其同样采用 LSM 树设计�
 Rob Pike 在 Notes on C Programming 说道：
 
 > Rule3: Fancy algorithms are slow when n is small, and n is usually small. Fancy algorithms have big constants. Until you know that n is frequently going to be big, don't get fancy.
->
+> 
 > Rule4: Fancy algorithms are buggier than simple ones, and they're much harder to implement. Use simple algorithms as well as simple data structures.
 
 Dave Cheney 提到：
@@ -201,8 +201,6 @@ type Collection interface {
 
 ### Batch
 
-
-
 ```go
 type Batch interface {
     Set(key, value []byte) error
@@ -211,8 +209,6 @@ type Batch interface {
 ```
 
 ### Snapshot
-
-
 
 ```go
 type Snapshot interface {
@@ -242,8 +238,6 @@ moss 的解决方案很简单，用户写入一批键值数据 (这里忽略其�
 
 将用户插入的一批数据成为 Batch，在数据库内部排序后称为 Segment：
 
-
-
 ```go
 type segment struct {
     data []byte
@@ -252,8 +246,6 @@ type segment struct {
 ```
 
 假设用户执行：
-
-
 
 ```go
 Set([]byte("name"), []byte("marty"))

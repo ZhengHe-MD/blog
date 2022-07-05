@@ -1,5 +1,5 @@
 ---
-title: 'Jaeger Walkthrough: jaeger-client-go'
+title: Jaeger 的 Go 客户端的源码导读
 date: 2020-06-21 22:28:35
 categories:
 - open source project
@@ -52,24 +52,24 @@ Web 服务的请求量很大，如果不能妥善回收利用 span，就有可�
 
 ```go
 type syncPollSpanAllocator struct {
-	spanPool sync.Pool
+    spanPool sync.Pool
 }
 
 func newSyncPollSpanAllocator() SpanAllocator {
-	return &syncPollSpanAllocator{
-		spanPool: sync.Pool{New: func() interface{} {
-			return &Span{}
-		}},
-	}
+    return &syncPollSpanAllocator{
+        spanPool: sync.Pool{New: func() interface{} {
+            return &Span{}
+        }},
+    }
 }
 
 func (pool *syncPollSpanAllocator) Get() *Span {
-	return pool.spanPool.Get().(*Span)
+    return pool.spanPool.Get().(*Span)
 }
 
 func (pool *syncPollSpanAllocator) Put(span *Span) {
-	span.reset()
-	pool.spanPool.Put(span)
+    span.reset()
+    pool.spanPool.Put(span)
 }
 ```
 
@@ -83,14 +83,14 @@ span 的生命周期大体如下：
 
 ```go
 func (s *Span) Retain() *Span {
-	atomic.AddInt32(&s.referenceCounter, 1)
-	return s
+    atomic.AddInt32(&s.referenceCounter, 1)
+    return s
 }
 
 func (s *Span) Release() {
-	if atomic.AddInt32(&s.referenceCounter, -1) == -1 {
-		s.tracer.spanAllocator.Put(s)
-	}
+    if atomic.AddInt32(&s.referenceCounter, -1) == -1 {
+        s.tracer.spanAllocator.Put(s)
+    }
 }
 ```
 
@@ -115,13 +115,13 @@ span 初始化时 referenceCounter 为 0，正常的 `Finish` 逻辑都会在最
 
 ```go
 type SpanContext struct {
-	traceID       TraceID
-	spanID        SpanID
-	parentID      SpanID
-	baggage       map[string]string
-	debugID       string
-	samplingState *samplingState
-	remote        bool
+    traceID       TraceID
+    spanID        SpanID
+    parentID      SpanID
+    baggage       map[string]string
+    debugID       string
+    samplingState *samplingState
+    remote        bool
 }
 ```
 
@@ -137,7 +137,7 @@ traceID、spanID 以及 parentID 是 span context 的最核心数据，其中 tr
 
 ```go
 type Injector interface {
-	Inject(ctx SpanContext, carrier interface{}) error
+    Inject(ctx SpanContext, carrier interface{}) error
 }
 
 type Extractor interface {
@@ -160,12 +160,12 @@ type Reporter interface {
 
 在 Span GC 一节中，我们已经介绍过数据上报的两种方式以及相应的 GC 时间点，这里不再赘述。jaeger-client-go 共提供 5 种 Reporter，罗列如下：
 
-| 名称              | 描述                                             |
-| ----------------- | ------------------------------------------------ |
+| 名称                | 描述                              |
+| ----------------- | ------------------------------- |
 | nullReporter      | no-op reporter，用于占位，接口调用不执行任何操作 |
-| loggingReporter   | 将所有 span 打到给定的 Logger 中                 |
-| InMemoryReporter  | 将所有 span 记录在内存中，用于测试               |
-| compositeReporter | 同时使用多个 reporter                            |
+| loggingReporter   | 将所有 span 打到给定的 Logger 中         |
+| InMemoryReporter  | 将所有 span 记录在内存中，用于测试            |
+| compositeReporter | 同时使用多个 reporter                 |
 | remoteReporter    | 将所有 span 上报到远端进程，用于实际生产         |
 
 接下来详细介绍一下 remote reporter。
@@ -177,19 +177,19 @@ remote reporter 的结构如下：
 ```go
 // reporter.go
 type remoteReporter struct {
-	queueLength int64 // used to update metrics.Gauge
-	closed      int64 // 0 - not closed, 1 - closed
-	reporterOptions
-	sender        Transport
-	queue         chan reporterQueueItem
-	reporterStats *reporterStats
+    queueLength int64 // used to update metrics.Gauge
+    closed      int64 // 0 - not closed, 1 - closed
+    reporterOptions
+    sender        Transport
+    queue         chan reporterQueueItem
+    reporterStats *reporterStats
 }
 
 type reporterOptions struct {
-	queueSize int
-	bufferFlushInterval time.Duration
-	logger log.DebugLogger
-	metrics *Metrics
+    queueSize int
+    bufferFlushInterval time.Duration
+    logger log.DebugLogger
+    metrics *Metrics
 }
 ```
 
@@ -226,16 +226,16 @@ IsSampled 根据 traceID 和 operation 实施抽样策略，返回的 tags 用�
 ```go
 type SamplerV2 interface {
   OnCreateSpan(span *Span) SamplingDecision
-	OnSetOperationName(span *Span, operationName string) SamplingDecision
-	OnSetTag(span *Span, key string, value interface{}) SamplingDecision
-	OnFinishSpan(span *Span) SamplingDecision
+    OnSetOperationName(span *Span, operationName string) SamplingDecision
+    OnSetTag(span *Span, key string, value interface{}) SamplingDecision
+    OnFinishSpan(span *Span) SamplingDecision
   Close()
 }
 
 type SamplingDecision struct {
-	Sample    bool
-	Retryable bool
-	Tags      []Tag
+    Sample    bool
+    Retryable bool
+    Tags      []Tag
 }
 ```
 
@@ -245,13 +245,13 @@ type SamplingDecision struct {
 
 Jaeger 在其[官方文档](https://www.jaegertracing.io/docs/1.17/sampling/)上已经介绍了其支持的采样策略，其对应的 sampler types 罗列如下：
 
-| Sampler Type                             | Sampling Strategy                                            |
-| ---------------------------------------- | ------------------------------------------------------------ |
-| ConstSampler                             | 要么全抽，要么全不抽                                         |
-| ProbabilisticSampler                     | 根据给定概率抽样                                             |
-| RateLimitingSampler                      | 限定每秒钟最大的抽样数量，抽样的结果符合请求数量分布         |
-| GuaranteedThroughputProbabilisticSampler | 在服务 (进程) 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据 |
-| PerOperationSampler                      | 在 operation 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据 |
+| Sampler Type                             | Sampling Strategy                               |
+| ---------------------------------------- | ----------------------------------------------- |
+| ConstSampler                             | 要么全抽，要么全不抽                                      |
+| ProbabilisticSampler                     | 根据给定概率抽样                                        |
+| RateLimitingSampler                      | 限定每秒钟最大的抽样数量，抽样的结果符合请求数量分布                      |
+| GuaranteedThroughputProbabilisticSampler | 在服务 (进程) 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据            |
+| PerOperationSampler                      | 在 operation 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据         |
 | RemotelyControlledSampler                | 从远端动态拉取抽样策略，而非在启动时配置。支持拉取上述所有 sampler types 的配置 |
 
 ##### ConstSampler
@@ -278,13 +278,13 @@ ProbabilisticSampler 实现地比较取巧，因为 traceID 是由两个 int64 �
 
 ```go
 func (s *ProbabilisticSampler) init(samplingRate float64) *ProbabilisticSampler {
-	// ...
-	s.samplingBoundary = uint64(float64(maxRandomNumber) * s.samplingRate)
-	// ...
+    // ...
+    s.samplingBoundary = uint64(float64(maxRandomNumber) * s.samplingRate)
+    // ...
 }
 
 func (s *ProbabilisticSampler) IsSampled(id TraceID, operation string) (bool, []Tag) {
-	return s.samplingBoundary >= id.Low&maxRandomNumber, s.tags
+    return s.samplingBoundary >= id.Low&maxRandomNumber, s.tags
 }
 ```
 
@@ -298,11 +298,11 @@ ProbabilisticSampler 的缺点在于，即便曾经出现过请求，但由于�
 
 ```go
 type GuaranteedThroughputProbabilisticSampler struct {
-	probabilisticSampler *ProbabilisticSampler
-	lowerBoundSampler    *RateLimitingSampler
-	tags                 []Tag
-	samplingRate         float64
-	lowerBound           float64
+    probabilisticSampler *ProbabilisticSampler
+    lowerBoundSampler    *RateLimitingSampler
+    tags                 []Tag
+    samplingRate         float64
+    lowerBound           float64
 }
 ```
 
@@ -310,12 +310,12 @@ type GuaranteedThroughputProbabilisticSampler struct {
 
 ```go
 func (s *GuaranteedThroughputProbabilisticSampler) IsSampled(id TraceID, operation string) (bool, []Tag) {
-	if sampled, tags := s.probabilisticSampler.IsSampled(id, operation); sampled {
-		s.lowerBoundSampler.IsSampled(id, operation)
-		return true, tags
-	}
-	sampled, _ := s.lowerBoundSampler.IsSampled(id, operation)
-	return sampled, s.tags
+    if sampled, tags := s.probabilisticSampler.IsSampled(id, operation); sampled {
+        s.lowerBoundSampler.IsSampled(id, operation)
+        return true, tags
+    }
+    sampled, _ := s.lowerBoundSampler.IsSampled(id, operation)
+    return sampled, s.tags
 }
 ```
 
@@ -325,9 +325,9 @@ func (s *GuaranteedThroughputProbabilisticSampler) IsSampled(id TraceID, operati
 
 ```go
 type PerOperationSampler struct {
-	//...
-	samplers       map[string]*GuaranteedThroughputProbabilisticSampler
-	//...
+    //...
+    samplers       map[string]*GuaranteedThroughputProbabilisticSampler
+    //...
 }
 ```
 
@@ -343,40 +343,40 @@ type PerOperationSampler struct {
 
 ##### Trace
 
-| 名称                         | 含义                                                         |
-| ---------------------------- | ------------------------------------------------------------ |
+| 名称                           | 含义                                              |
+| ---------------------------- | ----------------------------------------------- |
 | TracesStartedSampled         | 以当前 Tracer 为起点且被抽样的 trace 数量                    |
-| TracesStartedNotSampled      | 以当前 Tracer 为起点且未被抽样的 trace 数量                  |
+| TracesStartedNotSampled      | 以当前 Tracer 为起点且未被抽样的 trace 数量                   |
 | TracesStartedDelayedSampling | 以当前 Tracer 为起点且被推迟 (未在创建 span 时决定) 抽样的 trace 数量 |
 | TracesJoinedSampled          | 由外部 Tracer 为起点且被抽样的 trace 数量                    |
-| TracesJoinedNotSampled       | 由外部 Tracer 为起点且未被抽样的 trace 数量                  |
+| TracesJoinedNotSampled       | 由外部 Tracer 为起点且未被抽样的 trace 数量                   |
 
 ##### Span
 
-| 名称                         | 含义                                                         |
-| ---------------------------- | ------------------------------------------------------------ |
-| SpansStartedSampled          | 以当前 Tracer 为起点且被抽样的 span 数量                     |
-| SpansStartedNotSampled       | 以当前 Tracer 为起点且未被抽样的 span 数量                   |
+| 名称                           | 含义                                       |
+| ---------------------------- | ---------------------------------------- |
+| SpansStartedSampled          | 以当前 Tracer 为起点且被抽样的 span 数量              |
+| SpansStartedNotSampled       | 以当前 Tracer 为起点且未被抽样的 span 数量             |
 | SpansStartedDelayedSampling  | 以当前 Tracer 为起点且被推迟 (未在创建时决定) 抽样的 span 数量 |
-| SpansFinishedSampled         | 在当前 Tracer 结束且被抽样的 span 数量                       |
-| SpansFinishedNotSampled      | 在当前 Tracer 结束且未被抽样的 span 数量                     |
-| SpansFinishedDelayedSampling | 在当前 Tracer 结束且被推迟抽样的 span 数量                   |
+| SpansFinishedSampled         | 在当前 Tracer 结束且被抽样的 span 数量               |
+| SpansFinishedNotSampled      | 在当前 Tracer 结束且未被抽样的 span 数量              |
+| SpansFinishedDelayedSampling | 在当前 Tracer 结束且被推迟抽样的 span 数量             |
 
 ##### Reporter
 
-| 名称                | 含义                                           |
-| ------------------- | ---------------------------------------------- |
-| ReporterSuccess     | 成功上报的 span 数量                           |
-| ReporterFailure     | 由于 sender 错误上报失败的 span 数量           |
+| 名称                  | 含义                         |
+| ------------------- | -------------------------- |
+| ReporterSuccess     | 成功上报的 span 数量              |
+| ReporterFailure     | 由于 sender 错误上报失败的 span 数量  |
 | ReporterDropped     | 由于内部缓冲区队列过长导致上报失败的 span 数量 |
-| ReporterQueueLength | 当前缓冲区队列的长度                           |
+| ReporterQueueLength | 当前缓冲区队列的长度                 |
 
 ##### Sampler
 
 sampler 的埋点主要针对的是 RemoteControlledSampler：
 
-| 名称                 | 含义                   |
-| -------------------- | ---------------------- |
+| 名称                   | 含义          |
+| -------------------- | ----------- |
 | SamplerRetrieved     | 获取抽样策略成功的次数 |
 | SamplerQueryFailure  | 获取抽样策略失败的次数 |
 | SamplerUpdated       | 抽样策略更新成功的次数 |
@@ -386,4 +386,3 @@ sampler 的埋点主要针对的是 RemoteControlledSampler：
 
 * [jaegertracing/jaeger-client-go](https://github.com/jaegertracing/jaeger-client-go/)
 * [opentracing/opentracing-go](https://github.com/opentracing/opentracing-go)
-

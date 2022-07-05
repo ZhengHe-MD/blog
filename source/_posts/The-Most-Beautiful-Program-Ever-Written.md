@@ -1,5 +1,5 @@
 ---
-title: The Most Beautiful Program Ever Written
+title: 最美的程序：用 Lisp 写的 Lisp 解释器
 date: 2020-06-07 10:04:15
 tags:
 - papers-we-love
@@ -205,7 +205,7 @@ pmatch 中仅用短短 3 行代码，就实现了 List interpreter 核心流程�
                 (sub1 1)) environment)
 -1
 > (eval-expr '(((lambda (!)
-									(lambda (n)
+                                    (lambda (n)
                     ((! !) n)))
                 (lambda (!)
                   (lambda (n)
@@ -224,4 +224,3 @@ pmatch 中仅用短短 3 行代码，就实现了 List interpreter 核心流程�
 
 * The Most Beautiful Program Ever Written [PWL NYC],[meetup page](https://www.meetup.com/papers-we-love/events/238718664/), [video](https://www.youtube.com/watch?v=OyfBQmvr2Hc&t=3080s), [interp.scm](https://github.com/webyrd/Barliman/blob/master/interpreter_experiments/interp.scm), [unofficial gist](https://gist.github.com/lazywithclass/6af94f652cd59796e9592a5ea5772d17#simple-example)
 * webyrd/quines - [pmatch.scm](https://github.com/webyrd/quines/blob/master/pmatch.scm)
-
