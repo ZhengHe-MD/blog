@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-06-19T13:55:28.463Z</updated>
+  <updated>2022-07-05T07:13:18.932Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,45 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>你的 A/B 测试靠谱吗？</title>
+    <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
+    <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
+    <published>2022-07-04T19:50:21.000Z</published>
+    <updated>2022-07-05T07:13:18.932Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近，我们在公司内部做了一些 &lt;a href=&quot;https://www.goodreads.com/book/show/31625067-hacking-growth&quot;&gt;Hacking Growth&lt;/a&gt; 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、成单，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。&lt;/p&gt;
+&lt;p&gt;对于一名工程师，我认为 A/B 测试有两个角度值得了解：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;p&gt;如何搭建一个 A/B 测试平台，支持流量分层、转发，让不同实验共享流量；&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;如何解读一个 A/B 测试的结果，从中得出正确的结论，指导后续生产实践；&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 &lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf&quot;&gt;Overlapping Experiment Infrastructure&lt;/a&gt;，以及伴鱼的小伙伴们写的两篇实践总结 [&lt;a href=&quot;https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79&quot;&gt;1&lt;/a&gt;]、[&lt;a href=&quot;https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/&quot;&gt;2&lt;/a&gt;]；本文想聊的是后者，&lt;strong&gt;如何解读 A/B 测试的结果&lt;/strong&gt;？&lt;/p&gt;
+&lt;h2 id=&quot;建立直觉怎么定义更好&quot;&gt;建立直觉：怎么定义「更好」&lt;/h2&gt;
+&lt;p&gt;A/B 测试，顾名思义就是有 A 和 B 两种方案，测试的目的就是要知道「A 更好还是 B 更好」。假设现在的场景是给一个用户群在同样的时间拨打智能电话，对其中的一半用户使用话术 A，另一半使用话术 B，拨打后的结果只有两种：有意向和无意向。意向率就是意向用户总数与接通用户总数之比。&lt;/p&gt;
+&lt;p&gt;如果话术 A 比话术 B 更好，是否意味着无论执行多少次实验，话术 A 的意向率永远高于话术 B？换一个例子：A 选手和 B 选手在世界羽联的排名分别是世界第一和世界第二，是否意味着：&lt;/p&gt;
+&lt;ol type=&quot;1&quot;&gt;
+&lt;li&gt;&lt;p&gt;A 选手与 B 选手交战，A 选手总是能获胜&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;B 选手如果能胜过 C 选手 (排名第三或之后)，A 选手也必然能胜过 C 选手&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;事实并非如此，我们能观察到的只是： A 选手和所有对手的交手战绩 (获胜积分) 要略优于 B 选手。回到话术 A 与话术 B，话术 A 比话术 B 更好，只意味着，如果做很多次实验，话术 A 能在更多次的实验中能取得比话术 B 更高的意向率，而在单次实验中，话术 B 仍然可能取得比话术 A 更高的意向率。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;💡「更好」是概率更高的好，而不是绝对的好。&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>捋一捋 Accuracy 与 Precision 间的区别和联系</title>
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2022-06-19T13:55:28.463Z</updated>
+    <updated>2022-07-05T07:13:18.972Z</updated>
     
     <summary type="html">
     
@@ -40,7 +74,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2022-06-19T13:55:28.511Z</updated>
+    <updated>2022-07-05T07:13:19.024Z</updated>
     
     <summary type="html">
     
@@ -61,7 +95,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2022-06-19T13:55:28.487Z</updated>
+    <updated>2022-07-05T07:13:19.000Z</updated>
     
     <summary type="html">
     
@@ -80,7 +114,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-06-19T13:55:28.467Z</updated>
+    <updated>2022-07-05T07:13:18.976Z</updated>
     
     <summary type="html">
     
@@ -103,7 +137,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-06-19T13:55:28.495Z</updated>
+    <updated>2022-07-05T07:13:19.004Z</updated>
     
     <summary type="html">
     
@@ -137,7 +171,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-06-19T13:55:28.495Z</updated>
+    <updated>2022-07-05T07:13:19.004Z</updated>
     
     <summary type="html">
     
@@ -159,7 +193,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-06-19T13:55:28.447Z</updated>
+    <updated>2022-07-05T07:13:18.956Z</updated>
     
     <summary type="html">
     
@@ -180,7 +214,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-06-19T13:55:28.447Z</updated>
+    <updated>2022-07-05T07:13:18.956Z</updated>
     
     <summary type="html">
     
@@ -199,7 +233,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-06-19T13:55:28.483Z</updated>
+    <updated>2022-07-05T07:13:18.996Z</updated>
     
     <summary type="html">
     
@@ -218,7 +252,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-06-19T13:55:28.467Z</updated>
+    <updated>2022-07-05T07:13:18.976Z</updated>
     
     <summary type="html">
     
@@ -237,7 +271,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-06-19T13:55:28.499Z</updated>
+    <updated>2022-07-05T07:13:19.008Z</updated>
     
     <summary type="html">
     
@@ -256,7 +290,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-06-19T13:55:28.491Z</updated>
+    <updated>2022-07-05T07:13:19.000Z</updated>
     
     <summary type="html">
     
@@ -282,7 +316,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-06-19T13:55:28.467Z</updated>
+    <updated>2022-07-05T07:13:18.976Z</updated>
     
     <summary type="html">
     
@@ -305,7 +339,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-06-19T13:55:28.507Z</updated>
+    <updated>2022-07-05T07:13:19.016Z</updated>
     
     <summary type="html">
     
@@ -345,7 +379,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-06-19T13:55:28.431Z</updated>
+    <updated>2022-07-05T07:13:18.940Z</updated>
     
     <summary type="html">
     
@@ -366,7 +400,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
     <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
     <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-06-19T13:55:28.467Z</updated>
+    <updated>2022-07-05T07:13:18.976Z</updated>
     
     <summary type="html">
     
@@ -389,7 +423,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/</id>
     <published>2020-07-21T23:35:09.000Z</published>
-    <updated>2022-06-19T13:55:28.511Z</updated>
+    <updated>2022-07-05T07:13:19.020Z</updated>
     
     <summary type="html">
     
@@ -423,7 +457,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/"/>
     <id>https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/</id>
     <published>2020-07-12T18:06:15.000Z</published>
-    <updated>2022-06-19T13:55:28.431Z</updated>
+    <updated>2022-07-05T07:13:18.940Z</updated>
     
     <summary type="html">
     
@@ -442,7 +476,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/"/>
     <id>https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/</id>
     <published>2020-06-21T22:28:35.000Z</published>
-    <updated>2022-06-19T13:55:28.435Z</updated>
+    <updated>2022-07-05T07:13:18.944Z</updated>
     
     <summary type="html">
     
@@ -464,25 +498,6 @@
 &lt;h2 id=&quot;进程内调用链追踪信息管理&quot;&gt;进程内调用链追踪信息管理&lt;/h2&gt;
 &lt;h3 id=&quot;tracer&quot;&gt;Tracer&lt;/h3&gt;
 &lt;p&gt;Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="open source project" scheme="https://zhenghe-md.github.io/blog/categories/open-source-project/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Prometheus Alertmanager Walkthrough</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/06/13/Understanding-Prometheus-Alertmanager/</id>
-    <published>2020-06-13T22:21:27.000Z</published>
-    <updated>2022-06-19T13:55:28.459Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。&lt;/p&gt;
     
     </summary>
     
