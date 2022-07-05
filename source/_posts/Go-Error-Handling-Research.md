@@ -1,5 +1,5 @@
 ---
-title: Go Error Handling 方案调研
+title: Go 项目中 error handling 的世界观和方法论
 date: 2020-10-05 16:20:00
 tags:
 - Go
@@ -15,18 +15,18 @@ categories:
 
 为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：
 
-| 英文                      | 中文                                     |
-| ------------------------- | ---------------------------------------- |
-| error                     | 错误                                     |
-| exception                 | 异常                                     |
-| error-code-based          | 基于错误码                               |
-| exception-based           | 基于异常                                 |
-| package                   | 包 (Go 中 module 由多个 package 构成)    |
-| error wrapping/unwrapping | 包装错误/解包装                          |
-| error inspection          | 错误检查                                 |
-| error formatting          | 错误格式化                               |
-| error chain               | 错误链表，即通过包装将错误组织成链表结构 |
-| error class               | 错误类别、类型                           |
+| 英文                        | 中文                             |
+| ------------------------- | ------------------------------ |
+| error                     | 错误                             |
+| exception                 | 异常                             |
+| error-code-based          | 基于错误码                          |
+| exception-based           | 基于异常                           |
+| package                   | 包 (Go 中 module 由多个 package 构成) |
+| error wrapping/unwrapping | 包装错误/解包装                       |
+| error inspection          | 错误检查                           |
+| error formatting          | 错误格式化                          |
+| error chain               | 错误链表，即通过包装将错误组织成链表结构           |
+| error class               | 错误类别、类型                        |
 
 下文中，errors package 指代我们定制化的 error handling 方案。
 
@@ -51,7 +51,7 @@ func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *a
   // (1)
   fun := "GRPCADServiceImpl.DelAD -->" 
   res = &ad.DelADRes{}
-  
+
   passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
   if err != nil {
     // (2)
@@ -60,7 +60,7 @@ func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *a
     xlog.Error(err)
     return
   }
-  
+
   if !passed {
     // (3)
     res.ErrInfo = &grpcutil.ErrInfo{Code: -1, Msg: "not authorized"}
@@ -75,7 +75,7 @@ func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *a
     res.ErrInfo = &grpcutil.ErrInfo{Code: -1, Msg: "ad not found"}
     return
   }
-  
+
   if err != nil {
     return
   }
@@ -145,7 +145,7 @@ error inspection 采用的是比较原始的等价判断 (==) 或类型断言来
 #### 4.1.2 面向应用程序、用户及运维
 
 > The tricky part about errors is that they need to be different things to different consumers of them.
->
+> 
 > — Ben Johnson
 
 当我们在代码中处理 error 时，需要思考这样一个问题："是谁在消费这些 errors？" 在任意一个服务的生命周期中，通常至少有 3 个角色关心 error：应用程序 (application) 本身、服务的用户 (end user)、服务的维护者 (operator)。在刚才的例子中，error 类型检查 (4) 面向的是应用程序；创建 res.ErrInfo (3) 面向的是服务的用户；打印日志 (5) 面向的是维护者。因此一个设计精良的 errors package 要能够让工程师自如地处理 error 与各个角色之间的信息传递。
@@ -186,12 +186,12 @@ func Do() (ret interface{}, err error) {
   if err != nil {
     // sad path 1
   }
-  
+
   v2, err := B(v1)
   if err != nil {
     // sad path 2
   }
-  
+
   ret = process(v1, v2)
   return
 }
@@ -202,7 +202,7 @@ func Do() (ret interface{}, err error) {
 ##### 5.1.2 error 是否为空反映调用成功与否
 
 > Never use nil to indicate failure
->
+> 
 > — Dave Cheney
 
 所有可能产生 error 的函数都使用 Go 的多值返回特性，其中最后一个返回值默认为 `error` 类型，即：
@@ -299,12 +299,12 @@ const (
 
 ```go
 const (
-	Conflict   Class = "conflict"          // Action cannot be performed
-	Internal   Class = "internal"          // Internal error, error from DB, RPC, and other external services
-	Invalid    Class = "invalid"           // Validation failed
-	NotFound   Class = "not_found"         // Entity does not exist
-	PermDenied Class = "permission_denied" // Does not have permission
-	Other      Class = "other"             // Unclassified error
+    Conflict   Class = "conflict"          // Action cannot be performed
+    Internal   Class = "internal"          // Internal error, error from DB, RPC, and other external services
+    Invalid    Class = "invalid"           // Validation failed
+    NotFound   Class = "not_found"         // Entity does not exist
+    PermDenied Class = "permission_denied" // Does not have permission
+    Other      Class = "other"             // Unclassified error
 )
 ```
 
@@ -435,12 +435,12 @@ func HandleGetUser(ctx context.Context, req GetUserReq) (res GetUserRes) {
 func (m *GRPCADServiceImpl) delAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
   op := errors.Op("GRPCADServiceImpl.DelAD")
   res = &ad.DelADRes{}
-  
+
   passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
   if err != nil {
     return errors.E(op, err)
   }
-  
+
   if !passed {
     res.ErrInfo = &grpcutil.ErrInfo{Code: ErrCodeNotAuthorized, Msg: ErrMsgNotAuthorized}
     return
@@ -454,7 +454,7 @@ func (m *GRPCADServiceImpl) delAD(ctx context.Context, req *ad.DelADReq) (res *a
     err = nil
     return
   }
-  
+
   if err != nil {
     return errors.E(op, err)
   }
@@ -523,4 +523,3 @@ func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *a
 [20]: [upspin.io errors](https://github.com/upspin/upspin/tree/master/errors)
 
 [21]: [cockroachdb errors](https://github.com/cockroachdb/errors)
-

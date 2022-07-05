@@ -1,5 +1,5 @@
 ---
-title: Apache Arrow 小结
+title: TiDB 为什么要用 Apache Arrow - 一个门外汉的思考
 date: 2020-09-20 21:14:48
 tags:
 - database
@@ -249,4 +249,3 @@ TiDB 本身就是基于内存的计算引擎，那么既然 TiDB 有意向 HTAP 
 * [Apache Arrow: official docs](https://arrow.apache.org/docs/), [committers](https://arrow.apache.org/committers/)
 * [TiDB: A Raft-based HTAP Database](http://www.vldb.org/pvldb/vol13/p3072-huang.pdf)
 * [TiDB 源码阅读系列文章 (十) Chunk 和执行框架简介](https://pingcap.com/blog-cn/tidb-source-code-reading-10/)
-

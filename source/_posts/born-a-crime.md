@@ -1,5 +1,5 @@
 ---
-title: 「Born a Crime」读后感
+title: 「Born a Crime」读后小记
 date: 2021-05-23 09:04:37
 tags:
 categories:
@@ -38,7 +38,7 @@ categories:
 我对自己在人生中做过的任何决定都不后悔，但最让我害怕的就是遗憾，那些我想做却没做的决定，想说却没说出的话。我们花费了太多时间在害怕失败、担心被拒绝上。但实际上，遗憾才是最值得我们害怕的事。失败是答案，被拒绝也是答案，但遗憾则会伴随你一生。在未来的任意一个时间点，当你回顾过去时，就只能想象「如果...」。
 
 > Nelson Mandela once said, 'If you talk to a man in a language he understands, that goes to his head. If you talk to him in his language, that goes to his heart.' He was so right. When you make the effort to speak someone else's language, even if it's just basic phrases here and there, you are saying to them, 'I understand that you have a culture and identity that exists beyond me. I see you as a human being.
->
+> 
 > Language, even more than color, defines who you are to people.
 
 曼德拉说，与人交谈时，如果你能使用他能理解的语言，就能得到理解；如果你能使用他的母语与之交谈，就能直达人心。对于其它人来说，相对于肤色、样貌，语言更能决定你是谁。一口京腔的马思瑞在 B 站、Youtube 上能有这么多粉丝，也是同样的道理。我在去四川见丈母娘前，就开始看「耙耳朵的幸福生活」、与何僖学习简单的四川 (彭山) 话，也是为了和她的家人更好地交谈，我想现在我已经融入其中。
@@ -52,7 +52,7 @@ Trevor 和他的小伙伴们会从低价收取一些来源不明的物品，然�
 在不能确定并认可一件事情带来的社会价值超过损伤时，我无法将其作为可以为之努力的事业。
 
 > Hustling is to work what surfing the Internet is to reading. If you add up how much you read in a year on the Internet—tweets, Facebook posts, lists—you’ve read the equivalent of a shit ton of books, but in fact you’ve read no books in a year.
->
+> 
 > Comfort can be dangerous. Comfort provides a floor but also a ceiling
 
 这两句话是 Trevor 在约翰内斯堡郊区混日子时抒发的感想。卖盗版光盘、倒卖二手产品的经济收入满足了 Trevor 和他的小伙伴们最基本的生活需求，但这事儿本身在经济上和个人成长上都没有留下沉淀，并不会给他们的生活带来多大的改变。就像我们每天都在使用微信、微博、公众号等平台上大量地获取新鲜、重口味的资讯，一年下来这些信息本身的数量肯定能与一橱柜的书相当，但仔细想想，它们给我们的认知、想象力、实践能力带来了多少价值？如果只是用来抚平我们生活中的焦虑，让我们变得舒适，那么就需要警惕了。舒适可能很危险，舒适能保证我们处在一个基础的生活水平之上，但它同时也为我们设定了天花板。
@@ -80,4 +80,3 @@ Trevor 母亲生下他后，给他取了这个在当时的南非社会中没有�
 
 * Born a Crime，[Amazon](https://www.amazon.com/Born-Crime-Stories-African-Childhood-ebook/dp/B01DHWACVY)，[豆瓣](https://book.douban.com/subject/26907961/)，[LitCharts](https://www.litcharts.com/lit/born-a-crime/summary)
 * You Laugh But It's True 2011，[豆瓣](https://movie.douban.com/subject/21332484/)，[B 站](https://www.bilibili.com/video/av23507587)
-
