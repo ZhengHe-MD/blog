@@ -18,30 +18,36 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、成单，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试平">
+<meta name="description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试">
 <meta property="og:type" content="article">
-<meta property="og:title" content="你的 A&#x2F;B 测试靠谱吗？">
+<meta property="og:title" content="一次实验、两种错误、三个直觉">
 <meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/index.html">
 <meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、成单，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试平">
+<meta property="og:description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-1-error.gif">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-2-error-1.gif">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-2-error-2.gif">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/calculate-min-sample-size.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/permutation-test.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x-with-mark.png">
 <meta property="article:published_time" content="2022-07-04T19:50:21.000Z">
-<meta property="article:modified_time" content="2022-07-11T05:14:34.797Z">
+<meta property="article:modified_time" content="2022-08-18T08:39:19.641Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x.png">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/","path":"2022/07/04/A-B-Testing/","title":"你的 A/B 测试靠谱吗？"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/","path":"2022/07/04/A-B-Testing/","title":"一次实验、两种错误、三个直觉"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>你的 A/B 测试靠谱吗？ | ZhengHe</title>
+<title>一次实验、两种错误、三个直觉 | ZhengHe</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
@@ -258,7 +264,7 @@ mjx-container + br {
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          你的 A/B 测试靠谱吗？
+          一次实验、两种错误、三个直觉
         </h1>
 
         <div class="post-meta-container">
@@ -276,7 +282,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-07-11 05:14:34" itemprop="dateModified" datetime="2022-07-11T05:14:34+00:00">2022-07-11</time>
+      <time title="修改时间：2022-08-18 08:39:19" itemprop="dateModified" datetime="2022-08-18T08:39:19+00:00">2022-08-18</time>
     </span>
 
   
@@ -303,35 +309,225 @@ mjx-container + br {
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>最近，我们在公司内部做了一些 <a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking Growth</a> 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、成单，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。</p>
+        <p>最近，我们在公司内部做了一些 <a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking Growth</a> 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。</p>
 
 <p>对于一名工程师，我认为 A/B 测试有两个角度值得了解：</p>
 <ol type="1">
 <li><p>如何搭建一个 A/B 测试平台，支持流量分层、转发，让不同实验共享流量；</p></li>
-<li><p>如何解读一个 A/B 测试的结果，从中得出正确的结论，指导后续生产实践；</p></li>
+<li><p>如何动手做一个 A/B 测试，并能合理地解读统计结论，指导后续生产实践；</p></li>
 </ol>
-<p>对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf">Overlapping Experiment Infrastructure</a>，以及伴鱼的小伙伴们写的两篇实践总结 [<a target="_blank" rel="noopener" href="https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79">1</a>]、[<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/">2</a>]；本文想聊的是后者，<strong>如何解读 A/B 测试的结果</strong>？</p>
-<h2 id="建立直觉怎么定义更好">建立直觉：怎么定义「更好」</h2>
-<p>A/B 测试，顾名思义就是有 A 和 B 两种方案，测试的目的就是要知道「A 更好还是 B 更好」。假设现在的场景是给一个用户群在同样的时间拨打智能电话，对其中的一半用户使用话术 A，另一半使用话术 B，拨打后的结果只有两种：有意向和无意向。意向率就是意向用户总数与接通用户总数之比。</p>
-<p>如果话术 A 比话术 B 更好，是否意味着无论执行多少次实验，话术 A 的意向率永远高于话术 B？换一个例子：A 选手和 B 选手在世界羽联的排名分别是世界第一和世界第二，是否意味着：</p>
-<ol type="1">
-<li><p>A 选手与 B 选手交战，A 选手总是能获胜</p></li>
-<li><p>B 选手如果能胜过 C 选手 (排名第三或之后)，A 选手也必然能胜过 C 选手</p></li>
-</ol>
-<p>事实并非如此，我们能观察到的只是： A 选手和所有对手的交手战绩 (获胜积分) 要略优于 B 选手。回到话术 A 与话术 B，话术 A 比话术 B 更好，只意味着，如果做很多次实验，话术 A 能在更多次的实验中能取得比话术 B 更高的意向率，而在单次实验中，话术 B 仍然可能取得比话术 A 更高的意向率。</p>
+<p>对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf">Overlapping Experiment Infrastructure</a>，以及伴鱼的小伙伴们写的两篇实践总结 [<a target="_blank" rel="noopener" href="https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79">1</a>]、[<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/">2</a>]；本文想聊的是后者。</p>
+<h2 id="一次实验">1. 一次实验</h2>
+<p>在互联网场景中，无论是拉新、激活、留存、促活还是商业化，所有的 A/B 测试都可以用一个公式来概括：</p>
 <blockquote>
-<p>💡「更好」是概率更高的好，而不是绝对的好。</p>
+<p>💡 方案 A 的转化率比方案 B 的更高吗？</p>
 </blockquote>
-<p>定义了「更好」，就不难定义「好的程度」。在 100 次实验中，考虑下列两种情况：</p>
+<p>为了后续的讨论能更具体一些，我们先看一个实际的测试场景：假设我们需要给某个用户群体拨打 AI 电话，之前一直在使用家琪的声音拨打电话，现在供应商新推出了小红的声音，我们想知道小红的声音是否有更好的表现。于是，在其它条件相同的情况下，我们分别用小红和家琪的声音给若干用户打了电话，这次的实验现象如下表所示：</p>
+<table>
+<thead>
+<tr class="header">
+<th>实验现象</th>
+<th>小红</th>
+<th>家琪</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>接通</td>
+<td>3469</td>
+<td>2798</td>
+</tr>
+<tr class="even">
+<td>意向</td>
+<td>98</td>
+<td>43</td>
+</tr>
+<tr class="odd">
+<td>意向率</td>
+<td>2.83%</td>
+<td>1.54%</td>
+</tr>
+</tbody>
+</table>
+<p>套用刚才的公式，这个 A/B 测试就是：</p>
+<blockquote>
+<p>小红声音的意向率比家琪声音的更高吗？</p>
+</blockquote>
+<h3 id="从现象到结论">1.1 从现象到结论</h3>
+<p>从现象走到结论的方式有两类，即经验判断和统计分析。经验判断就是基于检索的分析，从一个人过去的经历中找到最相似的情况，然后基于它们来确定结论；统计分析就是基于概率的分析，从一个现象出现的概率大小来决定接受哪种结论。以刚才这个实验为例，我们关心的结论无非就是两种：</p>
+<ul>
+<li><p>小红声音的意向率比家琪声音的更高</p></li>
+<li><p>小红声音的意向率没有比家琪声音的更高</p></li>
+</ul>
+<p>由于是第一次使用 AI 电话触达用户，过往的经验对我们帮助不大，因此统计分析理应成为我们「从现象到结论的必经之路」。</p>
+<h3 id="从结论到事实">1.2 从结论到事实</h3>
+<p>结论和事实可能一致，也可能不一致，还是以刚才的 AI 电话为例，我们可以将结论和事实的关系整理成下表：</p>
+<table>
+<thead>
+<tr class="header">
+<th>结论\事实</th>
+<th>CR(小红) &gt; CR(家琪)</th>
+<th>CR(小红) ≤ CR(家琪)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CR(小红) &gt; CR(家琪)</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr class="even">
+<td>CR(小红) ≤ CR(家琪)</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>出现不一致的原因主要在于，考虑到成本因素，每次实验使用的是总体人群的一小部分，即所谓的样本。样本对总体的代表性取决于它在总体中的分布是否足够均匀：</p>
+<p><img src="./polulation-sample.png"></p>
+<h2 id="两种错误">2. 两种错误</h2>
+<p>当结论和事实不符时，可能产生两种错误：</p>
+<table>
+<thead>
+<tr class="header">
+<th>结论\事实</th>
+<th>CR(小红) &gt; CR(家琪)</th>
+<th>CR(小红) ≤ CR(家琪)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CR(小红) &gt; CR(家琪)</td>
+<td>✅</td>
+<td>❌  误以为发现更好的方案</td>
+</tr>
+<tr class="even">
+<td>CR(小红) ≤ CR(家琪)</td>
+<td>❌  错过更好的方案</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p>它们分别是「误以为发现更好的方案」和「错过更好的方案」。从可能的结果上看，前者可能导致系统设计者在错误的方向上推进，对业务直接造成负面影响；后者则不会产生任何影响，但业务在增长上错过了一个发力点。从危险程度上看，前者更大，后者更小，也受此影响，实际工作中人们往往会更关注第一类错误。</p>
+<p>两种错误之间存在此消彼长的关系：如果我们过分强调避免第一类错误，判断时就倾向于使用更保守的策略，过于保守就容易犯第二类错误；反之，如果我们过分强调避免第二类错误，判断时就倾向于使用更激进的策略，过于激进就容易犯第二类错误。</p>
+<p>两种错误之间存在互斥关系：在实际的一次结论判断中，如果结论是 A 方案比 B 方案好，就只可能犯第一类错误；如果结论是 A 方案没有比 B 方案好，就只可能犯第二类错误。一个结论不会同时犯两类错误。</p>
+<h2 id="三个直觉">3. 三个直觉</h2>
+<h3 id="统计分析也是在猜只是猜得更有章法">3.1 统计分析也是在猜，只是猜得更有章法</h3>
+<p>在做任何统计分析之前，我们需要先设定自己的信仰 — α 和 β。</p>
+<table>
+<thead>
+<tr class="header">
+<th>结论\事实</th>
+<th>CR(小红) &gt; CR(家琪)</th>
+<th>CR(小红) ≤ CR(家琪)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CR(小红) &gt; CR(家琪)</td>
+<td>P = 1 - α</td>
+<td>P = α</td>
+</tr>
+<tr class="even">
+<td>CR(小红) ≤ CR(家琪)</td>
+<td>P = β</td>
+<td>P = 1 - β</td>
+</tr>
+</tbody>
+</table>
+<p>α 就是犯第一类错误的概率；β 就是犯第二类错误的概率，这两个值确定了我们的风险偏好。假设 α = 5%，意味着如果结论是 A 方案比 B 方案好，我们有 5% 的概率会误以为发现更好的方案；假设 β = 20%，意味着如果结论是 A 方案没有 B 方案好，我们有 20% 的概率会错过更好的方案。</p>
+<p>之后统计分析的工作就是通过对人群分布的理解来构建概率模型，然后按照我们设定的信仰来作出判断。所以统计分析也是在猜，只是猜的时候，我们知道自己犯错的概率，采用激进的策略时也能对犯错的结果有心理预期。</p>
+<h3 id="假设检验就是在确认现象是否是巧合">3.2 假设检验就是在确认现象是否是巧合</h3>
+<p>假设检验的基本过程是：</p>
 <ol type="1">
-<li><p>话术 A 有 60 次取得比话术 B 更高的意向率</p></li>
-<li><p>话术 A 有 90 次取得比话术 B 更高的意向率</p></li>
+<li><p>假设我们不相信的结论正确</p></li>
+<li><p>证明观测到的现象是一个小概率事件</p></li>
+<li><p>拒绝假设，选择我们相信的结论</p></li>
 </ol>
-<p>不难想象，在第二种情况下，话术 A 「好的程度」更大一些，而更大的程度就意味着更充足的信心。假设结论是「话术 A 比话术 B 更好」，那么观测到 2 肯定比观测到 1 更靠谱。因为情况 1 可能由一些随机因素引发，比如恰好在本次实验中使用 A 话术拨打的用户中正在开会的多一些。但这些随机因素很难成群结队地出现，因此情况 2 不太可能由类似的因素引发。</p>
-<h2 id="假设检验---以-permutation-test-为例">假设检验 - 以 Permutation Test 为例</h2>
-<p>在上一节中，我们建立了 A/B 测试中关于「更好」的直觉，本节就来比较正式地分析一个具体场景 ——</p>
-<p><strong>实验结果</strong>：假设其它条件相当，我们用 A 话术和 B 话术分别拨打 10000 通电话，其中 A 话术接通了 3469 通，B 话术接通了 2798 通。在 A 话术接通的电话中，有 98 位用户有意向；而在 B 话术接通的电话中，有 43 位用户有意向。</p>
-<p>这里电话是否接通与话术无关，因此我们只关心接通电话的意向情况。上述实验结果可以总结为下表：</p>
+<p>以小红和家琪的声音选择测试为例，它的过程就是：</p>
+<ol type="1">
+<li><p>假设：小红声音的意向率没有比家琪声音的更高</p></li>
+<li><p>证明观测到的数据出现的概率小于 5%</p></li>
+<li><p>拒绝假设，认为小红声音的意向率比家琪的声音更高</p></li>
+</ol>
+<p>一个具体的证明过程可以以附录中的 Permutation Test 为参考，本节不深入讨论。</p>
+<h3 id="成本不是问题之前样本量越大越好">3.3 成本不是问题之前，样本量越大越好</h3>
+<h4 id="样本量对第一类错误的影响">3.3.1 样本量对第一类错误的影响</h4>
+<p>下面这张 GIF 图是从同一个总体中多次采样的分布结果，左图的样本量为 20，右图的样本量为 500。</p>
+<p><img src="./type-1-error.gif"></p>
+<p>左图中，A、B 两组采样的结果差异变化很大，有时候 A 看起来比 B 好，有时候看起来一样好，有时候看起来比 B 查；右图中，A、B 两组采样的结果差异变化很小，看起来两组采样的分布总是比较类似。即样本量较小时，A 更容易被误判为更好的方案，而<strong>样本量的增加可以降低第一类错误的发生概率</strong>。</p>
+<h4 id="样本量对第二类错误的影响">3.3.2 样本量对第二类错误的影响</h4>
+<p>下面的两张 GIF 图是从两个不同的总体中多次采样的分布结果，样本量分别为 10 和 100。</p>
+<p><img src="./type-2-error-1.gif"></p>
+<p><img src="./type-2-error-2.gif"></p>
+<p>样本量为 10 时，B 的分布有时候会跑到 A 的左边，即犯第二类错误；样本量为 100 时，B 的分布总是在 A 的右边，符合预期。因此<strong>样本量的增加可以降低第二类错误的发生概率</strong>。</p>
+<h4 id="样本量越大越好">3.3.3 样本量越大越好</h4>
+<p>从上面两组 GIF 图中，可以直观地看出，增加样本量可以同时降低第一类和第二类错误发生的概率。</p>
+<h2 id="尝试做一个-ab-测试">4. 尝试做一个 A/B 测试</h2>
+<p>了解了「一次实验、两种错误、三个直觉」之后，我们就来尝试做一个完整的 A/B 实验。</p>
+<h3 id="计算最小样本量">4.1 计算最小样本量</h3>
+<p>尽管直觉说样本量越大越好，但实际情况下流量资源即非无限、也非召之即来，我们需要计算一个最小的样本量。网上可以找到一些开箱即用的最小样本量计算器，这里以 <a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample Size Calculator (Evan’s Awesome A/B Tools)</a> 为例：</p>
+<p><img src="./calculate-min-sample-size.png"></p>
+<p>图中有 4 个参数，分别是：</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Baseline conversion rate</td>
+<td>基准转化率</td>
+</tr>
+<tr class="even">
+<td>Minimum Detectable Effect</td>
+<td>最小可发现效果</td>
+</tr>
+<tr class="odd">
+<td>Statistical power 1-β</td>
+<td>统计功效</td>
+</tr>
+<tr class="even">
+<td>Significance level α</td>
+<td>显著性水平</td>
+</tr>
+</tbody>
+</table>
+<p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择 2%；小于 1% 的改进对我们来说没有特别大的帮助，因此最小可发现效果选择 1%。最后 α 和 β 的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α = 5%，β = 20%。一通操作下来后，我们可以看到每个方案的样本数最小值为 3292。</p>
+<h3 id="线上执行-ab-分流">4.2 线上执行 A/B 分流</h3>
+<p>各大公司都有自己的 A/B 平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。</p>
+<h3 id="运行假设检验">4.3 运行假设检验</h3>
+<p>这里我推荐的是 Permutation Test，详细原理请看附录。我利用 Google 的 Colab 做了一个在线可执行的<a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=nPZQhldee09R">假设检验程序</a>，打开以后将实验数据分别填入 <code>total_A</code>、<code>succ_A</code>、<code>total_B</code> 和 <code>succ_B</code> 中，假设实验现象是：</p>
+<table>
+<thead>
+<tr class="header">
+<th>现象</th>
+<th>小红</th>
+<th>家琪</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>接通</td>
+<td>3469</td>
+<td>3357</td>
+</tr>
+<tr class="even">
+<td>意向</td>
+<td>98</td>
+<td>52</td>
+</tr>
+</tbody>
+</table>
+<p>那么填入的值分别为 3469、98、3357、52。执行的结果如下图所示：</p>
+<p><img src="./permutation-test.png"></p>
+<p>这里得到的 p 只要小于我们信仰中的 α，就可以认为小红声音的意向率高于家琪，且该结论错误的概率为万分之一。即便你是一位风险厌恶者，面对这样的错误率应该也可以放宽心了。</p>
+<h2 id="附录">5. 附录</h2>
+<h3 id="基于-permutation-test-的假设检验">5.1 基于 Permutation Test 的假设检验</h3>
+<p><strong>实验结果</strong>：假设其它条件相当，我们用 A 方案和 B 方案分别拨打 10000 通电话，其中 A 方案接通了 3469 通，B 方案接通了 2798 通。在 A 方案接通的电话中，有 98 位用户有意向；而在 B 方案接通的电话中，有 43 位用户有意向。</p>
+<p>这里电话是否接通与方案无关，因此我们只关心接通电话的意向情况。上述实验结果可以总结为下表：</p>
 <table>
 <thead>
 <tr class="header">
@@ -358,12 +554,12 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>从绝对数值上看，A 话术的意向率要高于 B 话术，似乎意味着 A 话术更好。话术 A 真的更好吗？这次实验的结果有可能只是个巧合吗？基于此，我们的假设如下：</p>
+<p>从绝对数值上看，A 方案的意向率要高于 B 方案，似乎意味着 A 方案更好。方案 A 真的更好吗？这次实验的结果有可能只是个巧合吗？基于此，我们的假设如下：</p>
 <ul>
-<li><p>零假设：话术 A 和话术 B 没有差别</p></li>
-<li><p>备择假设：话术 A 比话术 B 更好</p></li>
+<li><p>零假设：方案 A 和方案 B 没有差别</p></li>
+<li><p>备择假设：方案 A 比方案 B 更好</p></li>
 </ul>
-<p>下面使用的假设检验方法叫 Permutation Test，主要因为它<a target="_blank" rel="noopener" href="https://www.jwilber.me/permutationtest/">很符合直觉，没有参数，不(已)需(经)要(忘)公(光)式(光)</a>。Permutation Test 做的事情很简单，就是把当前的意向用户 (98+43=141) 重新随机打散分配到池子 (3469+2798 = 6267) 中，然后从池子中随机取 3469 个用户归属于 A 话术，剩下的归属于 B 话术。以上就是一次随机分配的模拟实验。假设单次模拟实验后有 X 个用户归属于 A 话术，Y 个用户归属于 B 话术，那么 X、Y 取值范围就是满足下列条件的任意组合：</p>
+<p>下面使用的假设检验方法叫 Permutation Test，主要因为它<a target="_blank" rel="noopener" href="https://www.jwilber.me/permutationtest/">很符合直觉，没有参数，无数学公式</a>。Permutation Test 做的事情很简单，就是把当前的意向用户 (98+43=141) 重新随机打散分配到池子 (3469+2798 = 6267) 中，然后从池子中随机取 3469 个用户归属于 A 方案，剩下的归属于 B 方案。以上就是一次随机分配的模拟实验。假设单次模拟实验后有 X 个用户归属于 A 方案，Y 个用户归属于 B 方案，那么 X、Y 取值范围就是满足下列条件的任意组合：</p>
 <p><span class="math display"><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -0.439ex" xmlns="http://www.w3.org/2000/svg" width="26.793ex" height="1.984ex" role="img" focusable="false" viewBox="0 -683 11842.4 877" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-58"></use></g><g data-mml-node="mo" transform="translate(1074.2, 0)"><use xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(2074.4, 0)"><use xlink:href="#MJX-TEX-I-59"></use></g><g data-mml-node="mo" transform="translate(3115.2, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(4171, 0)"><use xlink:href="#MJX-TEX-N-31"></use><use xlink:href="#MJX-TEX-N-34" transform="translate(500, 0)"></use><use xlink:href="#MJX-TEX-N-31" transform="translate(1000, 0)"></use></g><g data-mml-node="mo" transform="translate(5671, 0)"><use xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(6115.7, 0)"><use xlink:href="#MJX-TEX-I-58"></use></g><g data-mml-node="mo" transform="translate(7245.4, 0)"><use xlink:href="#MJX-TEX-N-2265"></use></g><g data-mml-node="mn" transform="translate(8301.2, 0)"><use xlink:href="#MJX-TEX-N-30"></use></g><g data-mml-node="mo" transform="translate(8801.2, 0)"><use xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(9245.9, 0)"><use xlink:href="#MJX-TEX-I-59"></use></g><g data-mml-node="mo" transform="translate(10286.7, 0)"><use xlink:href="#MJX-TEX-N-2265"></use></g><g data-mml-node="mn" transform="translate(11342.4, 0)"><use xlink:href="#MJX-TEX-N-30"></use></g></g></g></svg></mjx-container></span></p>
 <p>如果重复做 10000 次这样的模拟实验，并以 X-Y (这里以 X-Y、Y-X、X 或者 Y 为例皆可) 的值为横坐标，取值范围为 <code>[-141, 141]</code>，其各个取值的出现频次 <code>Freq(X-Y)</code> 为纵坐标，就很容易得到一个钟型曲线：</p>
 <figure>
@@ -373,14 +569,16 @@ mjx-container + br {
 <figure>
 <img src="./freq-x-with-mark.png" alt=""><figcaption>加上标记频率直方图</figcaption>
 </figure>
-<p>利用 x-y 在频度直方图中的位置，我们就能估算出 x-y 在随机变量 X-Y 概率密度函数上的分位点。在一次模拟实验中，我们算得的分位点为 99.95%，这意味着「如果零假设成立，观测到 x-y &gt;= 55 的概率为 0.05% (1-99.95%)」，即做一万次实验，只有五次能观测到 x-y &gt;= 55。这是个小概率事件，我们有信心选择拒绝零假设，相信备择假设，如果一定要给这个信心加一个数字，那么它就是 99.95%。</p>
+<p>利用 x-y 在频度直方图中的位置，我们就能估算出 x-y 在随机变量 X-Y 概率密度函数上的分位点。在一次模拟实验中，我们算得的分位点为 99.95%，这意味着「如果零假设成立，观测到 x-y &gt;= 55 的概率为 0.05% (1-99.95%)」，即做一万次实验，只有五次能观测到 x-y &gt;= 55。这是个小概率事件，我们有充足的信心选择拒绝零假设，相信备择假设，如果一定要给这个信心加一个数字，那么它就是 99.95%。</p>
 <p>如果你听过蒙特卡洛方法 (Monte Carlo Method)，刚才这个过程就是蒙特卡洛模拟。实现逻辑可以参考我的这篇 gist <a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test · GitHub</a>。</p>
 <h2 id="参考">参考</h2>
 <ul>
 <li><p><a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking Growth</a></p></li>
 <li><p><a href="%5BPermutation%20Test:%20Visual%20Explanation%5D(https://www.jwilber.me/permutationtest/)">The Permutation Test</a></p></li>
 <li><p><a target="_blank" rel="noopener" href="https://data36.com/statistical-significance-in-ab-testing/">Statistical Significance in A/B testing (Calculation, p-value and the Math)</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test · GitHub</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test · GitHub</a>, <a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=JJ73psUwe9GF">Colab</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample Size Calculator (Evan’s Awesome A/B Tools)</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://paulvanderlaken.com/2019/06/12/gif-visualizations-of-type-1-and-type-2-error-in-relation-to-sample-size/">GIF visualizations of Type 1 and Type 2 error in relation to sample size – paulvanderlaken.com</a></p></li>
 </ul>
 <svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-58" d="M42 0H40Q26 0 26 11Q26 15 29 27Q33 41 36 43T55 46Q141 49 190 98Q200 108 306 224T411 342Q302 620 297 625Q288 636 234 637H206Q200 643 200 645T202 664Q206 677 212 683H226Q260 681 347 681Q380 681 408 681T453 682T473 682Q490 682 490 671Q490 670 488 658Q484 643 481 640T465 637Q434 634 411 620L488 426L541 485Q646 598 646 610Q646 628 622 635Q617 635 609 637Q594 637 594 648Q594 650 596 664Q600 677 606 683H618Q619 683 643 683T697 681T738 680Q828 680 837 683H845Q852 676 852 672Q850 647 840 637H824Q790 636 763 628T722 611T698 593L687 584Q687 585 592 480L505 384Q505 383 536 304T601 142T638 56Q648 47 699 46Q734 46 734 37Q734 35 732 23Q728 7 725 4T711 1Q708 1 678 1T589 2Q528 2 496 2T461 1Q444 1 444 10Q444 11 446 25Q448 35 450 39T455 44T464 46T480 47T506 54Q523 62 523 64Q522 64 476 181L429 299Q241 95 236 84Q232 76 232 72Q232 53 261 47Q262 47 267 47T273 46Q276 46 277 46T280 45T283 42T284 35Q284 26 282 19Q279 6 276 4T261 1Q258 1 243 1T201 2T142 2Q64 2 42 0Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-I-59" d="M66 637Q54 637 49 637T39 638T32 641T30 647T33 664T42 682Q44 683 56 683Q104 680 165 680Q288 680 306 683H316Q322 677 322 674T320 656Q316 643 310 637H298Q242 637 242 624Q242 619 292 477T343 333L346 336Q350 340 358 349T379 373T411 410T454 461Q546 568 561 587T577 618Q577 634 545 637Q528 637 528 647Q528 649 530 661Q533 676 535 679T549 683Q551 683 578 682T657 680Q684 680 713 681T746 682Q763 682 763 673Q763 669 760 657T755 643Q753 637 734 637Q662 632 617 587Q608 578 477 424L348 273L322 169Q295 62 295 57Q295 46 363 46Q379 46 384 45T390 35Q390 33 388 23Q384 6 382 4T366 1Q361 1 324 1T232 2Q170 2 138 2T102 1Q84 1 84 9Q84 14 87 24Q88 27 89 30T90 35T91 39T93 42T96 44T101 45T107 45T116 46T129 46Q168 47 180 50T198 63Q201 68 227 171L252 274L129 623Q128 624 127 625T125 627T122 629T118 631T113 633T105 634T96 635T83 636T66 637Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path><path id="MJX-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-TEX-N-2265" d="M83 616Q83 624 89 630T99 636Q107 636 253 568T543 431T687 361Q694 356 694 346T687 331Q685 329 395 192L107 56H101Q83 58 83 76Q83 77 83 79Q82 86 98 95Q117 105 248 167Q326 204 378 228L626 346L360 472Q291 505 200 548Q112 589 98 597T83 616ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path><path id="MJX-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs></svg>
     </div>
