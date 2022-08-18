@@ -31,10 +31,11 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-2-error-2.gif">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/calculate-min-sample-size.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/permutation-test.png">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/permutation-test-2.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x-with-mark.png">
 <meta property="article:published_time" content="2022-07-04T19:50:21.000Z">
-<meta property="article:modified_time" content="2022-08-18T08:39:19.641Z">
+<meta property="article:modified_time" content="2022-08-18T09:01:56.155Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
@@ -282,7 +283,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-18 08:39:19" itemprop="dateModified" datetime="2022-08-18T08:39:19+00:00">2022-08-18</time>
+      <time title="修改时间：2022-08-18 09:01:56" itemprop="dateModified" datetime="2022-08-18T09:01:56+00:00">2022-08-18</time>
     </span>
 
   
@@ -359,7 +360,7 @@ mjx-container + br {
 <li><p>小红声音的意向率比家琪声音的更高</p></li>
 <li><p>小红声音的意向率没有比家琪声音的更高</p></li>
 </ul>
-<p>由于是第一次使用 AI 电话触达用户，过往的经验对我们帮助不大，因此统计分析理应成为我们「从现象到结论的必经之路」。</p>
+<p>由于是第一次使用 AI 电话触达用户，过往的经验对我们帮助不大，因此统计分析就是唯一的依靠。</p>
 <h3 id="从结论到事实">1.2 从结论到事实</h3>
 <p>结论和事实可能一致，也可能不一致，还是以刚才的 AI 电话为例，我们可以将结论和事实的关系整理成下表：</p>
 <table>
@@ -409,7 +410,7 @@ mjx-container + br {
 </tbody>
 </table>
 <p>它们分别是「误以为发现更好的方案」和「错过更好的方案」。从可能的结果上看，前者可能导致系统设计者在错误的方向上推进，对业务直接造成负面影响；后者则不会产生任何影响，但业务在增长上错过了一个发力点。从危险程度上看，前者更大，后者更小，也受此影响，实际工作中人们往往会更关注第一类错误。</p>
-<p>两种错误之间存在此消彼长的关系：如果我们过分强调避免第一类错误，判断时就倾向于使用更保守的策略，过于保守就容易犯第二类错误；反之，如果我们过分强调避免第二类错误，判断时就倾向于使用更激进的策略，过于激进就容易犯第二类错误。</p>
+<p>两种错误之间存在此消彼长的关系：如果我们过分强调避免第一类错误，判断时就倾向于使用更保守的策略，过于保守就容易犯第二类错误；反之，如果我们过分强调避免第二类错误，判断时就倾向于使用更激进的策略，过于激进就容易犯第一类错误。</p>
 <p>两种错误之间存在互斥关系：在实际的一次结论判断中，如果结论是 A 方案比 B 方案好，就只可能犯第一类错误；如果结论是 A 方案没有比 B 方案好，就只可能犯第二类错误。一个结论不会同时犯两类错误。</p>
 <h2 id="三个直觉">3. 三个直觉</h2>
 <h3 id="统计分析也是在猜只是猜得更有章法">3.1 统计分析也是在猜，只是猜得更有章法</h3>
@@ -425,13 +426,13 @@ mjx-container + br {
 <tbody>
 <tr class="odd">
 <td>CR(小红) &gt; CR(家琪)</td>
-<td>P = 1 - α</td>
-<td>P = α</td>
+<td>1 - α</td>
+<td>α</td>
 </tr>
 <tr class="even">
 <td>CR(小红) ≤ CR(家琪)</td>
-<td>P = β</td>
-<td>P = 1 - β</td>
+<td>β</td>
+<td>1 - β</td>
 </tr>
 </tbody>
 </table>
@@ -497,7 +498,7 @@ mjx-container + br {
 </table>
 <p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择 2%；小于 1% 的改进对我们来说没有特别大的帮助，因此最小可发现效果选择 1%。最后 α 和 β 的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α = 5%，β = 20%。一通操作下来后，我们可以看到每个方案的样本数最小值为 3292。</p>
 <h3 id="线上执行-ab-分流">4.2 线上执行 A/B 分流</h3>
-<p>各大公司都有自己的 A/B 平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。</p>
+<p>各大公司都有自己的 A/B 平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。本文开头给出的实验现象中，家琪声音对应的样本数量只有 2798，小于最小样本数量，因此还需要补充一部分家琪声音的实验数据。</p>
 <h3 id="运行假设检验">4.3 运行假设检验</h3>
 <p>这里我推荐的是 Permutation Test，详细原理请看附录。我利用 Google 的 Colab 做了一个在线可执行的<a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=nPZQhldee09R">假设检验程序</a>，打开以后将实验数据分别填入 <code>total_A</code>、<code>succ_A</code>、<code>total_B</code> 和 <code>succ_B</code> 中，假设实验现象是：</p>
 <table>
@@ -524,6 +525,31 @@ mjx-container + br {
 <p>那么填入的值分别为 3469、98、3357、52。执行的结果如下图所示：</p>
 <p><img src="./permutation-test.png"></p>
 <p>这里得到的 p 只要小于我们信仰中的 α，就可以认为小红声音的意向率高于家琪，且该结论错误的概率为万分之一。即便你是一位风险厌恶者，面对这样的错误率应该也可以放宽心了。</p>
+<p>假设实验现象是：</p>
+<table>
+<thead>
+<tr class="header">
+<th>现象</th>
+<th>小红</th>
+<th>家琪</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>接通</td>
+<td>3469</td>
+<td>3357</td>
+</tr>
+<tr class="even">
+<td>意向</td>
+<td>98</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<p>执行结果如下图所示：</p>
+<p><img src="./permutation-test-2.png"></p>
+<p>这里得到的 p 大于 α，就应该认为小红声音的意向率没有比家琪更高，该结论的错误率最大为 β，即 20%。</p>
 <h2 id="附录">5. 附录</h2>
 <h3 id="基于-permutation-test-的假设检验">5.1 基于 Permutation Test 的假设检验</h3>
 <p><strong>实验结果</strong>：假设其它条件相当，我们用 A 方案和 B 方案分别拨打 10000 通电话，其中 A 方案接通了 3469 通，B 方案接通了 2798 通。在 A 方案接通的电话中，有 98 位用户有意向；而在 B 方案接通的电话中，有 43 位用户有意向。</p>
