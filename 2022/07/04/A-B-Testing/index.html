@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x-with-mark.png">
 <meta property="article:published_time" content="2022-07-04T19:50:21.000Z">
-<meta property="article:modified_time" content="2022-08-18T09:01:56.155Z">
+<meta property="article:modified_time" content="2022-08-18T12:59:26.901Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
@@ -283,7 +283,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-08-18 09:01:56" itemprop="dateModified" datetime="2022-08-18T09:01:56+00:00">2022-08-18</time>
+      <time title="修改时间：2022-08-18 12:59:26" itemprop="dateModified" datetime="2022-08-18T12:59:26+00:00">2022-08-18</time>
     </span>
 
   
@@ -496,7 +496,8 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择 2%；小于 1% 的改进对我们来说没有特别大的帮助，因此最小可发现效果选择 1%。最后 α 和 β 的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α = 5%，β = 20%。一通操作下来后，我们可以看到每个方案的样本数最小值为 3292。</p>
+<p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择 2%；我们预估小红比家琪能带来 1% 以上的意向率改进，因此最小可发现效果选择 1%，如果后续发现这个改进并没有 1% 可以再回来调整。最后 α 和 β 的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α = 5%，β = 20%。</p>
+<p>一通操作下来后，我们可以看到每个方案的样本数最小值为 3292。</p>
 <h3 id="线上执行-ab-分流">4.2 线上执行 A/B 分流</h3>
 <p>各大公司都有自己的 A/B 平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。本文开头给出的实验现象中，家琪声音对应的样本数量只有 2798，小于最小样本数量，因此还需要补充一部分家琪声音的实验数据。</p>
 <h3 id="运行假设检验">4.3 运行假设检验</h3>
@@ -552,8 +553,7 @@ mjx-container + br {
 <p>这里得到的 p 大于 α，就应该认为小红声音的意向率没有比家琪更高，该结论的错误率最大为 β，即 20%。</p>
 <h2 id="附录">5. 附录</h2>
 <h3 id="基于-permutation-test-的假设检验">5.1 基于 Permutation Test 的假设检验</h3>
-<p><strong>实验结果</strong>：假设其它条件相当，我们用 A 方案和 B 方案分别拨打 10000 通电话，其中 A 方案接通了 3469 通，B 方案接通了 2798 通。在 A 方案接通的电话中，有 98 位用户有意向；而在 B 方案接通的电话中，有 43 位用户有意向。</p>
-<p>这里电话是否接通与方案无关，因此我们只关心接通电话的意向情况。上述实验结果可以总结为下表：</p>
+<p>以下面的实验现象为例：</p>
 <table>
 <thead>
 <tr class="header">
