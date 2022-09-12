@@ -17,6 +17,8 @@ mathjax: true
 
 对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 [Overlapping Experiment Infrastructure](https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf)，以及伴鱼的小伙伴们写的两篇实践总结 [[1](https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79)]、[[2](https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/)]；本文想聊的是后者。
 
+<!--more-->
+
 ## 1. 一次实验
 
 在互联网场景中，无论是拉新、激活、留存、促活还是商业化，所有的 A/B 测试都可以用一个公式来概括：
