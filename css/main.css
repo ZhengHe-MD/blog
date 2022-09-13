@@ -273,7 +273,7 @@ dd {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-  font-size: 0.875em;
+  font-size: 12px;
   margin: 0 0 20px;
   width: 100%;
 }
@@ -480,7 +480,7 @@ pre figcaption {
   background: var(--highlight-gutter-background);
   color: var(--highlight-foreground);
   display: flow-root;
-  font-size: 0.875em;
+  font-size: 12px;
   line-height: 1.2;
   padding: 0.5em;
 }
@@ -501,7 +501,7 @@ code {
 }
 code {
   border-radius: 3px;
-  font-size: 0.875em;
+  font-size: 12px;
   padding: 2px 4px;
   overflow-wrap: break-word;
 }
@@ -2823,7 +2823,7 @@ hr {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #661aaa;
+  background: #ff3733;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
