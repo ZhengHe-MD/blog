@@ -25,25 +25,25 @@ MapReduce job 的一般执行过程如下图所示：
 
 ![](./map-reduce-word-count.png)
 
-> ⚠️  注意：图中每个方块代表一个文件
+> 注：图中每个方块代表一个文件
 
-1. 输入数据是一个巨大的文件，需要先将它切分成多个子文件；
+1. 输入数据是一个巨大的文件，需要先把它切分成若干子文件；
 
-2. Map 过程将单个子文件中的原始数据转化成一组键值对，键值对中键值的含义由开发者定义。每个子文件产生的键值对会按照对应的键被散列到若干个临时文件中。键散列值 (`hash(key)`) 相同的数据会被汇聚进入同一个临时文件；
+2. Map 过程将单个子文件中的原始数据转化成一组键值对。键值对中键值的含义由开发者定义。每个子文件产生的键值对会按照对应的键散列到若干个临时文件中，在下文中我将称这些临时文件为 mapped file。键的散列值 (`hash(key)`) 相同的数据会被写入同一个临时文件；
 
-3. Reduce 过程先读取对应散列值的临时文件，根据需要重排里面的键值对，然后依照计算目标计算汇总数据；
+3. Reduce 过程先读取对应散列值的临时文件，根据需要重排里边的键值对，最后依照目标聚合数据；
 
-4. Reduce 产出的文件，可以被用作另一个 MapReduce job 的输入子文件，也可以被合并输出。
+4. Reduce 产出的文件，既可以被用作另一个 MapReduce job 的输入子文件，即第 1 步的输出结果，也可以被直接合并成结果文件输出。
 
-以图中的「词频计算」为例，Map 过程读取文件中的每一个词，生成键为词语、值为常数 1 的键值对，如 "Deer, 1"、"Car, 1"。键散列值相同的数据会被散列到相同的临时文件中，交给对应的 Reduce 过程。Reduce 过程获取散列值相同的键值对后，先做一次排序，使键相同的数据相邻，如图中的 3 个 "Car, 1"，然后加总计数值得到 "Car, 3"。合并所有输出文件就得到了最终的词频统计结果。
+以图中的「词频计算」为例，Map 过程读取文件中的每一个词，生成键为词语、值为常数 1 的键值对，如 "Deer, 1"、"Car, 1"。键散列值相同的数据会被散列到相同的临时文件中，交给对应的 Reduce 过程。Reduce 过程获取散列值相同的键值对后，先做一次排序，使键相同的数据物理上相邻，如图中的 3 个 "Car, 1"，然后直接加总计数值即可得到 "Car, 3"，即单词 "Car" 出现 3 次。合并所有输出文件就得到了所有词语的频度统计结果。
 
-从性能上看，Map 和 Reduce 的执行实例可以依据 job 的大小自由扩展，整个过程中的发生的数据读写形式只有 Sequential I/O，能充分满足大数据对吞吐的需求。
+从性能上看，Map 和 Reduce 的执行实例可以依据 job 的大小自由扩展，使得 Map 阶段和 Reduce 阶段各自可以横向扩容计算能力。另外，整个过程中的发生的数据读写形式只有顺序 I/O，能充分满足大数据对吞吐的需求。
 
 ## 2. 实现一个玩具版 MapReduce 引擎
 
 > 💡 What I cannot create, I do not understand.
 
-首先声明，这个引擎并不是我从无到有造出来的。在开干之前，我想起 4 年前做过的 MIT-6.824 作业中第一个 lab 就是 MapReduce。于是我先通读了一遍课程设计者提供的源码，随后才撸起袖子开干，这个过程免不了会有一些参考和借鉴。
+在进入正文之前，我首先声明：这个引擎并不是我从无到有造出来的。在开干之前，我想起 4 年前做过的 MIT-6.824 作业中第一个 lab 就是 MapReduce。于是我先通读了一遍课程设计者提供的源码，随后才撸起袖子开干，这个过程肯定会有一些参考和借鉴。
 
 ### 2.1 领域实体 (Entities)
 
@@ -51,9 +51,9 @@ MapReduce 引擎需要能接收用户提交的任务，并将它拆解成多个�
 
 ![](./map-reduce-entities.png)
 
-这里至少涉及 5 个实体：Cluster、Master、Worker、Job 和 Task。Cluster 负责集群元信息的记录，不同节点的注册、发现；master 节点负责调度计算任务的执行，即接收用户提交的 job，拆解成子任务 task，分发给 worker 节点执行。由于 map 与 reduce 子任务在元数据和执行过程并不相同，为了源码的可读性和可维护性，Task 又被进一步拆分成 MapTask 与 ReduceTask 两个子类。
+这里至少涉及 5 个实体：Cluster、Master、Worker、Job 和 Task。Cluster 负责管理集群的元信息、启动和关闭；master 节点负责 worker 节点的注册、发现，接收用户提交的 job，拆解成子任务 task，分发给 worker 节点执行。由于 map 与 reduce 子任务在元数据和执行过程并不相同，为了源码的可读性和可维护性，Task 又被进一步拆分成 MapTask 与 ReduceTask 两个子类。
 
-> 备注：为了表述清晰，下文中会将执行 MapTask 的 worker 称为 mapper，执行 ReduceTask 的 worker 称为 reducer。
+> 备注：为了表述清晰，下文中会将执行 map task 的 worker 称为 mapper，执行 reduce task 的 worker 称为 reducer。
 
 ### 2.2 领域过程 (Interfaces)
 
@@ -68,7 +68,6 @@ type Mapper interface {
 }
 ```
 
-
 reducer 将键相同的键值对聚合，由于输出的键与输入相同，在返回值中只需要给出计算结果即可：
 
 ```go
@@ -78,7 +77,7 @@ type Reducer interface {
 }
 ```
 
-由于每个计算任务的 map 和 reduce 过程本就是为了完成某个特定的计算目标，二者的逻辑有很密切的联系，因此工程师一般会对二者同时设计、编码和测试。于是我在这里额外定义一个 MapReducer，方便开发者管理 mapper 和 reducer 的逻辑。
+由于每个计算任务的 map 和 reduce 过程本就是为了完成某个特定的计算目标，二者的逻辑有很密切的联系，因此工程师一般会对二者同时设计、编码和测试。于是在这里额外定义一个 MapReducer，方便开发者管理 mapper 和 reducer 的逻辑。
 
 ```go
 // MapReducer is the interface that groups the basic Map and Reduce methods.
@@ -102,7 +101,7 @@ type Decoder interface {
 }
 ```
 
-尽管在实现过程中仅仅使用了标准库中的 json.Encoder 和 json.Decoder，但这里很有必要将二者提炼出来，强调它的重要性。
+尽管在实现过程中使用的是标准库中的 json.Encoder 和 json.Decoder，但这里很有必要将这两个过程提炼出来，强调它的重要性。
 
 ### 2.3 业务规则 (Business Rules)
 
@@ -112,7 +111,7 @@ type Decoder interface {
 
 ![](./map-reduce-files.png)
 
-一般拆分后的输入子文件会被放在文件系统 (如 HDFS) 的某个目录下。目录中文件的数量即为需要执行的 map task 数量 M。由于在 reduce 阶段，我们需要将键相同的键值对放进同一个 reduce task 中处理，而 map task 的输入文件中可能包含任意键值对，因此每个 map task 在执行时都可能输出到 R 个 mapped file 里，中间文件的总数为 MR。每个 reduce task 会读取散列值相同的所有 mapped file，然后执行排序和 reduce 逻辑，输出到一个 reduced file 里。最终将所有 reduced files 合并得到结果文件。
+一般拆分后的输入子文件会被放在文件系统 (如 HDFS) 的某个目录下。目录中文件的数量即为需要执行的 map task 数量 M。由于在 reduce 阶段，我们需要将键相同的键值对放进同一个 reduce task 中处理，而 map task 的输入文件中可能包含任意键值对，因此每个 map task 在执行时都可能输出到 R 个 mapped file 里，中间文件的总数为 MR。每个 reduce task 会读取散列值相同的所有 mapped file，然后执行排序和 reduce 逻辑，输出到一个 reduced file 里。将所有 reduced files 合并就能得到最终结果文件。
 
 综上所述，一次任务关联的文件总数为 `M + MR + R + 1`。在我们的计算引擎中，用户在提交任务时，会通过输入文件目录 (InputDir) 所含的文件数量确定 M，通过 Job 中的字段 R 指定 R。
 
@@ -172,7 +171,7 @@ func (mt *MapTask) Do() (err error) {
     // 3. 打开 mapped files
     mappedFiles := make([]*os.File, 0, mt.Job.R)
     encoders := make([]Encoder, 0, mt.Job.R)
-    // (省略)
+    // ...
     // 4. 遍历键值对，并利用 encoder 写出到相应的输出文件
     var hsh int
     for _, kv := range kvs {
@@ -201,7 +200,7 @@ type ReduceTask struct {
 }
 ```
 
-执行 reduce 时，需要打开 M 个输入文件和 1 个输出文件，先读取 M 个输入文件中的所有数据，按键排序后，将键相同的数据一组一组地交由开发者定义的 reducer 处理，并将得到的计算结果写进输出文件。
+执行 reduce 时，需要打开 M 个输入文件和 1 个输出文件，先读取 M 个输入文件中的所有数据，按键排序后，将键相同的数据一组一组地交由开发者定义的 reducer 处理，并将得到的计算结果写进输出文件。在论文中提到过，如果无法在内存中完成所有数据的排序，将使用外部排序算法，本项目为了简单直接忽略了这种情况。
 
 ```go
 func (rt *ReduceTask) Do() (err error) {
@@ -248,7 +247,7 @@ func (rt *ReduceTask) Do() (err error) {
 
 MapReduce job 的执行过程中涉及到了进程间通信，本项目使用 go 标准库里的 `net/rpc` 作为通信协议。MapReduce 集群中有两种节点：Master 和 Worker，Master 负责任务的调度和结果汇总，Worker 负责执行具体的计算过程。
 
-master 中存着所有注册节点的地址，即结构体中的 workers 字段。
+master 中需要存储所有注册节点的地址，即结构体 Master 中的 workers 字段。
 
 ```go
 // Master is the concrete type for Master node described in the original paper.
@@ -286,7 +285,7 @@ func (m *Master) Register(args *RegisterArgs, _ *struct{}) error {
 }
 ```
 
-之后，master 就可以根据用户提交的 job，将对应的若干 map task 和 reduce task 派发给若干 worker 节点，所需使用的 RPC 接口分别为 DoMapTask 和 DoReduceTask。
+之后，master 就可以根据用户提交的 job，将对应的 map task 和 reduce task 派发给若干 worker 节点，这里需要使用的是 worker 节点提供的 DoMapTask 和 DoReduceTask 接口。
 
 ```go
 // DoMapTaskArgs represents arguments passed to Worker.DoMapTask.
@@ -358,58 +357,58 @@ func (m *Master) sequential(args *SubmitArgs, operation *Operation) (err error) 
 ```go
 // distributed runs the map/reduce job on available Worker nodes in a distributed manner.
 func (m *Master) distributed(args *SubmitArgs, operation *Operation) (err error) {
-	// ...
-	// map phase
-	var mwg sync.WaitGroup
-	mwg.Add(len(files))
+    // ...
+    // map phase
+    var mwg sync.WaitGroup
+    mwg.Add(len(files))
 
-	var client *rpc.Client
-	for i, file := range files {
-		doTaskArgs := &DoMapTaskArgs{
-			MapTask: &MapTask{
-				Id:        strconv.Itoa(i),
-				InputFile: path.Join(job.InputDir, file.Name()),
-				Job:       job,
-			},
-		}
+    var client *rpc.Client
+    for i, file := range files {
+        doTaskArgs := &DoMapTaskArgs{
+            MapTask: &MapTask{
+                Id:        strconv.Itoa(i),
+                InputFile: path.Join(job.InputDir, file.Name()),
+                Job:       job,
+            },
+        }
 
-		client, _ = m.getClient()
+        client, _ = m.getClient()
 
-		go func() {
-			rpcErr := client.Call("Worker.DoMapTask", doTaskArgs, nil)
-			if rpcErr != nil {
-				operation.Error = rpcErr
-			}
-			mwg.Done()
-		}()
-	}
-	mwg.Wait()
-	log.Println("MapTask phase done.")
+        go func() {
+            rpcErr := client.Call("Worker.DoMapTask", doTaskArgs, nil)
+            if rpcErr != nil {
+                operation.Error = rpcErr
+            }
+            mwg.Done()
+        }()
+    }
+    mwg.Wait()
+    log.Println("MapTask phase done.")
     // ...
 }
 ```
 
 ### 2.4 API
 
-对用户来说，MapReduce 引擎只需要暴露提交计算任务的接口即可。对于不同的计算任务，所消耗的时间可从分钟级、小时级到天级甚至更长的时间，同步接口并不是一个好的选择。这里借鉴了 googleapis 中的 [Long Running Operations API](https://github.com/googleapis/googleapis/tree/master/google/longrunning)，用户通过 SubmitJob 接口提交 MapReduce job，然后得到一个 Operation 结构，表示一个正在执行的任务：
+对用户而言，MapReduce 引擎只需要暴露提交计算任务的接口即可。对于不同的计算任务，所消耗的时间可从分钟级、小时级到天级甚至更长的时间，同步的接口并不是一个好的选择。这里借鉴了 googleapis 中的 [Long Running Operations API](https://github.com/googleapis/googleapis/tree/master/google/longrunning)，用户通过 SubmitJob 接口提交 MapReduce job，然后得到一个 Operation 结构，表示一个正在执行的任务：
 
 ```go
 // SubmitArgs represents arguments passed when a client calls SubmitJob.
 type SubmitArgs struct {
-	Job         *Job // description of the job to submit
-	Distributed bool // indicates whether the job should be scheduled distributively
+    Job         *Job // description of the job to submit
+    Distributed bool // indicates whether the job should be scheduled distributively
 }
 
 // Operation is the reply from Master node when a client calls SubmitJob.
 type Operation struct {
-	Id    string
-	Done  bool
-	Error error
+    Id    string
+    Done  bool
+    Error error
 }
 
 // SubmitJob is called when a client wants to submit a new job to Master node.
 func (m *Master) SubmitJob(args *SubmitArgs, operation *Operation) error {
-	// ...
+    // ...
 }
 ```
 
@@ -418,42 +417,42 @@ func (m *Master) SubmitJob(args *SubmitArgs, operation *Operation) error {
 ```go
 // GetOperationArgs represents arguments passed when a client calls GetOperation.
 type GetOperationArgs struct {
-	Id string
+    Id string
 }
 
 // GetOperation requests the operation status of a map/reduce job.
 func (m *Master) GetOperation(args *GetOperationArgs, operation *Operation) error {
-	// ...
+    // ...
 }
 ```
 
 ### 2.5 Demo
 
-在 Go 运行时中动态加载用户自定义的函数并不是一件很容易的事，由于这部分并非本项目的关注点，我暂时将每个任务对应的 MapReducer 统一定义到项目源码的 mapreducers.go 中。受限于这个选择，这个玩具版 MapReduce 引擎并无法真正支持任意自定义 MapReduce job。
+在 Go 运行时中动态加载用户自定义的函数并不是一件很容易的事，由于这部分功能并非本项目的主要关注点，本项目直接将每个任务对应的 MapReducer 统一定义到项目源码的 [mapreducers.go](https://github.com/ZhengHe-MD/pset/blob/main/map-reduce/go/mapreduce/mapreducers.go) 中。受限于这个选择，这个玩具版 MapReduce 引擎并无法真正支持用户提交任意自定义 MapReduce job。
 
 #### 2.5.1 WordCount
 
-WordCount 即「词频计算」，是 MapReduce 世界的 "hello, world"，其实并不复杂：
+WordCount 即「词频计算」，是 MapReduce 世界的 "hello, world"：
 
 ```go
 type WordCount struct{}
 
 func (wc WordCount) Map(data []byte) (kvs []KeyValue, err error) {
-	for _, byt := range bytes.Fields(data) {
-		kvs = append(kvs, KeyValue{
-			Key:   string(byt),
-			Value: "1",
-		})
-	}
-	return
+    for _, byt := range bytes.Fields(data) {
+        kvs = append(kvs, KeyValue{
+            Key:   string(byt),
+            Value: "1",
+        })
+    }
+    return
 }
 
 func (wc WordCount) Reduce(key string, values []string) (string, error) {
-	return strconv.Itoa(len(values)), nil
+    return strconv.Itoa(len(values)), nil
 }
 ```
 
-WordCount 的 mapper 只需要将文本分词后输出 "[word], 1"。reducer 执行时，任意一个词，如 "hello" 对应的键值对 "hello, 1" 会被合并，因此这里 reduce 函数的输入 key 为 "hello"，values 为一个字符串数组 `["1", "1", ..., "1"]`，我们只需要返回它的长度即可。
+WordCount 的 mapper 只需要将文本分词后输出 "[word], 1"。reducer 执行时，任意一个词，如 "hello" 对应的键值对 "hello, 1" 会被合并，因此这里 Reduce 函数的输入 key 为 "hello"，values 为一个字符串数组 `["1", "1", ..., "1"]`，该函数只需返回这个数组的长度即得到单词 "hello" 的出现次数。
 
 以莎士比亚的节选为例，执行测试如下：
 
@@ -502,43 +501,43 @@ t.Run("word count (sequential)", func(t *testing.T) {
 type Avg struct{}
 
 func (a Avg) Map(data []byte) (kvs []KeyValue, err error) {
-	var cnt, sum, num int
-	for _, byt := range bytes.Fields(data) {
-		num, err = strconv.Atoi(string(byt))
-		if err != nil {
-			return
-		}
-		sum += num
-		cnt += 1
-	}
+    var cnt, sum, num int
+    for _, byt := range bytes.Fields(data) {
+        num, err = strconv.Atoi(string(byt))
+        if err != nil {
+            return
+        }
+        sum += num
+        cnt += 1
+    }
 
-	kvs = append(kvs,
-		KeyValue{Key: "sum", Value: strconv.Itoa(sum)},
-		KeyValue{Key: "cnt", Value: strconv.Itoa(cnt)})
-	return
+    kvs = append(kvs,
+        KeyValue{Key: "sum", Value: strconv.Itoa(sum)},
+        KeyValue{Key: "cnt", Value: strconv.Itoa(cnt)})
+    return
 }
 
 func (a Avg) Reduce(key string, values []string) (value string, err error) {
-	var sum, num int
-	for _, v := range values {
-		num, err = strconv.Atoi(v)
-		if err != nil {
-			return
-		}
-		sum += num
-	}
-	value = strconv.Itoa(sum)
-	return
+    var sum, num int
+    for _, v := range values {
+        num, err = strconv.Atoi(v)
+        if err != nil {
+            return
+        }
+        sum += num
+    }
+    value = strconv.Itoa(sum)
+    return
 }
 ```
 
-由于所有输入子文件的输出键值对都是 `{"sum": "xxx", "cnt": "yyy"}`，我们只能用同一个 reducer 聚合计算结果，因此 Job.R 须设置为 1。
+由于所有输入子文件的输出键值对都是 `{"sum": "xxx", "cnt": "yyy"}`，我们只能用同一个 reducer 聚合计算结果，因此 Job.R 设置为 1。
 
 ## 3. SQL to MapReduce Job
 
 ### 3.1 Select
 
-假设我们将一张大表 (students) 横向拆分成两张子表，表 1 内容如下：
+假设有一张大表 students 记录着学生的基本数据，这张表被横向拆分成两张子表，其内容如下：
 
 ```
 id,name,age
@@ -546,8 +545,6 @@ id,name,age
 10002,Jill,26
 10003,Richard,18
 ```
-
-表 2 内容如下：
 
 ```
 id,name,age
@@ -557,13 +554,13 @@ id,name,age
 10018,Jill,29
 ```
 
-现在需要实现这样一个查询：
+现在想实现这样一个查询：
 
 ```sql
 SELECT * FROM students WHERE name = "Jill";
 ```
 
-用肉眼我们可以直接观察到它的结果应该是：
+应该怎么写这个 mapreducer？用肉眼我们可以直接观察到它的结果应该是：
 
 ```
 id,name,age
@@ -571,7 +568,7 @@ id,name,age
 10018,Jill,29
 ```
 
-那应该如何写对应的 MapReducer？由于 select 过程只有过滤没有聚合计算，这基本意味着 reduce 阶段可以是一个 no-op。那唯一需要做的就是在 Map 阶段过滤掉不符合条件的数据即可，键值对中的键取行的唯一 id 即可，示意图如下：
+由于 select 过程只有过滤没有聚合计算，这基本意味着 reduce 阶段可以是一个 no-op。那唯一需要做的就是在 Map 阶段过滤掉不符合条件的数据即可，键值对中的键取行的唯一 id 即可，处理过程示意如下：
 
 ![](./map-reduce-select.png)
 
@@ -579,7 +576,23 @@ id,name,age
 
 ### 3.2 Join
 
-假设我们有两张表，分别为 enrollments 和 students，它们分别被拆分成两张子表：
+假设有两张表，students 和 enrollments，分别记录学生信息和他们的选课信息。它们分别被拆分成两张子表：
+
+```
+# students-1.csv
+students
+id,name,age
+10001,Michael,24
+10002,Jill,26
+10003,Richard,18
+# students-2.csv
+students
+id,name,age
+10004,Hazard,27
+10005,Max,25
+10010,Alice,20
+10011,Bob,29
+```
 
 ```
 # enrollments-1.csv
@@ -601,22 +614,6 @@ id,student_id,course
 20010,10011,Math
 ```
 
-```
-# students-1.csv
-students
-id,name,age
-10001,Michael,24
-10002,Jill,26
-10003,Richard,18
-# students-2.csv
-students
-id,name,age
-10004,Hazard,27
-10005,Max,25
-10010,Alice,20
-10011,Bob,29
-```
-
 现在需要实现这样一个查询：
 
 ```sql
@@ -631,7 +628,7 @@ LEFT JOIN students
   ON enrollments.student_id = students.id;
 ```
 
-因为 join 条件是 `students.id = enrollments.student_id`，一个比较容易想到的思路就是选择被 join 的字段为键值对中的键，然后对同一个键中两表的数据执行 join，前者对应的就是 map 阶段，后者为 reduce 阶段，示意图如下：
+应该怎么写 mapreducer？因为 join 条件是 `students.id = enrollments.student_id`，一个比较容易想到的思路就是选择被 join 的字段为键值对中的键，然后对同一个键中两表的数据执行 join，前者对应的就是 map 阶段，后者为 reduce 阶段，处理过程示意如下：
 
 ![](./map-reduce-join.png)
 
@@ -643,13 +640,13 @@ LEFT JOIN students
 
 1. 使用本地文件系统使得其只能利用一台机器的多个 CPU，而非多台机器
 
-2. 无法支持自定义 MapReducer
+2. 无法支持开发者提交自定义的 MapReducer
 
 3. Select/Join 任务实际上有很多可能的参数组合并未支持
 
 4. ...
 
-但对我来说，目前的认识暂时够用，希望有一天能在生产环境中遇到相关的问题，让我有机会进一步探索大数据的奥义。
+不过目前的认识暂时够用，希望有一天在生产环境中遇到相关的问题，能有机会进一步探索大数据系统的奥义。
 
 ## 5. 参考
 
