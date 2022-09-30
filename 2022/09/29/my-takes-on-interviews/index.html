@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/blog/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/blog/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/blog/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
+<meta name="description" content="在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试官毁掉技术面试的三大法宝">
+<meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/index.html">
+<meta property="og:site_name" content="ZhengHe">
+<meta property="og:description" content="在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/choices.jpeg">
+<meta property="article:published_time" content="2022-09-29T08:36:28.000Z">
+<meta property="article:modified_time" content="2022-09-30T03:23:27.977Z">
+<meta property="article:author" content="ZhengHe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/choices.jpeg">
+
+
+<link rel="canonical" href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/","path":"2022/09/29/my-takes-on-interviews/","title":"面试官毁掉技术面试的三大法宝"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>面试官毁掉技术面试的三大法宝 | ZhengHe</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/blog/css/noscript.css">
+  </noscript>
+<style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container {
+  overflow: auto hidden;
+}
+
+mjx-container + br {
+  display: none;
+}
+</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/blog/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">ZhengHe</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/blog/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          面试官毁掉技术面试的三大法宝
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-29 08:36:28" itemprop="dateCreated datePublished" datetime="2022-09-29T08:36:28+00:00">2022-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-30 03:23:27" itemprop="dateModified" datetime="2022-09-30T03:23:27+00:00">2022-09-30</time>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2022/09/29/my-takes-on-interviews/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/09/29/my-takes-on-interviews/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。</p>
+<span id="more"></span>
+<h2 id="面试目标">1. 面试目标</h2>
+<p>在我眼里，无论是对面试官还是候选人，每场技术面试的终极目标都是：<strong>在有限的时间内尽可能多地获取对方信息</strong>，并最终利用这些信息来作出决定 —— 用人单位决定是否录用，候选人决定是否入职。</p>
+<h2 id="三大法宝">2. 三大法宝</h2>
+<p>作为面试官，要毁掉一场技术面试只需要掌握以下三点：</p>
+<h3 id="以寻找弱点为面试目标">2.1 以寻找弱点为面试目标</h3>
+<p>软件开发实践涉及的领域种类繁多、内容丰富，且每个领域各自深难见底，深耕数十年者大有人在。在这样一个知识空间中，工程师的成长路径、知识积累有无限种可能：</p>
+<p><img src="./choices.jpeg" /></p>
+<p>正因为面试双方的经历都很独特，其中一人要找到对方的弱点可谓是轻而易举。如果面试官的问题让候选人感到不知所措、无从入手，便意味着命中候选人的某个弱点。</p>
+<p>我们来分析一下找到候选人的弱点对双方的面试目标有何帮助：面试官获取的信息是「候选人不懂 A 知识点」，而在其它方面则一无所获，如候选人思考的角度、表达的方式、对熟悉知识的掌握程度；候选人获取的唯一信息是「某司某部门的 X 面面试官会问 A 知识点」。除了获取的信息有限，当面试官发现候选人的弱点时，还可能产生恶魔效应，使得在评价候选人其它方面时产生偏见。</p>
+<p>正如以上分析，找到候选人的弱点对于促进面试目标达成的帮助不大。如果想毁掉一场面试，面试官平时可以刻意积累一些冷门、偏门的知识点以及罕见场景处理的奇技淫巧，这些都能帮助面试官有效地发现更多候选人的弱点。发现弱点后，还应继续针对它进行 360 度无死角追问，挖掘更多的弱点，让候选人产生自我怀疑，并最终得到候选人「基础薄弱」的结论。</p>
+<p>YC Startup School 的导师 Kevin Hale 在讲解如何评价创业点子时，曾提到下面这句话：</p>
+<blockquote>
+<p>The average investor or a lot of the investors that you see when you talk to them about your idea, it feels like they're trying to poke holes in your idea. They're trying to figure out what's wrong with it and then thrying to show just how smart they are.</p>
+<p>一般水平或者你见到的大多数投资者，当与他们谈论创业点子时，你能感觉他们正试图在你的想法上挑刺。他们试图找出这些想法的问题所在，并展示他们有多聪明。</p>
+</blockquote>
+<p>评价创业点子与评价候选人十分类似，评价者需要根据申请信息和几轮面谈来获取所需信息，并做出是否投资或录用的决定。对于评价创业点子，Kevin Hale 提到 YC 的理念是：</p>
+<blockquote>
+<p>I figure out all the ways that I think whatever you're doing could possibly become big.</p>
+<p>我会想象你做的事情可以变伟大的所有可能性。</p>
+</blockquote>
+<p>类似地我认为，如果面试官想认真经营一场面试，<strong>应该多关注候选人的强项，并想象他在目标岗位上的更多可能性，然后通过面试来验证。</strong></p>
+<h3 id="充分利用角色优势">2.2 充分利用角色优势</h3>
+<p>面试官中的「官」暗示了它天生的角色优势，这也给面试官与候选人在无形之中带来一层「官民」关系。在刻板印象中，官是掌握权势、拥有话语权的一方，民是居于弱势、听凭摆布的一方。如果面试官想利用这种角色优势毁掉一场面试，我在这里支几个招：</p>
+<p>首先提问时可以采用命令式口吻，如：</p>
+<ul>
+<li><p>"来把这个数据库 ACID 的含义给我说一下"</p></li>
+<li><p>"这个代码写一下，我只需要最优的解法，其它的不用说了"</p></li>
+<li><p>"别说那些没有意义的，挑重点"</p></li>
+</ul>
+<p>其次，提问过程不给候选人选择机会，如：</p>
+<ul>
+<li><p>"我看你用过数据库，我们聊聊 MySQL 中 InnoDB 和 MyISAM 引擎的区别吧"</p></li>
+<li><p>"我看你写过 Go，说说三色标记法是什么"</p></li>
+<li><p>"我看你在这个项目里面用过 ES，说说 ES 的数据是如何存储和复制的吧"</p></li>
+</ul>
+<p>另外，还可以对候选人的团队、项目刨根问底，但一旦聊到己方团队负责范围、分工结构和进行中的项目则以商业机密为名只字不提。</p>
+<p>我们来分析一下这些做法对面试目标有何帮助：命令式口吻本身百害而无一利，既会给候选人带来不必要的心理压力，也会降低候选人对面试官及其所代表公司的好感度，这些都将成为双方获取对方信息的阻力；不给候选人提供选择机会不一定会阻碍信息流通，如果恰好面试官和候选人都对目标话题有比较深的见解，则从结果上看面试依然有效。但让候选人自行选择深入交谈的子话题，可以更好地了解候选人在其所擅长领域的掌握深度和广度，更为高效；对于团队、项目等信息必要的保密本身无可厚非，但如果只是单向要求，对候选人和自身双重标准，则既不利于候选人最终决断，也有损企业的公平形象。面试官所属和候选人供职的单位本应同等享有相关信息的保密权利，不应该因为面试角色的不对等而区别对待。</p>
+<p>现在有越来越多的企业，为了向候选人展示更多的尊重，同时避免面试官不当利用角色优势，用面试主持人的称谓来代替面试官，以减少类似情况发生。以我作为候选人参与过的面试经历为参考，只有少数外企能将这点落到实处。</p>
+<h3 id="脱离工作场景问问题">2.3 脱离工作场景问问题</h3>
+<p>在有监督学习中，算法工程师需要准备打好标签的训练数据喂给预先设计好的模型，让模型逐步优化；在微服务部署上线前，一般会先在 staging 环境上观察许久，确认没有异常后方可上线。</p>
+<p>但是，如果机器学习模型的训练数据是劣质数据，就容易 "garbage in, garbage out"；同样地，如果 staging 环境与生产环境差异巨大，在 staging 上的观察便失去了意义，到线上环境该出故障还得出故障。类似地，<strong>如果面试中的问题过分脱离工作场景，我们只能认为通过的候选人擅长回答这类问题，但实际工作时又是另外一回事</strong>。如果面试官想通过脱离工作场景问问题来毁掉一场面试，我可以分享点心得体会：</p>
+<p>首先<strong>背好八股文</strong>，比如：</p>
+<ul>
+<li><p>数据库隔离级别有几种，分别有哪些？每个隔离级别分别怎么实现？</p></li>
+<li><p>HTTP 建连时握手为什么是三次？挥手为什么是四次？</p></li>
+<li><p>Golang 的 GMP 模型中的 goroutine 调度策略是什么？</p></li>
+<li><p>解释一下 Kafka 的 zero-copy？</p></li>
+<li><p>...</p></li>
+</ul>
+<p>平时越用不着的、越底层、越高端的效果越好。其次，<strong>要拒绝互动</strong>，不给候选人提供任何帮助，候选人问什么都无可奉告，每个问题都需要候选人自行补全、独立完成；另外，<strong>编码不得使用 IDE，必须一次 bugfree</strong>，在线编码时要用普通文档，不提供语法高亮、自动缩进和联想功能，现场编码时必须在白板或白纸上进行，并且要求一次性通过所有测试用例。</p>
+<p>脱离工作场景问问题对于达成面试目标而言事倍功半：首先，问八股得八股，背八股是面试官与候选人双方同时抱佛脚的默契，问八股捕获到的信息有限，且参考性很小；拒绝互动，与工作中合作开发的常态相违背。双方本可以利用互动过程获取一些关于对方的软性信息，体会一起工作的感觉；关于编码，我相信没有工程师在工作中不使用 IDE，也没有工程师在工作中一次性写出 bugfree 的代码，甚至以此为荣。此外，候选人为了做到这点，平时需要格外努力训练这种工作中用不到的能力，是谓卷也！如果两位候选人，A 一次性 bugfree 且思考奇快、手速惊人且方案最优，B 在面试过程中经过缜密思考开始动手，编码过程中多次修改优化，最终也得到最优解并通过测试用例，你会更倾向于前者还是后者？我认为面试官只能得到「A 比 B 更加熟练」的信息，但对于二者数据结构与算法编码能力的认知，大致不会有显著区别。</p>
+<h2 id="尾声">3. 尾声</h2>
+<p>只要能想明白面试的目标，毁掉或拯救一场技术面试皆非难事。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/blog/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/blog/2022/08/06/map-reduce-from-scratch/" rel="prev" title="从 MapReduce 到 SQL">
+                  <i class="fa fa-chevron-left"></i> 从 MapReduce 到 SQL
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/blog/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
