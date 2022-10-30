@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-10-30T13:19:02.339Z</updated>
+  <updated>2022-10-30T15:15:18.543Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,41 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>纸牌游戏：24</title>
+    <link href="https://zhenghe-md.github.io/blog/2022/10/30/24/"/>
+    <id>https://zhenghe-md.github.io/blog/2022/10/30/24/</id>
+    <published>2022-10-30T21:21:09.000Z</published>
+    <updated>2022-10-30T15:15:18.543Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;可能是太想排到车号了，最近上下班路上总是盯着过往车辆的号牌。盯着盯着就会下意识地思考：「怎么用上面的数字经过加、减、乘、除得到 24」，比如下面这个车牌：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./car-number.jpg&quot;&gt;&lt;/p&gt;
+&lt;p&gt;既可以 &quot;(6 + 3) × 8 ÷ 3&quot;，也可以 &quot;(3 × 3 - 6) × 8&quot;。有时候就这么算着、算着，到达目的地仍然觉得意犹未尽。&lt;/p&gt;
+&lt;p&gt;这个「下意识」的背后是一群理科少年们迷恋的游戏：24。大概是高二的时候，我与几位同学一起到厦门双十中学参加数学夏令营，其中我还记得名字的有杜远志、吴奋强、林杰、杜明树、陈庆树。夏令营里上什么课我已经完全不记得，但我仍然记得在临时宿舍里，少年们拿着几副纸牌，热火朝天地比赛心算 24。&lt;/p&gt;
+&lt;p&gt;游戏规则很简单：拿一副完整的纸牌，剔除掉大王和小王，将剩下的纸牌平均分给比赛双方。双方各自手持一组纸牌，纸牌需背面朝上。每轮游戏开始，双方同时取出最上面的两张纸牌，反手甩到桌面上，四个数字瞬间暴露在两对炯炯有神的眼睛下。谁先算出 24，就拍一下床板，然后说出解法。说对了，四张纸牌收入囊中，说错了，则拱手送人。谁把对方手上的纸牌赢光，谁便胜出。&lt;/p&gt;
+&lt;p&gt;我的记忆里仍然有许多有意思的画面：比如我拍床板时太用力，疼得嗷嗷叫，直接叫了暂停。又比如我算不过陈庆树，就哥几个一起「三英战吕布」。我记得最经典的一道题，就是 &quot;3、3、7、7&quot;，难倒了众多好汉。如果你也觉得有意思，不妨试试？答案在文末的代码块中。&lt;/p&gt;
+&lt;p&gt;今天早上醒来，忽然想到这不就是个「搜索问题？」对于我这个为了生活 LeetCode 400+ 的做题家来说是小菜一碟了。于是就在家里的白板上画起了思路：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;./whiteboard.png&quot;&gt;&lt;/p&gt;
+&lt;p&gt;最终这 4 个数字一定会和 3 个二元运算符组成一个算式，而且这个算式一定可以用上面这种语法树表示。那么我只要每次从剩余的数字中选择 2 个，再选取 1 个运算符，就可以穷举出所有可能的语法树。因为减法和除法并不具备交换性，这里选取数字的顺序是需要考虑的，这是排列，不是组合。&lt;/p&gt;
+&lt;details class=&quot;note info no-icon&quot;&gt;&lt;summary&gt;&lt;p&gt;代码在这里&lt;/p&gt;
+&lt;/summary&gt;
+&lt;script src=&quot;//gist.github.com/060aae7b993cac117b0193702c3b864c.js?file=24.go&quot;&gt;&lt;/script&gt;
+
+&lt;/details&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>猫和女儿教会我的道理</title>
     <link href="https://zhenghe-md.github.io/blog/2022/10/09/relationship/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/09/relationship/</id>
     <published>2022-10-09T17:06:43.000Z</published>
-    <updated>2022-10-30T13:19:02.339Z</updated>
+    <updated>2022-10-30T15:15:18.663Z</updated>
     
     <summary type="html">
     
@@ -41,7 +71,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/"/>
     <id>https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/</id>
     <published>2022-09-29T08:36:28.000Z</published>
-    <updated>2022-10-30T13:19:02.335Z</updated>
+    <updated>2022-10-30T15:15:18.659Z</updated>
     
     <summary type="html">
     
@@ -58,7 +88,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/"/>
     <id>https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/</id>
     <published>2022-08-06T22:16:08.000Z</published>
-    <updated>2022-10-30T13:19:02.335Z</updated>
+    <updated>2022-10-30T15:15:18.659Z</updated>
     
     <summary type="html">
     
@@ -83,7 +113,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
     <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
     <published>2022-07-04T19:50:21.000Z</published>
-    <updated>2022-10-30T13:19:02.247Z</updated>
+    <updated>2022-10-30T15:15:18.571Z</updated>
     
     <summary type="html">
     
@@ -141,7 +171,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2022-10-30T13:19:02.303Z</updated>
+    <updated>2022-10-30T15:15:18.627Z</updated>
     
     <summary type="html">
     
@@ -160,7 +190,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2022-10-30T13:19:02.355Z</updated>
+    <updated>2022-10-30T15:15:18.679Z</updated>
     
     <summary type="html">
     
@@ -181,7 +211,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2022-10-30T13:19:02.327Z</updated>
+    <updated>2022-10-30T15:15:18.651Z</updated>
     
     <summary type="html">
     
@@ -200,7 +230,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-10-30T13:19:02.307Z</updated>
+    <updated>2022-10-30T15:15:18.631Z</updated>
     
     <summary type="html">
     
@@ -223,7 +253,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-10-30T13:19:02.339Z</updated>
+    <updated>2022-10-30T15:15:18.663Z</updated>
     
     <summary type="html">
     
@@ -257,7 +287,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-10-30T13:19:02.335Z</updated>
+    <updated>2022-10-30T15:15:18.663Z</updated>
     
     <summary type="html">
     
@@ -279,7 +309,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-10-30T13:19:02.287Z</updated>
+    <updated>2022-10-30T15:15:18.611Z</updated>
     
     <summary type="html">
     
@@ -300,7 +330,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-10-30T13:19:02.287Z</updated>
+    <updated>2022-10-30T15:15:18.611Z</updated>
     
     <summary type="html">
     
@@ -319,7 +349,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-10-30T13:19:02.323Z</updated>
+    <updated>2022-10-30T15:15:18.647Z</updated>
     
     <summary type="html">
     
@@ -338,7 +368,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-10-30T13:19:02.307Z</updated>
+    <updated>2022-10-30T15:15:18.631Z</updated>
     
     <summary type="html">
     
@@ -357,7 +387,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-10-30T13:19:02.339Z</updated>
+    <updated>2022-10-30T15:15:18.667Z</updated>
     
     <summary type="html">
     
@@ -376,7 +406,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-10-30T13:19:02.331Z</updated>
+    <updated>2022-10-30T15:15:18.655Z</updated>
     
     <summary type="html">
     
@@ -402,7 +432,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-10-30T13:19:02.307Z</updated>
+    <updated>2022-10-30T15:15:18.631Z</updated>
     
     <summary type="html">
     
@@ -425,7 +455,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-10-30T13:19:02.347Z</updated>
+    <updated>2022-10-30T15:15:18.671Z</updated>
     
     <summary type="html">
     
@@ -465,7 +495,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
     <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
     <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-10-30T13:19:02.271Z</updated>
+    <updated>2022-10-30T15:15:18.595Z</updated>
     
     <summary type="html">
     
@@ -478,29 +508,6 @@
     
     
       <category term="Go" scheme="https://zhenghe-md.github.io/blog/tags/Go/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>TiDB 为什么要用 Apache Arrow - 一个门外汉的思考</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/09/20/apache-arrow-summary/</id>
-    <published>2020-09-20T21:14:48.000Z</published>
-    <updated>2022-10-30T13:19:02.307Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：&lt;/p&gt;
-&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Chunk stores multiple rows of data in Apache Arrow format.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// See https://arrow.apache.org/docs/format/Columnar.html#physical-memory-layout&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Values are appended in compact format and can be directly accessed without decoding.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// When the chunk is done processing, we can reuse the allocated memory by resetting it.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;type&lt;/span&gt; Chunk &lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &amp;#123; &lt;span class=&quot;comment&quot;&gt;/*...*/&lt;/span&gt; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;心里自然而然会产生疑问：为什么要使用这个项目规定的数据存储格式？于是在阅读完 TiDB 相关源码和单测后，顺便搜寻并浏览一些有趣的资料 (见文末参考部分)，现在将这次调研的收获小结在这篇博客中。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="system design" scheme="https://zhenghe-md.github.io/blog/categories/system-design/"/>
-    
-    
-      <category term="database" scheme="https://zhenghe-md.github.io/blog/tags/database/"/>
     
   </entry>
   
