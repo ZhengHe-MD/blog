@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2022-12-31T13:44:02.738Z</updated>
+  <updated>2023-01-02T12:20:47.283Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>阻碍工程师成长的几种想法</title>
+    <link href="https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/"/>
+    <id>https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/</id>
+    <published>2023-01-02T19:49:29.000Z</published>
+    <updated>2023-01-02T12:20:47.283Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
+&lt;p&gt;从 2022 年 10 月中旬开始到 12 月中旬，日拱一卒，终于把「Software Engineering at Google」通读了一遍。书中介绍的是每个软件公司都会遇到的问题：如何培养好的工程师文化？如何共享知识？如何组建和带领工程师团队？如何长期维持软件质量？等等。同样的问题，在不同的规模、时间范围下的挑战不同，思考角度、解决方案、落地周期也都不同。这本书介绍的正是这家拥有&lt;a href=&quot;https://increditools.com/how-many-software-engineers-does-google-have/&quot;&gt;超过两万名工程师&lt;/a&gt;的软件公司在这些问题上的思考。&lt;/p&gt;
+&lt;p&gt;在过去的工作经历中，我作为新人、下属、导师与不同类型的工程师有过不同程度的合作，他们之中既有顶尖的工程师，也有敬业的技术经理；既有人菜瘾大的码农、也有性格孤僻的极客；既有刚毕业就躺平的新人、也有工作十多年依然精力充沛的老兵。在这些合作经历中，我最大的感触就是：一名优秀的工程师，在技术层面外，还得是半个心理学家，既要熟练控制计算机、也要擅长与人合作。书中多处阐述工程师容易陷入的思想误区，它们或多或少地会阻碍工程师们成长，我也是其中之一。今天恰好借着看完这本书的契机将关于它们的思考记录下来。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="思考" scheme="https://zhenghe-md.github.io/blog/tags/%E6%80%9D%E8%80%83/"/>
+    
+  </entry>
+  
+  <entry>
     <title>纸牌游戏：24</title>
     <link href="https://zhenghe-md.github.io/blog/2022/10/30/24/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/30/24/</id>
     <published>2022-10-30T21:21:09.000Z</published>
-    <updated>2022-12-31T13:44:02.738Z</updated>
+    <updated>2023-01-02T12:20:47.171Z</updated>
     
     <summary type="html">
     
@@ -38,7 +59,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/09/relationship/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/09/relationship/</id>
     <published>2022-10-09T17:06:43.000Z</published>
-    <updated>2022-12-31T13:44:02.878Z</updated>
+    <updated>2023-01-02T12:20:47.323Z</updated>
     
     <summary type="html">
     
@@ -58,7 +79,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/"/>
     <id>https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/</id>
     <published>2022-09-29T08:36:28.000Z</published>
-    <updated>2022-12-31T13:44:02.874Z</updated>
+    <updated>2023-01-02T12:20:47.319Z</updated>
     
     <summary type="html">
     
@@ -75,7 +96,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/"/>
     <id>https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/</id>
     <published>2022-08-06T22:16:08.000Z</published>
-    <updated>2022-12-31T13:44:02.870Z</updated>
+    <updated>2023-01-02T12:20:47.315Z</updated>
     
     <summary type="html">
     
@@ -100,7 +121,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
     <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
     <published>2022-07-04T19:50:21.000Z</published>
-    <updated>2022-12-31T13:44:02.766Z</updated>
+    <updated>2023-01-02T12:20:47.203Z</updated>
     
     <summary type="html">
     
@@ -158,7 +179,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2022-12-31T13:44:02.834Z</updated>
+    <updated>2023-01-02T12:20:47.275Z</updated>
     
     <summary type="html">
     
@@ -177,7 +198,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2022-12-31T13:44:02.898Z</updated>
+    <updated>2023-01-02T12:20:47.343Z</updated>
     
     <summary type="html">
     
@@ -198,7 +219,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2022-12-31T13:44:02.866Z</updated>
+    <updated>2023-01-02T12:20:47.311Z</updated>
     
     <summary type="html">
     
@@ -217,7 +238,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2022-12-31T13:44:02.838Z</updated>
+    <updated>2023-01-02T12:20:47.283Z</updated>
     
     <summary type="html">
     
@@ -240,7 +261,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2022-12-31T13:44:02.878Z</updated>
+    <updated>2023-01-02T12:20:47.323Z</updated>
     
     <summary type="html">
     
@@ -274,7 +295,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2022-12-31T13:44:02.874Z</updated>
+    <updated>2023-01-02T12:20:47.319Z</updated>
     
     <summary type="html">
     
@@ -296,7 +317,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2022-12-31T13:44:02.818Z</updated>
+    <updated>2023-01-02T12:20:47.255Z</updated>
     
     <summary type="html">
     
@@ -317,7 +338,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2022-12-31T13:44:02.818Z</updated>
+    <updated>2023-01-02T12:20:47.255Z</updated>
     
     <summary type="html">
     
@@ -336,7 +357,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2022-12-31T13:44:02.862Z</updated>
+    <updated>2023-01-02T12:20:47.303Z</updated>
     
     <summary type="html">
     
@@ -355,7 +376,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2022-12-31T13:44:02.838Z</updated>
+    <updated>2023-01-02T12:20:47.283Z</updated>
     
     <summary type="html">
     
@@ -374,7 +395,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2022-12-31T13:44:02.878Z</updated>
+    <updated>2023-01-02T12:20:47.323Z</updated>
     
     <summary type="html">
     
@@ -393,7 +414,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2022-12-31T13:44:02.866Z</updated>
+    <updated>2023-01-02T12:20:47.311Z</updated>
     
     <summary type="html">
     
@@ -419,7 +440,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2022-12-31T13:44:02.838Z</updated>
+    <updated>2023-01-02T12:20:47.283Z</updated>
     
     <summary type="html">
     
@@ -442,7 +463,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
     <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
     <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2022-12-31T13:44:02.886Z</updated>
+    <updated>2023-01-02T12:20:47.335Z</updated>
     
     <summary type="html">
     
@@ -474,27 +495,6 @@
       <category term="distributed system" scheme="https://zhenghe-md.github.io/blog/tags/distributed-system/"/>
     
       <category term="system design" scheme="https://zhenghe-md.github.io/blog/tags/system-design/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Go 项目中 error handling 的世界观和方法论</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/10/05/Go-Error-Handling-Research/</id>
-    <published>2020-10-05T16:20:00.000Z</published>
-    <updated>2022-12-31T13:44:02.798Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="engineering" scheme="https://zhenghe-md.github.io/blog/categories/engineering/"/>
-    
-    
-      <category term="Go" scheme="https://zhenghe-md.github.io/blog/tags/Go/"/>
     
   </entry>
   
