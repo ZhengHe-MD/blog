@@ -1,11 +1,7 @@
 ---
 title: 'Kafka: a Distributed Messaging System for Log Processing (2011)'
 date: 2020-03-15 19:05:46
-tags:
-- kafka
-- mq
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---

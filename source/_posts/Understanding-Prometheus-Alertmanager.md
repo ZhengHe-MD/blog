@@ -1,9 +1,7 @@
 ---
 title: Prometheus Alertmanager 的源码导读
 date: 2020-06-13 22:21:27
-tags:
-categories:
-- open source project
+category: 编程
 ---
 
 Alertmanager 是 Prometheus 提供的报警分发平台，它主要满足的是报警的路由、分组、抑制、去重等常见需求。

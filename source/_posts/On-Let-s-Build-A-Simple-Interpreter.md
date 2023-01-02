@@ -1,9 +1,7 @@
 ---
 title: 从头开始构建一个 Pascal 的解释器
 date: 2022-01-03 19:43:37
-tags:
-  - tutorial
-  - 笨学指南
+category: 实践
 ---
 
 前阵子无意中发现了一个系列教程：「[Let's Build A Simple Interpreter](https://github.com/rspivak/lsbasi) 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 [Ruslan Spivak](https://ruslanspivak.com/pages/about/) 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。

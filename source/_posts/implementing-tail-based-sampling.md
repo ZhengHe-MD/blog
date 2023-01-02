@@ -1,9 +1,7 @@
 ---
 title: 调用链追踪系统在伴鱼：实践篇
 date: 2021-03-04 17:03:51
-tags:
-categories:
-- system design
+category: 系统设计
 ---
 
 > 此文同时发表在[伴鱼技术博客](https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/)上

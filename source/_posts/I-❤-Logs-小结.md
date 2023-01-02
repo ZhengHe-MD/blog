@@ -1,9 +1,7 @@
 ---
 title: 重新思考日志：以日志为中心的系统设计理念 ——「I ❤ Logs」读后小记
 date: 2020-07-12 18:06:15
-tags:
-categories:
-- books-we-love
+category: 读书
 ---
 
 *I ❤ Logs* 出版于 2014 年，是一本很短小的书，100 页不到，利用这周的零散时间就看完了。作者 [Jay Kreps](https://www.linkedin.com/in/jaykreps/)，是前 LinkedIn 的 Principal Staff Engineer，也是 LinkedIn 许多著名开源项目的负责人及联合作者，如 Kafka、Voldemort 等。他是现任 [Confluent](https://www.confluent.io/about/) 的 CEO，主要工作在于围绕实时数据提供企业级服务支持。这本书算是 Jay Kreps 过去多年实践的思考结晶。

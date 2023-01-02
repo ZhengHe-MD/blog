@@ -1,7 +1,7 @@
 ---
 title: 一次实验、两种错误、三个直觉
 date: 2022-07-04 19:50:21
-tags:
+category: 实践
 mathjax: true
 ---
 

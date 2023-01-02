@@ -1,10 +1,7 @@
 ---
 title: Prometheus TSDB 的存储层演进 —— PromConf 演讲笔记
 date: 2020-02-27 09:50:01
-tags:
-- tsdb
-categories:
-- system design
+category: 系统设计
 ---
 
 > 注：如果只想了解 Prometheus TSDB 的存储层现状，可以直接移步[ Ganesh Vernekar 的博客](https://ganeshvernekar.com/blog/)，他写了 7 篇系列文章介绍这个主题。

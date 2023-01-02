@@ -1,9 +1,7 @@
 ---
 title: 报警平台的匹配器演进
 date: 2020-05-10
-tags:
-categories:
-- "system design"
+category: 系统设计
 mathjax:
 - true
 ---

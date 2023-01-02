@@ -1,8 +1,7 @@
 ---
 title: 从 MapReduce 到 SQL
 date: 2022-08-06 22:16:08
-tags:
-
+category: 实践
 ---
 
 在最近的工作中，为了做数据分析，我开始写一些复杂的 HiveSQL。每次执行 HiveSQL  时，都会看到 Map/Reduce jobs 被调度、执行，直到最后展示出数据。渐渐地我心中多了两个疑问：

@@ -1,10 +1,7 @@
 ---
 title: Consistent Hashing and Random Trees (1997)
 date: 2020-02-18 17:33:21
-tags:
-- data structures & algorithms
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---

@@ -1,8 +1,7 @@
 ---
 title: 学习本身是一件值得思考的事情
 date: 2021-11-28 20:54:58
-tags:
-- 笨学指南
+category: 读书
 ---
 
 前段时间，我的朋友「肚子」向我推荐了 [Make It Stick: The Science of Successful Learning](https://www.goodreads.com/book/show/18770267-make-it-stick) 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：**学习本身是一件值得思考的事情**。

@@ -1,8 +1,7 @@
 ---
 title: 最美的程序：用 Lisp 写的 Lisp 解释器
 date: 2020-06-07 10:04:15
-tags:
-- papers-we-love
+category: 编程
 ---
 
 本文来自于 2017 年 PWL NYC Meetup，作者的简介如下：

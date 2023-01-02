@@ -1,10 +1,7 @@
 ---
 title: LFU Implementation With O(1) Complexity (2010)
 date: 2020-02-17 18:27:16
-tags:
-- data structures & algorithms
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---

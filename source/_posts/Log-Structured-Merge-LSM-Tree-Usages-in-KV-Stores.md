@@ -1,11 +1,7 @@
 ---
 title: 用 LSM Tree 实现一个键值数据库 —— GopherConf 2017 演讲笔记
 date: 2020-02-26 23:23:03
-tags:
-- kv
-- data structures & algorithms
-categories:
-- system design
+category: 系统设计
 mathjax:
 - true
 ---

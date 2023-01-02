@@ -1,10 +1,7 @@
 ---
 title: 'Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)'
 date: 2020-02-17 18:16:20
-tags: 
-- distributed tracing
-categories:
-- papers-we-love
+category: 论文
 ---
 
 早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。

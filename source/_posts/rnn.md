@@ -1,7 +1,7 @@
 ---
 title: 从头开始实现 RNN
 date: 2022-02-20 15:03:20
-tags:
+category: 实践
 ---
 
 > What I cannot create, I do not understand. -- Richard Feynman

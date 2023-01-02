@@ -1,9 +1,7 @@
 ---
 title: The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)
 date: 2020-07-21 23:35:09
-tags:
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---

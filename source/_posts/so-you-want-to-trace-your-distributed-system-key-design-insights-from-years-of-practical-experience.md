@@ -1,12 +1,7 @@
 ---
 title: So, you want to trace your distributed system? Key design insights from years of practical experience (2014)
 date: 2020-11-29 21:28:32
-categories:
-- papers-we-love
-tags:
-- distributed tracing
-- distributed system
-- system design
+category: 论文
 mathjax:
 - true
 ---

@@ -1,12 +1,7 @@
 ---
 title: Scaling Memcache at Facebook (2013)
 date: 2020-03-08 16:40:55
-tags:
-- cache
-- distributed system
-- kv
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---

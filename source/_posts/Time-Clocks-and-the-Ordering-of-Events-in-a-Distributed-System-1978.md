@@ -1,10 +1,7 @@
 ---
 title: 'Time, Clocks, and the Ordering of Events in a Distributed System (1978)'
 date: 2020-02-17 18:25:14
-tags:
-- distributed system
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 

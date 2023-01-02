@@ -1,8 +1,7 @@
 ---
 title: 缓存管理策略综述
 date: 2020-02-19 23:17:10
-categories:
-- system design
+category: 系统设计
 mathjax:
 - true
 ---

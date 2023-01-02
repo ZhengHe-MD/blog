@@ -1,8 +1,7 @@
 ---
 title: Jaeger 的 Go 客户端的源码导读
 date: 2020-06-21 22:28:35
-categories:
-- open source project
+category: 编程
 mathjax:
 - true
 ---

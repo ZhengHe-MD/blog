@@ -1,10 +1,7 @@
 ---
 title: TiDB 为什么要用 Apache Arrow - 一个门外汉的思考
 date: 2020-09-20 21:14:48
-tags:
-- database
-categories:
-- system design
+category: 系统设计
 ---
 
 最近在阅读 TiDB 源码 util/chunk package 的过程中，看到了 Apache Arrow 这个项目 (下文简称 Arrow)：

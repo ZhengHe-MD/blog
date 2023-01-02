@@ -1,8 +1,7 @@
 ---
 title: 捋一捋 Accuracy 与 Precision 间的区别和联系
 date: 2022-05-23 07:39:41
-tags:
-- 一图中的
+category: 思考
 ---
 
 Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。

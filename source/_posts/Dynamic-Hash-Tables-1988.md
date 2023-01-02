@@ -1,10 +1,7 @@
 ---
 title: Dynamic Hash Tables (1988)
 date: 2020-02-18 12:36:49
-tags:
-- data structures & algorithms
-categories:
-- papers-we-love
+category: 论文
 mathjax:
 - true
 ---
