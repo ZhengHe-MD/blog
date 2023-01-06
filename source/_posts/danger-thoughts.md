@@ -1,5 +1,5 @@
 ---
-title: 阻碍工程师成长的几种想法
+title: Software Engineering at Google - 阻碍工程师成长的几种想法
 date: 2023-01-02 19:49:29
 category: 读书
 ---
