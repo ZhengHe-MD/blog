@@ -6,7 +6,7 @@
   <link href="/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2023-01-06T13:51:11.528Z</updated>
+  <updated>2023-01-08T03:13:13.519Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -17,11 +17,30 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>我开发的口语跟读练习工具 RAM</title>
+    <link href="https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/"/>
+    <id>https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/</id>
+    <published>2023-01-07T18:33:26.000Z</published>
+    <updated>2023-01-08T03:13:13.519Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;平时，我习惯在跑步、散步或通勤时做一些口语跟读练习。散步或通勤时还好，在手机上来回播放、暂停音频即可，但这种方法不适合在跑步中使用。另外，北京入冬后，在室外这么干容易生冻疮。于是我就想：能不能让音频自动地播放一句，停留一段时间让我跟读，然后再播下一句？&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Software Engineering at Google - 阻碍工程师成长的几种想法</title>
     <link href="https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/"/>
     <id>https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/</id>
     <published>2023-01-02T19:49:29.000Z</published>
-    <updated>2023-01-06T13:51:11.528Z</updated>
+    <updated>2023-01-08T03:13:13.483Z</updated>
     
     <summary type="html">
     
@@ -42,7 +61,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/30/24/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/30/24/</id>
     <published>2022-10-30T21:21:09.000Z</published>
-    <updated>2023-01-06T13:51:11.400Z</updated>
+    <updated>2023-01-08T03:13:13.379Z</updated>
     
     <summary type="html">
     
@@ -61,7 +80,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/09/relationship/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/09/relationship/</id>
     <published>2022-10-09T17:06:43.000Z</published>
-    <updated>2023-01-06T13:51:11.568Z</updated>
+    <updated>2023-01-08T03:13:13.519Z</updated>
     
     <summary type="html">
     
@@ -81,7 +100,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/"/>
     <id>https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/</id>
     <published>2022-09-29T08:36:28.000Z</published>
-    <updated>2023-01-06T13:51:11.564Z</updated>
+    <updated>2023-01-08T03:13:13.519Z</updated>
     
     <summary type="html">
     
@@ -100,7 +119,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/"/>
     <id>https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/</id>
     <published>2022-08-06T22:16:08.000Z</published>
-    <updated>2023-01-06T13:51:11.564Z</updated>
+    <updated>2023-01-08T03:13:13.515Z</updated>
     
     <summary type="html">
     
@@ -127,7 +146,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
     <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
     <published>2022-07-04T19:50:21.000Z</published>
-    <updated>2023-01-06T13:51:11.436Z</updated>
+    <updated>2023-01-08T03:13:13.411Z</updated>
     
     <summary type="html">
     
@@ -187,7 +206,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2023-01-06T13:51:11.520Z</updated>
+    <updated>2023-01-08T03:13:13.479Z</updated>
     
     <summary type="html">
     
@@ -206,7 +225,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2023-01-06T13:51:11.592Z</updated>
+    <updated>2023-01-08T03:13:13.591Z</updated>
     
     <summary type="html">
     
@@ -225,7 +244,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2023-01-06T13:51:11.556Z</updated>
+    <updated>2023-01-08T03:13:13.507Z</updated>
     
     <summary type="html">
     
@@ -244,7 +263,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2023-01-06T13:51:11.528Z</updated>
+    <updated>2023-01-08T03:13:13.483Z</updated>
     
     <summary type="html">
     
@@ -267,7 +286,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2023-01-06T13:51:11.568Z</updated>
+    <updated>2023-01-08T03:13:13.571Z</updated>
     
     <summary type="html">
     
@@ -303,7 +322,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2023-01-06T13:51:11.568Z</updated>
+    <updated>2023-01-08T03:13:13.519Z</updated>
     
     <summary type="html">
     
@@ -327,7 +346,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2023-01-06T13:51:11.500Z</updated>
+    <updated>2023-01-08T03:13:13.459Z</updated>
     
     <summary type="html">
     
@@ -346,7 +365,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2023-01-06T13:51:11.500Z</updated>
+    <updated>2023-01-08T03:13:13.459Z</updated>
     
     <summary type="html">
     
@@ -365,7 +384,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2023-01-06T13:51:11.552Z</updated>
+    <updated>2023-01-08T03:13:13.503Z</updated>
     
     <summary type="html">
     
@@ -384,7 +403,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2023-01-06T13:51:11.528Z</updated>
+    <updated>2023-01-08T03:13:13.483Z</updated>
     
     <summary type="html">
     
@@ -403,7 +422,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2023-01-06T13:51:11.572Z</updated>
+    <updated>2023-01-08T03:13:13.575Z</updated>
     
     <summary type="html">
     
@@ -422,7 +441,7 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2023-01-06T13:51:11.560Z</updated>
+    <updated>2023-01-08T03:13:13.511Z</updated>
     
     <summary type="html">
     
@@ -448,7 +467,7 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2023-01-06T13:51:11.528Z</updated>
+    <updated>2023-01-08T03:13:13.483Z</updated>
     
     <summary type="html">
     
@@ -458,40 +477,6 @@
     
     
       <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>So, you want to trace your distributed system? Key design insights from years of practical experience (2014)</title>
-    <link href="https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/"/>
-    <id>https://zhenghe-md.github.io/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/</id>
-    <published>2020-11-29T21:28:32.000Z</published>
-    <updated>2023-01-06T13:51:11.584Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文主要介绍一篇关于调用链追踪系统设计的论文。行文会尊从原论文的结构，但不是逐字翻译，以意译和加入个人理解的转述为主。&lt;/p&gt;
-
-&lt;h1 id=&quot;introduction&quot;&gt;1. Introduction&lt;/h1&gt;
-&lt;p&gt;如果把公司内部所有 IT 系统看作一个巨型分布式系统，通常其规模庞大、结构复杂，且拥有多层依赖和抽象，每层单拎出来也同样是个分布式系统。以 Google 的业务服务为例，如搜索、广告，会构建于内部基础服务之上，如 Bigtable；而 BigTable 又构建于 Google File System (GFS) 和 Chubby 之上。即便是业务服务本身，也可能存在多层 (multiple tiers) 结构，其中每层同样支持横向扩展。从巨石应用走向微服务，我们在组织架构和服务架构上都变得高效，但其代价就是下降的系统可观测性 (observability)。一个很现实的问题就是：几乎不存在一位工程师能够了解系统全貌，那么问题排查也将变得困难。从单机走向分布式，只关心单个进程、单台机器的性能指标已经远远不够，我们需要将监控的重心从以机器为中心 (machine-centric) 转向以流程为中心 (workflow-centric)，后者的核心方法便是调用链追踪系统。分布式系统的终极理想可以描述为：在获得横向扩展性的同时不暴露自己分布式的本质，即向外提供与单机系统相同的体验。调用链追踪系统概莫能外。&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;按：原文将请求处理过程称为 workflow，下文会使用流程和请求来指代它；原文将以流程为中心的观测方法统称为 end-to-end tracing，由于现在分布式系统几乎是所有讨论的默认假设，本文将不再强调 end-to-end，将其直接译为调用链追踪。&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;尽管大家对调用链追踪的兴趣浓厚，但关于如何设计一个调用链追踪系统，市面上、社区中提供的信息十分有限。更令人担忧的是，现存的文献和实践都将调用链追踪当作多种场景的万能解决方案 (one-size-fits-all)，然而我们以及 Dapper 的实践经验证明事实并非如此。因此在提出你的解决方案之前，最好明确你想要解决的问题是什么。&lt;/p&gt;
-&lt;p&gt;调用链追踪的基本原理和概念十分通俗易懂：就是在系统中的各个节点 (组件) 上埋点，当请求经过时将节点信息 (trace point) 上报，最后汇总信息重建调用链。我们从经验中总结了调用链追踪系统的 4 个设计维度，通过组合这些设计维度的选择就能得到不同应用场景的解决方案：&lt;/p&gt;
-&lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;which causal relationships should be preserved: 保留什么样的因果关系？&lt;/li&gt;
-&lt;li&gt;how causal relationships are tracked: 如何追踪因果关系？&lt;/li&gt;
-&lt;li&gt;how to reduce overhead by sampling: 如何通过采样降低成本？&lt;/li&gt;
-&lt;li&gt;how end-to-end traces should be visualized: 如何将追踪的结果可视化？&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;如果对这 4 个设计维度以及它们之间的权衡关系没有足够的理解，设计一个调用链追踪系统将可能让实现与场景脱节。事实上，由于这些维度之前并未被实践者或研究者提出和充分理解，许多调用链追踪系统的实现并未能充分达成其设计理想。&lt;/p&gt;
-&lt;h1 id=&quot;backgroud&quot;&gt;2. Backgroud&lt;/h1&gt;
-&lt;p&gt;本节主要陈述一些调用链追踪系统的背景信息，包括核心应用场景、解决方案分类以及本文所推崇的架构方案。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="论文" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AE%BA%E6%96%87/"/>
     
     
   </entry>
