@@ -3,10 +3,10 @@
   <title>ZhengHe</title>
   <icon>https://zhenghe-md.github.io/blog/icon.png</icon>
   
-  <link href="/blog/atom.xml" rel="self"/>
+  <link href="https://zhenghe-md.github.io/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2023-01-08T03:13:13.519Z</updated>
+  <updated>2023-01-08T03:15:06.853Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,16 +21,14 @@
     <link href="https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/"/>
     <id>https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/</id>
     <published>2023-01-07T18:33:26.000Z</published>
-    <updated>2023-01-08T03:13:13.519Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;平时，我习惯在跑步、散步或通勤时做一些口语跟读练习。散步或通勤时还好，在手机上来回播放、暂停音频即可，但这种方法不适合在跑步中使用。另外，北京入冬后，在室外这么干容易生冻疮。于是我就想：能不能让音频自动地播放一句，停留一段时间让我跟读，然后再播下一句？&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.853Z</updated>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    <summary type="html">&lt;p&gt;平时，我习惯在跑步、散步或通勤时做一些口语跟读练习。散步或通勤时还好，在手机上来回播放、暂停音频即可，但这种方法不适合在跑步中使用。另外，北京入冬后，在室外这么干容易生冻疮。于是我就想：能不能让音频自动地播放一句，停留一段时间让我跟读，然后再播下一句？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -40,18 +38,16 @@
     <link href="https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/"/>
     <id>https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/</id>
     <published>2023-01-02T19:49:29.000Z</published>
-    <updated>2023-01-08T03:13:13.483Z</updated>
+    <updated>2023-01-08T03:15:06.813Z</updated>
     
-    <summary type="html">
     
-      &lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
+    <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
 &lt;p&gt;从 2022 年 10 月中旬开始到 12 月中旬，日拱一卒，终于把「Software Engineering at Google」通读了一遍。书中介绍的是每个软件公司都会遇到的问题：如何培养好的工程师文化？如何共享知识？如何组建和带领工程师团队？如何长期维持软件质量？等等。同样的问题，在不同的规模、时间范围下的挑战不同，思考角度、解决方案、落地周期也都不同。这本书介绍的正是这家拥有&lt;a href=&quot;https://increditools.com/how-many-software-engineers-does-google-have/&quot;&gt;超过两万名工程师&lt;/a&gt;的软件公司在这些问题上的思考。&lt;/p&gt;
-&lt;p&gt;在过去的工作经历中，我作为新人、下属、导师与不同类型的工程师有过不同程度的合作，他们之中既有顶尖的工程师，也有敬业的技术经理；既有人菜瘾大的码农、也有性格孤僻的极客；既有刚毕业就躺平的新人、也有工作十多年依然精力充沛的老兵。在这些合作经历中，我最大的感触就是：一名优秀的工程师，在技术层面外，还得是半个心理学家，既要熟练控制计算机、也要擅长与人合作。书中多处阐述工程师容易陷入的思想误区，它们或多或少地会阻碍工程师们成长，我也是其中之一。今天恰好借着看完这本书的契机将关于它们的思考记录下来。&lt;/p&gt;
-    
-    </summary>
+&lt;p&gt;在过去的工作经历中，我作为新人、下属、导师与不同类型的工程师有过不同程度的合作，他们之中既有顶尖的工程师，也有敬业的技术经理；既有人菜瘾大的码农、也有性格孤僻的极客；既有刚毕业就躺平的新人、也有工作十多年依然精力充沛的老兵。在这些合作经历中，我最大的感触就是：一名优秀的工程师，在技术层面外，还得是半个心理学家，既要熟练控制计算机、也要擅长与人合作。书中多处阐述工程师容易陷入的思想误区，它们或多或少地会阻碍工程师们成长，我也是其中之一。今天恰好借着看完这本书的契机将关于它们的思考记录下来。&lt;/p&gt;</summary>
     
     
-      <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
     
     
   </entry>
@@ -61,16 +57,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/30/24/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/30/24/</id>
     <published>2022-10-30T21:21:09.000Z</published>
-    <updated>2023-01-08T03:13:13.379Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;可能是太想排到车号了，最近上下班路上总是盯着过往车辆的号牌。盯着盯着就会下意识地思考：「怎么用上面的数字经过加、减、乘、除得到 24」，比如下面这个车牌：&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.709Z</updated>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    <summary type="html">&lt;p&gt;可能是太想排到车号了，最近上下班路上总是盯着过往车辆的号牌。盯着盯着就会下意识地思考：「怎么用上面的数字经过加、减、乘、除得到 24」，比如下面这个车牌：&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -80,17 +74,15 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/09/relationship/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/09/relationship/</id>
     <published>2022-10-09T17:06:43.000Z</published>
-    <updated>2023-01-08T03:13:13.519Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;没有屏蔽我朋友圈的人估计都知道，我有一只帅气的猫叫郑小钱，一个可爱的女儿叫郑天晴。小钱已经快 5 岁了，天晴刚刚 1 岁 3 个月，她们和我 (爸爸)、我媳妇 (妈妈) 以及我妈妈 (奶奶)，4 人 1 猫生活在北京租住的一套小房子里。&lt;/p&gt;
-&lt;p&gt;都说养猫是养娃的演习，这话颇有道理。二者的确有很多相似的地方，比如我们会忍不住给她们买玩具，花时间陪她们玩耍，给她们准备饭菜与零食，管她们拉屎撒尿。最有意思的，也是我和媳妇经常讨论的一点就是「她们跟谁关系最好。」她们不懂任何人情世故，却好像知道所有人情世故。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.853Z</updated>
     
     
-      <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
+    <summary type="html">&lt;p&gt;没有屏蔽我朋友圈的人估计都知道，我有一只帅气的猫叫郑小钱，一个可爱的女儿叫郑天晴。小钱已经快 5 岁了，天晴刚刚 1 岁 3 个月，她们和我 (爸爸)、我媳妇 (妈妈) 以及我妈妈 (奶奶)，4 人 1 猫生活在北京租住的一套小房子里。&lt;/p&gt;
+&lt;p&gt;都说养猫是养娃的演习，这话颇有道理。二者的确有很多相似的地方，比如我们会忍不住给她们买玩具，花时间陪她们玩耍，给她们准备饭菜与零食，管她们拉屎撒尿。最有意思的，也是我和媳妇经常讨论的一点就是「她们跟谁关系最好。」她们不懂任何人情世故，却好像知道所有人情世故。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
     
     
   </entry>
@@ -100,16 +92,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/"/>
     <id>https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/</id>
     <published>2022-09-29T08:36:28.000Z</published>
-    <updated>2023-01-08T03:13:13.519Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.849Z</updated>
     
     
-      <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
+    <summary type="html">&lt;p&gt;在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
     
     
   </entry>
@@ -119,11 +109,10 @@
     <link href="https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/"/>
     <id>https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/</id>
     <published>2022-08-06T22:16:08.000Z</published>
-    <updated>2023-01-08T03:13:13.515Z</updated>
+    <updated>2023-01-08T03:15:06.845Z</updated>
     
-    <summary type="html">
     
-      &lt;p&gt;在最近的工作中，为了做数据分析，我开始写一些复杂的 HiveSQL。每次执行 HiveSQL 时，都会看到 Map/Reduce jobs 被调度、执行，直到最后展示出数据。渐渐地我心中多了两个疑问：&lt;/p&gt;
+    <summary type="html">&lt;p&gt;在最近的工作中，为了做数据分析，我开始写一些复杂的 HiveSQL。每次执行 HiveSQL 时，都会看到 Map/Reduce jobs 被调度、执行，直到最后展示出数据。渐渐地我心中多了两个疑问：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;&lt;p&gt;MapReduce 引擎如何工作？&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;SQL 是如何被翻译成 MapReduce job 的？&lt;/p&gt;&lt;/li&gt;
@@ -131,12 +120,11 @@
 &lt;p&gt;为了解决这两个疑问，我用比较熟悉的 Go 语言实现了一个玩具版本的 MapReduce 引擎，然后基于此实现基本的 select，join。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;本文相关的源码放在仓库 &lt;a href=&quot;https://github.com/ZhengHe-MD/pset/tree/main/map-reduce/go/mapreduce&quot;&gt;ZhengHe-MD/pset · GitHub&lt;/a&gt; 中，欢迎查阅。&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
+&lt;/blockquote&gt;</summary>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -146,11 +134,10 @@
     <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
     <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
     <published>2022-07-04T19:50:21.000Z</published>
-    <updated>2023-01-08T03:13:13.411Z</updated>
+    <updated>2023-01-08T03:15:06.741Z</updated>
     
-    <summary type="html">
     
-      &lt;p&gt;最近，我们在公司内部做了一些 &lt;a href=&quot;https://www.goodreads.com/book/show/31625067-hacking-growth&quot;&gt;Hacking Growth&lt;/a&gt; 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;最近，我们在公司内部做了一些 &lt;a href=&quot;https://www.goodreads.com/book/show/31625067-hacking-growth&quot;&gt;Hacking Growth&lt;/a&gt; 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。&lt;/p&gt;
 
 &lt;p&gt;对于一名工程师，我认为 A/B 测试有两个角度值得了解：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
@@ -191,12 +178,11 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;套用刚才的公式，这个 A/B 测试就是：&lt;/p&gt;
-    
-    </summary>
+&lt;p&gt;套用刚才的公式，这个 A/B 测试就是：&lt;/p&gt;</summary>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -206,16 +192,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2023-01-08T03:13:13.479Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.809Z</updated>
     
     
-      <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
+    <summary type="html">&lt;p&gt;Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
     
     
   </entry>
@@ -225,16 +209,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2023-01-08T03:13:13.591Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在和不同地区的人聊天时，我们常常会有疑惑：为什么有些人说话时分不清 x 和 y？这里的 x 和 y 可能是拼音中的 f 和 h，l 和 n，l 和 r，z 和 zh，ang 和 an。比如，我明明是福建人，为什么别人以为我是胡建人？在最近刚刚读完的一本书《Fluent Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:07.429Z</updated>
     
     
-      <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
+    <summary type="html">&lt;p&gt;在和不同地区的人聊天时，我们常常会有疑惑：为什么有些人说话时分不清 x 和 y？这里的 x 和 y 可能是拼音中的 f 和 h，l 和 n，l 和 r，z 和 zh，ang 和 an。比如，我明明是福建人，为什么别人以为我是胡建人？在最近刚刚读完的一本书《Fluent Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
     
     
   </entry>
@@ -244,16 +226,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2023-01-08T03:13:13.507Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.841Z</updated>
     
     
-      <category term="编程" scheme="https://zhenghe-md.github.io/blog/categories/%E7%BC%96%E7%A8%8B/"/>
+    <summary type="html">&lt;p&gt;每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="编程" scheme="https://zhenghe-md.github.io/blog/categories/%E7%BC%96%E7%A8%8B/"/>
     
     
   </entry>
@@ -263,20 +243,18 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2023-01-08T03:13:13.483Z</updated>
+    <updated>2023-01-08T03:15:06.813Z</updated>
     
-    <summary type="html">
     
-      &lt;blockquote&gt;
+    <summary type="html">&lt;blockquote&gt;
 &lt;p&gt;💡 人们常常高估自己一年能成就之事，而低估自己十年能成就之事&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;尽管我的博客中绝大多数内容都与计算机相关，但实际上我还有另一个身份：经济学学士。在对外经贸大学度过的四年，是我对人生的认识井喷的四年。毕业之后选择计算机，并不是因为我厌恶经济学。相反，在学习经济学的过程中建立起的心智模式，一直对我的学习和实践产生着指导性作用。&lt;/p&gt;
-&lt;p&gt;在货币银行学中，有一个与金钱的时间价值紧密相关的概念：&lt;strong&gt;复利&lt;/strong&gt;，即本金产生的利息会在下一个计息周期成为本金的一部分，用大白话来描述就是「利滚利」。用经济学的概念去解释生活现象，是我很喜欢做的一种心理实验，甚至有时候我会相信任何一个经济学的概念都对应生活中的某个隐喻。在我看来，&lt;strong&gt;复利的隐喻就是坚持&lt;/strong&gt;。在过去的经历中，坚持在许多层面给到了我奖励，而且这些奖励会随着时间的推移自我增强，就像利息追加进入本金。&lt;/p&gt;
-    
-    </summary>
+&lt;p&gt;在货币银行学中，有一个与金钱的时间价值紧密相关的概念：&lt;strong&gt;复利&lt;/strong&gt;，即本金产生的利息会在下一个计息周期成为本金的一部分，用大白话来描述就是「利滚利」。用经济学的概念去解释生活现象，是我很喜欢做的一种心理实验，甚至有时候我会相信任何一个经济学的概念都对应生活中的某个隐喻。在我看来，&lt;strong&gt;复利的隐喻就是坚持&lt;/strong&gt;。在过去的经历中，坚持在许多层面给到了我奖励，而且这些奖励会随着时间的推移自我增强，就像利息追加进入本金。&lt;/p&gt;</summary>
     
     
-      <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
+    
+    <category term="思考" scheme="https://zhenghe-md.github.io/blog/categories/%E6%80%9D%E8%80%83/"/>
     
     
   </entry>
@@ -286,11 +264,10 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2023-01-08T03:13:13.571Z</updated>
+    <updated>2023-01-08T03:15:07.409Z</updated>
     
-    <summary type="html">
     
-      &lt;blockquote&gt;
+    <summary type="html">&lt;blockquote&gt;
 &lt;p&gt;What I cannot create, I do not understand. -- Richard Feynman&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Andrej Karpathy 在 2015 年发表了题为 &lt;a href=&quot;https://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt; 的博客，并配套开源了其中实验所用的 &lt;a href=&quot;https://github.com/karpathy/char-rnn&quot;&gt;char-rnn 代码仓库&lt;/a&gt;，以及用 numpy 手写的 &lt;a href=&quot;https://gist.github.com/karpathy/d4dee566867f8291f086&quot;&gt;gist: min-char-rnn&lt;/a&gt;，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：&lt;/p&gt;
@@ -307,12 +284,11 @@
 &lt;li&gt;超级丹的技战术&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。&lt;/p&gt;
-    
-    </summary>
+&lt;p&gt;整个探索过程对我而言充满了趣味和挑战，并且在实践中令人激动地首次使用微积分的知识。尽管这只是深度学习的冰山一角，但足以让一名主营业务为服务端开发的软件工程师感到激动不已，于是便有了这篇博客，将这个过程记录下来。&lt;/p&gt;</summary>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -322,21 +298,19 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2023-01-08T03:13:13.519Z</updated>
+    <updated>2023-01-08T03:15:06.849Z</updated>
     
-    <summary type="html">
     
-      &lt;p&gt;因为平时需要阅读大量的英文资料，翻译对我来说是一个高频需求，但我一直没能找到一个足够趁手的工具。对于一个理想的翻译工具，我有三点期望：&lt;/p&gt;
+    <summary type="html">&lt;p&gt;因为平时需要阅读大量的英文资料，翻译对我来说是一个高频需求，但我一直没能找到一个足够趁手的工具。对于一个理想的翻译工具，我有三点期望：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;翻译准确：翻译的结果与原文贴合不显得尴尬&lt;/li&gt;
 &lt;li&gt;触发简单：复制到剪贴板后快速触发翻译指令&lt;/li&gt;
 &lt;li&gt;响应迅速：发起翻译请求到获得结果小于一秒&lt;/li&gt;
-&lt;/ol&gt;
-    
-    </summary>
+&lt;/ol&gt;</summary>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -346,16 +320,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2023-01-08T03:13:13.459Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let&#39;s Build A Simple Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan Spivak&lt;/a&gt; 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.789Z</updated>
     
     
-      <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
+    <summary type="html">&lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let&#39;s Build A Simple Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan Spivak&lt;/a&gt; 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="实践" scheme="https://zhenghe-md.github.io/blog/categories/%E5%AE%9E%E8%B7%B5/"/>
     
     
   </entry>
@@ -365,16 +337,14 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2023-01-08T03:13:13.459Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;前段时间，我的朋友「肚子」向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：&lt;strong&gt;学习本身是一件值得思考的事情&lt;/strong&gt;。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.789Z</updated>
     
     
-      <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
+    <summary type="html">&lt;p&gt;前段时间，我的朋友「肚子」向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：&lt;strong&gt;学习本身是一件值得思考的事情&lt;/strong&gt;。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
     
     
   </entry>
@@ -384,16 +354,14 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2023-01-08T03:13:13.503Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.837Z</updated>
     
     
-      <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
+    <summary type="html">&lt;p&gt;今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
     
     
   </entry>
@@ -403,16 +371,14 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/23/born-a-crime/</id>
     <published>2021-05-23T09:04:37.000Z</published>
-    <updated>2023-01-08T03:13:13.483Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在伴鱼 App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.813Z</updated>
     
     
-      <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
+    <summary type="html">&lt;p&gt;因为之前在 Youtube 和 B 站上零星地看了一些 Trevor Noah 的 stand-up 和 Daily Show，加上最近在伴鱼 App 上与来自南非的老师学英语，我在大约四月中旬决定读一读「Born a Crime」这本书，书的内容本来并不多，但个人时间安排原因使得这个过程变得很长，直到昨天终于读完。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="读书" scheme="https://zhenghe-md.github.io/blog/categories/%E8%AF%BB%E4%B9%A6/"/>
     
     
   </entry>
@@ -422,16 +388,14 @@
     <link href="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/"/>
     <id>https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/</id>
     <published>2021-05-09T10:19:17.000Z</published>
-    <updated>2023-01-08T03:13:13.575Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&quot;Google 内部曾对工程师做一次 &lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf&quot;&gt;调研&lt;/a&gt;，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。&quot;&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:07.413Z</updated>
     
     
-      <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
+    <summary type="html">&lt;p&gt;&quot;Google 内部曾对工程师做一次 &lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/43835.pdf&quot;&gt;调研&lt;/a&gt;，发现平均每位工程师每天会进行 5.3 次代码搜索会话 (session)，执行 12 个代码搜索请求；在 Github/Gitlab 等仓库托管服务中，搜索是工程师最常用的功能之一。&quot;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
     
     
   </entry>
@@ -441,23 +405,21 @@
     <link href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/"/>
     <id>https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/</id>
     <published>2021-03-04T17:03:51.000Z</published>
-    <updated>2023-01-08T03:13:13.511Z</updated>
+    <updated>2023-01-08T03:15:06.841Z</updated>
     
-    <summary type="html">
     
-      &lt;blockquote&gt;
+    <summary type="html">&lt;blockquote&gt;
 &lt;p&gt;此文同时发表在&lt;a href=&quot;https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/&quot;&gt;伴鱼技术博客&lt;/a&gt;上&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;在 &lt;a href=&quot;https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/&quot;&gt;理论篇&lt;/a&gt; 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;内部基础设施无需做跨语言支持&lt;/li&gt;
 &lt;li&gt;技术选型会有轻微的语言倾向&lt;/li&gt;
-&lt;/ol&gt;
-    
-    </summary>
+&lt;/ol&gt;</summary>
     
     
-      <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
+    
+    <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
     
     
   </entry>
@@ -467,16 +429,14 @@
     <link href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/"/>
     <id>https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/</id>
     <published>2020-12-20T23:03:14.000Z</published>
-    <updated>2023-01-08T03:13:13.483Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 &lt;a href=&quot;https://github.com/ZhengHe-MD/database-of-tracing-systems&quot;&gt;Database of Tracing Systems&lt;/a&gt; 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。&lt;/p&gt;
-    
-    </summary>
+    <updated>2023-01-08T03:15:06.813Z</updated>
     
     
-      <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
+    <summary type="html">&lt;p&gt;本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 &lt;a href=&quot;https://github.com/ZhengHe-MD/database-of-tracing-systems&quot;&gt;Database of Tracing Systems&lt;/a&gt; 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="系统设计" scheme="https://zhenghe-md.github.io/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/"/>
     
     
   </entry>
