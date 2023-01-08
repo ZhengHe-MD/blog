@@ -38,17 +38,17 @@ category: 实践
   
 {% cplayer %}
 - name: 原始音频
-  src: ./dont-cheat.wav 
+  src: ./dont-cheat.mp3
 {% endcplayer %}
 
 {% cplayer %}
 - name: easy
-  src: ./dont-cheat-easy.wav 
+  src: ./dont-cheat-easy.mp3
 {% endcplayer %}
 
 {% cplayer %}
 - name: medium
-  src: ./dont-cheat-medium.wav 
+  src: ./dont-cheat-medium.mp3
 {% endcplayer %}
 
 {% cplayer %}
