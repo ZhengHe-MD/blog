@@ -164,15 +164,17 @@ $$f, $fr, fre, rei, eib, ibu, bur, urg, rg$, g$$
 
 以上是对倒排索引的简单回顾，接下来我们来讨论代码搜索引擎常用的索引结构。
 
-### 3.2.2 Trigram
+### 3.2.2 NGram
 
-Russ Cox 在博客 [How Google Code Search Worked](https://swtch.com/~rsc/regexp/regexp4.html) 中提出用 Trigram 索引来支持代码搜索，其结构与 3.2.1 节中介绍的 3-gram 完全一致，这里不再赘述。
+#### 3.2.2.1 Trigram
+
+Trigram 是最常用的 n-gram。Russ Cox 在博客 [How Google Code Search Worked](https://swtch.com/~rsc/regexp/regexp4.html) 中提出用 Trigram 索引来支持代码搜索，其结构与 3.2.1 节中介绍的 3-gram 完全一致，这里不再赘述。
 
 > ❓为什么是 3-gram，而不是 2-gram 或 4-gram
->
+> 
 > In practice, there are too few distinct 2-grams and too many distinct 4-grams, so 3-grams (trigrams) it is. — Russ Cox
 
-### 3.2.3 Positional Trigram
+#### 3.2.2.2 Positional Trigram
 
 Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postings 间的关系，基本结构如下：
 
@@ -186,7 +188,11 @@ Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postin
 
 即在 Trigram Index 的基础上增加位置信息。
 
-### 3.2.4 Suffix Array
+#### 3.2.2.3 Sparse Grams
+
+尽管优于 2-gram，3-gram 也存在选择性小的情况。比如 `for` 的选择性就很差，选择性差意味着许多读取出来的索引都在后期筛选时被抛弃，计算资源就被白白浪费。因此 GitHub Code Search 在它的新引擎 Blackbird 上使用的是他们自研的 [Sparse Grams](https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search/#fn-69904-bignote)，是一种结合多种 n-gram 的解决方案，在多种 n-gram 之间取得选择性和索引体积的平衡。
+
+### 3.2.3 Suffix Array
 
 一个字符串的 Suffix Array 是它所有后缀子串按字典序排列的数组。假设给定一个字符串 "hello world"：
 
@@ -199,11 +205,11 @@ Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postin
 其中第一列表示后缀子串在原字符串中的位置。拿到上述排序结构后，查询子串就可以转化成二分查找问题：以查询子串 "llo" 为例，先在上图中的第二列，即所有后缀子串的第一个字母，以字符 "l" 为目标执行二分查找，找到一块区域 (5-7 行)，然后对这个区域继续嵌套执行二分查找，直到遍历完目标子串的所有字符为止。
 
 > 💡留两个思考：
->
+> 
 > 1. 如何高效地存储 Suffix Array 索引？需要存储所有子串吗？(答案在 Nelson Elhage 的[博客](https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/)里)
 > 2. Suffix Array 索引建立的时空复杂度是多少？
 
-### 3.2.5 基于文本索引的查询过程
+### 3.2.4 基于文本索引的查询过程
 
 无论是 Trigram、Positional Trigram 还是 Suffix Array，如果想支持通过正则表达式搜索代码，都要实现以下流程：
 
@@ -228,7 +234,7 @@ Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postin
 * [Livegrep](https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/)
 * [Regular Expression Search via Graph Cuts](https://blog.aaw.io/2016/06/10/regrams-intro.html)
 
-### 3.2.6 Ctags
+### 3.2.5 Ctags
 
 Ctags 是 unix 或 unix-like 系统中内置的工具，为源码仓库生成「语言对象」 (language objects) 的索引。目前仍在维护的版本是 Universal Ctags，想了解更多细节可以阅读它的[官方文档](https://docs.ctags.io/en/latest/index.html)。
 
@@ -242,26 +248,26 @@ $ cd regexgo && ctags **/*.go
 就能在 regexgo 文件夹中看到一个 tags 文件，其内容如下所示：
 
 ```
-MatchString	nfa.go	/^func MatchString(n *nfa, word string, options *Mat/
-TestBackTracking	nfa_test.go	/^func TestBackTracking(t *testing.T) {$/
-TestNFASearch	nfa_test.go	/^func TestNFASearch(t *testing.T) {$/
-TestToPostfix	parser_test.go	/^func TestToPostfix(t *testing.T) {$/
-addEpsilonTransition	nfa.go	/^func addEpsilonTransition(from *state, to *state) /
-addTransition	nfa.go	/^func addTransition(from, to *state, symbol byte) {/
-backtracking	nfa.go	/^func backtracking(s *state, visited map[*state]int/
-const	nfa.go	/^const ($/
-import	nfa_test.go	/^import ($/
-nfaSearch	nfa.go	/^func nfaSearch(n *nfa, word string) bool {$/
-toPostfix	parser.go	/^func toPostfix(exp string) string {$/
+MatchString    nfa.go    /^func MatchString(n *nfa, word string, options *Mat/
+TestBackTracking    nfa_test.go    /^func TestBackTracking(t *testing.T) {$/
+TestNFASearch    nfa_test.go    /^func TestNFASearch(t *testing.T) {$/
+TestToPostfix    parser_test.go    /^func TestToPostfix(t *testing.T) {$/
+addEpsilonTransition    nfa.go    /^func addEpsilonTransition(from *state, to *state) /
+addTransition    nfa.go    /^func addTransition(from, to *state, symbol byte) {/
+backtracking    nfa.go    /^func backtracking(s *state, visited map[*state]int/
+const    nfa.go    /^const ($/
+import    nfa_test.go    /^import ($/
+nfaSearch    nfa.go    /^func nfaSearch(n *nfa, word string) bool {$/
+toPostfix    parser.go    /^func toPostfix(exp string) string {$/
 ```
 
 每行数据是一个 `(language object, file, regexp matcher)` 三元组。Ctags 常常被用于 IDE 实现定义跳转的功能，它也可以被集成到代码搜索引擎中，更好地服务于「语言感知」的查询。Ctags 背后由不同编程语言的解析器 (parser) 驱动，后者的原理则是另一个话题，不在本文中讨论。
 
-### 3.2.7 LSIF
+### 3.2.6 LSIF
 
 从 Ctags 的例子中可以看出，Ctags 中记录的「语言对象」信息量很小，基本上只有函数信息。要支持表达力更强的「语言感知」查询，其记录的信息还远远不够。在数据模型和信息量上，LSIF 比 Ctags 走得更远：
 
->The goal of the LSIF is to support rich code navigation in development tools or Web UI without needing a local copy of the source code.  — [LSP/LSIF docs](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/)
+> The goal of the LSIF is to support rich code navigation in development tools or Web UI without needing a local copy of the source code.  — [LSP/LSIF docs](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/)
 
 由于 LSIF 的设计目的是支持丰富的代码跳转能力，因此它需要记录包括变量定义、引用，函数的定义、调用及它们之间的关系。LSIF 是将这些实体，及实体之间的关系用图结构来建模。以下是 Chris Wendt 在 GopherCon 2019 上题为「[LSIF + Go](https://www.youtube.com/watch?v=fMIRKRj_A88)」演讲中的其中一张 slide，其中红框为图的点，绿线为图的边。
 
@@ -311,7 +317,7 @@ toPostfix	parser.go	/^func toPostfix(exp string) string {$/
 
 在绝大多数时候，研发关心的是仓库的最新版本，因此一个务实主义的做法是只对最新的版本建立索引。
 
->Indexing every branch of every repository isn’t a pragmatic use of resources for most customers, so this decision balances optimizing the common case (searching all default branches) with space savings (not indexing everything). — [Sourcegraph](https://docs.sourcegraph.com/dev/background-information/architecture/index)
+> Indexing every branch of every repository isn’t a pragmatic use of resources for most customers, so this decision balances optimizing the common case (searching all default branches) with space savings (not indexing everything). — [Sourcegraph](https://docs.sourcegraph.com/dev/background-information/architecture/index)
 
 仓库发生变化后，数据管理模块需要将这些变化反馈到索引上。
 
@@ -350,7 +356,7 @@ Zoekt 项目的作者，Google 工程师 Han-Wen 在 Gerrit Summit 2017 上的 [
 
 ## 5.1 Google Code Search
 
->⚠️ 本节的大部分内容来自于 Russ Cox 的博客 [How Google Code Search Worked](https://swtch.com/~rsc/regexp/regexp4.html)。
+> ⚠️ 本节的大部分内容来自于 Russ Cox 的博客 [How Google Code Search Worked](https://swtch.com/~rsc/regexp/regexp4.html)。
 
 ### 5.1.1 一点历史
 
@@ -526,15 +532,20 @@ Sourcegraph 在隔离代码和索引上更近了一步。在它的架构中存�
 
 作为一个商业化的代码搜索引擎项目，Sourcegraph 无论在系统设计上还是产品体验上都更加完善。如果你期望享受极致的使用体验，且不想花费时间、精力去了解、部署、运维一个代码搜索引擎，那么 Sourcegraph 是个很好的选择。
 
-## 5.6 项目对比
+## 5.6 GitHub Code Search
 
-| 项目名称               | 查询语言                                     | 索引                            | 服务架构                     |
-| ---------------------- | -------------------------------------------- | ------------------------------- | ---------------------------- |
-| **Google Code Search** | [substring, regexp]                          | Trigram                         | -                            |
+GitHub Code Search 经历了 [3 版迭代](https://github.blog/2021-12-15-a-brief-history-of-code-search-at-github/)，从 2008 年的Solr，到 2010 年的 Elastic Search，最终到 2020 年自研的 Blackbird。内容比较长，详情可以在这篇文章 [The technology behind GitHub’s new code search | The GitHub Blog](https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search) 中具体了解。
+
+## 5.7 项目对比
+
+| 项目名称                   | 查询语言                                         | 索引                              | 服务架构                      |
+| ---------------------- | -------------------------------------------- | ------------------------------- | ------------------------- |
+| **Google Code Search** | [substring, regexp]                          | Trigram                         | -                         |
 | **Hound**              | [substring, regexp]                          | Trigram                         | WebServer、 IndexServer 合并 |
 | **Livegrep**           | [substring, regexp] + [modifier]             | Suffix Array                    | WebServer、IndexServer 隔离  |
 | **Zoekt**              | [substring, regexp] + [modifier]             | Positional Trigram, Ctags       | WebServer、IndexServer 隔离  |
 | **Sourcegraph**        | [substring, regexp, structural] + [modifier] | Positional Trigram, Ctags, LSIF | WebServer、IndexServer 隔离  |
+| **GitHub Code Search** | [substring, regexp]                          | Sparse Grams                    | WebServer、IndexServer 隔离  |
 
 尾注：完整调研报告请见我个人的 Notion [笔记](https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7)
 
@@ -562,6 +573,9 @@ Sourcegraph 在隔离代码和索引上更近了一步。在它的架构中存�
     - [Life of a repository](https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-repository)
     - [Life of a search query](https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query)
     - [Search pagination](https://docs.sourcegraph.com/dev/background-information/architecture/search-pagination)
+- GitHub Code Search
+  - [The techonology behind GitHub's new code search](https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search/)
+  - [A brief history of code search at GitHub](https://github.blog/2021-12-15-a-brief-history-of-code-search-at-github/)
 - Livegrep
   - [livegrep/livegrep](https://github.com/livegrep/livegrep/)
   - [Regular Expression Search with Suffix Arrays](https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/)
