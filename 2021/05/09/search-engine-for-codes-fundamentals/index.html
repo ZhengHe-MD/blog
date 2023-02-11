@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/zoekt-index.png">
 <meta property="og:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/sourcegraph-architecture.png">
 <meta property="article:published_time" content="2021-05-09T10:19:17.000Z">
-<meta property="article:modified_time" content="2023-01-08T07:43:22.622Z">
+<meta property="article:modified_time" content="2023-02-11T01:29:55.874Z">
 <meta property="article:author" content="ZhengHe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2021/05/09/search-engine-for-codes-fundamentals/anatomy.png">
@@ -287,7 +287,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-08 07:43:22" itemprop="dateModified" datetime="2023-01-08T07:43:22+00:00">2023-01-08</time>
+      <time title="修改时间：2023-02-11 01:29:55" itemprop="dateModified" datetime="2023-02-11T01:29:55+00:00">2023-02-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -410,17 +410,20 @@ mjx-container + br {
 <p>💡 留个思考：如果想支持模糊检索该怎么做呢？</p>
 </blockquote>
 <p>以上是对倒排索引的简单回顾，接下来我们来讨论代码搜索引擎常用的索引结构。</p>
-<h3 id="trigram">3.2.2 Trigram</h3>
-<p>Russ Cox 在博客 <a target="_blank" rel="noopener" href="https://swtch.com/~rsc/regexp/regexp4.html">How Google Code Search Worked</a> 中提出用 Trigram 索引来支持代码搜索，其结构与 3.2.1 节中介绍的 3-gram 完全一致，这里不再赘述。</p>
+<h3 id="ngram">3.2.2 NGram</h3>
+<h4 id="trigram">3.2.2.1 Trigram</h4>
+<p>Trigram 是最常用的 n-gram。Russ Cox 在博客 <a target="_blank" rel="noopener" href="https://swtch.com/~rsc/regexp/regexp4.html">How Google Code Search Worked</a> 中提出用 Trigram 索引来支持代码搜索，其结构与 3.2.1 节中介绍的 3-gram 完全一致，这里不再赘述。</p>
 <blockquote>
 <p>❓为什么是 3-gram，而不是 2-gram 或 4-gram</p>
 <p>In practice, there are too few distinct 2-grams and too many distinct 4-grams, so 3-grams (trigrams) it is. — Russ Cox</p>
 </blockquote>
-<h3 id="positional-trigram">3.2.3 Positional Trigram</h3>
+<h4 id="positional-trigram">3.2.2.2 Positional Trigram</h4>
 <p>Positional Trigram 与 Trigram 间的关系就是 Positional Postings 与 Postings 间的关系，基本结构如下：</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;$&#123;trigram&#125;&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;$&#123;doc_id&#125;&quot;</span>: [<span class="number">1</span>, <span class="number">3</span>] <span class="comment">// positions</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>即在 Trigram Index 的基础上增加位置信息。</p>
-<h3 id="suffix-array">3.2.4 Suffix Array</h3>
+<h4 id="sparse-grams">3.2.2.3 Sparse Grams</h4>
+<p>尽管优于 2-gram，3-gram 也存在选择性小的情况。比如 <code>for</code> 的选择性就很差，选择性差意味着许多读取出来的索引都在后期筛选时被抛弃，计算资源就被白白浪费。因此 GitHub Code Search 在它的新引擎 Blackbird 上使用的是他们自研的 <a target="_blank" rel="noopener" href="https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search/#fn-69904-bignote">Sparse Grams</a>，是一种结合多种 n-gram 的解决方案，在多种 n-gram 之间取得选择性和索引体积的平衡。</p>
+<h3 id="suffix-array">3.2.3 Suffix Array</h3>
 <p>一个字符串的 Suffix Array 是它所有后缀子串按字典序排列的数组。假设给定一个字符串 "hello world"：</p>
 <p><img src="./suffix-array-example-1.png" /></p>
 <p>它的所有后缀子串包含："hello world"、"ello world"、"llo world" 等等，排序后得到：</p>
@@ -433,7 +436,7 @@ mjx-container + br {
 <li>Suffix Array 索引建立的时空复杂度是多少？</li>
 </ol>
 </blockquote>
-<h3 id="基于文本索引的查询过程">3.2.5 基于文本索引的查询过程</h3>
+<h3 id="基于文本索引的查询过程">3.2.4 基于文本索引的查询过程</h3>
 <p>无论是 Trigram、Positional Trigram 还是 Suffix Array，如果想支持通过正则表达式搜索代码，都要实现以下流程：</p>
 <p><img src="./text-based-query-process.png" /></p>
 <ol type="1">
@@ -455,14 +458,14 @@ mjx-container + br {
 <li><a target="_blank" rel="noopener" href="https://blog.nelhage.com/2015/02/regular-expression-search-with-suffix-arrays/">Livegrep</a></li>
 <li><a target="_blank" rel="noopener" href="https://blog.aaw.io/2016/06/10/regrams-intro.html">Regular Expression Search via Graph Cuts</a></li>
 </ul>
-<h3 id="ctags">3.2.6 Ctags</h3>
+<h3 id="ctags">3.2.5 Ctags</h3>
 <p>Ctags 是 unix 或 unix-like 系统中内置的工具，为源码仓库生成「语言对象」 (language objects) 的索引。目前仍在维护的版本是 Universal Ctags，想了解更多细节可以阅读它的<a target="_blank" rel="noopener" href="https://docs.ctags.io/en/latest/index.html">官方文档</a>。</p>
 <p>以我的一个玩具项目「<a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/regexgo">Zhenghe-MD/regexgo</a>」为例，执行：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/ZhengHe-MD/regexgo.git</span><br><span class="line">$ <span class="built_in">cd</span> regexgo &amp;&amp; ctags **/*.go</span><br></pre></td></tr></table></figure>
 <p>就能在 regexgo 文件夹中看到一个 tags 文件，其内容如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MatchString	nfa.go	/^func MatchString(n *nfa, word string, options *Mat/</span><br><span class="line">TestBackTracking	nfa_test.go	/^func TestBackTracking(t *testing.T) &#123;$/</span><br><span class="line">TestNFASearch	nfa_test.go	/^func TestNFASearch(t *testing.T) &#123;$/</span><br><span class="line">TestToPostfix	parser_test.go	/^func TestToPostfix(t *testing.T) &#123;$/</span><br><span class="line">addEpsilonTransition	nfa.go	/^func addEpsilonTransition(from *state, to *state) /</span><br><span class="line">addTransition	nfa.go	/^func addTransition(from, to *state, symbol byte) &#123;/</span><br><span class="line">backtracking	nfa.go	/^func backtracking(s *state, visited map[*state]int/</span><br><span class="line">const	nfa.go	/^const ($/</span><br><span class="line">import	nfa_test.go	/^import ($/</span><br><span class="line">nfaSearch	nfa.go	/^func nfaSearch(n *nfa, word string) bool &#123;$/</span><br><span class="line">toPostfix	parser.go	/^func toPostfix(exp string) string &#123;$/</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MatchString    nfa.go    /^func MatchString(n *nfa, word string, options *Mat/</span><br><span class="line">TestBackTracking    nfa_test.go    /^func TestBackTracking(t *testing.T) &#123;$/</span><br><span class="line">TestNFASearch    nfa_test.go    /^func TestNFASearch(t *testing.T) &#123;$/</span><br><span class="line">TestToPostfix    parser_test.go    /^func TestToPostfix(t *testing.T) &#123;$/</span><br><span class="line">addEpsilonTransition    nfa.go    /^func addEpsilonTransition(from *state, to *state) /</span><br><span class="line">addTransition    nfa.go    /^func addTransition(from, to *state, symbol byte) &#123;/</span><br><span class="line">backtracking    nfa.go    /^func backtracking(s *state, visited map[*state]int/</span><br><span class="line">const    nfa.go    /^const ($/</span><br><span class="line">import    nfa_test.go    /^import ($/</span><br><span class="line">nfaSearch    nfa.go    /^func nfaSearch(n *nfa, word string) bool &#123;$/</span><br><span class="line">toPostfix    parser.go    /^func toPostfix(exp string) string &#123;$/</span><br></pre></td></tr></table></figure>
 <p>每行数据是一个 <code>(language object, file, regexp matcher)</code> 三元组。Ctags 常常被用于 IDE 实现定义跳转的功能，它也可以被集成到代码搜索引擎中，更好地服务于「语言感知」的查询。Ctags 背后由不同编程语言的解析器 (parser) 驱动，后者的原理则是另一个话题，不在本文中讨论。</p>
-<h3 id="lsif">3.2.7 LSIF</h3>
+<h3 id="lsif">3.2.6 LSIF</h3>
 <p>从 Ctags 的例子中可以看出，Ctags 中记录的「语言对象」信息量很小，基本上只有函数信息。要支持表达力更强的「语言感知」查询，其记录的信息还远远不够。在数据模型和信息量上，LSIF 比 Ctags 走得更远：</p>
 <blockquote>
 <p>The goal of the LSIF is to support rich code navigation in development tools or Web UI without needing a local copy of the source code. — <a target="_blank" rel="noopener" href="https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/">LSP/LSIF docs</a></p>
@@ -602,13 +605,15 @@ mjx-container + br {
 <p><img src="./sourcegraph-architecture.png" /></p>
 <p>代码同步由 gitserver 和 repo-updater 完成，详情可查看 <a target="_blank" rel="noopener" href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-repository">Life of a repository</a>；基于文本的代码搜索由 Zoekt 项目支持，包括 zoekt-indexserver 和 zoekt-webserver。在未建立索引的分支上的查询由 searcher 完成。syntect-server 负责往搜索结果中添加语法高亮信息，详情可查看 <a target="_blank" rel="noopener" href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query">Life of a search query</a>；precise-code-intel-worker 则负责前面提到的 Precise Code Intelligence。</p>
 <p>作为一个商业化的代码搜索引擎项目，Sourcegraph 无论在系统设计上还是产品体验上都更加完善。如果你期望享受极致的使用体验，且不想花费时间、精力去了解、部署、运维一个代码搜索引擎，那么 Sourcegraph 是个很好的选择。</p>
-<h2 id="项目对比">5.6 项目对比</h2>
+<h2 id="github-code-search">5.6 GitHub Code Search</h2>
+<p>GitHub Code Search 经历了 <a target="_blank" rel="noopener" href="https://github.blog/2021-12-15-a-brief-history-of-code-search-at-github/">3 版迭代</a>，从 2008 年的Solr，到 2010 年的 Elastic Search，最终到 2020 年自研的 Blackbird。内容比较长，详情可以在这篇文章 <a target="_blank" rel="noopener" href="https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search">The technology behind GitHub’s new code search | The GitHub Blog</a> 中具体了解。</p>
+<h2 id="项目对比">5.7 项目对比</h2>
 <table>
 <colgroup>
-<col style="width: 17%" />
-<col style="width: 35%" />
-<col style="width: 24%" />
-<col style="width: 22%" />
+<col style="width: 18%" />
+<col style="width: 36%" />
+<col style="width: 25%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -649,6 +654,12 @@ mjx-container + br {
 <td>Positional Trigram, Ctags, LSIF</td>
 <td>WebServer、IndexServer 隔离</td>
 </tr>
+<tr class="even">
+<td><strong>GitHub Code Search</strong></td>
+<td>[substring, regexp]</td>
+<td>Sparse Grams</td>
+<td>WebServer、IndexServer 隔离</td>
+</tr>
 </tbody>
 </table>
 <p>尾注：完整调研报告请见我个人的 Notion <a target="_blank" rel="noopener" href="https://www.notion.so/Code-Search-Engine-e1391cd82b3e490aa05edabdf7ceacd7">笔记</a></p>
@@ -685,6 +696,11 @@ mjx-container + br {
 <li><a target="_blank" rel="noopener" href="https://docs.sourcegraph.com/dev/background-information/architecture/life-of-a-search-query">Life of a search query</a></li>
 <li><a target="_blank" rel="noopener" href="https://docs.sourcegraph.com/dev/background-information/architecture/search-pagination">Search pagination</a></li>
 </ul></li>
+</ul></li>
+<li>GitHub Code Search
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.blog/2023-02-06-the-technology-behind-githubs-new-code-search/">The techonology behind GitHub's new code search</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.blog/2021-12-15-a-brief-history-of-code-search-at-github/">A brief history of code search at GitHub</a></li>
 </ul></li>
 <li>Livegrep
 <ul>
