@@ -1,522 +1,390 @@
 ---
-title: Go 项目中 error handling 的世界观和方法论
+title: 如何在 Golang 项目中处理好错误
 date: 2020-10-05 16:20:00
-category: 编程
+category: 
+- 编程
 ---
 
-自从 2018 年底用 Go 搭建第一个项目以来，已经过去接近 2 年时间，我发现自己从未系统地思考过 Go 的 error handling 方案。最近在阅读 [1] 时，逐渐发现个人和团队都应该花更多的精力建立更加扎实的工程实践方法论，进一步提升交付项目质量。而本篇博客算是向这个方向迈出的第一步。
+造一辆能跑在路上的车并非难事，但要这辆车能在各种路况、气候和突发事件下安全行驶，事情就不再简单。如果把写程序比喻成造车，构建程序的主要功能就是让车跑起来，而处理好错误就是让车安全地跑。**错误是程序的重要组成部分，能否在程序中处理好错误决定了软件的质量上限**。在这篇博客中，我将介绍个人在 Golang 项目中错误处理的思考。
 
-<!-- more -->
+<!--more-->
 
-## 0. 术语说明
+# 谁在消费错误
 
-为了避免翻译造成的歧义，文中涉及的没有通用翻译中文的术语都会直接使用原英文单词：
+> The tricky part about errors is that they need to be different things to different consumers of them。 --- Ben Johnson
 
-| 英文                        | 中文                             |
-| ------------------------- | ------------------------------ |
-| error                     | 错误                             |
-| exception                 | 异常                             |
-| error-code-based          | 基于错误码                          |
-| exception-based           | 基于异常                           |
-| package                   | 包 (Go 中 module 由多个 package 构成) |
-| error wrapping/unwrapping | 包装错误/解包装                       |
-| error inspection          | 错误检查                           |
-| error formatting          | 错误格式化                          |
-| error chain               | 错误链表，即通过包装将错误组织成链表结构           |
-| error class               | 错误类别、类型                        |
+要妥善地处理好程序中的错误，首先应想清楚这些错误的消费者是谁。boltdb 的作者 Ben Johnson 在[这篇博客](https://middlemost.com/failure-is-your-domain/)里总结了他的思考：**有三种角色在消费错误，它们分别是用户 (end user)、程序 (application) 和运维 (operator)**。
 
-下文中，errors package 指代我们定制化的 error handling 方案。
+## 消费者 1：用户
 
-## 1. 文献综述
+当服务遇到错误，无法完成用户的请求时，我们需要告诉用户「是什么」和「怎么做」，比如：
 
-不同程序语言的 error handling 方案大致可以分为两种：error-code-based 和 exception-based。Raymond 在博客 [2] [3] 中指出 exception-based 错误处理更不利于写出优质的代码，也更难辨别优质和劣质的代码；Go 在设计时选择了 error-code-based error handling 方案，鼓励开发者显式地在 error 出现的地方直接处理 [4]；并在官博 [5] 中提出了 **errors are values** 的理念，只要实现 `Error` 接口的结构体就可以作为 error，不同的项目就能够按需定制 error handling 实现方案，并提出在一些特殊场景下可以利用非通用的代码重构技巧避免冗长、啰嗦的表达，如errWriter；许多来自 Java、Python 等语言的工程师习惯了 exception-based 的方案，遇到 Go 时感到十分不习惯 [6]，但如果我们总是希望在一门新语言中尝试套用自己熟悉语言的语法，就无法充分理解其它语言在这方面的设计理念。Go 核心工程师 Rob Pike 在 [7] 中描述了他如何在 [Upspin](https://upspin.io/) 项目中定制 error 信息和处理方案，使得项目对程序、用户及开发者更加友好；许多 error handling 项目都关注到了多层嵌套调用场景下的上下文注入问题，即所谓的 error wrapping，其中 Dave Cheney 的项目 pkg/errors [8] 被广泛使用，Go 在 1.13 后也提供类似的原生解决方案 [9]；受 [7] [8] 的启发，Ben Johnson，boltDB 的作者，结合自己多年的编码经验，在 [10] 中提出 **Failure is your Domain** 的观点，认为每个项目应当构建特有的 error handling package，并提出逻辑调用栈 (logical stack) 的概念，在 GopherCon 2019，还有工程师在推广类似的方案 [11]。
+* 您的权限不足，请联系 xxx 开启
+* 系统临时故障，请稍后重试
 
-error handling 可以细分为 checking、inspection 和 formatting 三部分，分别指判断 error 发生与否、检查 error 类型、打印 error 上下文。在发现 Go 社区的开发者们因为语言本身对 error handling 的支持不足，频繁创造各种各样的轮子之后，Russ Cox 在 2018 年末发布了两个新提议 [12] [13]，前者尝试解决 checking 代码冗长的问题；后者尝试解决 inspection 的信息丢失以及 formatting 的上下文信息不足问题。目前仅 inspection 的方案被整合到了 1.13 中，直到最近的 1.15 版本没有新的解决方案出现。
+这里的「是什么」并非越具体越好，一般告诉用户错误的大类即可：是参数错误、还是权限问题、亦或是服务端超载。许多工程师会本能地把原本应该打印在日志里的信息告诉用户，这么做背后隐藏着有两个目的：
 
-## 2. 项目综述
+* 如果用户有技术背景知识足够，能理解根因
+* 用户反馈时会把错误信息带上，能加速定位
 
-发布之初，Go (<1.13) 仅提供 `Error` 接口及 `errors.New`、`fmt.Errorf` 两个构建 error 的方法 [4]；Go 1.13 支持利用 `%w` 格式化符号实现 error wrapping，并提供 `Unwrap`、`errors.Is` 以及 `errors.As` 来解决 error wrapping 过程中上下文缺失的问题 [9]；spacemonkeygo 为了将大型 Python 仓库迁移到 Go 上，开发了 [14] ，模拟 Python 中 error class 的继承，支持自动记录日志、调用栈以及任意键值数据，支持 error inspection；juju errors [15] 因 juju 项目而诞生，在 wrap error 时，你可以选择保留或隐藏 error 产生的原因 (cause)，但它的 `Cause` 方法仅 unwrap 一层，而 [8] 会递归地遍历 error chain，[16] 中的概念与 [15] 类似，仅在 API 上有所不同；hashicorp 开源的 errwrap [16]，支持将 errors 组织成树状结构，并提供 `Walk` 方法遍历这棵树；pkg/errors [8] 提供 wrapping 和调用栈捕获的功能，并利用 `%+v` 格式化 error，展示更多的细节，它认为只有整个 error chain 最末端的 error 最有价值，pingcap/errors [18] 基于 [8] 二次开发，并且在 [19] 中增加了 error 类 (域) 的概念；upspin.io/errors [20] 是定制化 error 的实践范本，同时引入了 `errors.Is` 和 `errors.Match` 用于辅助检查 error 类型；[21] 考虑了 error 在进程间传递的场景，让 error handling 具备网络传播兼容能力。
+但仔细一想，这些目的经不起推敲。首先，用户根本不关心背后的细节和实现，即便这些用户是软件工程师这个断言也没问题；其次，暴露过多的信息可能给恶意攻击者留下线索，降低系统的安全性；最后，问题定位是低频场景，通过日志查询详细的信息即便速度慢一些，但并非无法接受。
 
-## 3. 现状
+## 消费者 2：程序
 
-### 3.1 举例
+许多时候，程序需要根据错误的类型来精细地控制逻辑。比如，当 X 服务发送请求给 Y 服务，Y 服务无法满足该请求，便返回错误。此时，X 服务是否应该重试？这取决于返回的错误是临时性的还是不可恢复的；当 X 服务的 DAL (Data Access Layer) 发送请求到数据库，后者返回错误时，X 服务应该给用户返回什么信息？这取决于数据库返回的错误是什么类型，是数据找不到？还是数据库表满了？还是别的原因？
 
-目前，公司内部生产环境使用 Go 1.12，仅有最基本的 error handling 工具，此外服务器研发团队没有统一 error handling 方案。一段 Controller 中典型的代码如下所示：
+这错误的类型定义方面，业界已经有许多成型的实践：
+
+* [HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)：400、401、403、404、429、500、502、503...
+* [gRPC](https://grpc.github.io/grpc/core/md_doc_statuscodes.html)：INVALID_ARGUMENT, DEADLINE_EXCEEDED, NOT_FOUND, ALREADY_EXISTS, ...
+* [MySQL](https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html)：1040、1045、1046、1064、1114...
+
+它们都经过了无数项目的考验，非必要不重复造轮子。
+
+## 消费者 3：运维
+
+用户遇到无法解决的问题时，最终会来到运维的手上。服务日志是运维定位问题的利器。将错误及错误发生的背景信息打印到日志里，将极大地方便故障排查。要想定位快，细节就要越丰富，这些细节可能包括错误发生时的：
+
+* 一句话描述
+* 函数调用栈
+* 请求上下文 (request_id、user_id、device_id)
+
+其中「一句话描述」与「函数调用栈」就可能来自于错误。
+
+# "Errors are values"
+
+> Values can be programmed, and since errors are values, errors can be programmed...The key lesson, however, is that errors are values and the full power of the Go programming language is available for processing them. --- Rob Pike
+
+2015 年 1 月，[Rob Pike](https://en.wikipedia.org/wiki/Rob_Pike) 在 The Go Blog 上发表了题为 "Errors are values" 的[文章](https://go.dev/blog/errors-are-values)，并在当年的 Gopherfest [演讲](https://www.youtube.com/watch?v=PAAkCSZUG1c&t=973s) "Go Proverbs" 中将这句话列在 19 个 proverbs 之中。它是每位 Golang 工程师应该铭记的一句话。
+
+## 错误只是一个普通值
+
+### The error interface
+
+在 Golang 中，任意实现了 error interface 的数据类型都被认为是错误：
 
 ```go
-func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
-  // (1)
-  fun := "GRPCADServiceImpl.DelAD -->" 
-  res = &ad.DelADRes{}
-
-  passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
-  if err != nil {
-    // (2)
-    err = fmt.Errorf("%s check auth failed err %v", fun, err)
-    // (5)
-    xlog.Error(err)
-    return
-  }
-
-  if !passed {
-    // (3)
-    res.ErrInfo = &grpcutil.ErrInfo{Code: -1, Msg: "not authorized"}
-    return
-  }
-
-  conds := map[string]interface{}{"id": req.Id}
-
-  adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
-  // (4)
-  if err == scanner.ErrEmptyRow {
-    res.ErrInfo = &grpcutil.ErrInfo{Code: -1, Msg: "ad not found"}
-    return
-  }
-
-  if err != nil {
-    return
-  }
-
-  _, err = model.ADDao.DeleteAD(ctx, conds)
-  if err != nil {
-    return
-  }
-
-  res.Data = &ad.DelADRes_Data{
-    Id: req.Id,
-  }
-
-  return
+type error interface {
+	Error() string
 }
 ```
 
-先抛开代码逻辑的正确性，只谈 error handling 逻辑，我们可以大致总结出如下几点 (以下序号与上述代码中的序号一一对应)：
-
-1. 每个函数的起始处设置一个 `fun := "FunctionName -->"`，便于生成日志和 error 信息
-2. 如果遇到服务端 error，则使用 `fmt.Errorf` 将被调函数返回的 error 信息包装一层，并记录 ERROR 级别日志，继续向上返回
-3. 如果遇到客户端 error，则设置响应结构体的 ErrInfo 字段，可以设定 error code 和用户可见的 error msg
-4. 如果需要针对不同 error 类型执行不同逻辑分支，则利用等价判断。
-
-### 3.2 讨论
-
-以上几点并未形成任何跨项目的规范，仅仅是路径依赖的结果。其中有一些小问题，我在下面列举出来：
-
-##### fun 的约定值
-
-`fun` 的约定值是 `${结构体名称}.${函数名称} -->`。首先，后面的箭头符号 `-->` 需要占用 3 个字符，日志量大时会占用可观的存储空间。除此之外，每位工程师都需要手写 `-->`，即便它可以增加日志可读性，至少我们应当让它自动生成。
-
-##### error wrapping
-
-前面已经提到过，使用 `fmt.Errorf` 包装被调函数返回的 error 会丢失一些上下文信息 (如下层错误类型)，但打印到日志中的 error 信息一般足以追溯线上问题。抛开上下文信息丢失问题，以上面的代码为例：
+它甚至可以只是一个字符串：
 
 ```go
-fmt.Errorf("%s check auth failed err %v", fun, err)
-```
+type err string
 
-的打印结果是："GRPCADServiceImpl.DelAD --> check auth failed err auth.CheckAuth --> xxx"，可以发现 "check auth failed" 与 "auth.CheckAuth" 的内容相同，增加了消息的冗余度。如果保证每个被调函数也会在错误消息中增加 `fun` 的信息，我们可以将其简化为： 
-
-```go
-fmt.Errorf("%s %v", fun, err)
-```
-
-其打印结果就是："GRPCADServiceImpl.DelAD --> auth.CheckAuth --> xxx"，这里已经可以看到**逻辑调用栈**的影子。但因为 `fun` 的存在主要是为了打日志方便，当不需要打日志时就不会声明这个局部变量，因此没有形成统一的规范，打印结果中的逻辑调用栈信息实际上并无法保证完整性。
-
-##### 客户端 error
-
-遇到客户端 error，如鉴权失败、请求参数校验失败等情况，需要在每个可能出问题的地方书写同样的代码逻辑来构建 `ErrInfo` 字段。目前，error code 的使用刚刚起步，采用不同业务线预留号段的策略；error msg 还处在蛮荒状态，尚未有进入讨论阶段的方案。
-
-##### error inspection
-
-error inspection 采用的是比较原始的等价判断 (==) 或类型断言来实现，因为没有 wrapping 方案，类型断言也基本不用，或至少没有在实践上达成共识。
-
-## 4. error handling 的世界观和方法论
-
-在上文中，我们阐述了 error handling 现状，并讨论其中的潜在问题。需要肯定的是，即便当前的方案并不完美，它事实上已经满足开发者平时的服务日志观测及问题排查的需求。但我们缺失的是更系统的跨项目 error handling 共识及其方案。经过调研和分析后，我将在本节介绍我认同的 Go error handling 的世界观，并介绍相应的实践方法论。
-
-### 4.1 世界观
-
-#### 4.1.1 "happy path" 与 "sad path" 地位相同
-
-如果我们将函数的正常逻辑路径称为 "happy path"，异常逻辑路径称为 "sad path"。在使用 exception-based error handling 的编程语言时，工程师认为 "sad path" 是一种需要额外考虑的特殊情况，需要特殊对待；而在 Go 开发者眼里，"happy path" 和 "sad path" 都是一般的情况，二者应该同样重要，被同等对待。
-
-#### 4.1.2 面向应用程序、用户及运维
-
-> The tricky part about errors is that they need to be different things to different consumers of them.
-> 
-> — Ben Johnson
-
-当我们在代码中处理 error 时，需要思考这样一个问题："是谁在消费这些 errors？" 在任意一个服务的生命周期中，通常至少有 3 个角色关心 error：应用程序 (application) 本身、服务的用户 (end user)、服务的维护者 (operator)。在刚才的例子中，error 类型检查 (4) 面向的是应用程序；创建 res.ErrInfo (3) 面向的是服务的用户；打印日志 (5) 面向的是维护者。因此一个设计精良的 errors package 要能够让工程师自如地处理 error 与各个角色之间的信息传递。
-
-##### 应用程序与 error
-
-应用程序可能拥有各种各样的外部依赖，比如第三方服务、内部 RPC 服务、数据库服务、消息队列服务，甚至磁盘、网卡、CPU 等等。这些依赖本身随时可能出现这样或那样的问题，但这类问题本身通常不会导致应用程序的进程崩溃，只要问题是临时的、非致命的、在定义范围内的，应用程序就可以从容地根据 error 的特点处理。因此应用程序需要能够准确、方便、健壮地获取 error 特征。
-
-##### 用户与 error
-
-当服务运行遇到 error 时，需要向普通的 C 端用户提供友好、明确的消息提示，让他明白系统正处于异常状态，可以稍后重试或联系客服、技术人员。因此消息应该是对人类友好的自然语言。除此之外，系统内部的细节，如错误栈信息，不应当直接暴露给 C 端用户，对于未明确定义的 error 更应如此。主要原因在于：
-
-1. 用户不应该关心服务的实现细节
-2. 暴露不必要的细节可能会降低系统安全性
-
-##### 维护者与 error
-
-遇到线上问题时，服务的维护者接到报警后，需要根据详细的 error 信息做根源分析，这时信息越多越好，当然更高的可读性能够帮助维护人员更快地定位问题，解决问题。这里的维护者一般是服务的开发者，而非 devop 团队成员。
-
-*备注：本节的观点主要源自于 [7] [10]*
-
-### 5. 方法论
-
-在进入方法论之前，需要先明确适用范围：本节提出的方法针对的是单个网络服务 (如 HTTP/RPC) 内部的 error，不涉及 error 在进程间的传递的部分，针对后者可以考虑 cockroachdb 团队提出的解决方案 [21]。
-
-#### 5.1 errors are values
-
-任何实现了 `Error` 接口的数据类型都是 error，它们与字符串、整数、结构体相比并没有特别之处。
-
-##### 5.1.1 将 "happy path" 留在控制流的最外层
-
-Go 鼓励工程师将逻辑的 "happy path" 留在函数缩进的最外层，而把 "sad path" 放到第二级缩进中，如：
-
-```go
-func Do() (ret interface{}, err error) {
-  // happy path
-  v1, err := A()
-  if err != nil {
-    // sad path 1
-  }
-
-  v2, err := B(v1)
-  if err != nil {
-    // sad path 2
-  }
-
-  ret = process(v1, v2)
-  return
+func (e err) Error() string {
+	return e
 }
 ```
 
-「现状」一节中的例子也遵守了这个规则。
+> 💁‍♂️ Golang 中没有 implement 关键词，只要实现了 interface，就等价于 implement。
 
-##### 5.1.2 error 是否为空反映调用成功与否
+### 作为返回值
 
-> Never use nil to indicate failure
-> 
-> — Dave Cheney
-
-所有可能产生 error 的函数都使用 Go 的多值返回特性，其中最后一个返回值默认为 `error` 类型，即：
+既然错误只是一个普通值，这个值就可以被作为函数的入参和出参。如果一个函数的执行过程中可能出现错误，那么 error 约定俗成地会作为最后一个返回值，举例如下：
 
 ```go
-func A (args ...interface{}) (ret interface{}, err error)
-```
-
-调用方默认先检查 err 是否为空，为空则认为调用成功，非空则认为调用失败，如：
-
-```go
-func main() {
-  ret, err := A(1, 2, 3)
-  if err != nil {
-    // 调用失败，即 sad path
-  }
-  // 调用成功，即 happy path
+// example 1:
+res, err := http.Get("http://localhost:8080")
+// example 2:
+if u, err := url.Parse("invalid-url"); err != nil {
+	// handle sad path
+} else {
+	// handle happy path
 }
 ```
 
-一旦调用失败，调用方不应该使用其它任意返回值，或对其它返回值有任何假设，而是采用 fail-fast 的策略结束执行。**不要使用其它返回值的特征作为调用成功与否的依据**，这样做既不符合 Go 的设计理念，也会使代码的可读性大大下降。
+## 与使用 Exception 的区别
 
-#### 5.2 从 error 的消费者角度出发
+在许多当下流行的编程语言中，基于 Exception 的错误处理占主流地位，比如 C++、Java 和 Python。对于从这些语言转到 Golang 的工程师而言，"errors are values" 的观点相当激进，难以适应。Stackoverflow 的前 CEO Joel Spolsky 在 2003 年发表过一篇[博客](https://www.joelonsoftware.com/2003/10/13/13/)，在其中他讨论了用 Exceptions 处理错误带来的问题：
 
-本节我们要定制自己的 errors package，并利用它来解决现状中的问题，同时践行我们的世界观。既然关心 error 的角色有很多，我们就索性分开管理面向不同消费者的信息，因此定义 `Error` 结构体如下：
+> I consider exceptions to be no better than "goto's", [considered harmful](http://www.acm.org/classics/oct95/) since the 1960s, in that they create an abrupt jump from one point of code to another. --- Joel Spolsky
+
+Joel 认为更好的方式是将错误当作普通的返回值，而程序应该在拿到返回值时立即处理它，尽管这会让程序变得更啰嗦，但啰嗦总比牺牲软件的质量好一些。
+
+> 💁‍♂️ 本节并非想说明语言设计的优劣，只是想介绍一下 Golang 的错误处理设计理念的由来。
+
+## 若干 error interface 的实现
+
+既然 "errors are values"，我们就可以利用 Golang 赋予的所有逻辑表达能力处理错误，为不同项目、场景定制化设计。无论是标准库还是社区中都有许多相关实践，这里分别举几个例子：
+
+### 标准库
+
+**1. errorString**
 
 ```go
-// Error defines a standard application error.
-type Error struct {
-  // For application/machine
-  Class Class
-  // For both users & operators, see methods ErrMsg (users) and Error (operators)
-  Msg string
-  // For operators
-  Op    Op    // logical operation
-  Code  int   // error code, which identifies an user-defined error
-  Cause error // error from lower level
+// src/errors/errors.go
+func New(text string) error {
+	return &errorString{text}
 }
 
-type Op string
-type Class string
-```
+type errorString struct {
+	s string
+}
 
-其中 Class 表示 error 类型，面向应用程序；Msg 表示 error 消息，既面向外部用户，也面向维护者，分别体现在 `ErrMsg` 和 `Error` 两个方法上；Op 指 Error 生成时所处的函数，Code 是 error 的标识，Cause 存储下层 error，三者面向维护者。为了方便创建 Error，errors package 还提供一个 constructor：
-
-```go
-func E(args ...interface{}) error {
-  // ignore preprocessing
-  e := &Error{}
-  for _, arg := range args {
-    switch arg := arg.(type) {
-    case Class:
-      e.Class = arg
-    case string:
-      e.Msg = arg
-    case Op:
-      e.Op = arg
-    case int:
-      e.Code = arg
-    case *Error:
-      cp := *arg
-      e.Cause = &cp
-    case error:
-      e.Cause = arg
-    default:
-      _, file, line, _ := runtime.Caller(1)
-      log.Printf("errors.E: bad call from %s:%d: %v", file, line, args)
-      return fmt.Errorf("unknown type %T, value %v in error call", arg, arg)
-    }
-  }
-  // ignore postprocessing
-  return e
+func (e *errorString) Error() string {
+	return e.s
 }
 ```
 
-这样开发者就可以很方便地构建 Error，并填充任意需要的字段，包括 wrap 下层 error。
+利用 `errors.New` 创建的错误实际上就是这里的 `errorString`。
 
-##### 5.2.1 应用程序
-
-应用程序主要关注 error 的两个方面：「是否为空」及「所属类型」。前者我们在上文中已经讨论，本节只关注后者。有的开发者可能会定义许多 error 类型，涉及各种分支情形，以便应用程序可以根据各种场景做判断，如：
+**2. joinError**
 
 ```go
-const (
-  InvalidUserName    Class = "invalid username"
-  InvalidPassword    Class = "invalid password"
-  UserNotFound       Class = "user not found"
-  DepartmentNotFound Class = "department not found"
-  TokenNotFound      Class = "token not found" 
-  //...
+// src/errors/join.go
+type joinError struct {
+	errs []error
+}
+
+func (e *joinError) Error() string {
+	var b []byte
+	for i, err := range e.errs {
+		if i > 0 {
+			b = append(b, '\n')
+		}
+		b = append(b, err.Error()...)
+	}
+	return string(b)
+}
+```
+
+一些场景里，我们希望合并多个错误，同时保留这些错误的原始信息，这时可以用 `errors.Join`，后者就会创建一个 `joinError`。
+
+**3. os.PathError**
+
+```go
+// src/io/fs/fs.go
+// PathError records an error and the operation and file path that caused it.
+type PathError struct {
+	Op   string
+	Path string
+	Err  error
+}
+
+func (e *PathError) Error() string { return e.Op + " " + e.Path + ": " + e.Err.Error() }
+func (e *PathError) Unwrap() error { return e.Err }
+```
+
+在执行文件操作遇到错误时，除了记录错误本身，保留操作类型、文件路径信息能帮助我们更快地定位问题，这里的 `PathError` 就干了这么一件事。
+
+### 社区
+
+许多团队为了方便在自己的项目中处理错误，定制化开发了许多 Golang packages，然后开源出来造福社区。以下列举一些项目供读者进一步了解，这里不再赘述：
+
+* [GitHub - uber-go/multierr](https://github.com/uber-go/multierr)
+* [GitHub - juju/errors](https://github.com/juju/errors)
+* [GitHub - go-errors/errors](https://github.com/go-errors/errors)
+* [GitHub - cockroachdb/errors](https://github.com/cockroachdb/errors)
+* [GitHub - pkg/errors](https://github.com/pkg/errors)
+* [GitHub - pingcap/errors](https://github.com/pingcap/errors)
+
+# 标准库的演进
+
+Golang 对于语法和功能的添加十分克制，因此 errors 标准库迭代之路可谓是小心翼翼。
+
+## <1.13: 点
+
+在 Go1.13 之前，每个错误都是一个「点」，错误之间无法建立联系。我们可以用 `errors.New` 和 `fmt.Errorf` 这两种方法创建一个新的错误：
+
+```go
+// create an error
+var RecordNotFoundErr = errors.New("DB: record not found")
+var UserNotFoundErr = fmt.Errorf("user not found: %v", RecordNotFoundErr)
+```
+
+如果要在程序中消费它，可以通过检查值或类型是否相等来控制程序逻辑：
+
+```go
+// check identity
+if err == RecordNotFoundErr {
+	// case 1
+} else {
+	// case 2
+}
+// check type
+if nerr, ok := err.(net.Error) {
+	// case 1
+} else {
+	// case 2
+}
+```
+
+这时有一个常见的问题：当我们想给错误补充一些信息时，错误之间的血缘关系会消失，比如：
+
+```go
+var RecordNotFoundErr := errors.New("DB: record not found")
+var UserNotFoundErr = fmt.Errorf("user not found: %v", RecordNotFoundErr)
+```
+
+程序拿到 `UserNotFoundErr` 时，它已经和 `RecordNotFoundErr` 没有任何关系，我们无法针对它做任何的值或类型的判断。
+
+## 1.13-1.19: 链表
+
+Go1.13 支持了错误的包装 (wrap)，于是错误之间可以形成「链表」。Golang 官方为此发布了一篇[博客](https://go.dev/blog/go1.13-errors)，介绍相关的最佳实践。具体地说，`fmt.Errorf` 新增了一个格式标记「%w」，开发者可以用它包装错误：
+
+```go
+var RecordNotFoundErr = errors.New("DB: record not found")
+var UserNotFoundErr = fmt.Errorf("user not found: %w", RecordNotFoundErr)
+```
+
+与「%v」不同，「%w」会在创建新错误的同时，保留对下层错误的引用。这时开发者可以通过 errors package 新增的两个方法来检查错误值或错误类型：
+
+```go
+// check error identity: errors.Is
+if errors.Is(err, RecordNotFoundErr) {}
+// check error type: errors.As
+var nerr *net.Error
+if errors.As(err, &nerr) {}
+```
+
+`errors.Is` 和 `errors.As` 都会递归地遍历整条错误链表，确认链表上是否存在相等的值或类型。除此以外，为了将这种递归的能力开放，Go1.13 还提供了 `errors.Unwrap` 方法，方便开发者获取链表上下一个错误节点：
+
+```go
+var recordNotFoundErr = errors.Unwrap(UserNotFoundErr)
+```
+
+## 1.20: 树
+
+Go1.20 在 Go1.13 的基础上更进一步，支持一次包装多个错误，于是错误之间可以建立「树」状关系。在使用层面的体现就是 `fmt.Errorf` 方法支持指定多个「%w」标记，即同时包装多个错误：
+
+```go
+var RecordNotFoundErr = errors.New("DB: record not found")
+var NotFoundErr = errors.New("NotFound")
+var UserNotFoundErr = fmt.Errorf("user not found: %w (%w)", RecordNotFoundErr, NotFoundErr)
+```
+
+相应地， `errors.Is` 与 `errors.As` 也从对链表遍历升级成了对树的遍历。
+
+# 业务服务中的错误处理实战
+
+> 📢 本小节为个人开发经验总结，存在一些观点倾向，请按需摄取。
+
+那么我们应该如何利用上述的思路和工具，在业务服务开发中合理地处理错误？我将解决方案概括成了四句话：
+
+* 定义通用错误
+* 底层转换标识
+* 中间填充信息
+* 上层统一判断
+
+下面就来分别解释它们的含义。
+
+## 定义通用错误
+
+如果你足够幸运能在标准化做得很强的公司工作，那么公司内部应该会有一套稳定通用错误标准定义，比如 [Google Cloud](https://cloud.google.com/apis/design/errors)，直接使用这些标准错误来驱动服务内部的错误处理即可，你可以直接跳过此步骤；如果你的公司与我工作过的大多数公司一样，缺乏人人遵守的工程化标准，就需要定义服务内部或团队内部的通用错误。
+
+定义通用错误并不难，一般根据需要选择 HTTP 或 gRPC 的错误定义即可，比如：
+
+```go
+// pkg/errors.go
+var (
+	NotFound   = errors.New("NotFound")
+	BadRequest = errors.New("BadRequest")
+	Internal   = errors.New("InternalServerError")
+	//...
 )
 ```
 
-但如果从应用程序的角度出发，一般情况下，上层代码逻辑仅关心少数的几种 error 类型，甚至大多数情况下仅关心 error 是临时性还是永久性的即可。error 类型过多，则上层调用方需要处理的场景就越多，这既给调用方添加负担，又将实现细节暴露到上层。经过权衡，我认同 Ben Johnson 的主张，在 errors package 中定义少量几个含义宽泛的 error 类型即可，就先从以下几个开始：
+这里的通用错误主要是提供给程序和运维消费，并非面向用户，粒度不必定义地特别细致。
+
+## 底层转换标识
+
+在跨进程调用处，无论是访问数据库、消息队列、配置中心，还是请求上游的微服务，一旦发生错误就立即包装成定义好的通用错误：
 
 ```go
-const (
-    Conflict   Class = "conflict"          // Action cannot be performed
-    Internal   Class = "internal"          // Internal error, error from DB, RPC, and other external services
-    Invalid    Class = "invalid"           // Validation failed
-    NotFound   Class = "not_found"         // Entity does not exist
-    PermDenied Class = "permission_denied" // Does not have permission
-    Other      Class = "other"             // Unclassified error
-)
-```
-
-也许你已经察觉到这与 HTTP 协议的响应码有些相似。最后的 Other 类型可以容纳未定义的 error，在必要时可以将其它类型从中抽出。判断 error 类型时，可以使用工具函数 Is，如：
-
-```go
-if errors.Is(err, errors.Invalid) {
-  // sad path
+// DAO
+func (mud *MySQLUserDAO) GetUser(ctx context.Context, id int64) (*User, error) {
+	user, err := mud.getUser(ctx, id)
+	return user, mud.wrapMySQLError(err)
 }
-```
 
-不同抽象层中的 error 可以通过多层 wrapping，形成 error chain。Is 会从头到尾遍历 error chain，以第一个 Class 取值不为 zero value 的 `*Error` 为判定依据。实践中，我们约定：**error chain 上最后一个数据类型为 `*Error` 的节点，它必须有一个定义好的的 Class，而它前面的所有节点 Class 都为空**。背后的理由是：整个 error chain 应该只有一个类型，且开发者关心的是根因。
+func (mud *MySQLUserDAO) getUser(ctx context.Context, id int64) (*User, error) {
+	// call mysql driver
+}
 
-##### 5.2.2 用户
+func (mud *MySQLUserDAO) wrapMySQLError(err error) error {
+	if err == nil {
+		return nil
+	}
 
-直接返回给普通用户的消息存放在 Msg 字段中，它的内容通常在最外层 (Controller) 设置。errors package 也提供了 ErrMsg 工具函数：
-
-```go
-func ErrMsg(err error) string {
-  code := firstCode(err)
-  // if err != nil, msg will be set to a default msg
-  msg := firstMsg(err)
-
-  if msg != "" && code != 0 {
-    return fmt.Sprintf("[%d] %s", code, msg)
-  }
-
-  return msg
+	switch err {
+		case MySQLAccessDenied:
+			return fmt.Errorf("MySQL access denied: %w", PermissionDenied)
+		// ... other cases
+		default:
+		return fmt.Errorf("MySQL error: %w", Internal)
+	}
 }
 ```
 
-ErrMsg 与 Is 类似，其中 code 取值为 error chain 上第一个非 0 的 error code；msg 取值为 error chain 上第一个非空字符串的 error msg，如果参数 err 不为空，且找不到合法的 msg，则返回默认消息。
+## 中间填充信息
 
-##### 5.2.3 维护者
+在上层与底层之间，难免会有一些中间层。业务越复杂，划分的层级越多，同层之间还可能存在相互依赖。结果就是函数调用栈变深。这里会出现两个问题：
 
-服务出现线上问题时，对服务的维护者而言最重要的就是日志信息。有效的日志信息需要包括至少两部分：(逻辑) 调用栈和 error 详情，前者帮助开发者追溯引起 error 的调用链；后者为开发者提供造成 error 的现场信息，如位置和参数。日志信息的展示对应 error 的 formatting 功能。
+1. 到达同一个底层方法的路径可能有多个，光看底层错误信息无法回溯问题触发过程
+2. 不同层关心的内容不同，拥有的信息也不同，光看底层错误信息无法拿到完整信息
 
-在 Go 程序中，发生 panic 时就可以看到类似如下的调用栈信息：
-
-```go
-goroutine 11 [running]:
-testing.tRunner.func1(0xc420092690)
-    /usr/local/go/src/testing/testing.go:711 +0x2d2
-panic(0x53f820, 0x594da0)
-    /usr/local/go/src/runtime/panic.go:491 +0x283
-github.com/yourbasic/bit.(*Set).Max(0xc42000a940, 0x0)
-    ../src/github.com/bit/set_math_bits.go:137 +0x89
-github.com/yourbasic/bit.TestMax(0xc420092690)
-    ../src/github.com/bit/set_test.go:165 +0x337
-testing.tRunner(0xc420092690, 0x57f5e8)
-    /usr/local/go/src/testing/testing.go:746 +0xd0
-created by testing.(*T).Run
-    /usr/local/go/src/testing/testing.go:789 +0x2de
-```
-
-这里的调用栈信息非常完整，完全满足开发者的问题排查需求。但在日志采集的过程中，由于出现了换行，会造成检索难的问题；如果将其合并成一行，则会严重影响可读性。errors package 使用逻辑调用栈，可以打印出轻量的、可读性强的 error 信息，以下便是对应 `Error` 接口的实现：
+因此需要在中间层填充必要的信息，比如在下面的例子中：
 
 ```go
-func (e *Error) Error() string {
-  b := bytes.NewBuffer(nil)
-  if e.Op != "" {
-    _, _ = fmt.Fprintf(b, "%s: ", e.Op)
-  }
-  // print operation info of the tail error
-  if e.Cause == nil {
-    e.writeOpInfo(b)
-    return b.String()
-  }
-
-  // if the inner error is of type *Error, only print the Op,
-  // otherwise, print operation info and the inner error
-  if _, isError := e.Cause.(*Error); isError {
-    b.WriteString(e.Cause.Error())
-  } else {
-    e.writeOpInfo(b)
-    b.WriteString(e.Cause.Error())
-  }
-
-  return b.String()
-}
-
-func (e *Error) writeOpInfo(b *bytes.Buffer) {
-  if e.Code != 0 && len(e.Msg) > 0 {
-     _, _ = fmt.Fprintf(b, "[%d] %s", e.Code, e.Msg)
-  } else if e.Code != 0 {
-    _, _ = fmt.Fprintf(b, "[%d]", e.Code)
-  } else if len(e.Msg) > 0 {
-    _, _ = fmt.Fprintf(b, "%s", e.Msg)
-  }
+func (dus *DefaultUserService) GetUser(ctx context.Context, id int64) (*User, error) {
+	user, err := dus.user.GetUser(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("UserService gets user %d: %w", id, err)
+	}
+	return user, nil
 }
 ```
 
-假设存在以下场景：
+既明确了当前函数为 `UserService.GetUser`，也补充了查询的目标用户 `id`。
+
+## 上层统一判断
+
+当这些错误来到上层后，我们可以利用一个工具函数或 HTTP/gRPC middleware 来统一决定：
+
+* 返回的错误码
+* 返回的错误消息
+* 打印的日志
 
 ```go
-func GetUser(ctx context.Context, id int) (user *User, err error) {
-  op := errors.Op("GetUser")
-  if user, err = db.GetUser(ctx, id); err != nil {
-    return errors.E(op, errors.Internal, 10001, fmt.Sprintf("get user %d from db", id), err)  
-  } else {
-    // happy path (ignored)
-  }
-}
+func (rt *Router) handleError(w http.ResponseWriter, err error) {
+	if err == nil {
+		return
+	}
 
-func HandleGetUser(ctx context.Context, req GetUserReq) (res GetUserRes) {
-  op := errors.Op("HandleGetUser")
-  if user, err := GetUser(ctx, req.Id); err != nil {
-    err = errors.E(op, err)
-    log.Error(err) // (1)
-    res = GetUserRes{Msg: errors.ErrMsg(err), Code: errors.ErrCode(err)}
-    return
-  }
-  // happy path (ignored)
+	var status int
+	var message string
+
+	switch {
+	case errors.Is(err, InvalidArgument):
+		// ...
+	case errors.Is(err, NotFound):
+		// ...
+	case errors.Is(err, Internal):
+		// ...
+	default:
+		// ...
+	}
+
+	w.WriteHeader(status)
+	w.Write([]byte(message))
 }
 ```
 
-在 (1) 处打印出来的日志就是 `HandleGetUser: GetUser: [10001] get user 10873521 from db`，前半段是服务内部的逻辑调用栈，后半段是出错细节，合并在同一行中，对日志收集和查看也比较友好。在打错误日志时，需要遵守一个原则：**每个 error 只被打印一次**，且通常这一次打印发生在调用链的头部，因为头部拥有最完备的信息。这种做法的不方便之处在于，调用链上的每个函数都需要定义一个局部变量 `op`，并且当下层返回的 error 不为空时需要包装一层，增加了许多人工成本，但鉴于在「现状」一节中的方案也做了这样的事情，引入 errors package 实际并未增加额外的工作。
+# 小结
 
-如果我们构建的是开放 API 服务，为了方便快速定位问题，可以使用 `Code` 标识具体的某个 error，其数值范围，每个取值的含义由使用方自行决定。
+* 错误的消费者：用户、程序、运维
+* 错误就是值：错误可以被编程
+* 标准库的演进：点 → 链表 → 树
+* 业务服务中的错误处理实战：定义通用错误、底层转换标识、中间填充信息、上层统一判断
 
-*备注：本节的观点主要源自于 [1] [7] [10]*
+# 参考
 
-### 6. 完整示例
-
-现在我们用上节介绍的世界观和方法论，尝试改善「现状」：
-
-```go
-func (m *GRPCADServiceImpl) delAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
-  op := errors.Op("GRPCADServiceImpl.DelAD")
-  res = &ad.DelADRes{}
-
-  passed, err := !auth.CheckAuth(ctx, req.Uid, auth.AccessCodeAdDelete)
-  if err != nil {
-    return errors.E(op, err)
-  }
-
-  if !passed {
-    res.ErrInfo = &grpcutil.ErrInfo{Code: ErrCodeNotAuthorized, Msg: ErrMsgNotAuthorized}
-    return
-  }
-
-  conds := map[string]interface{}{"id": req.Id}
-
-  adToDelete, err := model.ADDao.GetOneAD(ctx, conds)
-  if errors.Is(err, errors.NotFound) {
-    res.ErrInfo = &grpcutil.ErrInfo{Code: errors.ErrCode(err), Msg: fmt.Sprintf("未找到广告 %d", req.Id)}
-    err = nil
-    return
-  }
-
-  if err != nil {
-    return errors.E(op, err)
-  }
-
-  _, err = model.ADDao.DeleteAD(ctx, conds)
-  if err != nil {
-    return errors.E(op, err)
-  }
-
-  res.Data = &ad.DelADRes_Data{Id: req.Id}
-  return
-}
-
-func (m *GRPCADServiceImpl) DelAD(ctx context.Context, req *ad.DelADReq) (res *ad.DelADRes, err error) {
-  res, err := delAD(ctx, req)
-  if err != nil {
-    xlog.Error(err)
-    res.ErrInfo = &grpcutil.ErrInfo{Code: errors.ErrCode(err), Msg: errors.ErrMsg(err)}
-  }
-  return
-}
-```
-
-为了代码的简洁，打 ERROR 级别日志和根据 err 构建 ErrInfo 的逻辑单独抽离到 `DelAD` 函数中，当然我们也可以通过 Interceptor 来达到同样的目的。
-
-## 参考
-
-[1]: [practical-go: gophercon-singapore-2019#error_handling](https://dave.cheney.net/practical-go/presentations/gophercon-singapore-2019.html#_error_handling)
-
-[2]: [Cleaner, more elegant, and wrong](https://devblogs.microsoft.com/oldnewthing/20040422-00/?p=39683)
-
-[3]: [Cleaner, more elegant, and harder to recognize](https://devblogs.microsoft.com/oldnewthing/20050114-00/?p=36693)
-
-[4]: [The Go Blog: Error handling and Go](https://blog.golang.org/error-handling-and-go)
-
-[5]: [The Go Blog: Errors are values](https://blog.golang.org/errors-are-values)
-
-[6]: [Exploring Error Handling Patterns in Go](https://8thlight.com/blog/kyle-krull/2018/08/13/exploring-error-handling-patterns-in-go.html)
-
-[7]: [Error handling in Upspin](https://commandcenter.blogspot.com/2017/12/error-handling-in-upspin.html)
-
-[8]: [pkg errors](https://github.com/pkg/errors)
-
-[9]: [Working with Errors in Go 1.13](https://blog.golang.org/go1.13-errors)
-
-[10]: [Failure is your Domain --- Ben Johnson](https://middlemost.com/failure-is-your-domain/)
-
-[11]: GopherCon 2019: Marwan Sulaiman - Handling Go Errors, [video](https://www.youtube.com/watch?v=4WIhhzTTd0Y), [summary](https://about.sourcegraph.com/go/gophercon-2019-handling-go-errors/)
-
-[12]: [Error Handling — Problem Overview](https://go.googlesource.com/proposal/+/master/design/go2draft-error-handling-overview.md)
-
-[13]: [Error Values — Problem Overview](https://go.googlesource.com/proposal/+/master/design/go2draft-error-values-overview.md)
-
-[14]: [spacemonkeygo errors](https://github.com/spacemonkeygo/errors)
-
-[15]: [juju errors](https://github.com/juju/errors)
-
-[16]: gopkg errgo [v1](https://github.com/go-errgo/errgo/tree/v1.0.1), [v2](https://github.com/go-errgo/errgo/tree/v2)
-
-[17]: [hashicorp errwrap](github.com/hashicorp/errwrap)
-
-[18]: [pingcap errors](https://github.com/pingcap/errors)
-
-[19]: [pingcap parser terror](https://github.com/pingcap/parser/blob/release-3.0/terror/terror.go)
-
-[20]: [upspin.io errors](https://github.com/upspin/upspin/tree/master/errors)
-
-[21]: [cockroachdb errors](https://github.com/cockroachdb/errors)
+* [MiddleMost: Failure is your Domain](https://middlemost.com/failure-is-your-domain/)
+* [The Go Blog: Error handling and Go](https://blog.golang.org/error-handling-and-go)
+* [The Go Blog: Errors are values](https://blog.golang.org/errors-are-values)
+* [Joel on Software: Exceptions](https://www.joelonsoftware.com/2003/10/13/13/)
+* [Working with Errors in Go 1.13](https://blog.golang.org/go1.13-errors)
+* [New in Go 1.20: wrapping multiple errors](https://lukas.zapletalovi.com/posts/2022/wrapping-multiple-errors/)
