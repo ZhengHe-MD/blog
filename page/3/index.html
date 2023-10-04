@@ -238,6 +238,114 @@ mjx-container + br {
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2021/03/04/implementing-tail-based-sampling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2021/03/04/implementing-tail-based-sampling/" class="post-title-link" itemprop="url">调用链追踪系统在伴鱼：实践篇</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-03-04 17:03:51" itemprop="dateCreated datePublished" datetime="2021-03-04T17:03:51+00:00">2021-03-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2021/03/04/implementing-tail-based-sampling/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/04/implementing-tail-based-sampling/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>此文同时发表在<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2021/03/04/implementing-tail-based-sampling/">伴鱼技术博客</a>上</p>
+</blockquote>
+<p>在 <a href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">理论篇</a> 中，我们介绍了伴鱼在调用链追踪领域的调研工作，本篇继续介绍伴鱼的调用链追踪实践。在正式介绍前，简单交代一下背景：2015 年，在伴鱼服务端起步之时，技术团队就做出统一使用 Go 语言的决定。这个决定的影响主要体现在：</p>
+<ol type="1">
+<li>内部基础设施无需做跨语言支持</li>
+<li>技术选型会有轻微的语言倾向</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2021/03/04/implementing-tail-based-sampling/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -269,7 +377,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -370,7 +478,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -486,7 +594,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -587,7 +695,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -690,7 +798,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -806,7 +914,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -907,7 +1015,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1025,7 +1133,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1126,7 +1234,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
+      <time title="修改时间：2023-10-04 03:49:22" itemprop="dateModified" datetime="2023-10-04T03:49:22+00:00">2023-10-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1170,121 +1278,6 @@ mjx-container + br {
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/" class="post-title-link" itemprop="url">报警平台的匹配器演进</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-10 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-10T00:00:00+00:00">2020-05-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 03:05:33" itemprop="dateModified" datetime="2023-05-08T03:05:33+00:00">2023-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="简介">简介</h2>
-<p>本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。</p>
-
-<h3 id="背景">背景</h3>
-<p>报警平台是伴鱼内部各端、应用、基础设施等<strong>服务异常状态信息的集散中心</strong>。整体流程如下图所示：</p>
-<p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg" height="150px"></p>
-<p>信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式<strong>路由</strong>给理应关心它的人。总体而言，路由的需求可以分为以下几种：</p>
-<ul>
-<li>路由给服务的负责人及其团队</li>
-<li>路由给服务依赖方人员及其团队</li>
-<li>路由给所有值班人员所在的即时消息群</li>
-</ul>
-<p>为了满足这样的需求，报警平台采用树状结构组织路由信息，如下图所示：</p>
-<p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/route-tree.jpg" height="350px"></p>
-<p>每个节点是一个路由节点，节点上可以挂载不同的规则，如抑制规则、通知规则；也可以存放不同的配置信息，如触发报警的阈值，以及相关负责人及其团队的联系方式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
