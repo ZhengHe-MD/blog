@@ -6,7 +6,7 @@ category: 实践
 
 # 魔方速拧之路
 
-走上魔方速拧路既是机缘巧合，也是冥冥之中天意使然。2022 年 8 月 28 日，我见到郑天晴坐在地上摔打着奶奶给她买的玩具魔方，忽然回忆起高中班上有个同学能在 3 分钟内复原一个魔方，令同学们既赞叹又羡慕，我心中的少年之火在这一瞬间被点燃，决定也试上一试。于是我找到了博主 [LeesRandomVids](https://www.youtube.com/@LeesRandomVids) 制作的保姆级教学视频「[How to Solve a Rubik's Cube, Step by Step Beginners Tutorial on Solving a 3x3 Rubik‘s Cube](https://www.youtube.com/watch?v=oBhI3yfEn4g)」，边看边学，很快便完成了人生首次三阶魔方复原！
+走上魔方速拧路既是机缘巧合，也是冥冥之中天意使然。2022 年 8 月 28 日，我见到郑天晴坐在地上摔打奶奶给她买的玩具魔方，忽然回忆起高中班上有个同学能在 3 分钟内复原一个魔方，令同学们既赞叹又羡慕，我心中的少年之火在这一瞬间被点燃，决定也试上一试。于是我找到了博主 [LeesRandomVids](https://www.youtube.com/@LeesRandomVids) 制作的保姆级教学视频「[How to Solve a Rubik's Cube, Step by Step Beginners Tutorial on Solving a 3x3 Rubik‘s Cube](https://www.youtube.com/watch?v=oBhI3yfEn4g)」，边看边学，很快便完成了人生首次三阶魔方复原！
 
 <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113277950498917&bvid=BV1hx2NYWEVG&cid=26217874529&p=1&autoPlay=false" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
@@ -69,7 +69,7 @@ J Perm 曾经用一个视频「[How Algorithms Actually Work on the Rubik’s Cu
 
 在练习魔方速拧之前，我曾经在 [Brilliant](https://brilliant.org/) 上囫囵吞枣地学习过一门群论的入门课，虽然大部分内容都已经遗忘，但群论中关于对称性的认知还是深深地刻在了我的脑海里。群论把我们高中学习过的镜面对称、点对称、旋转对称做了进一步抽象，当我们对一个物体做若干次相同的变换后，这个物体能恢复到最初的样子，那这个物体就具备一定的对称性。魔方不就是这样的一个物体？而每个公式不就是一个变换？所以每当我学习一个新公式，我必做的一件事就是不断的重复这个公式，看重复多少次以后魔方能恢复原状，最快的时候两次即可恢复原状，最多则需要几十次。在这个过程中，我能够不断地感受到魔方的对称之美，就像小时候翻花绳一样乐此不疲。
 
-[人在面对复杂而无法理解的现象时，就会产生美感](https://ralphammer.com/immanuel-kant-beauty/)。三阶魔方的千变万化让我望而生畏，因为恰好在接触魔方之前学过一点三脚猫的群论功夫，让我具备了欣赏魔方对称性的部分能力，这正好给了我一扇似乎能窥探到魔方世界奥秘的窗，这大概和康德眼中的美有些神似？
+[人在面对复杂而无法理解的现象时，就会产生美感](https://ralphammer.com/immanuel-kant-beauty/)。三阶魔方的千变万化让我望而生畏，因为恰好在接触魔方之前学过一点三脚猫的群论功夫，让我具备了欣赏魔方对称性的部分能力，这正好给了我一扇似乎能窥探到魔方世界奥秘的窗，这大概满足了康德眼中美感的形成条件。
 
 # 感受无用的乐趣
 
