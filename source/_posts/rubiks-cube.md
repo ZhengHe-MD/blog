@@ -8,11 +8,13 @@ category: 实践
 
 走上魔方速拧路既是机缘巧合，也是冥冥之中天意使然。2022 年 8 月 28 日，我见到郑天晴坐在地上摔打奶奶给她买的玩具魔方，忽然回忆起高中班上有个小伙子能在 3 分钟内复原一个魔方，令同学们既赞叹又羡慕，我心中的少年之火在这一瞬间被点燃，决定也试上一试。于是我找到了博主 [LeesRandomVids](https://www.youtube.com/@LeesRandomVids) 制作的保姆级教学视频「[How to Solve a Rubik's Cube, Step by Step Beginners Tutorial on Solving a 3x3 Rubik‘s Cube](https://www.youtube.com/watch?v=oBhI3yfEn4g)」，边看边学，很快便完成了人生首次三阶魔方复原！
 
+在实现了大众最朴素的魔方复原梦后，我有些意犹未尽。首先，我真的很好奇像我这样的普通中年大叔经过刻意练习后能在多短的时间内复原一个魔方？其次，平时带娃的时间太琐碎，如何在这琐碎的时间中不靠手机来持续获得一点点满足感？魔方速拧一把不过数分钟，恰好能填补这些时光缝隙。于是我在 2022 年 8 月 22 日录下了第一个魔方复原视频，复原用时 2 分 34 秒。
+
 <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113277950498917&bvid=BV1hx2NYWEVG&cid=26217874529&p=1&autoPlay=false" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
 <!-- more -->
 
-在实现了大众最朴素的魔方复原梦后，我有些意犹未尽。首先，我真的很好奇像我这样的普通中年大叔经过刻意练习后能在多短的时间内复原一个魔方？其次，平时带娃的时间太琐碎，如何在这琐碎的时间中不靠手机来持续获得一点点满足感？魔方速拧一把不过数分钟，恰好能填补这些时光缝隙。于是我在 2022 年 8 月 22 日录下了第一个魔方复原视频，复原用时 2 分 34 秒，然后便以此作为复原时间的基准参考值，设定下一个目标「1 分 30 秒」！2022 年 9 月 4 日，只用了不到一周时间，我便实现了 1 分 30 秒内完成复原的目标，并录下了第二个魔方复原视频。
+然后便以此作为复原时间的基准参考值，设定下一个目标「1 分 30 秒」！2022 年 9 月 4 日，只用了不到一周时间，我便实现了 1 分 30 秒内完成复原的目标，并录下了第二个魔方复原视频。
 
 <iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113277950826694&bvid=BV18x2NYpECB&cid=26217679849&p=1&autoPlay=false" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
 
