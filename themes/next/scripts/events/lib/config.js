@@ -1,6 +1,6 @@
 'use strict';
 
-const merge = require('hexo-util').deepMerge;
+const { deepMerge } = require('hexo-util');
 
 module.exports = hexo => {
   const data = hexo.locals.get('data');
@@ -15,11 +15,11 @@ module.exports = hexo => {
     hexo.log.warn(`Since ${args[0]} is turned on, the ${args[1]} is disabled to avoid potential hazards.`);
   };
 
-  if (cache && cache.enable && language_switcher) {
+  if (cache?.enable && language_switcher) {
     warning('language_switcher', 'caching');
     cache.enable = false;
   }
-  if (cache && cache.enable && hexo.config.relative_link) {
+  if (cache?.enable && hexo.config.relative_link) {
     warning('caching', '`relative_link` option in Hexo `_config.yml`');
     hexo.config.relative_link = false;
   }
@@ -30,7 +30,7 @@ module.exports = hexo => {
     const { i18n } = hexo.theme;
 
     const mergeLang = lang => {
-      if (data.languages[lang]) i18n.set(lang, merge(i18n.get([lang]), data.languages[lang]));
+      if (data.languages[lang]) i18n.set(lang, deepMerge(i18n.get([lang]), data.languages[lang]));
     };
 
     if (Array.isArray(language)) {

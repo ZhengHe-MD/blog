@@ -1,6 +1,5 @@
 'use strict';
 
-require('chai').should();
 const Hexo = require('hexo');
 const hexo = new Hexo();
 
@@ -13,7 +12,7 @@ describe('next-url', () => {
 
   before(() => {
     hexo.config.url = 'https://example.com';
-    hexo.url_for = require('hexo/lib/plugins/helper/url_for').bind(hexo);
+    hexo.url_for = require('hexo/dist/plugins/helper/url_for').bind(hexo);
   });
 
   it('text', () => {
@@ -30,6 +29,10 @@ describe('next-url', () => {
 
   it('external', () => {
     nextUrl('https://theme-next.js.org', 'Text').should.eql('<a href="https://theme-next.js.org/" rel="noopener" target="_blank">Text</a>');
+  });
+
+  it('decodeURI', () => {
+    (() => nextUrl('https://theme-next.js.org', 'A % B')).should.not.throw();
   });
 
   it('exturl enabled', () => {
