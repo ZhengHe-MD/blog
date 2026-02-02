@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,26 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，jaeger-client-go。  简介 jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：  如何在进程内部管理调用链追踪信息 (tracer, span) 如何在进程间传递调">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Jaeger 的 Go 客户端的源码导读">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，jaeger-client-go。  简介 jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：  如何在进程内部管理调用链追踪信息 (tracer, span) 如何在进程间传递调">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/span_life.jpg">
-<meta property="article:published_time" content="2020-06-21T22:28:35.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.764Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/span_life.jpg">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/","path":"2020/06/21/Jaeger-Walkthrough-jaeger-client-go/","title":"Jaeger 的 Go 客户端的源码导读"}</script>
@@ -44,9 +30,35 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -59,11 +71,6 @@
 
 mjx-container[jax="SVG"] > svg {
   overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
 }
 
 mjx-container[jax="SVG"][display="true"] {
@@ -163,11 +170,11 @@ foreignObject[data-mjx-xml] {
   stroke-width: 3;
 }
 
-mjx-container {
+mjx-container[display="true"] {
   overflow: auto hidden;
 }
 
-mjx-container + br {
+mjx-container[display="true"] + br {
   display: none;
 }
 </style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
@@ -177,8 +184,8 @@ mjx-container + br {
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -197,7 +204,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -205,32 +212,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -248,11 +238,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Jaeger 的 Go 客户端的源码导读 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -274,7 +269,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -309,16 +304,18 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger 项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/">jaeger-client-go</a>。</p>
-
+    <div class="post-body" itemprop="articleBody"><p>Jaeger Walkthrough 系列文章之一，旨在深入理解 Jaeger
+项目内部的实现细节。本文介绍的是 Jaeger 的 Go 客户端，<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/">jaeger-client-go</a>。</p>
+<span id="more"></span>
 <h2 id="简介">简介</h2>
-<p>jaeger-client-go 是 Jaeger 对 opentracing-go 标准接口的实现，主要解决的是两个问题：</p>
+<p>jaeger-client-go 是 Jaeger 对 opentracing-go
+标准接口的实现，主要解决的是两个问题：</p>
 <ul>
 <li>如何在进程内部管理调用链追踪信息 (tracer, span)</li>
 <li>如何在进程间传递调用链追踪信息 (span context, propagation)</li>
 </ul>
-<p>但在调用链追踪实践中，jaeger-client-go 仅仅解决上述两个问题还不够，它还需要考虑的问题包括：</p>
+<p>但在调用链追踪实践中，jaeger-client-go
+仅仅解决上述两个问题还不够，它还需要考虑的问题包括：</p>
 <ul>
 <li>如何将数据上报到存储中心</li>
 <li>如何对数据抽样，支持不同的抽样策略</li>
@@ -327,22 +324,39 @@ mjx-container + br {
 <p>接下来，我们就着源码对这些问题一一分析。</p>
 <h2 id="进程内调用链追踪信息管理">进程内调用链追踪信息管理</h2>
 <h3 id="tracer">Tracer</h3>
-<p>Tracer 是 opentracing.Tracer 的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go 中各个模块完成相应工作。</p>
-<p>opentracing.Tracer 中默认的 <a target="_blank" rel="noopener" href="https://github.com/opentracing/opentracing-go/blob/master/globaltracer.go">GlobalTracer</a> 实现了所有接口的 noop 版本，应用程序直接调用不会有任何作用。应用程序想要接入 Jaeger，只需在启动时，初始化 Tracer：</p>
+<p>Tracer 是 opentracing.Tracer
+的实现，它负责与应用程序沟通，接收应用程序的请求，协调 jaeger-client-go
+中各个模块完成相应工作。</p>
+<p>opentracing.Tracer 中默认的 <a target="_blank" rel="noopener" href="https://github.com/opentracing/opentracing-go/blob/master/globaltracer.go">GlobalTracer</a>
+实现了所有接口的 noop
+版本，应用程序直接调用不会有任何作用。应用程序想要接入
+Jaeger，只需在启动时，初始化 Tracer：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cfg := jaegercfg.Configuration{}</span><br><span class="line">tracer, closer, err := cfg.NewTracer()</span><br><span class="line"><span class="comment">// <span class="doctag">TODO:</span> deal with err</span></span><br><span class="line"><span class="keyword">defer</span> closer.Close()</span><br><span class="line">opentracing.SetGlobalTracer(tracer)</span><br></pre></td></tr></table></figure>
 <p>一切就能如魔法般正常地运转起来，对应用代码无侵入。</p>
 <h3 id="span-allocator">Span Allocator</h3>
-<p>Web 服务每收到一个请求，Tracer 就得在内部为其初始化一个结构体记录这个请求的一些调用链追踪信息，如开始时间、结束时间、操作名称、标签、日志等等，这个结构体就是 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/span.go">Span</a>。</p>
-<p>Web 服务的请求量很大，如果不能妥善回收利用 span，就有可能不断申请和回收内存，造成资源浪费。jaeger-client-go 基于 <code>sync.Pool</code> 来管理 span pool，以教科书的方式解决这个问题：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> syncPollSpanAllocator <span class="keyword">struct</span> {</span><br><span class="line">    spanPool sync.Pool</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newSyncPollSpanAllocator</span><span class="params">()</span> <span class="title">SpanAllocator</span></span> {</span><br><span class="line">    <span class="keyword">return</span> &amp;syncPollSpanAllocator{</span><br><span class="line">        spanPool: sync.Pool{New: <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">interface</span></span>{} {</span><br><span class="line">            <span class="keyword">return</span> &amp;Span{}</span><br><span class="line">        }},</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pool *syncPollSpanAllocator)</span> <span class="title">Get</span><span class="params">()</span> *<span class="title">Span</span></span> {</span><br><span class="line">    <span class="keyword">return</span> pool.spanPool.Get().(*Span)</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pool *syncPollSpanAllocator)</span> <span class="title">Put</span><span class="params">(span *Span)</span></span> {</span><br><span class="line">    span.reset()</span><br><span class="line">    pool.spanPool.Put(span)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>Web 服务每收到一个请求，Tracer
+就得在内部为其初始化一个结构体记录这个请求的一些调用链追踪信息，如开始时间、结束时间、操作名称、标签、日志等等，这个结构体就是
+<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/span.go">Span</a>。</p>
+<p>Web 服务的请求量很大，如果不能妥善回收利用
+span，就有可能不断申请和回收内存，造成资源浪费。jaeger-client-go 基于
+<code>sync.Pool</code> 来管理 span
+pool，以教科书的方式解决这个问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> syncPollSpanAllocator <span class="keyword">struct</span> {</span><br><span class="line">    spanPool sync.Pool</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newSyncPollSpanAllocator</span><span class="params">()</span></span> SpanAllocator {</span><br><span class="line">    <span class="keyword">return</span> &amp;syncPollSpanAllocator{</span><br><span class="line">        spanPool: sync.Pool{New: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="keyword">interface</span>{} {</span><br><span class="line">            <span class="keyword">return</span> &amp;Span{}</span><br><span class="line">        }},</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pool *syncPollSpanAllocator)</span></span> Get() *Span {</span><br><span class="line">    <span class="keyword">return</span> pool.spanPool.Get().(*Span)</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(pool *syncPollSpanAllocator)</span></span> Put(span *Span) {</span><br><span class="line">    span.reset()</span><br><span class="line">    pool.spanPool.Put(span)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <h3 id="span-gc">Span GC</h3>
 <p>span 的生命周期大体如下：</p>
 <p><img src="/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/span_life.jpg" alt="span_life"></p>
-<p>当应用开发者调用 <code>span.Finish()</code> 时，需要根据抽样策略判断该 span 信息是否需要采集，若是，则进入上报；若否，则直接释放。上报方式可分为同步和异步两种，为了在不同上报方式中做好 span GC，Span 采用了引用计数法，并定义了两个方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Span)</span> <span class="title">Retain</span><span class="params">()</span> *<span class="title">Span</span></span> {</span><br><span class="line">    atomic.AddInt32(&amp;s.referenceCounter, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Span)</span> <span class="title">Release</span><span class="params">()</span></span> {</span><br><span class="line">    <span class="keyword">if</span> atomic.AddInt32(&amp;s.referenceCounter, <span class="number">-1</span>) == <span class="number">-1</span> {</span><br><span class="line">        s.tracer.spanAllocator.Put(s)</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>span 初始化时 referenceCounter 为 0，正常的 <code>Finish</code> 逻辑都会在最后调用 <code>Release</code> 方法，如果是异步上报，则 reporter 需要首先调用 <code>Retain</code> 方法，确保 span 不会被误回收。</p>
+<p>当应用开发者调用 <code>span.Finish()</code>
+时，需要根据抽样策略判断该 span
+信息是否需要采集，若是，则进入上报；若否，则直接释放。上报方式可分为同步和异步两种，为了在不同上报方式中做好
+span GC，Span 采用了引用计数法，并定义了两个方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Span)</span></span> Retain() *Span {</span><br><span class="line">    atomic.AddInt32(&amp;s.referenceCounter, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Span)</span></span> Release() {</span><br><span class="line">    <span class="keyword">if</span> atomic.AddInt32(&amp;s.referenceCounter, <span class="number">-1</span>) == <span class="number">-1</span> {</span><br><span class="line">        s.tracer.spanAllocator.Put(s)</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>span 初始化时 referenceCounter 为 0，正常的 <code>Finish</code>
+逻辑都会在最后调用 <code>Release</code> 方法，如果是异步上报，则
+reporter 需要首先调用 <code>Retain</code> 方法，确保 span
+不会被误回收。</p>
 <h3 id="opentracing-observer">Opentracing Observer</h3>
-<p>为了方便社区定制化开发插件，opentracing 社区在 <a target="_blank" rel="noopener" href="https://github.com/opentracing-contrib/go-observer/blob/master/observer.go">opentracing-contrib/go-observer</a> 中定义 OTObserver 实现，让开发者可以为 Span 提供回调函数：</p>
+<p>为了方便社区定制化开发插件，opentracing 社区在 <a target="_blank" rel="noopener" href="https://github.com/opentracing-contrib/go-observer/blob/master/observer.go">opentracing-contrib/go-observer</a>
+中定义 OTObserver 实现，让开发者可以为 Span 提供回调函数：</p>
 <ul>
 <li>StartSpan：span 初始化时</li>
 <li>SetOperationName：span 设置 OperationName 时</li>
@@ -352,19 +366,39 @@ mjx-container + br {
 <p>这一做法也被 jaeger-client-go 采用 (<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/contrib_observer.go">contrib_observer</a>)。</p>
 <h2 id="进程间调用链追踪信息传递">进程间调用链追踪信息传递</h2>
 <h3 id="span-context">Span Context</h3>
-<p>要追踪整个调用链，在远程调用时就需要将上下文信息传递到被调用进程，使得被调用方和被调方的数据能在上报时被准确地关联。span context 中存储的内容并没有在 opentracing 标准中规定，实现者可以自行决定。以下是 Jaeger 的 span context 结构体：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SpanContext <span class="keyword">struct</span> {</span><br><span class="line">    traceID       TraceID</span><br><span class="line">    spanID        SpanID</span><br><span class="line">    parentID      SpanID</span><br><span class="line">    baggage       <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">    debugID       <span class="keyword">string</span></span><br><span class="line">    samplingState *samplingState</span><br><span class="line">    remote        <span class="keyword">bool</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>traceID、spanID 以及 parentID 是 span context 的最核心数据，其中 traceID 用来关联整个调用链上单次访问的所有 span，spanID 与 parentID 用来关联不同的 span；baggage 中的数据类似于 golang 中的 context，只不过 baggage 中的数据能跨进程，golang 中的 context 只是用于单线程内部的追踪；debugID 用于绕过抽样策略，保证 trace 必采；samplingState 保存 trace 的抽样状态，理论上每个 trace 要么所有数据都采，要么都不采，采一部分没有意义，因此抽样状态需要往下传递；remote 仅用于标识 span context 是不是来自于远端进程，用于程序内部判断使用。</p>
+<p>要追踪整个调用链，在远程调用时就需要将上下文信息传递到被调用进程，使得被调用方和被调方的数据能在上报时被准确地关联。span
+context 中存储的内容并没有在 opentracing
+标准中规定，实现者可以自行决定。以下是 Jaeger 的 span context
+结构体：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SpanContext <span class="keyword">struct</span> {</span><br><span class="line">    traceID       TraceID</span><br><span class="line">    spanID        SpanID</span><br><span class="line">    parentID      SpanID</span><br><span class="line">    baggage       <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span></span><br><span class="line">    debugID       <span class="type">string</span></span><br><span class="line">    samplingState *samplingState</span><br><span class="line">    remote        <span class="type">bool</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>traceID、spanID 以及 parentID 是 span context 的最核心数据，其中
+traceID 用来关联整个调用链上单次访问的所有 span，spanID 与 parentID
+用来关联不同的 span；baggage 中的数据类似于 golang 中的 context，只不过
+baggage 中的数据能跨进程，golang 中的 context
+只是用于单线程内部的追踪；debugID 用于绕过抽样策略，保证 trace
+必采；samplingState 保存 trace 的抽样状态，理论上每个 trace
+要么所有数据都采，要么都不采，采一部分没有意义，因此抽样状态需要往下传递；remote
+仅用于标识 span context 是不是来自于远端进程，用于程序内部判断使用。</p>
 <h3 id="propagation">Propagation</h3>
-<p>在跨进程传递 span context 时，我们需要两样东西：propagator 与 carrier。propagator 负责序列化、反序列化 span context；carrier 则是数据的实际载体。</p>
+<p>在跨进程传递 span context 时，我们需要两样东西：propagator 与
+carrier。propagator 负责序列化、反序列化 span context；carrier
+则是数据的实际载体。</p>
 <h5 id="propagator">Propagator</h5>
 <p>每个 propagator 需要实现两个接口：Injector 和 Extractor：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Injector <span class="keyword">interface</span> {</span><br><span class="line">    Inject(ctx SpanContext, carrier <span class="keyword">interface</span>{}) error</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Extractor <span class="keyword">interface</span> {</span><br><span class="line">  Extract(carrier <span class="keyword">interface</span>{}) (SpanContext, error)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>opentracing 中定义了三种 propagator：BinaryPropagator、TextMapPropagator 与 HTTPHeaderPropagator，分别用于 span context 与二进制数据、文本字典数据以及 HTTP Header 数据之间的转换。其中 HTTPHeaderPropagator 用于 HTTP 进程间的数据编解码，而 BinaryPropagator 与 TextMapPropagator 用于 RPC 进程间的数据编解码。jaeger-client-go 在 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/propagation.go">propagation.go</a> 中分别实现了它们。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Injector <span class="keyword">interface</span> {</span><br><span class="line">    Inject(ctx SpanContext, carrier <span class="keyword">interface</span>{}) <span class="type">error</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Extractor <span class="keyword">interface</span> {</span><br><span class="line">  Extract(carrier <span class="keyword">interface</span>{}) (SpanContext, <span class="type">error</span>)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>opentracing 中定义了三种
+propagator：BinaryPropagator、TextMapPropagator 与
+HTTPHeaderPropagator，分别用于 span context
+与二进制数据、文本字典数据以及 HTTP Header 数据之间的转换。其中
+HTTPHeaderPropagator 用于 HTTP 进程间的数据编解码，而 BinaryPropagator
+与 TextMapPropagator 用于 RPC 进程间的数据编解码。jaeger-client-go 在 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/propagation.go">propagation.go</a>
+中分别实现了它们。</p>
 <h2 id="数据上报">数据上报</h2>
 <p>jaeger-client-go 中负责数据上报的模块是 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/reporter.go">Reporter</a>，其接口定义如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reporter <span class="keyword">interface</span> {</span><br><span class="line">  Report(span *Span)</span><br><span class="line">  Close()</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>在 Span GC 一节中，我们已经介绍过数据上报的两种方式以及相应的 GC 时间点，这里不再赘述。jaeger-client-go 共提供 5 种 Reporter，罗列如下：</p>
+<p>在 Span GC 一节中，我们已经介绍过数据上报的两种方式以及相应的 GC
+时间点，这里不再赘述。jaeger-client-go 共提供 5 种
+Reporter，罗列如下：</p>
 <table>
 <thead>
 <tr class="header">
@@ -398,20 +432,40 @@ mjx-container + br {
 <p>接下来详细介绍一下 remote reporter。</p>
 <h3 id="remote-reporter">Remote Reporter</h3>
 <p>remote reporter 的结构如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reporter.go</span></span><br><span class="line"><span class="keyword">type</span> remoteReporter <span class="keyword">struct</span> {</span><br><span class="line">    queueLength <span class="keyword">int64</span> <span class="comment">// used to update metrics.Gauge</span></span><br><span class="line">    closed      <span class="keyword">int64</span> <span class="comment">// 0 - not closed, 1 - closed</span></span><br><span class="line">    reporterOptions</span><br><span class="line">    sender        Transport</span><br><span class="line">    queue         <span class="keyword">chan</span> reporterQueueItem</span><br><span class="line">    reporterStats *reporterStats</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> reporterOptions <span class="keyword">struct</span> {</span><br><span class="line">    queueSize <span class="keyword">int</span></span><br><span class="line">    bufferFlushInterval time.Duration</span><br><span class="line">    logger log.DebugLogger</span><br><span class="line">    metrics *Metrics</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>remote reporter 在内部会维护一个队列，即一个 repoterQueueItem 类型的 channel，当应用调用 <code>Report</code> 方法时，就将 span 塞进队列，同时增加其引用计数保证其不被回收。另一侧，remote reporter 在初始化时会启动一个异步线程将队列中的 span 取出，并追加 (append) 到 sender 中。sender 实现了 Transport 接口：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// transport.go</span></span><br><span class="line"><span class="keyword">type</span> Transport <span class="keyword">interface</span> {</span><br><span class="line">  Append(span *Span) (<span class="keyword">int</span>, error)</span><br><span class="line">  Flush() (<span class="keyword">int</span>, error)</span><br><span class="line">  io.Closer</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>其中 <code>Append</code> 会将 span 序列化并放入 sender 内部缓冲区，如果内部缓冲区长度超过限制，则 sender 会自动 <code>Flush</code>，并返回写出的 span 数量；如果未超出，则保留在缓冲区中。remote reporter 也会每隔一段时间强制调用 sender 的 <code>Flush</code> 方法，通过时间和数量两个维度来保证数据的准实时上报。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// reporter.go</span></span><br><span class="line"><span class="keyword">type</span> remoteReporter <span class="keyword">struct</span> {</span><br><span class="line">    queueLength <span class="type">int64</span> <span class="comment">// used to update metrics.Gauge</span></span><br><span class="line">    closed      <span class="type">int64</span> <span class="comment">// 0 - not closed, 1 - closed</span></span><br><span class="line">    reporterOptions</span><br><span class="line">    sender        Transport</span><br><span class="line">    queue         <span class="keyword">chan</span> reporterQueueItem</span><br><span class="line">    reporterStats *reporterStats</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> reporterOptions <span class="keyword">struct</span> {</span><br><span class="line">    queueSize <span class="type">int</span></span><br><span class="line">    bufferFlushInterval time.Duration</span><br><span class="line">    logger log.DebugLogger</span><br><span class="line">    metrics *Metrics</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>remote reporter 在内部会维护一个队列，即一个 repoterQueueItem 类型的
+channel，当应用调用 <code>Report</code> 方法时，就将 span
+塞进队列，同时增加其引用计数保证其不被回收。另一侧，remote reporter
+在初始化时会启动一个异步线程将队列中的 span 取出，并追加 (append) 到
+sender 中。sender 实现了 Transport 接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// transport.go</span></span><br><span class="line"><span class="keyword">type</span> Transport <span class="keyword">interface</span> {</span><br><span class="line">  Append(span *Span) (<span class="type">int</span>, <span class="type">error</span>)</span><br><span class="line">  Flush() (<span class="type">int</span>, <span class="type">error</span>)</span><br><span class="line">  io.Closer</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>其中 <code>Append</code> 会将 span 序列化并放入 sender
+内部缓冲区，如果内部缓冲区长度超过限制，则 sender 会自动
+<code>Flush</code>，并返回写出的 span
+数量；如果未超出，则保留在缓冲区中。remote reporter
+也会每隔一段时间强制调用 sender 的 <code>Flush</code>
+方法，通过时间和数量两个维度来保证数据的准实时上报。</p>
 <h2 id="数据抽样">数据抽样</h2>
-<p>大型 web 服务的请求量通常很大，而实际开发者关心的调用链通常只是其中异常的少数，因此这里存在很低的信噪比：想保留越多的异常请求现场，就要保存越多的无用数据。<strong>提高信噪比</strong>是调用链追踪解决方案的核心设计目标。本节从抽样器接口和类型 (策略) 两个方面讨论数据抽样模块。</p>
+<p>大型 web
+服务的请求量通常很大，而实际开发者关心的调用链通常只是其中异常的少数，因此这里存在很低的信噪比：想保留越多的异常请求现场，就要保存越多的无用数据。<strong>提高信噪比</strong>是调用链追踪解决方案的核心设计目标。本节从抽样器接口和类型
+(策略) 两个方面讨论数据抽样模块。</p>
 <h3 id="sampler-interface">Sampler Interface</h3>
-<p>jaeger-client-go 中存在两个版本的 sampler interface：<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/sampler.go#L32">V1</a> 和 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/sampler_v2.go#L26">V2</a>。V1 的设计比较直接：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Sampler <span class="keyword">interface</span> {</span><br><span class="line">  IsSampled(id TraceID, operation <span class="keyword">string</span>) (sampled <span class="keyword">bool</span>, tags []Tag)</span><br><span class="line">  Close()</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>IsSampled 根据 traceID 和 operation 实施抽样策略，返回的 tags 用于在查询时回溯该 trace 是使用何种抽样策略；抽样策略可能会启动其它 goroutine 执行异步任务，Close 方法允许 Sampler 在关闭时停止这些异步任务。V1 的设计认为抽样决定仅在创建 span 时做出，且只做一次。但在实践中发现，是否抽样的决定有时候需要利用更多的、在创建 span 时还不存在的信息来判断，如标签信息、时长信息等等，于是有了 V2：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SamplerV2 <span class="keyword">interface</span> {</span><br><span class="line">  OnCreateSpan(span *Span) SamplingDecision</span><br><span class="line">    OnSetOperationName(span *Span, operationName <span class="keyword">string</span>) SamplingDecision</span><br><span class="line">    OnSetTag(span *Span, key <span class="keyword">string</span>, value <span class="keyword">interface</span>{}) SamplingDecision</span><br><span class="line">    OnFinishSpan(span *Span) SamplingDecision</span><br><span class="line">  Close()</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> SamplingDecision <span class="keyword">struct</span> {</span><br><span class="line">    Sample    <span class="keyword">bool</span></span><br><span class="line">    Retryable <span class="keyword">bool</span></span><br><span class="line">    Tags      []Tag</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>jaeger-client-go 中存在两个版本的 sampler interface：<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/sampler.go#L32">V1</a>
+和 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/sampler_v2.go#L26">V2</a>。V1
+的设计比较直接：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Sampler <span class="keyword">interface</span> {</span><br><span class="line">  IsSampled(id TraceID, operation <span class="type">string</span>) (sampled <span class="type">bool</span>, tags []Tag)</span><br><span class="line">  Close()</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>IsSampled 根据 traceID 和 operation 实施抽样策略，返回的 tags
+用于在查询时回溯该 trace 是使用何种抽样策略；抽样策略可能会启动其它
+goroutine 执行异步任务，Close 方法允许 Sampler
+在关闭时停止这些异步任务。V1 的设计认为抽样决定仅在创建 span
+时做出，且只做一次。但在实践中发现，是否抽样的决定有时候需要利用更多的、在创建
+span 时还不存在的信息来判断，如标签信息、时长信息等等，于是有了 V2：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SamplerV2 <span class="keyword">interface</span> {</span><br><span class="line">  OnCreateSpan(span *Span) SamplingDecision</span><br><span class="line">    OnSetOperationName(span *Span, operationName <span class="type">string</span>) SamplingDecision</span><br><span class="line">    OnSetTag(span *Span, key <span class="type">string</span>, value <span class="keyword">interface</span>{}) SamplingDecision</span><br><span class="line">    OnFinishSpan(span *Span) SamplingDecision</span><br><span class="line">  Close()</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> SamplingDecision <span class="keyword">struct</span> {</span><br><span class="line">    Sample    <span class="type">bool</span></span><br><span class="line">    Retryable <span class="type">bool</span></span><br><span class="line">    Tags      []Tag</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <p>这时，sampler 就能够支持<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go#debug-traces-forced-sampling">通过标签强制采样</a>这种很实用的特殊需求。</p>
-<h3 id="sampler-typessampling-strategies">Sampler Types/Sampling Strategies</h3>
-<p>Jaeger 在其<a target="_blank" rel="noopener" href="https://www.jaegertracing.io/docs/1.17/sampling/">官方文档</a>上已经介绍了其支持的采样策略，其对应的 sampler types 罗列如下：</p>
+<h3 id="sampler-typessampling-strategies">Sampler Types/Sampling
+Strategies</h3>
+<p>Jaeger 在其<a target="_blank" rel="noopener" href="https://www.jaegertracing.io/docs/1.17/sampling/">官方文档</a>上已经介绍了其支持的采样策略，其对应的
+sampler types 罗列如下：</p>
 <table>
 <colgroup>
 <col style="width: 45%">
@@ -438,42 +492,67 @@ mjx-container + br {
 </tr>
 <tr class="even">
 <td>GuaranteedThroughputProbabilisticSampler</td>
-<td>在服务 (进程) 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据</td>
+<td>在服务 (进程)
+级别，根据给定概率抽样，同时保证在给定时间内有抽样数据</td>
 </tr>
 <tr class="odd">
 <td>PerOperationSampler</td>
-<td>在 operation 级别，根据给定概率抽样，同时保证在给定时间内有抽样数据</td>
+<td>在 operation
+级别，根据给定概率抽样，同时保证在给定时间内有抽样数据</td>
 </tr>
 <tr class="even">
 <td>RemotelyControlledSampler</td>
-<td>从远端动态拉取抽样策略，而非在启动时配置。支持拉取上述所有 sampler types 的配置</td>
+<td>从远端动态拉取抽样策略，而非在启动时配置。支持拉取上述所有 sampler
+types 的配置</td>
 </tr>
 </tbody>
 </table>
 <h5 id="constsampler">ConstSampler</h5>
 <p>ConstSampler 设计很简单，初始化时接收一个布尔值，表明是否抽样：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewConstSampler</span><span class="params">(decision <span class="keyword">bool</span>)</span> *<span class="title">ConstSampler</span></span> {}</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewConstSampler</span><span class="params">(decision <span class="type">bool</span>)</span></span> *ConstSampler {}</span><br></pre></td></tr></table></figure>
 <p>在决定是否抽样时，直接将给定的决定返回即可：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ConstSampler)</span> <span class="title">IsSampled</span><span class="params">(id TraceID, operation <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">bool</span>, []Tag)</span></span> {</span><br><span class="line">  <span class="keyword">return</span> s.Decision, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>在请求量较少或者测试环境中，我们可以使用 ConstSampler 来全量抽样，方便测试。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ConstSampler)</span></span> IsSampled(id TraceID, operation <span class="type">string</span>) (<span class="type">bool</span>, []Tag) {</span><br><span class="line">  <span class="keyword">return</span> s.Decision, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>在请求量较少或者测试环境中，我们可以使用 ConstSampler
+来全量抽样，方便测试。</p>
 <h5 id="probabilisticsampler">ProbabilisticSampler</h5>
-<p>ProbabilisticSampler 实现地比较取巧，因为 traceID 是由两个 int64 随机数构成，假设概率为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.439ex" xmlns="http://www.w3.org/2000/svg" width="1.138ex" height="1.439ex" role="img" focusable="false" viewBox="0 -442 503 636" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-70"></use></g></g></g></svg></mjx-container></span>，直接判断 traceID 的其中一个 int64 随机数是否小于 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.439ex" xmlns="http://www.w3.org/2000/svg" width="25.248ex" height="2.009ex" role="img" focusable="false" viewBox="0 -694 11159.4 888" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-70"></use></g><g data-mml-node="mo" transform="translate(725.2, 0)"><use xlink:href="#MJX-TEX-N-D7"></use></g><g data-mml-node="mi" transform="translate(1725.4, 0)"><use xlink:href="#MJX-TEX-I-6D"></use></g><g data-mml-node="mi" transform="translate(2603.4, 0)"><use xlink:href="#MJX-TEX-I-61"></use></g><g data-mml-node="mi" transform="translate(3132.4, 0)"><use xlink:href="#MJX-TEX-I-78"></use></g><g data-mml-node="mi" transform="translate(3704.4, 0)"><use xlink:href="#MJX-TEX-I-52"></use></g><g data-mml-node="mi" transform="translate(4463.4, 0)"><use xlink:href="#MJX-TEX-I-61"></use></g><g data-mml-node="mi" transform="translate(4992.4, 0)"><use xlink:href="#MJX-TEX-I-6E"></use></g><g data-mml-node="mi" transform="translate(5592.4, 0)"><use xlink:href="#MJX-TEX-I-64"></use></g><g data-mml-node="mi" transform="translate(6112.4, 0)"><use xlink:href="#MJX-TEX-I-6F"></use></g><g data-mml-node="mi" transform="translate(6597.4, 0)"><use xlink:href="#MJX-TEX-I-6D"></use></g><g data-mml-node="mi" transform="translate(7475.4, 0)"><use xlink:href="#MJX-TEX-I-4E"></use></g><g data-mml-node="mi" transform="translate(8363.4, 0)"><use xlink:href="#MJX-TEX-I-75"></use></g><g data-mml-node="mi" transform="translate(8935.4, 0)"><use xlink:href="#MJX-TEX-I-6D"></use></g><g data-mml-node="mi" transform="translate(9813.4, 0)"><use xlink:href="#MJX-TEX-I-62"></use></g><g data-mml-node="mi" transform="translate(10242.4, 0)"><use xlink:href="#MJX-TEX-I-65"></use></g><g data-mml-node="mi" transform="translate(10708.4, 0)"><use xlink:href="#MJX-TEX-I-72"></use></g></g></g></svg></mjx-container></span> 即可：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ProbabilisticSampler)</span> <span class="title">init</span><span class="params">(samplingRate <span class="keyword">float64</span>)</span> *<span class="title">ProbabilisticSampler</span></span> {</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    s.samplingBoundary = <span class="keyword">uint64</span>(<span class="keyword">float64</span>(maxRandomNumber) * s.samplingRate)</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ProbabilisticSampler)</span> <span class="title">IsSampled</span><span class="params">(id TraceID, operation <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">bool</span>, []Tag)</span></span> {</span><br><span class="line">    <span class="keyword">return</span> s.samplingBoundary &gt;= id.Low&amp;maxRandomNumber, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>ProbabilisticSampler 实现地比较取巧，因为 traceID 是由两个 int64
+随机数构成，假设概率为 <span class="math inline"><em>p</em></span>，直接判断 traceID 的其中一个 int64
+随机数是否小于 <span class="math inline"><em>p</em> × <em>m</em><em>a</em><em>x</em><em>R</em><em>a</em><em>n</em><em>d</em><em>o</em><em>m</em><em>N</em><em>u</em><em>m</em><em>b</em><em>e</em><em>r</em></span>
+即可：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ProbabilisticSampler)</span></span> init(samplingRate <span class="type">float64</span>) *ProbabilisticSampler {</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    s.samplingBoundary = <span class="type">uint64</span>(<span class="type">float64</span>(maxRandomNumber) * s.samplingRate)</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ProbabilisticSampler)</span></span> IsSampled(id TraceID, operation <span class="type">string</span>) (<span class="type">bool</span>, []Tag) {</span><br><span class="line">    <span class="keyword">return</span> s.samplingBoundary &gt;= id.Low&amp;maxRandomNumber, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <h5 id="ratelimitingsampler">RateLimitingSampler</h5>
-<p>RateLimitingSampler 利用基于借贷模型的漏桶算法，实现服务级别的限流，且支持动态调整漏桶滴水的速度，具体实现可访问 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/utils/rate_limiter.go">rate_limiter.go</a> 进一步了解。</p>
+<p>RateLimitingSampler
+利用基于借贷模型的漏桶算法，实现服务级别的限流，且支持动态调整漏桶滴水的速度，具体实现可访问
+<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/utils/rate_limiter.go">rate_limiter.go</a>
+进一步了解。</p>
 <h5 id="guaranteedthroughputprobabilisticsampler">GuaranteedThroughputProbabilisticSampler</h5>
-<p>ProbabilisticSampler 的缺点在于，即便曾经出现过请求，但由于请求数量太少，可能造成没有抽样数据的问题，那么我们能否在请求数量较少的时候，保证最少数量的抽样数据？后者正好符合 RateLimitingSampler 的语义，将二者结合，就成了 GuaranteedThroughputProbabilisticSampler：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> GuaranteedThroughputProbabilisticSampler <span class="keyword">struct</span> {</span><br><span class="line">    probabilisticSampler *ProbabilisticSampler</span><br><span class="line">    lowerBoundSampler    *RateLimitingSampler</span><br><span class="line">    tags                 []Tag</span><br><span class="line">    samplingRate         <span class="keyword">float64</span></span><br><span class="line">    lowerBound           <span class="keyword">float64</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>判定是否抽样的逻辑是先用 ProbabilisticSampler 判断，如果是否，再通过 RateLimitingSampler 判断：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *GuaranteedThroughputProbabilisticSampler)</span> <span class="title">IsSampled</span><span class="params">(id TraceID, operation <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">bool</span>, []Tag)</span></span> {</span><br><span class="line">    <span class="keyword">if</span> sampled, tags := s.probabilisticSampler.IsSampled(id, operation); sampled {</span><br><span class="line">        s.lowerBoundSampler.IsSampled(id, operation)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>, tags</span><br><span class="line">    }</span><br><span class="line">    sampled, _ := s.lowerBoundSampler.IsSampled(id, operation)</span><br><span class="line">    <span class="keyword">return</span> sampled, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>ProbabilisticSampler
+的缺点在于，即便曾经出现过请求，但由于请求数量太少，可能造成没有抽样数据的问题，那么我们能否在请求数量较少的时候，保证最少数量的抽样数据？后者正好符合
+RateLimitingSampler 的语义，将二者结合，就成了
+GuaranteedThroughputProbabilisticSampler：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> GuaranteedThroughputProbabilisticSampler <span class="keyword">struct</span> {</span><br><span class="line">    probabilisticSampler *ProbabilisticSampler</span><br><span class="line">    lowerBoundSampler    *RateLimitingSampler</span><br><span class="line">    tags                 []Tag</span><br><span class="line">    samplingRate         <span class="type">float64</span></span><br><span class="line">    lowerBound           <span class="type">float64</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>判定是否抽样的逻辑是先用 ProbabilisticSampler 判断，如果是否，再通过
+RateLimitingSampler 判断：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *GuaranteedThroughputProbabilisticSampler)</span></span> IsSampled(id TraceID, operation <span class="type">string</span>) (<span class="type">bool</span>, []Tag) {</span><br><span class="line">    <span class="keyword">if</span> sampled, tags := s.probabilisticSampler.IsSampled(id, operation); sampled {</span><br><span class="line">        s.lowerBoundSampler.IsSampled(id, operation)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>, tags</span><br><span class="line">    }</span><br><span class="line">    sampled, _ := s.lowerBoundSampler.IsSampled(id, operation)</span><br><span class="line">    <span class="keyword">return</span> sampled, s.tags</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <h5 id="peroperationsampler">PerOperationSampler</h5>
-<p>之前的所有 Sampler 都是针对服务进程级别做的抽样，这种做法的弊端在于：通常服务有很多个 operation (通常与接口一一对应)，每个 operation 的访问量差别很大，少数一两个 operation 承载着大部分流量，因此在服务进程级别上依靠概率或限流抽样，会使得流量少的 operation 缺乏抽样数据，流量多的 operation 抽样数据冗余。因此就需要 operation 级别的抽样策略，这就是 PerOperationSampler 的设计初衷：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PerOperationSampler <span class="keyword">struct</span> {</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    samplers       <span class="keyword">map</span>[<span class="keyword">string</span>]*GuaranteedThroughputProbabilisticSampler</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>其原理并不复杂，就是针对每个 operation 都维护一个 GuaranteedThroughputProbabilisticSampler。</p>
+<p>之前的所有 Sampler
+都是针对服务进程级别做的抽样，这种做法的弊端在于：通常服务有很多个
+operation (通常与接口一一对应)，每个 operation
+的访问量差别很大，少数一两个 operation
+承载着大部分流量，因此在服务进程级别上依靠概率或限流抽样，会使得流量少的
+operation 缺乏抽样数据，流量多的 operation 抽样数据冗余。因此就需要
+operation 级别的抽样策略，这就是 PerOperationSampler 的设计初衷：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PerOperationSampler <span class="keyword">struct</span> {</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    samplers       <span class="keyword">map</span>[<span class="type">string</span>]*GuaranteedThroughputProbabilisticSampler</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>其原理并不复杂，就是针对每个 operation 都维护一个
+GuaranteedThroughputProbabilisticSampler。</p>
 <h5 id="remotelycontrolledsampler">RemotelyControlledSampler</h5>
-<p>顾名思义，RemotelyControlledSampler 其实并不与某种抽样策略对应，它能通过外部配置中心获取配置，生成配置指定类型 Sampler，从而允许服务治理框架通过中心化配置调整各微服务调用链信息的抽样策略。</p>
+<p>顾名思义，RemotelyControlledSampler
+其实并不与某种抽样策略对应，它能通过外部配置中心获取配置，生成配置指定类型
+Sampler，从而允许服务治理框架通过中心化配置调整各微服务调用链信息的抽样策略。</p>
 <h2 id="统计指标">统计指标</h2>
-<p>在 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/metrics.go">metrics.go</a> 中我们可以看到 jaeger-client-go 埋下的所有统计数据点，这里主要介绍与 trace、span、reporter 和 sampler 有关的统计数据点：</p>
+<p>在 <a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/blob/master/metrics.go">metrics.go</a>
+中我们可以看到 jaeger-client-go 埋下的所有统计数据点，这里主要介绍与
+trace、span、reporter 和 sampler 有关的统计数据点：</p>
 <h5 id="trace">Trace</h5>
 <table>
 <colgroup>
@@ -497,7 +576,8 @@ mjx-container + br {
 </tr>
 <tr class="odd">
 <td>TracesStartedDelayedSampling</td>
-<td>以当前 Tracer 为起点且被推迟 (未在创建 span 时决定) 抽样的 trace 数量</td>
+<td>以当前 Tracer 为起点且被推迟 (未在创建 span 时决定) 抽样的 trace
+数量</td>
 </tr>
 <tr class="even">
 <td>TracesJoinedSampled</td>
@@ -511,6 +591,10 @@ mjx-container + br {
 </table>
 <h5 id="span">Span</h5>
 <table>
+<colgroup>
+<col style="width: 41%">
+<col style="width: 58%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>名称</th>
@@ -604,7 +688,7 @@ mjx-container + br {
 <li><a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger-client-go/">jaegertracing/jaeger-client-go</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/opentracing/opentracing-go">opentracing/opentracing-go</a></li>
 </ul>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-70" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path id="MJX-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path><path id="MJX-TEX-I-6D" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-61" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path><path id="MJX-TEX-I-78" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-TEX-I-52" d="M230 637Q203 637 198 638T193 649Q193 676 204 682Q206 683 378 683Q550 682 564 680Q620 672 658 652T712 606T733 563T739 529Q739 484 710 445T643 385T576 351T538 338L545 333Q612 295 612 223Q612 212 607 162T602 80V71Q602 53 603 43T614 25T640 16Q668 16 686 38T712 85Q717 99 720 102T735 105Q755 105 755 93Q755 75 731 36Q693 -21 641 -21H632Q571 -21 531 4T487 82Q487 109 502 166T517 239Q517 290 474 313Q459 320 449 321T378 323H309L277 193Q244 61 244 59Q244 55 245 54T252 50T269 48T302 46H333Q339 38 339 37T336 19Q332 6 326 0H311Q275 2 180 2Q146 2 117 2T71 2T50 1Q33 1 33 10Q33 12 36 24Q41 43 46 45Q50 46 61 46H67Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628Q287 635 230 637ZM630 554Q630 586 609 608T523 636Q521 636 500 636T462 637H440Q393 637 386 627Q385 624 352 494T319 361Q319 360 388 360Q466 361 492 367Q556 377 592 426Q608 449 619 486T630 554Z"></path><path id="MJX-TEX-I-6E" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-64" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-TEX-I-6F" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-TEX-I-4E" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path><path id="MJX-TEX-I-75" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-62" d="M73 647Q73 657 77 670T89 683Q90 683 161 688T234 694Q246 694 246 685T212 542Q204 508 195 472T180 418L176 399Q176 396 182 402Q231 442 283 442Q345 442 383 396T422 280Q422 169 343 79T173 -11Q123 -11 82 27T40 150V159Q40 180 48 217T97 414Q147 611 147 623T109 637Q104 637 101 637H96Q86 637 83 637T76 640T73 647ZM336 325V331Q336 405 275 405Q258 405 240 397T207 376T181 352T163 330L157 322L136 236Q114 150 114 114Q114 66 138 42Q154 26 178 26Q211 26 245 58Q270 81 285 114T318 219Q336 291 336 325Z"></path><path id="MJX-TEX-I-65" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-TEX-I-72" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path></defs></svg>
+
     </div>
 
     
@@ -618,13 +702,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -635,12 +719,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/06/13/Understanding-Prometheus-Alertmanager/" rel="prev" title="Prometheus Alertmanager 的源码导读">
-                  <i class="fa fa-chevron-left"></i> Prometheus Alertmanager 的源码导读
+                  <i class="fa fa-angle-left"></i> Prometheus Alertmanager 的源码导读
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/" rel="next" title="I ❤ Logs - 以日志为中心的系统设计理念">
-                  I ❤ Logs - 以日志为中心的系统设计理念 <i class="fa fa-chevron-right"></i>
+                  I ❤ Logs - 以日志为中心的系统设计理念 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -664,15 +748,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -680,28 +763,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,40 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 单集群 (Single Front-end Cluster)、多集群 (Multiple Front-end Clusters)、多区域 (Multiple Regions) 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 re">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Scaling Memcache at Facebook (2013)">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 单集群 (Single Front-end Cluster)、多集群 (Multiple Front-end Clusters)、多区域 (Multiple Regions) 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 re">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/demand-filled-look-aside-cache.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/fanout.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/get-udp.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/sliding-window-size.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/stale-sets.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/thundering-herds.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/memcache-pools-churn.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/replication.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/replication-invalidations.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcsqueal-invalidations-fanout.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcrouter.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/geographically-distributed-clusters.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/writes-in-non-master.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/remote-markers.jpg">
-<meta property="article:published_time" content="2020-03-08T16:40:55.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.776Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/","path":"2020/03/08/Scaling-Memcache-at-Facebook-2013/","title":"Scaling Memcache at Facebook (2013)"}</script>
@@ -58,9 +30,35 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -73,11 +71,6 @@
 
 mjx-container[jax="SVG"] > svg {
   overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
 }
 
 mjx-container[jax="SVG"][display="true"] {
@@ -177,11 +170,11 @@ foreignObject[data-mjx-xml] {
   stroke-width: 3;
 }
 
-mjx-container {
+mjx-container[display="true"] {
   overflow: auto hidden;
 }
 
-mjx-container + br {
+mjx-container[display="true"] + br {
   display: none;
 }
 </style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
@@ -191,8 +184,8 @@ mjx-container + br {
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -211,7 +204,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -219,32 +212,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -262,11 +238,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Scaling Memcache at Facebook (2013) | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -288,7 +269,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -323,27 +304,38 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述 <strong>单集群 (Single Front-end Cluster)</strong>、<strong>多集群 (Multiple Front-end Clusters)</strong>、<strong>多区域 (Multiple Regions)</strong> 环境下遇到的问题和相应的解决方案。尽管整个解决方案以 memcached 为基本单元，但我们可以任意地将 memcached 替换成 redis、boltDB、levelDB 等其它服务作为缓存单元。</p>
-
+    <div class="post-body" itemprop="articleBody"><p>本文介绍 FB 基于 memcached 构建统一缓存层的最佳实践。全文递进式地讲述
+<strong>单集群 (Single Front-end Cluster)</strong>、<strong>多集群
+(Multiple Front-end Clusters)</strong>、<strong>多区域 (Multiple
+Regions)</strong> 环境下遇到的问题和相应的解决方案。尽管整个解决方案以
+memcached 为基本单元，但我们可以任意地将 memcached 替换成
+redis、boltDB、levelDB 等其它服务作为缓存单元。</p>
+<span id="more"></span>
 <p>在下文中，需要注意两个词语的区别：</p>
 <ul>
 <li>memcached：指 memcached 源码或运行时，即单机版</li>
 <li>memcache：指基于 memcached 构建的分布式缓存系统，即分布式版</li>
 </ul>
 <h1 id="background">Background</h1>
-<p>与大部分互联网公司的读写流量特点类似，FB 的整体业务呈现出明显读多写少的特点，其读请求量比写请求量高出若 <strong>2</strong> 个数量级 (数据来自于 <a target="_blank" rel="noopener" href="https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf">slides</a>)，因此增加缓存层可以显著提高业务稳定性，保护 DB。</p>
+<p>与大部分互联网公司的读写流量特点类似，FB
+的整体业务呈现出明显读多写少的特点，其读请求量比写请求量高出若
+<strong>2</strong> 个数量级 (数据来自于 <a target="_blank" rel="noopener" href="https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf">slides</a>)，因此增加缓存层可以显著提高业务稳定性，保护
+DB。</p>
 <h2 id="pre-memcache">Pre-memcache</h2>
-<p>在使用缓存层之前，FB 的 Web Server 直接访问数据库，通过 <strong>数据分片</strong> 和 <strong>一主多从</strong> 的方式来扛住读写流量：</p>
+<p>在使用缓存层之前，FB 的 Web Server 直接访问数据库，通过
+<strong>数据分片</strong> 和 <strong>一主多从</strong>
+的方式来扛住读写流量：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/pre-memcache.jpg" width="500px"></p>
 <p>但随着用户数数量飙升，单纯靠数据库来抗压成本高，效率低。</p>
 <h2 id="design-requirements">Design Requirements</h2>
-<p>系统设计的第一步，就是要明白系统的要求。FB 缓存层的设计要求可以概括为：</p>
+<p>系统设计的第一步，就是要明白系统的要求。FB
+缓存层的设计要求可以概括为：</p>
 <ol type="1">
 <li>数据读 QPS 为 10亿</li>
 <li>支持多区域</li>
 <li>支持平滑升级</li>
-<li>缓存层与持久化层数据保持 <strong>最大努力最终一致性 (best-effort eventual consistency)</strong></li>
+<li>缓存层与持久化层数据保持 <strong>最大努力最终一致性 (best-effort
+eventual consistency)</strong></li>
 </ol>
 <h2 id="cache-policy">Cache Policy</h2>
 <p>memcache 的 cache policy 可以用 2 个词概括：</p>
@@ -352,41 +344,87 @@ mjx-container + br {
 <li>write-invalidate (write)</li>
 </ul>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/demand-filled-look-aside-cache.jpg" width="500px"></p>
-<p>如上图所示：demand-filled look-aside 指<strong>读数据时</strong>，web server 先尝试从 memcache 中读数据，若读取失败则从持久化存储中获取数据填充到 memcache 中；<strong>写数据时</strong>，先更新数据库，然后将 memcache 中相应的数据删除。采用 write-invalide 的主要原因有两个：</p>
+<p>如上图所示：demand-filled look-aside 指<strong>读数据时</strong>，web
+server 先尝试从 memcache
+中读数据，若读取失败则从持久化存储中获取数据填充到 memcache
+中；<strong>写数据时</strong>，先更新数据库，然后将 memcache
+中相应的数据删除。采用 write-invalide 的主要原因有两个：</p>
 <ol type="1">
 <li>删除操作幂等，当任何异常发生时可以重试</li>
 <li>write-invalidate 与 demand-filled 在语义上是天作之合</li>
 </ol>
-<p>这里需要注意的是，不论使用哪种 cache policy，没有分布式事务的支持都无法保证缓存层数据与持久化层数据的一致性。但实践中往往不需要二者的强一致保证，因此类似 look-aside demand-filled 和 write-invalidate 这种组合策略在实践中比较流行。更多有关 Cache Policies 的讨论欢迎阅读我的 <a href="/blog/2020/02/19/Cache-Policies/">这篇博客</a>。</p>
-<h1 id="in-a-cluster-latency-and-load">In a Cluster: Latency and Load</h1>
-<p>本节探讨在一个集群内部部署上千个 memcached 服务遇到的挑战和相应的解决方案。在这个规模上，系统优化的主要精力集中在如何减少获取缓存数据的时延 (latency)，抵抗 cache miss 时造成的负载压力 (load)。</p>
+<p>这里需要注意的是，不论使用哪种 cache
+policy，没有分布式事务的支持都无法保证缓存层数据与持久化层数据的一致性。但实践中往往不需要二者的强一致保证，因此类似
+look-aside demand-filled 和 write-invalidate
+这种组合策略在实践中比较流行。更多有关 Cache Policies 的讨论欢迎阅读我的
+<a href="/blog/2020/02/19/Cache-Policies/">这篇博客</a>。</p>
+<h1 id="in-a-cluster-latency-and-load">In a Cluster: Latency and
+Load</h1>
+<p>本节探讨在一个集群内部部署上千个 memcached
+服务遇到的挑战和相应的解决方案。在这个规模上，系统优化的主要精力集中在如何减少获取缓存数据的时延
+(latency)，抵抗 cache miss 时造成的负载压力 (load)。</p>
 <h2 id="scale-out">Scale-out</h2>
-<p>随着用户数量增加，服务本身可以通过横向扩容支撑更高的并发请求，相应地缓存层也需要扩容。FB 采用的是一种常见的扩容方案：<strong>部署多个 memcached 服务，形成单个缓存集群，并通过 consistent hashing 将缓存数据散列在不同的 memcached 实例上</strong>。</p>
+<p>随着用户数量增加，服务本身可以通过横向扩容支撑更高的并发请求，相应地缓存层也需要扩容。FB
+采用的是一种常见的扩容方案：<strong>部署多个 memcached
+服务，形成单个缓存集群，并通过 consistent hashing 将缓存数据散列在不同的
+memcached 实例上</strong>。</p>
 <h2 id="high-fanout">High Fanout</h2>
-<p>在 FB 的服务中，载入一个热门的网页平均需要从 memcache 中获取 521 条不同的数据，如果出现 cache miss 则需要从持久化存储中获取数据，这些数据读取请求的时延都将影响到服务的质量。通常不同数据的读取之间存在一定的先后依赖关系，可以表示成一个有向无环图 (DAG)，如下图所示：</p>
+<p>在 FB 的服务中，载入一个热门的网页平均需要从 memcache 中获取 521
+条不同的数据，如果出现 cache miss
+则需要从持久化存储中获取数据，这些数据读取请求的时延都将影响到服务的质量。通常不同数据的读取之间存在一定的先后依赖关系，可以表示成一个有向无环图
+(DAG)，如下图所示：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/fanout.jpg" width="500px"></p>
 <p>我们称这种放射状的数据读取模式为 fanout。</p>
 <h2 id="reducing-latency">Reducing Latency</h2>
-<p>面对 high fanout，memcache 集群首先要面对的问题就是 <strong>all-to-all communication</strong>。由于缓存数据被散列到不同的 memcached 实例上，每个 web server 都可能需要与所有 memcached 服务通信：</p>
+<p>面对 high fanout，memcache 集群首先要面对的问题就是
+<strong>all-to-all communication</strong>。由于缓存数据被散列到不同的
+memcached 实例上，每个 web server 都可能需要与所有 memcached
+服务通信：</p>
 <ol type="1">
-<li>由于 fanout 的存在，处理每个请求需要各个 web server 从多个 memcached 实例上获取数据，如果这些数据在短时间内忽然到来，可能造成网络拥堵，即 incast congestion</li>
-<li>由于每个 memcached 实例都持有一部分数据，这使得每个实例在高负载下都有可能成为服务瓶颈</li>
+<li>由于 fanout 的存在，处理每个请求需要各个 web server 从多个 memcached
+实例上获取数据，如果这些数据在短时间内忽然到来，可能造成网络拥堵，即
+incast congestion</li>
+<li>由于每个 memcached
+实例都持有一部分数据，这使得每个实例在高负载下都有可能成为服务瓶颈</li>
 </ol>
-<h5 id="parallel-requests-and-batching">Parallel Requests and Batching</h5>
-<p>面对这些问题，应用层上至少可以做一件事：parallel requests and batching。由于每个请求可能需要在同一个 memcached server 上取多条数据，那么我们可以在 web server 的逻辑中减少 RTT 次数，将可以一起取的数据通过一次 RTT 一并取出，减少时延。</p>
+<h5 id="parallel-requests-and-batching">Parallel Requests and
+Batching</h5>
+<p>面对这些问题，应用层上至少可以做一件事：parallel requests and
+batching。由于每个请求可能需要在同一个 memcached server
+上取多条数据，那么我们可以在 web server 的逻辑中减少 RTT
+次数，将可以一起取的数据通过一次 RTT 一并取出，减少时延。</p>
 <h5 id="client-server-communication">Client-server Communication</h5>
-<p>在缓存层上，FB 的主要思路就是将控制逻辑集中到 memcache client 上。memcache client 分成两部分：sdk 与 proxy，后者被称为 mcrouter。mcrouter 向外暴露与 memcached 相同的接口，在 web server 与 memcached server 之间增加一层抽象。</p>
-<p>由于读多写少，且读数据对错误的容忍度高，因此 memcache client 使用 UDP 与 memcached server 通信，因为 UDP 没有连接的概念，通常处理读请求时都是由 sdk 与 memcached server 之间直接通信。sdk 使用 UDP 通信时，一旦发现丢包或者顺序错误，就会报错，而不尝试解决错误。在论文发表当时，FB 的服务高峰期中，只有约 0.25% 的读请求被抛弃。</p>
-<p>处理写请求时，memcache sdk 使用 TCP 与部署在该宿主机上 mcrouter 通信。如此一来，每个 web server 就只需要与单个 mcrouter 建立连接，由后者来保持与不同 memcached server 之间的连接，从而大大减少维持 TCP 连接、处理网络 I/O 所需的 CPU 与内存资源，这种做法通常被称为 connection coalescing。</p>
-<p>从统计数据上看，通过使用 UDP 来处理读请求能够将读请求的整体时延降低 20% 左右。</p>
+<p>在缓存层上，FB 的主要思路就是将控制逻辑集中到 memcache client
+上。memcache client 分成两部分：sdk 与 proxy，后者被称为
+mcrouter。mcrouter 向外暴露与 memcached 相同的接口，在 web server 与
+memcached server 之间增加一层抽象。</p>
+<p>由于读多写少，且读数据对错误的容忍度高，因此 memcache client 使用 UDP
+与 memcached server 通信，因为 UDP
+没有连接的概念，通常处理读请求时都是由 sdk 与 memcached server
+之间直接通信。sdk 使用 UDP
+通信时，一旦发现丢包或者顺序错误，就会报错，而不尝试解决错误。在论文发表当时，FB
+的服务高峰期中，只有约 0.25% 的读请求被抛弃。</p>
+<p>处理写请求时，memcache sdk 使用 TCP 与部署在该宿主机上 mcrouter
+通信。如此一来，每个 web server 就只需要与单个 mcrouter
+建立连接，由后者来保持与不同 memcached server
+之间的连接，从而大大减少维持 TCP 连接、处理网络 I/O 所需的 CPU
+与内存资源，这种做法通常被称为 connection coalescing。</p>
+<p>从统计数据上看，通过使用 UDP 来处理读请求能够将读请求的整体时延降低
+20% 左右。</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/get-udp.jpg" width="450px"></p>
 <h5 id="incast-congestion">Incast Congestion</h5>
-<p>为解决 incast congestion 问题，memcache clients 也实现了拥塞控制逻辑。类似于 TCP 的 congestion control，client 的滑动窗口会根据网络拥堵状况自动扩容和缩容。与 TCP 不同的是，来自于同一个 web server 的请求都会被放入同一个滑动窗口中。</p>
+<p>为解决 incast congestion 问题，memcache clients
+也实现了拥塞控制逻辑。类似于 TCP 的 congestion control，client
+的滑动窗口会根据网络拥堵状况自动扩容和缩容。与 TCP
+不同的是，来自于同一个 web server 的请求都会被放入同一个滑动窗口中。</p>
 <p>下图展示的是 window size 对请求时延的影响：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/sliding-window-size.jpg" width="500px"></p>
-<p>window size 太小时，许多请求都在排队；window size 太大时，可能出现网络拥堵。因此动态地找到其中的 sweet spot 就是拥塞控制的主要目标。</p>
+<p>window size 太小时，许多请求都在排队；window size
+太大时，可能出现网络拥堵。因此动态地找到其中的 sweet spot
+就是拥塞控制的主要目标。</p>
 <h2 id="reducing-load">Reducing Load</h2>
-<p>使用 memcache 可以减少请求直接访问 DB 的次数，但出现 cache miss 时，DB 依然会承受负载压力，一条热点数据可能造成瞬间高压。</p>
+<p>使用 memcache 可以减少请求直接访问 DB 的次数，但出现 cache miss
+时，DB 依然会承受负载压力，一条热点数据可能造成瞬间高压。</p>
 <h3 id="leases">Leases</h3>
 <p>FB 在 memcache 中通过引入 leases 来解决两个问题：</p>
 <ol type="1">
@@ -396,7 +434,8 @@ mjx-container + br {
 <h5 id="stale-set">Stale Set</h5>
 <p>look-aside cache policy 下可能发生数据不一致：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/stale-sets.jpg" width="400px"></p>
-<p>假设两个 web server， x 和 y，需要读取同一条数据 d，其执行顺序如下：</p>
+<p>假设两个 web server， x 和 y，需要读取同一条数据
+d，其执行顺序如下：</p>
 <ol type="1">
 <li>x 从 memcache 中读取数据 d，发生 cache miss，从数据库读出 d = A</li>
 <li>另一个 memcache client 将 DB 中的 d 更新为 B</li>
@@ -404,90 +443,155 @@ mjx-container + br {
 <li>y 将 d = B 写入 memcache 中</li>
 <li>x 将 d = A 写入 memcache 中</li>
 </ol>
-<p>此时，在 d 过期或者被删除之前，数据库与缓存内的数据将保持不一致的状态。引入 leases 可以解决这个问题：</p>
+<p>此时，在 d
+过期或者被删除之前，数据库与缓存内的数据将保持不一致的状态。引入 leases
+可以解决这个问题：</p>
 <ul>
-<li>每次出现 cache miss 时返回一个 lease id，每个 lease id 都只针对单条数据</li>
+<li>每次出现 cache miss 时返回一个 lease id，每个 lease id
+都只针对单条数据</li>
 <li>当数据被删除 (write-invalidate) 时，之前发出的 lease id 失效</li>
-<li>写入数据时，sdk 会将上次收到的 lease id 带上，memcached server 如果发现 lease id 失效，则拒绝执行</li>
+<li>写入数据时，sdk 会将上次收到的 lease id 带上，memcached server
+如果发现 lease id 失效，则拒绝执行</li>
 </ul>
 <h5 id="thundering-herds">Thundering Herds</h5>
 <p>look-aside cache policy 的另一个问题是可能引发瞬间高压：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/thundering-herds.jpg" width="400px"></p>
-<p>当数据出现访问热点时，可能导致成千上万个请求同时发生 cache miss，从而重击 DB。通过扩展 lease 机制可以解决这个问题。每个 memcached server 都会控制每个 key 的 lease 发放速率。默认配置下，每个 key 在 10 秒内只会发放一个 lease，余下访问同一个 key 的请求都会被告知<strong>要么等待一小段时间后重试或者拿过期数据</strong>走人。通常在数毫秒内，获得 lease 的 web server 就会将数据填上，这时其它 client 重试时就会成功，整个过程只有一个请求会穿透到 DB。</p>
+<p>当数据出现访问热点时，可能导致成千上万个请求同时发生 cache
+miss，从而重击 DB。通过扩展 lease 机制可以解决这个问题。每个 memcached
+server 都会控制每个 key 的 lease 发放速率。默认配置下，每个 key 在 10
+秒内只会发放一个 lease，余下访问同一个 key
+的请求都会被告知<strong>要么等待一小段时间后重试或者拿过期数据</strong>走人。通常在数毫秒内，获得
+lease 的 web server 就会将数据填上，这时其它 client
+重试时就会成功，整个过程只有一个请求会穿透到 DB。</p>
 <h5 id="stale-values">Stale Values</h5>
-<p>在一些能够容忍过期数据的场景下，我们还有可能进一步减少负载。当数据被删除时，memcached server 可以将它短暂地保存到另一个数据结构中，后者存储着最新删除的数据。此时 web server 可以自行决定是等待新的数据还是读取过期数据。</p>
+<p>在一些能够容忍过期数据的场景下，我们还有可能进一步减少负载。当数据被删除时，memcached
+server
+可以将它短暂地保存到另一个数据结构中，后者存储着最新删除的数据。此时 web
+server 可以自行决定是等待新的数据还是读取过期数据。</p>
 <h3 id="memcache-pools">Memcache Pools</h3>
-<p>将 memcache 作为通用缓存层意味着所有的、不同的 workloads 将共享这一基础设施。不同的 workload 之间可能互补，也可能互斥。从更新频率的维度出发，FB 团队统计了不同更新频率数据的 working set 大小：</p>
+<p>将 memcache 作为通用缓存层意味着所有的、不同的 workloads
+将共享这一基础设施。不同的 workload
+之间可能互补，也可能互斥。从更新频率的维度出发，FB
+团队统计了不同更新频率数据的 working set 大小：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/memcache-pools-churn.jpg" width="400px"></p>
 <p>可以看出，缓存层存储的所有数据中，更新频率高的占大头。这时候就有可能出现更新频率高的数据将更新频率低的数据从缓存中挤出的现象。</p>
-<p>为了解决这种问题，FB 将一个集群内部的 memcached 实例分成不同的 pools：</p>
+<p>为了解决这种问题，FB 将一个集群内部的 memcached 实例分成不同的
+pools：</p>
 <ul>
 <li>default(wildcard) pool：默认 pool 用来存储大部分数据</li>
 <li>small pool：存储访问频率高但 cache miss 的成本不高的数据</li>
 <li>large pool：存储访问频率低但 cache miss 的成本特别高的数据</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>可以理解成是 Bulkheads 设计模式的应用。</p>
 <h3 id="replication-within-pools">Replication Within Pools</h3>
-<p>在一些 pools 内部，当一个 memcached 实例无法承载读压力时，可以通过副本 (replication) 来提高读效率，降低时延，即<strong>将整个 memcached 实例中的数据复制到另一个实例中</strong>。之所以选择复制整个实例的数据而不是在更细粒度上复制数据，主要目的在于不想增加 web server 获取数据所需的 RTT 次数：如果只复制一部分数据，原本只需要一次批量读取请求就能获取的数据，就可能需要通过请求多个实例来获取，这反而可能增加时延，降低效率。当然，这种方案也需要数据发生更新时，需要让它在多个副本中失效才行，所以本质上是一个<strong>写效率换读效率</strong>的过程。</p>
+<p>在一些 pools 内部，当一个 memcached
+实例无法承载读压力时，可以通过副本 (replication)
+来提高读效率，降低时延，即<strong>将整个 memcached
+实例中的数据复制到另一个实例中</strong>。之所以选择复制整个实例的数据而不是在更细粒度上复制数据，主要目的在于不想增加
+web server 获取数据所需的 RTT
+次数：如果只复制一部分数据，原本只需要一次批量读取请求就能获取的数据，就可能需要通过请求多个实例来获取，这反而可能增加时延，降低效率。当然，这种方案也需要数据发生更新时，需要让它在多个副本中失效才行，所以本质上是一个<strong>写效率换读效率</strong>的过程。</p>
 <h2 id="handling-failures">Handling Failures</h2>
-<p>在云原生环境中，memcached server 同样可能遭遇网络失联或者自身宕机。如果整个数据中心出现大面积问题，FB 会将用户请求直接转移到另一个数据中心；如果只是少数几个 server 因为网络原因失联，则依赖于一种自动恢复机制，通常恢复需要几分钟时间，但几分钟就有可能将 DB 和后台服务击垮。为此， FB 团队专门用少量的机器配置一个小的 memcache 集群，称为 Gutter。当集群内部少量的 server 发生故障时，memcached client 会将请求先转发到 Gutter 中。可以理解为 Gutter 是备胎，平时不工作。</p>
-<p>Gutter 与普通的 rehash 不同，后者将失联机器的负载转嫁到了剩余的 server 上，可能造成雪崩效应/链式反应。</p>
+<p>在云原生环境中，memcached server
+同样可能遭遇网络失联或者自身宕机。如果整个数据中心出现大面积问题，FB
+会将用户请求直接转移到另一个数据中心；如果只是少数几个 server
+因为网络原因失联，则依赖于一种自动恢复机制，通常恢复需要几分钟时间，但几分钟就有可能将
+DB 和后台服务击垮。为此， FB 团队专门用少量的机器配置一个小的 memcache
+集群，称为 Gutter。当集群内部少量的 server 发生故障时，memcached client
+会将请求先转发到 Gutter 中。可以理解为 Gutter 是备胎，平时不工作。</p>
+<p>Gutter 与普通的 rehash 不同，后者将失联机器的负载转嫁到了剩余的
+server 上，可能造成雪崩效应/链式反应。</p>
 <h1 id="in-a-region-replication">In a Region: Replication</h1>
-<p>随着用户的访问量继续增大，你可能会想要购买更多的机器来部署 web server 和 memcached server，实现横向扩容。然而简单地横向扩容不能解决所有问题。越来越多的用户会将原本不严重的问题暴露出来：</p>
+<p>随着用户的访问量继续增大，你可能会想要购买更多的机器来部署 web server
+和 memcached
+server，实现横向扩容。然而简单地横向扩容不能解决所有问题。越来越多的用户会将原本不严重的问题暴露出来：</p>
 <ol type="1">
 <li>用户增多会导致热点数量增多、单个热点热度增大</li>
-<li>由于 memcached client 需要与所有 memcached server 通信，incast congestion 问题会更严重</li>
+<li>由于 memcached client 需要与所有 memcached server 通信，incast
+congestion 问题会更严重</li>
 </ol>
-<p>因此有必要将 memcached servers 分成多个集群，将热点问题和网络问题分而治之。多个集群将继续共享同一个 DB 集群：</p>
+<p>因此有必要将 memcached servers
+分成多个集群，将热点问题和网络问题分而治之。多个集群将继续共享同一个 DB
+集群：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/replication.jpg" width="400px"></p>
 <h2 id="regional-invalidations">Regional Invalidations</h2>
-<p>部署多个 memcached server 集群，<strong>同一条数据的不同版本可能会出现在不同集群上</strong>。一种简单的解决方案是让 web server 每次发生 cache miss 时，将所有集群中的对应数据删除。显然这会造成大量的跨集群通信，又重新引发了网络问题。</p>
-<p>既然数据在 DB 中只有一份，何不利用 DB 数据的更新日志来保证数据在不同集群间的最终一致性？</p>
+<p>部署多个 memcached server
+集群，<strong>同一条数据的不同版本可能会出现在不同集群上</strong>。一种简单的解决方案是让
+web server 每次发生 cache miss
+时，将所有集群中的对应数据删除。显然这会造成大量的跨集群通信，又重新引发了网络问题。</p>
+<p>既然数据在 DB 中只有一份，何不利用 DB
+数据的更新日志来保证数据在不同集群间的最终一致性？</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/replication-invalidations.jpg" width="400px"></p>
-<p>FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcsqueal 中间件，并将其部署到每个 MySQL 集群上。mcsqueal 负责读取 MySQL 的 commit log，解析其中的 SQL 语句，捕获数据更新信息，并将其广播给所有 memcached 集群。</p>
+<p>FB 在持久化层中使用 MySQL 集群，于是它们顺着思路开发了 mcsqueal
+中间件，并将其部署到每个 MySQL 集群上。mcsqueal 负责读取 MySQL 的 commit
+log，解析其中的 SQL 语句，捕获数据更新信息，并将其广播给所有 memcached
+集群。</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcsqueal-invalidations-fanout.jpg" width="500px"></p>
-<p>从架构图中，不难看出 fanout 问题再次出现，大量的跨集群通信数据同样可能将网络打垮。解决方案也不难想到，即<strong>分而治之</strong>：</p>
+<p>从架构图中，不难看出 fanout
+问题再次出现，大量的跨集群通信数据同样可能将网络打垮。解决方案也不难想到，即<strong>分而治之</strong>：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/mcrouter.jpg" width="500px"></p>
-<p>一个区域内部部署多个 memcache 集群能够给我们带来诸多好处，除了缓解热点问题、网络拥堵问题，还能让运维人员方便地下线单个节点、集群，而不至于使得 cash miss rate 忽然增大。</p>
+<p>一个区域内部部署多个 memcache
+集群能够给我们带来诸多好处，除了缓解热点问题、网络拥堵问题，还能让运维人员方便地下线单个节点、集群，而不至于使得
+cash miss rate 忽然增大。</p>
 <h2 id="regional-pools">Regional Pools</h2>
-<p>是否所有数据都需要在一个区域中储存多份？如果一些数据访问频率很低，存一份就足够了。基于该思路，FB 会在单个区域内单独划分一个 pool 用来存储一些访问率低的数据。</p>
+<p>是否所有数据都需要在一个区域中储存多份？如果一些数据访问频率很低，存一份就足够了。基于该思路，FB
+会在单个区域内单独划分一个 pool 用来存储一些访问率低的数据。</p>
 <h2 id="cold-cluster-warmup">Cold Cluster Warmup</h2>
-<p>上线新的 memcache 集群时，如果不预热可能会出现大量 cache miss。因此 FB 团队构建了一个 Cold Cluster Warmup 系统，可以让新的集群在发生 cache miss 时先从已经加载好数据的集群中获取数据，而不是从持久化存储中，如此一来，集群上线就能够变得更加平滑。</p>
+<p>上线新的 memcache 集群时，如果不预热可能会出现大量 cache miss。因此
+FB 团队构建了一个 Cold Cluster Warmup 系统，可以让新的集群在发生 cache
+miss
+时先从已经加载好数据的集群中获取数据，而不是从持久化存储中，如此一来，集群上线就能够变得更加平滑。</p>
 <h1 id="across-regions-consistency">Across Regions: Consistency</h1>
-<p>随着 FB 的服务推广到世界各地，将 web servers 推进到离用户最近的地方能够给用户带来更好的体验；将 FB 的数据中心同步到不同区域 (region)，也能帮助提高 FB 服务的容灾能力；在新的区域可能在各方面产生规模经济效应。因此 memcache 服务也需要能够被部署到多个区域。</p>
-<p>利用 MySQL 的复制机制，FB 将一个区域设置为 master 区域，而其它区域为只读区域，负责从 master 中同步数据。web servers 处理读请求时只需要访问本地的 DB 或缓存服务即可：</p>
+<p>随着 FB 的服务推广到世界各地，将 web servers
+推进到离用户最近的地方能够给用户带来更好的体验；将 FB
+的数据中心同步到不同区域 (region)，也能帮助提高 FB
+服务的容灾能力；在新的区域可能在各方面产生规模经济效应。因此 memcache
+服务也需要能够被部署到多个区域。</p>
+<p>利用 MySQL 的复制机制，FB 将一个区域设置为 master
+区域，而其它区域为只读区域，负责从 master 中同步数据。web servers
+处理读请求时只需要访问本地的 DB 或缓存服务即可：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/geographically-distributed-clusters.jpg" width="500px"></p>
 <p>但这里将产生一个新的问题：<strong>只读区域的数据库有同步延迟，可能导致竞争条件出现</strong>。想象以下这个场景：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/writes-in-non-master.jpg" width="500px"></p>
 <ol type="1">
 <li>复制集群中的 web server A 写入数据到 master DB</li>
 <li>A 将本地 memcache 中的数据删除</li>
-<li>复制集群中的 web server B 从 memcache 中读取数据发生 cache miss，从本地 DB 中获取数据</li>
-<li>A 写入的数据从 master DB 中同步到 replica DB，并通过 mcsqueal 将本地 memcache 中的数据删除</li>
+<li>复制集群中的 web server B 从 memcache 中读取数据发生 cache
+miss，从本地 DB 中获取数据</li>
+<li>A 写入的数据从 master DB 中同步到 replica DB，并通过 mcsqueal 将本地
+memcache 中的数据删除</li>
 <li>web server B 将其读到的数据写入 memcache 中</li>
 </ol>
-<p>此时，DB 与 memcache 中的数据将再次出现不一致，且必须等待数据过期之后才能恢复。如何解决这个问题？FB 在 memcache 上引入 remote marker 机制：</p>
+<p>此时，DB 与 memcache
+中的数据将再次出现不一致，且必须等待数据过期之后才能恢复。如何解决这个问题？FB
+在 memcache 上引入 remote marker 机制：</p>
 <p><img src="/blog/2020/03/08/Scaling-Memcache-at-Facebook-2013/remote-markers.jpg" width="500px"></p>
 <p>当 replica 区域的 web server 需要写入某数据 d 时：</p>
 <ol type="1">
-<li>在本地 memcache 上打上 remote marker，标记为 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span></li>
+<li>在本地 memcache 上打上 remote marker，标记为 <span class="math inline"><em>r</em><sub><em>d</em></sub></span></li>
 <li>将 d 写入到 master DB 中</li>
-<li>将 d 从 memcache 中删除 (<span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span> 不删除)</li>
-<li>等待 master DB 将数据同步到本地 replica DB 中，并且在 SQL 语句中埋入 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span> 的信息</li>
-<li>本地 replica DB 通过 mcsqueal 解析 SQL 语句中，删除 remote marker <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span></li>
+<li>将 d 从 memcache 中删除 (<span class="math inline"><em>r</em><sub><em>d</em></sub></span> 不删除)</li>
+<li>等待 master DB 将数据同步到本地 replica DB 中，并且在 SQL 语句中埋入
+<span class="math inline"><em>r</em><sub><em>d</em></sub></span>
+的信息</li>
+<li>本地 replica DB 通过 mcsqueal 解析 SQL 语句中，删除 remote marker
+<span class="math inline"><em>r</em><sub><em>d</em></sub></span></li>
 </ol>
 <p>当 replica 区域的 web server 想要读取数据 d 发生 cache miss 时：</p>
 <ul>
-<li>如果 memcache 中数据 d 带了 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span>，则从 master DB 中读取数据</li>
-<li>如果 memcache 中数据 d 没有 <span class="math inline"><mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="1.965ex" height="1.355ex" role="img" focusable="false" viewBox="0 -442 868.7 599.1" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-72"></use></g><g data-mml-node="TeXAtom" transform="translate(451, -150) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-64"></use></g></g></g></g></g></svg></mjx-container></span>，则直接从本地的 replica DB 中读取数据</li>
+<li>如果 memcache 中数据 d 带了 <span class="math inline"><em>r</em><sub><em>d</em></sub></span>，则从 master
+DB 中读取数据</li>
+<li>如果 memcache 中数据 d 没有 <span class="math inline"><em>r</em><sub><em>d</em></sub></span>，则直接从本地的
+replica DB 中读取数据</li>
 </ul>
-<p>remote marker 机制实际上就是标记了 <strong>数据写入 master DB 但尚未同步到 replica DB</strong> 的中间状态。</p>
+<p>remote marker 机制实际上就是标记了 <strong>数据写入 master DB
+但尚未同步到 replica DB</strong> 的中间状态。</p>
 <h1 id="references">References</h1>
 <ul>
-<li>Usenix 2013: Scaling Memcache at Facebook, <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6phA3IAcEJ8">video</a>, <a target="_blank" rel="noopener" href="https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf">slides</a>, <a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf">paper</a></li>
+<li>Usenix 2013: Scaling Memcache at Facebook, <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=6phA3IAcEJ8">video</a>, <a target="_blank" rel="noopener" href="https://www.usenix.org/sites/default/files/conference/protected-files/nishtala_nsdi13_slides.pdf">slides</a>,
+<a target="_blank" rel="noopener" href="https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf">paper</a></li>
 </ul>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-72" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-TEX-I-64" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path></defs></svg>
+
     </div>
 
     
@@ -501,13 +605,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -518,12 +622,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/" rel="prev" title="Prometheus TSDB 的存储层演进 —— PromConf 演讲笔记">
-                  <i class="fa fa-chevron-left"></i> Prometheus TSDB 的存储层演进 —— PromConf 演讲笔记
+                  <i class="fa fa-angle-left"></i> Prometheus TSDB 的存储层演进 —— PromConf 演讲笔记
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" rel="next" title="Kafka: a Distributed Messaging System for Log Processing (2011)">
-                  Kafka: a Distributed Messaging System for Log Processing (2011) <i class="fa fa-chevron-right"></i>
+                  Kafka: a Distributed Messaging System for Log Processing (2011) <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -547,15 +651,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -563,28 +666,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

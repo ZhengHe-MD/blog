@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,29 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="简介 本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。  背景 报警平台是伴鱼内部各端、应用、基础设施等服务异常状态信息的集散中心。整体流程如下图所示：  信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式路由给理应关心它的人。总体而言，路由的需求可以">
-<meta property="og:type" content="article">
-<meta property="og:title" content="报警平台的匹配器演进">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="简介 本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。  背景 报警平台是伴鱼内部各端、应用、基础设施等服务异常状态信息的集散中心。整体流程如下图所示：  信息源将信息投递给报警平台，后者将这些信息最终通过邮件、即时消息、电话呼叫的形式路由给理应关心它的人。总体而言，路由的需求可以">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/route-tree.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/compile-process.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/lex-yacc-process.jpg">
-<meta property="article:published_time" content="2020-05-10T00:00:00.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.784Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/","path":"2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/","title":"报警平台的匹配器演进"}</script>
@@ -47,9 +30,35 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -62,11 +71,6 @@
 
 mjx-container[jax="SVG"] > svg {
   overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
 }
 
 mjx-container[jax="SVG"][display="true"] {
@@ -166,11 +170,11 @@ foreignObject[data-mjx-xml] {
   stroke-width: 3;
 }
 
-mjx-container {
+mjx-container[display="true"] {
   overflow: auto hidden;
 }
 
-mjx-container + br {
+mjx-container[display="true"] + br {
   display: none;
 }
 </style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
@@ -180,8 +184,8 @@ mjx-container + br {
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -200,7 +204,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -208,32 +212,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -251,11 +238,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="报警平台的匹配器演进 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -277,7 +269,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -312,10 +304,11 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h2 id="简介">简介</h2>
-<p>本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc 同类工具构建 DSL 编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。</p>
-
+    <div class="post-body" itemprop="articleBody"><h2 id="简介">简介</h2>
+<p>本文介绍伴鱼内部服务报警平台中匹配器模块的演进，及其利用 Lex 和 Yacc
+同类工具构建 DSL
+编译器的过程。是我和团队成员在伴鱼的质量工程小组的一小部分工作。</p>
+<span id="more"></span>
 <h3 id="背景">背景</h3>
 <p>报警平台是伴鱼内部各端、应用、基础设施等<strong>服务异常状态信息的集散中心</strong>。整体流程如下图所示：</p>
 <p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/alertmanager-process.jpg" height="150px"></p>
@@ -328,139 +321,234 @@ mjx-container + br {
 <p>为了满足这样的需求，报警平台采用树状结构组织路由信息，如下图所示：</p>
 <p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/route-tree.jpg" height="350px"></p>
 <p>每个节点是一个路由节点，节点上可以挂载不同的规则，如抑制规则、通知规则；也可以存放不同的配置信息，如触发报警的阈值，以及相关负责人及其团队的联系方式。</p>
-<p>根路由是所有异常信息的必经之路，经过这里的信息会路由给所有值班人员；一级子路由节点是所有的服务，经过这里的信息会路由给该服务的负责人及其团队；如果有其它团队想要订阅某服务的异常消息，如 <em>Service A</em> 团队想要了解 <em>Service B</em> 的崩溃 (panic) 信息，则可以在 <em>Service B</em> 节点下创建子路由 <em>Service B Panic</em>，并在上面配置 <em>Service A</em> 团队的联系方式，从而达到订阅目的。</p>
-<p>那么如何判断一条报警信息将经过哪些路由节点，一条规则是否起作用？这就需要引入本文的主角：<strong>匹配器 (matcher)</strong>，每个路由、每条规则上都会挂载一个匹配器，当它成功匹配到报警信息时，路由和规则就会生效。一条典型的报警信息会有许多信息，我们不妨将它看作是任意数量的键值对，如：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">  <span class="attr">"title"</span>: <span class="string">"Web 服务 ServiceB 崩溃报警"</span>,</span><br><span class="line">  <span class="attr">"source"</span>: <span class="string">"192.168.0.1"</span>,</span><br><span class="line">  <span class="attr">"error_type"</span>: <span class="string">"panic"</span>,</span><br><span class="line">  <span class="attr">"project_name"</span>: <span class="string">"ServiceB"</span>,</span><br><span class="line">  <span class="attr">"project_source"</span>: <span class="string">"web"</span>,</span><br><span class="line">  <span class="attr">"details"</span>: <span class="string">"(call stack)"</span>,</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>我们可以试着写出路由节点 <em>ServiceB</em> 及 <em>Service B Panic</em> 的匹配器：</p>
+<p>根路由是所有异常信息的必经之路，经过这里的信息会路由给所有值班人员；一级子路由节点是所有的服务，经过这里的信息会路由给该服务的负责人及其团队；如果有其它团队想要订阅某服务的异常消息，如
+<em>Service A</em> 团队想要了解 <em>Service B</em> 的崩溃 (panic)
+信息，则可以在 <em>Service B</em> 节点下创建子路由 <em>Service B
+Panic</em>，并在上面配置 <em>Service A</em>
+团队的联系方式，从而达到订阅目的。</p>
+<p>那么如何判断一条报警信息将经过哪些路由节点，一条规则是否起作用？这就需要引入本文的主角：<strong>匹配器
+(matcher)</strong>，每个路由、每条规则上都会挂载一个匹配器，当它成功匹配到报警信息时，路由和规则就会生效。一条典型的报警信息会有许多信息，我们不妨将它看作是任意数量的键值对，如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"title"</span><span class="punctuation">:</span> <span class="string">"Web 服务 ServiceB 崩溃报警"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"source"</span><span class="punctuation">:</span> <span class="string">"192.168.0.1"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"error_type"</span><span class="punctuation">:</span> <span class="string">"panic"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"project_name"</span><span class="punctuation">:</span> <span class="string">"ServiceB"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"project_source"</span><span class="punctuation">:</span> <span class="string">"web"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">"details"</span><span class="punctuation">:</span> <span class="string">"(call stack)"</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></table></figure>
+<p>我们可以试着写出路由节点 <em>ServiceB</em> 及 <em>Service B
+Panic</em> 的匹配器：</p>
 <ul>
-<li><em>ServiceB</em>：project_source 为 web 且 project_name 为 ServiceB</li>
-<li><em>Service B Panic</em>：project_source 为 web，且 project_name 为 Service B，且 error_type 为 panic</li>
+<li><em>ServiceB</em>：project_source 为 web 且 project_name 为
+ServiceB</li>
+<li><em>Service B Panic</em>：project_source 为 web，且 project_name 为
+Service B，且 error_type 为 panic</li>
 </ul>
-<p>报警平台的用户需要亲自配置部分路由和规则，能否定制一套简单、易上手的 DSL？如：</p>
+<p>报警平台的用户需要亲自配置部分路由和规则，能否定制一套简单、易上手的
+DSL？如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB"</span><br></pre></td></tr></table></figure>
 <p>这样即使用户不是工程师，看过几个例子后也能熟练地书写匹配表达式。</p>
 <h3 id="匹配表达式定义">匹配表达式定义</h3>
 <p>匹配器表达式由原始表达式和复合表达式构成。原始表达式是最小的匹配器，有<strong>完全匹配</strong>和<strong>正则匹配</strong>两种：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 完全匹配</span><br><span class="line">project_source = "web"</span><br><span class="line"># 正则匹配</span><br><span class="line">details =~ "duplicate key when insert"</span><br></pre></td></tr></table></figure>
-<p>原始表达式的左手边是报警信息的标签，不带双引号；原始表达式的右手边是匹配文本，带双引号。不同的原始表达式可通过二元关系运算，AND (且) 和 OR (或) ，组合成复合表达式如：</p>
+<p>原始表达式的左手边是报警信息的标签，不带双引号；原始表达式的右手边是匹配文本，带双引号。不同的原始表达式可通过二元关系运算，AND
+(且) 和 OR (或) ，组合成复合表达式如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND project_name = "ServiceB" OR "error_type" = "panic"</span><br></pre></td></tr></table></figure>
-<p>类似于乘除之于加减，AND 的优先级大于 OR，如果要改变优先级，可通过增加括号来实现，如：</p>
+<p>类似于乘除之于加减，AND 的优先级大于
+OR，如果要改变优先级，可通过增加括号来实现，如：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">project_source = "web" AND (project_name = "ServiceB" OR "error_type" = "panic")</span><br></pre></td></tr></table></figure>
 <h2 id="编译过程">编译过程</h2>
 <p>一个完整的编译过程大致分三阶段：</p>
 <p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/compile-process.jpg" height="350px"></p>
 <ol type="1">
-<li>前端：验证源码的语法和语义，并解析成中间表述 (Immediate Representation, IR)</li>
+<li>前端：验证源码的语法和语义，并解析成中间表述 (Immediate
+Representation, IR)</li>
 <li>中端：针对 IR 作一些与目标 CPU 架构无关的优化</li>
 <li>后端：针对目标 CPU 架构优化并生成可执行的机器指令</li>
 </ol>
 <p>我们也可以将匹配器表达式理解成一门语言，但我们只需要将它转化成合理的内存数据结构即可，因此这里只涉及到完整编译过程的前端：</p>
 <ol type="1">
 <li>词法分析 (Lexical Analysis)：将完整的语句拆成词语和标点符号</li>
-<li>语法分析 (Syntax Analysis)：根据语法规范，将词语和标点符合组合成抽象语法树 (AST)</li>
-<li>语义分析 (Semantic Analysis)：向语法树中添加语义信息，完成校验变量类型等各种语义检查</li>
+<li>语法分析 (Syntax
+Analysis)：根据语法规范，将词语和标点符合组合成抽象语法树 (AST)</li>
+<li>语义分析 (Semantic
+Analysis)：向语法树中添加语义信息，完成校验变量类型等各种语义检查</li>
 <li>生成中间表述 (IR Generation)：转化成合理的内存数据结构</li>
 </ol>
 <p>以下就是匹配表达式的 IR：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PrimitiveMatcher <span class="keyword">struct</span> {</span><br><span class="line">	Label    <span class="keyword">string</span></span><br><span class="line">	Text     <span class="keyword">string</span></span><br><span class="line">	IsRegexp <span class="keyword">bool</span></span><br><span class="line">	re       *regexp.Regexp</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Matcher <span class="keyword">struct</span> {</span><br><span class="line">	PrimitiveMatcher *PrimitiveMatcher</span><br><span class="line">	IsCompound       <span class="keyword">bool</span></span><br><span class="line">	Operator    		 MatcherOperator</span><br><span class="line">	Operands    		 []*Matcher</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>其中 Matcher 既可以是原始匹配器 (表达式) 也可以是复合匹配器 (表达式)。</p>
-<p>下面分别介绍报警平台匹配器编译器的两个版本实现，Matcher Compiler V1 (MCV1) 和 Matcher Compiler V2 (MCV2)。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PrimitiveMatcher <span class="keyword">struct</span> {</span><br><span class="line">	Label    <span class="type">string</span></span><br><span class="line">	Text     <span class="type">string</span></span><br><span class="line">	IsRegexp <span class="type">bool</span></span><br><span class="line">	re       *regexp.Regexp</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Matcher <span class="keyword">struct</span> {</span><br><span class="line">	PrimitiveMatcher *PrimitiveMatcher</span><br><span class="line">	IsCompound       <span class="type">bool</span></span><br><span class="line">	Operator    		 MatcherOperator</span><br><span class="line">	Operands    		 []*Matcher</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>其中 Matcher 既可以是原始匹配器 (表达式) 也可以是复合匹配器
+(表达式)。</p>
+<p>下面分别介绍报警平台匹配器编译器的两个版本实现，Matcher Compiler V1
+(MCV1) 和 Matcher Compiler V2 (MCV2)。</p>
 <h2 id="matcher-compiler-v1">Matcher Compiler V1</h2>
-<p>在实现 MCV1 时我们并未从编译的角度看待这个模块，而只是单纯地想实现从表达式到 <em>IR</em> 的转化。凭借工程师的本能，MCV1 将编译的前端处理过程分成 3 步：</p>
+<p>在实现 MCV1
+时我们并未从编译的角度看待这个模块，而只是单纯地想实现从表达式到
+<em>IR</em> 的转化。凭借工程师的本能，MCV1 将编译的前端处理过程分成 3
+步：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">err = m.parseToken()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> {</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">err = m.toElements()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> {</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> m.buildMatcher()</span><br></pre></td></tr></table></figure>
 <h3 id="parsetoken">parseToken</h3>
-<p><code>parseToken</code> 将原始表达式转化成一个词语数组，是词法分析的雏形，其整体过程如下：</p>
+<p><code>parseToken</code>
+将原始表达式转化成一个词语数组，是词法分析的雏形，其整体过程如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, c := m.expr {</span><br><span class="line">  hasLeftDoubleQuote := <span class="literal">false</span></span><br><span class="line">  <span class="keyword">switch</span> c {</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'('</span>:</span><br><span class="line">    	<span class="comment">//...</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">')'</span>:</span><br><span class="line">    	<span class="comment">//...</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">'='</span>:</span><br><span class="line">    	<span class="comment">//...</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">'~'</span></span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  	<span class="keyword">default</span>:</span><br><span class="line">    	<span class="comment">//...</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <p><code>parseToken</code> 需要许多状态，如：</p>
 <ul>
 <li>是否在括号内</li>
 <li>是否在引号内</li>
-<li>遇到 <code>~</code> 要考虑是否会和上一个字符共同组成 <code>=~</code></li>
-<li>...</li>
+<li>遇到 <code>~</code> 要考虑是否会和上一个字符共同组成
+<code>=~</code></li>
+<li>…</li>
 </ul>
-<p>由于状态较多，要同时考虑各种状态及其之间的转化过程，使得 <code>parseToken</code> 足够健壮，过程烧脑且容易出错。</p>
+<p>由于状态较多，要同时考虑各种状态及其之间的转化过程，使得
+<code>parseToken</code> 足够健壮，过程烧脑且容易出错。</p>
 <h3 id="toelements">toElements</h3>
-<p><code>toElements</code> 遍历词语数组，构建其中的原始表达式，可以看作理解成是语法分析和语义分析的一部分，其整体过程如下：</p>
+<p><code>toElements</code>
+遍历词语数组，构建其中的原始表达式，可以看作理解成是语法分析和语义分析的一部分，其整体过程如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i, word := <span class="keyword">range</span> m.words {</span><br><span class="line">  <span class="keyword">switch</span> strings.ToLower(word) {</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"="</span>:</span><br><span class="line">    	leftWord, rightWord, _ := m.tryFetchBothSideWord(i)</span><br><span class="line">      m.addElement(m.buildPrimitiveMatcher(leftWord, rightWord, <span class="literal">false</span>))</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"=~"</span>:</span><br><span class="line">    	leftWord, rightWord, _ := m.tryFetchBothSideWord(i)</span><br><span class="line">    	m.addElement(m.buildPrimitiveMatcher(leftWord, rightWord, <span class="literal">true</span>))</span><br><span class="line">    <span class="comment">// deal with more cases</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>这部分逻辑比较简单，遇到 <code>=</code> 或者 <code>=~</code> 时看一下前后的词语，看是否能构成原始表达式。</p>
+<p>这部分逻辑比较简单，遇到 <code>=</code> 或者 <code>=~</code>
+时看一下前后的词语，看是否能构成原始表达式。</p>
 <h3 id="buildmatcher">buildMatcher</h3>
-<p><code>buildMatcher</code> 遍历 elements 数组，构建最终的树状复合表达式，其实就是中缀表达式的计算过程，是栈的典型<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">应用场景</a>，利用操作符栈和操作数栈即可实现，其整体过程如下：</p>
+<p><code>buildMatcher</code> 遍历 elements
+数组，构建最终的树状复合表达式，其实就是中缀表达式的计算过程，是栈的典型<a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">应用场景</a>，利用操作符栈和操作数栈即可实现，其整体过程如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">  valueStack Stack</span><br><span class="line">	opStack Stack</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, element := <span class="keyword">range</span> m.elements {</span><br><span class="line">  <span class="keyword">switch</span> e := element; {</span><br><span class="line">    <span class="keyword">case</span> e == <span class="string">"("</span>:</span><br><span class="line">      opStack.Push(<span class="string">"("</span>)</span><br><span class="line">    <span class="keyword">case</span> e == <span class="string">")"</span>:</span><br><span class="line">      <span class="keyword">for</span> op := opStack.Pop(); op != <span class="string">"("</span> {</span><br><span class="line">        rhs, lhs := valueStack.Pop(), valueStack.Pop()</span><br><span class="line">        <span class="comment">// apply</span></span><br><span class="line">      }</span><br><span class="line">    <span class="comment">// operators</span></span><br><span class="line">    <span class="keyword">case</span> isOp(e):</span><br><span class="line">      currOp = e</span><br><span class="line">      <span class="keyword">for</span> prevOp := opStack.Peek(); precedence[currOp] &lt;= precedence[prevOp] {</span><br><span class="line">        opStack.Pop()</span><br><span class="line">        rhs, lhs := valueStack.Pop(), valueStack.Pop()</span><br><span class="line">        <span class="comment">// apply prevOp</span></span><br><span class="line">      }</span><br><span class="line">      opStack.Push(currOp)</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      valueStack.Push(e)</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// deal with the rest valueStack and opStack</span></span><br></pre></td></tr></table></figure>
 <h3 id="mcv1-小结">MCV1 小结</h3>
-<p>MCV1 是凭借工程师本能构建的一个模块，优势就在于可以迅速地搭建原型，验证想法。从代码健壮性角度看， <code>parseToken</code> 的状态管理比较脆弱；从可读性角度看，无法从逻辑中直接看出其所支持的语法，为后期维护造成障碍；从可扩展性角度看，<code>buildMatcher</code> 目前只支持中缀表达式，如果有语法变化将整体逻辑产生较大影响；从效率角度看，编译一次表达式需要 3 次遍历，如果将 <code>toElements</code> 与 <code>buildMatcher</code> 逻辑合并可以优化到 2 次。</p>
+<p>MCV1
+是凭借工程师本能构建的一个模块，优势就在于可以迅速地搭建原型，验证想法。从代码健壮性角度看，
+<code>parseToken</code>
+的状态管理比较脆弱；从可读性角度看，无法从逻辑中直接看出其所支持的语法，为后期维护造成障碍；从可扩展性角度看，<code>buildMatcher</code>
+目前只支持中缀表达式，如果有语法变化将整体逻辑产生较大影响；从效率角度看，编译一次表达式需要
+3 次遍历，如果将 <code>toElements</code> 与 <code>buildMatcher</code>
+逻辑合并可以优化到 2 次。</p>
 <h2 id="matcher-compiler-v2">Matcher Compiler V2</h2>
-<p>为了解决上述问题，我们想到了 Lex 和 Yacc。Lex 是 lexical analyzer generator，能够帮助我们生成词法分析器 (lexical analyzer)；Yacc 是 parser generator，能够帮助我们生成解析器 (parser)，完成语法分析。Lex 和 Yacc 是 Unix 系统的原生工具，Linux 与MacOS 平台也都自带这两个工具。既然已经有前人为我们栽树，我们为什么不趁机乘凉？</p>
+<p>为了解决上述问题，我们想到了 Lex 和 Yacc。Lex 是 lexical analyzer
+generator，能够帮助我们生成词法分析器 (lexical analyzer)；Yacc 是 parser
+generator，能够帮助我们生成解析器 (parser)，完成语法分析。Lex 和 Yacc 是
+Unix 系统的原生工具，Linux 与MacOS
+平台也都自带这两个工具。既然已经有前人为我们栽树，我们为什么不趁机乘凉？</p>
 <h3 id="lex-yacc">Lex &amp; Yacc</h3>
 <p>Lex 和 Yacc 的协作过程如下图所示：</p>
 <p><img src="/blog/2020/05/10/The-Evolution-of-Alertmanager-Matcher-in-Palfish/lex-yacc-process.jpg" height="400px"></p>
-<p>开发者将构词规则和一些定制化逻辑 (C Code) 定义到 <code>lex.l</code> 文件中，利用 <code>lex</code> 命令生成词法分析器；将语法规则和一些定制化逻辑定义到 <code>parser.y</code> 文件中，利用 <code>yacc</code> 命令生成解析器。词法分析器的 <code>yylex</code> 方法将输入文本转化成 token，投喂给 <code>yyparse</code>，后者根据语法和定制化逻辑将 token 流转化成最终的目标数据结构，即 IR。</p>
+<p>开发者将构词规则和一些定制化逻辑 (C Code) 定义到 <code>lex.l</code>
+文件中，利用 <code>lex</code>
+命令生成词法分析器；将语法规则和一些定制化逻辑定义到
+<code>parser.y</code> 文件中，利用 <code>yacc</code>
+命令生成解析器。词法分析器的 <code>yylex</code> 方法将输入文本转化成
+token，投喂给 <code>yyparse</code>，后者根据语法和定制化逻辑将 token
+流转化成最终的目标数据结构，即 IR。</p>
 <h4 id="examplecalculator">Example：Calculator</h4>
 <p>以一个支持加减运算的计算机为例，先定义语法规则：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// parser.y</span></span><br><span class="line">%token NUMBER</span><br><span class="line">%%</span><br><span class="line"></span><br><span class="line"><span class="comment">// 括号中的 $$ 表示语法左手边 (LHS) 的值</span></span><br><span class="line"><span class="comment">// 括号中的 $1、$2、$3 表示语法右手边 (RHS) 的值</span></span><br><span class="line">statement: expression   { <span class="built_in">printf</span>(<span class="string">"= %d\n"</span>, $<span class="number">1</span>); }</span><br><span class="line">    ;</span><br><span class="line"></span><br><span class="line">expression: NUMBER <span class="string">'+'</span> NUMBER   { $$ = $<span class="number">1</span> + $<span class="number">3</span>; }</span><br><span class="line">    |       NUMBER <span class="string">'-'</span> NUMBER   { $$ = $<span class="number">1</span> - $<span class="number">3</span>; }</span><br><span class="line">    |       NUMBER              { $$ = $<span class="number">1</span>; }</span><br><span class="line">    ;</span><br></pre></td></tr></table></figure>
-<p>第一行的 <code>token</code> 定义语法中的数据类型，由于单个字符本身没有歧义，在 Lex 和 Yacc 无需特别定义单字符 token，如 <code>+</code> 和 <code>-</code>，因此在这里我们只需要数字 <code>NUMBER</code>。在第一个 <code>%%</code> 之后，定义了计算器的语法，含义非常直白，可读性强。</p>
+<p>第一行的 <code>token</code>
+定义语法中的数据类型，由于单个字符本身没有歧义，在 Lex 和 Yacc
+无需特别定义单字符 token，如 <code>+</code> 和
+<code>-</code>，因此在这里我们只需要数字 <code>NUMBER</code>。在第一个
+<code>%%</code> 之后，定义了计算器的语法，含义非常直白，可读性强。</p>
 <p>然后再定义构词规则：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lex.l</span></span><br><span class="line">%{</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"y.tab.h"</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> yylval;</span><br><span class="line">%}</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">[<span class="number">0</span><span class="number">-9</span>]+  { yylval = atoi(yytext); <span class="keyword">return</span> NUMBER; }</span><br><span class="line">[ \t] ;</span><br><span class="line">\n <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">. <span class="keyword">return</span> yytext[<span class="number">0</span>];</span><br><span class="line">%%</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lex.l</span></span><br><span class="line">%{</span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">"y.tab.h"</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">int</span> yylval;</span><br><span class="line">%}</span><br><span class="line"></span><br><span class="line">%%</span><br><span class="line">[<span class="number">0</span><span class="number">-9</span>]+  { yylval = atoi(yytext); <span class="keyword">return</span> NUMBER; }</span><br><span class="line">[ \t] ;</span><br><span class="line">\n <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">. <span class="keyword">return</span> yytext[<span class="number">0</span>];</span><br><span class="line">%%</span><br></pre></td></tr></table></figure>
 <p>在两个 <code>%%</code> 中间的就是构词规则：</p>
 <ul>
-<li>符合正则表达式 <code>[0-9]+</code> 就是数字类型的词语，其对应的值为 <code>atoi(yytext)</code></li>
+<li>符合正则表达式 <code>[0-9]+</code> 就是数字类型的词语，其对应的值为
+<code>atoi(yytext)</code></li>
 <li>符合正则表达式 <code>[ \t]</code> 的不处理，即忽略空格和制表符</li>
-<li>符合正则表达式 <code>\n</code> 的返回 0，即用换行符标识文本结束位置</li>
-<li>符合正则表达式 <code>.</code> 的返回文本本身，即所有非数字的字符直接返回，这里实际上指的就是 <code>+</code> 和 <code>-</code>。</li>
+<li>符合正则表达式 <code>\n</code> 的返回
+0，即用换行符标识文本结束位置</li>
+<li>符合正则表达式 <code>.</code>
+的返回文本本身，即所有非数字的字符直接返回，这里实际上指的就是
+<code>+</code> 和 <code>-</code>。</li>
 </ul>
-<p>接下来只需要用 <code>lex</code> 和 <code>yacc</code> 命令生成词法分析器和解析器，然后运行即可：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> MacOS</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> lex lex.l</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yacc -d parser.y</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> gcc y.tab.c lex.yy.c -ly -ll -o calculator</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./calculator</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> 128 + 128</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> = 256</span></span><br></pre></td></tr></table></figure>
+<p>接下来只需要用 <code>lex</code> 和 <code>yacc</code>
+命令生成词法分析器和解析器，然后运行即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">MacOS</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">lex lex.l</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">yacc -d parser.y</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">gcc y.tab.c lex.yy.c -ly -ll -o calculator</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">./calculator</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">128 + 128</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">= 256</span></span><br></pre></td></tr></table></figure>
 <h3 id="对比分析">对比分析</h3>
-<p>从代码健壮性角度上看，<code>lex</code> 生成的词法分析器已经经受时间的检验，开发者大可相信其代码的健壮性；从可读性角度看，构词规则和语法规则定义简短，通俗易懂；从可扩展性角度看，任何可以通过上下文无关文法 (context-free grammar) 表达的语法都能支持；从效率角度看，<code>yylex</code> 与 <code>yyparse</code> 可以流式地处理文本，<code>yyparse</code> 从 <code>yylex</code> 获取词语，即时地根据语法规则组合成 IR，这种做法使得编译前端的工作只需要 1 次遍历便可完成。但 <code>lex</code> 和 <code>yacc</code> 为了支持更复杂的场景，其生成的代码也会更复杂，这也是效率与通用性权衡的表现。</p>
+<p>从代码健壮性角度上看，<code>lex</code>
+生成的词法分析器已经经受时间的检验，开发者大可相信其代码的健壮性；从可读性角度看，构词规则和语法规则定义简短，通俗易懂；从可扩展性角度看，任何可以通过上下文无关文法
+(context-free grammar)
+表达的语法都能支持；从效率角度看，<code>yylex</code> 与
+<code>yyparse</code> 可以流式地处理文本，<code>yyparse</code> 从
+<code>yylex</code> 获取词语，即时地根据语法规则组合成
+IR，这种做法使得编译前端的工作只需要 1 次遍历便可完成。但
+<code>lex</code> 和 <code>yacc</code>
+为了支持更复杂的场景，其生成的代码也会更复杂，这也是效率与通用性权衡的表现。</p>
 <h3 id="nex-goyacc">Nex &amp; Goyacc</h3>
-<p>报警平台使用 Go 语言编码，直接使用 <code>lex</code> 和 <code>yacc</code> 需要引入 <code>cgo</code>，这也使得二者的使用门槛变高。好在 Go 官方提供了 <code>goyacc</code>，方便我们在 <code>parser.y</code> 中引入用 Go 语言编写的定制化逻辑；斯坦福的一位博士 Ben Lynn 开源了它的 <code>nex</code> 项目，作为用 Go 语言原生开发的词法分析器生成器，能与 <code>goyacc</code> 兼容，形成类似 <code>lex</code> 和 <code>yacc</code> 一般的搭档。接下来我们将利用 <code>nex</code> 和 <code>goyacc</code> 来实现匹配器编译器。</p>
+<p>报警平台使用 Go 语言编码，直接使用 <code>lex</code> 和
+<code>yacc</code> 需要引入
+<code>cgo</code>，这也使得二者的使用门槛变高。好在 Go 官方提供了
+<code>goyacc</code>，方便我们在 <code>parser.y</code> 中引入用 Go
+语言编写的定制化逻辑；斯坦福的一位博士 Ben Lynn 开源了它的
+<code>nex</code> 项目，作为用 Go 语言原生开发的词法分析器生成器，能与
+<code>goyacc</code> 兼容，形成类似 <code>lex</code> 和 <code>yacc</code>
+一般的搭档。接下来我们将利用 <code>nex</code> 和 <code>goyacc</code>
+来实现匹配器编译器。</p>
 <p>与计算器的例子类似，我们先看语法规则中定义的数据类型：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">%union{</span><br><span class="line">  str <span class="keyword">string</span></span><br><span class="line">  expr *MatchExpr</span><br><span class="line">  pexpr *PrimitiveExpr</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">%token LABEL VALUE</span><br><span class="line">%token REG_EQ AND OR</span><br><span class="line"></span><br><span class="line">%<span class="keyword">type</span> &lt;expr&gt; expr</span><br><span class="line">%<span class="keyword">type</span> &lt;pexpr&gt; pexpr</span><br><span class="line">%<span class="keyword">type</span> &lt;str&gt; LABEL VALUE</span><br><span class="line">%<span class="keyword">type</span> &lt;str&gt; REG_EQ AND OR</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">%union{</span><br><span class="line">  str <span class="type">string</span></span><br><span class="line">  expr *MatchExpr</span><br><span class="line">  pexpr *PrimitiveExpr</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">%token LABEL VALUE</span><br><span class="line">%token REG_EQ AND OR</span><br><span class="line"></span><br><span class="line">%<span class="keyword">type</span> &lt;expr&gt; expr</span><br><span class="line">%<span class="keyword">type</span> &lt;pexpr&gt; pexpr</span><br><span class="line">%<span class="keyword">type</span> &lt;str&gt; LABEL VALUE</span><br><span class="line">%<span class="keyword">type</span> &lt;str&gt; REG_EQ AND OR</span><br></pre></td></tr></table></figure>
 <p>其中，语法中的数据类型包括：</p>
 <ul>
 <li><code>LABEL</code>：原子表达式的 LHS</li>
 <li><code>VALUE</code>：原子表达式的 RHS</li>
-<li><code>REG_EQ</code>、<code>AND</code>、<code>OR</code> 分别为正则匹配，且和或</li>
+<li><code>REG_EQ</code>、<code>AND</code>、<code>OR</code>
+分别为正则匹配，且和或</li>
 </ul>
-<p>此外我们还定义了原始表达式 <code>pexpr</code> 和复合表达式 <code>expr</code> 供定义语法规则时引用。由于语法中有多种关系运算符，它们的优先级不同，因此我们还需要定义运算符的优先级：</p>
+<p>此外我们还定义了原始表达式 <code>pexpr</code> 和复合表达式
+<code>expr</code>
+供定义语法规则时引用。由于语法中有多种关系运算符，它们的优先级不同，因此我们还需要定义运算符的优先级：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%left OR</span><br><span class="line">%left AND</span><br><span class="line">%left <span class="string">'('</span> <span class="string">')'</span></span><br></pre></td></tr></table></figure>
-<p><code>left</code> 表示先从运算符的 LHS 开始计算，三者的优先级关系是 <code>OR &lt; AND &lt; '(' == ')'</code>，非常直观。最后进入我们的语法规则：</p>
+<p><code>left</code> 表示先从运算符的 LHS 开始计算，三者的优先级关系是
+<code>OR &lt; AND &lt; '(' == ')'</code>，非常直观。最后进入我们的语法规则：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 匹配器表达式可以是空字符串，也可以是一个合法的表达式</span></span><br><span class="line">matcher:</span><br><span class="line">  { setResult(yylex, &amp;Matcher{}) }</span><br><span class="line">| expr</span><br><span class="line">  { setResult(yylex, $<span class="number">1</span>) }</span><br><span class="line"></span><br><span class="line"><span class="comment">// 表达式可能以下之一：</span></span><br><span class="line"><span class="comment">//   复合表达式：expr AND expr</span></span><br><span class="line"><span class="comment">//   复合表达式：expr OR expr</span></span><br><span class="line"><span class="comment">//   原始表达式：pexpr</span></span><br><span class="line"><span class="comment">//   括号表达式：(expr)</span></span><br><span class="line">expr: expr AND expr</span><br><span class="line">  { $$ = &amp;Matcher{IsCompound: <span class="literal">true</span>, Operator:$<span class="number">2</span>, Operands:[]*Matcher{$<span class="number">1</span>,$<span class="number">3</span>}} }</span><br><span class="line">| expr OR expr</span><br><span class="line">  { $$ = &amp;Matcher{IsCompound: <span class="literal">true</span>, Operator:$<span class="number">2</span>, Operands:[]*Matcher{$<span class="number">1</span>,$<span class="number">3</span>}} }</span><br><span class="line">| pexpr</span><br><span class="line">  { $$ = &amp;Matcher{IsCompound: <span class="literal">false</span>, PrimitiveMatcher:$<span class="number">1</span>} }</span><br><span class="line">| <span class="string">'('</span> expr <span class="string">')'</span></span><br><span class="line">  { $$ = $<span class="number">2</span> }</span><br><span class="line"><span class="comment">// 原始表达式要么是 LABEL = VALUE, 要么是 LABEL =~ VALUE</span></span><br><span class="line">pexpr: LABEL <span class="string">'='</span> VALUE</span><br><span class="line">  { $$ = &amp;PrimitiveMatcher{Label:$<span class="number">1</span>, Text:$<span class="number">3</span>, IsRegex: <span class="literal">false</span>} }</span><br><span class="line">| LABEL REG_EQ VALUE</span><br><span class="line">  { $$ = &amp;PrimitiveMatcher{Label:$<span class="number">1</span>, Text:$<span class="number">3</span>, IsRegex: <span class="literal">true</span>} }</span><br></pre></td></tr></table></figure>
-<p>每条语法规则的含义已经标明在注释中，在每条语法规则之后，是 Go 语言编码的简单逻辑，告诉解析器在不同情况下如何拼装 IR。搞定语法后，我们就可以定义构词规则：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/[aA][nN][dD]/                      { lval.str = <span class="string">"AND"</span>; <span class="keyword">return</span> AND }</span><br><span class="line">/[oO][rR]/                          { lval.str = <span class="string">"OR"</span>; <span class="keyword">return</span> OR }</span><br><span class="line">/=~/                                { <span class="keyword">return</span> REG_EQ }</span><br><span class="line">/=/                                 { <span class="keyword">return</span> <span class="keyword">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/\(/                                { <span class="keyword">return</span> <span class="keyword">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/\)/                                { <span class="keyword">return</span> <span class="keyword">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/[A-Za-z][A-Za-z0<span class="number">-9</span>_]*/             { lval.str = yylex.Text(); <span class="keyword">return</span> LABEL }</span><br><span class="line">/<span class="string">".*"</span>/                     { lval.str = yylex.Text()[<span class="number">1</span>:<span class="built_in">len</span>(yylex.Text())<span class="number">-1</span>]; <span class="keyword">return</span> VALUE }</span><br><span class="line">/[ \t\r\n]+/                        { <span class="comment">/* white spaces ignored */</span> }</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">package</span> c</span><br></pre></td></tr></table></figure>
+<p>每条语法规则的含义已经标明在注释中，在每条语法规则之后，是 Go
+语言编码的简单逻辑，告诉解析器在不同情况下如何拼装
+IR。搞定语法后，我们就可以定义构词规则：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/[aA][nN][dD]/                      { lval.str = <span class="string">"AND"</span>; <span class="keyword">return</span> AND }</span><br><span class="line">/[oO][rR]/                          { lval.str = <span class="string">"OR"</span>; <span class="keyword">return</span> OR }</span><br><span class="line">/=~/                                { <span class="keyword">return</span> REG_EQ }</span><br><span class="line">/=/                                 { <span class="keyword">return</span> <span class="type">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/\(/                                { <span class="keyword">return</span> <span class="type">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/\)/                                { <span class="keyword">return</span> <span class="type">int</span>(yylex.Text()[<span class="number">0</span>]) }</span><br><span class="line">/[A-Za-z][A-Za-z0<span class="number">-9</span>_]*/             { lval.str = yylex.Text(); <span class="keyword">return</span> LABEL }</span><br><span class="line">/<span class="string">".*"</span>/                     { lval.str = yylex.Text()[<span class="number">1</span>:<span class="built_in">len</span>(yylex.Text())<span class="number">-1</span>]; <span class="keyword">return</span> VALUE }</span><br><span class="line">/[ \t\r\n]+/                        { <span class="comment">/* white spaces ignored */</span> }</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">package</span> c</span><br></pre></td></tr></table></figure>
 <ul>
-<li>大小写无关的字符串 "AND" 返回类型 <code>AND</code>；"OR" 返回类型 <code>OR</code></li>
-<li>"=~"、"="、"("、")" 直接返回相应的数据类型</li>
-<li>正则表达式 <code>/[A-Za-z][A-Za-z0-9_]*/</code> 匹配的是原始表达式中的 <code>LABEL</code></li>
-<li>正则表达式 <code>/".*"/</code> 匹配的是原始表达式中的 <code>VALUE</code></li>
-<li>正则表达式 <code>/[ \t\r\n]+/</code> 匹配的是空格字符，即忽略所有类型的空格</li>
+<li>大小写无关的字符串 “AND” 返回类型 <code>AND</code>；“OR” 返回类型
+<code>OR</code></li>
+<li>“=~”、“=”、“(”、“)” 直接返回相应的数据类型</li>
+<li>正则表达式 <code>/[A-Za-z][A-Za-z0-9_]*/</code>
+匹配的是原始表达式中的 <code>LABEL</code></li>
+<li>正则表达式 <code>/".*"/</code> 匹配的是原始表达式中的
+<code>VALUE</code></li>
+<li>正则表达式 <code>/[ \t\r\n]+/</code>
+匹配的是空格字符，即忽略所有类型的空格</li>
 </ul>
-<p>最后使用 <code>nex</code> 和 <code>goyacc</code> 就可以生成词法分析器和解析器：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> nex nex.l</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> goyacc -o parser.go parser.y</span></span><br></pre></td></tr></table></figure>
+<p>最后使用 <code>nex</code> 和 <code>goyacc</code>
+就可以生成词法分析器和解析器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">nex nex.l</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">goyacc -o parser.go parser.y</span></span><br></pre></td></tr></table></figure>
 <p>然后再把二者串起来即可：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 忽略细节处理</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Compile</span><span class="params">(ctx context.Context, in io.Reader)</span> <span class="params">(m *Matcher, err error)</span></span> {</span><br><span class="line">	lr := NewLexer(in)</span><br><span class="line">	yyParse(lr)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> lr.parseResult == <span class="literal">nil</span> {</span><br><span class="line">		err = SyntaxError</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	m = lr.parseResult.(*Matcher)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 忽略细节处理</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Compile</span><span class="params">(ctx context.Context, in io.Reader)</span></span> (m *Matcher, err <span class="type">error</span>) {</span><br><span class="line">	lr := NewLexer(in)</span><br><span class="line">	yyParse(lr)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> lr.parseResult == <span class="literal">nil</span> {</span><br><span class="line">		err = SyntaxError</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	m = lr.parseResult.(*Matcher)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
 <h3 id="rob-pike-style-lexer">Rob Pike Style Lexer</h3>
-<p>完成上面的工作，本可以告一段落，但有一个问题还困扰着我们：”为什么 Go 只推出了 <code>yacc</code> 的移植版本，而不顺便推出 <code>lex</code> 的移植版本？“ 几经周折找到了 Rob Pike 2011 年的一次演讲： "Lexical Scanning in Go"。在演讲中他认为 ” <code>lex</code> 生成的代码太多，过于复杂，用 Go 语言实现一个并非难事，且 Go 的 channel 能方便地实现 <code>lex</code> 和 <code>yacc</code> 的流水线协作。“ 尽管这种观点也是在为 Go 站台，我们还是决定试一试他提出的 lexical scanning 方案。</p>
-<p>词法分析的过程，就是从输入字符流起点扫描至终点的线性过程，在扫描期间，词法分析器需要正确地判断自己所处的状态，以起点为例，刚开始扫描，可能进入 <code>LABEL</code> 状态，也可能进入 <code>(</code> 状态：</p>
+<p>完成上面的工作，本可以告一段落，但有一个问题还困扰着我们：”为什么 Go
+只推出了 <code>yacc</code> 的移植版本，而不顺便推出 <code>lex</code>
+的移植版本？“ 几经周折找到了 Rob Pike 2011 年的一次演讲： “Lexical
+Scanning in Go”。在演讲中他认为 ” <code>lex</code>
+生成的代码太多，过于复杂，用 Go 语言实现一个并非难事，且 Go 的 channel
+能方便地实现 <code>lex</code> 和 <code>yacc</code> 的流水线协作。“
+尽管这种观点也是在为 Go 站台，我们还是决定试一试他提出的 lexical
+scanning 方案。</p>
+<p>词法分析的过程，就是从输入字符流起点扫描至终点的线性过程，在扫描期间，词法分析器需要正确地判断自己所处的状态，以起点为例，刚开始扫描，可能进入
+<code>LABEL</code> 状态，也可能进入 <code>(</code> 状态：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">↑</span><br><span class="line">在LABEL中</span><br><span class="line"></span><br><span class="line">(labela = "a") OR labelb = "b"</span><br><span class="line">↑</span><br><span class="line">在'('中</span><br></pre></td></tr></table></figure>
-<p>扫描完 <code>VALUE</code> 后，可能进入<code>结束</code>状态，也可能进入 <code>)</code> 状态或 <code>关系运算符</code> 状态：</p>
+<p>扫描完 <code>VALUE</code>
+后，可能进入<code>结束</code>状态，也可能进入 <code>)</code> 状态或
+<code>关系运算符</code> 状态：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">labela = "a" AND (labelb = "b" OR labelc = "c")</span><br><span class="line">             ↑</span><br><span class="line">            进入[关系运算符]状态</span><br><span class="line">(labela = "a")</span><br><span class="line">             ↑</span><br><span class="line">            进入 ')' 状态</span><br><span class="line">labela = "a"</span><br><span class="line">            ↑</span><br><span class="line">           进入[结束]状态</span><br></pre></td></tr></table></figure>
 <p>不难看出，这实际上就是一个状态机，详细的状态转移过程如下图所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># start: [开始]; leftParen: '('; label: [标签]; eq: [匹配符]; value: [文本];</span><br><span class="line"># rightParen: ')'; binaryOp: [关系运算符]; end: [结束]</span><br><span class="line">                                                +------------+</span><br><span class="line">                                                | rightParen | -------------+</span><br><span class="line">                                                +------------+              |</span><br><span class="line">                                                  ^  |                      |</span><br><span class="line">                                                  |  |                      |</span><br><span class="line">  +----------------------+                        |  ----------------+      |</span><br><span class="line">  |                      v                        |                  v      |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |  |   start   | --&gt; | label | --&gt; | eq | --&gt; |   value    | --&gt; | end |  |</span><br><span class="line">  |  +-----------+     +-------+     +----+     +------------+     +-----+  |</span><br><span class="line">  |    |                 ^                        |                         |</span><br><span class="line">  |    |                 |                        |                         |</span><br><span class="line">  |    v                 |                        v                         |</span><br><span class="line">  |  +-----------+       |                      +------------+              |</span><br><span class="line">  +- | leftParen |       +--------------------- |  binaryOp  | &lt;------------+</span><br><span class="line">     +-----------+                              +------------+</span><br><span class="line">       ^                                          |</span><br><span class="line">       +------------------------------------------+</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>接下来就需要让这个状态机动起来：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> lexer <span class="keyword">struct</span> {</span><br><span class="line">  name  <span class="keyword">string</span>    <span class="comment">// used only for error reports.</span></span><br><span class="line">  input <span class="keyword">string</span>    <span class="comment">// the string being scanned.</span></span><br><span class="line">  start <span class="keyword">int</span>       <span class="comment">// start position of this item.</span></span><br><span class="line">  pos   <span class="keyword">int</span>       <span class="comment">// current position in the input.</span></span><br><span class="line">  width <span class="keyword">int</span>       <span class="comment">// width of last rune read from input.</span></span><br><span class="line">  items <span class="keyword">chan</span> item <span class="comment">// channel of scanned items.</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// stateFn represents the state of the scanner</span></span><br><span class="line"><span class="comment">// as a function that returns the next state.</span></span><br><span class="line"><span class="keyword">type</span> stateFn <span class="function"><span class="keyword">func</span><span class="params">(*lexer)</span> <span class="title">stateFn</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *lexer)</span> <span class="title">run</span><span class="params">()</span></span> {</span><br><span class="line">  <span class="keyword">for</span> state := lexStart; state != <span class="literal">nil</span>; {</span><br><span class="line">    state = state(l)</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">close</span>(l.items)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
-<p>其中 <code>stateFn</code> 就是状态转移方程，约定当 <code>stateFn == nil</code> 时，状态机停止，即 <code>nil</code> 就是结束状态的转移方程。接下来只需要定义各个状态转移方程即可：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexStart</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLabel</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLeftParen</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexRightParen</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexEq</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexValue</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexBinaryOp</span><span class="params">(l *lexer)</span> <span class="title">stateFn</span></span> {}</span><br></pre></td></tr></table></figure>
-<p>每当状态即将转移时，<code>stateFn</code> 内部就会将在本状态中扫描到的词语传给 <code>item channel</code>，这个 channel 就是 lexer 与 parser 之间通信的媒介。</p>
-<p>值得一提的是，Go 的模板引擎 template，就是按照上述方式构建的，感兴趣可以阅读<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">源码</a>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> lexer <span class="keyword">struct</span> {</span><br><span class="line">  name  <span class="type">string</span>    <span class="comment">// used only for error reports.</span></span><br><span class="line">  input <span class="type">string</span>    <span class="comment">// the string being scanned.</span></span><br><span class="line">  start <span class="type">int</span>       <span class="comment">// start position of this item.</span></span><br><span class="line">  pos   <span class="type">int</span>       <span class="comment">// current position in the input.</span></span><br><span class="line">  width <span class="type">int</span>       <span class="comment">// width of last rune read from input.</span></span><br><span class="line">  items <span class="keyword">chan</span> item <span class="comment">// channel of scanned items.</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// stateFn represents the state of the scanner</span></span><br><span class="line"><span class="comment">// as a function that returns the next state.</span></span><br><span class="line"><span class="keyword">type</span> stateFn <span class="function"><span class="keyword">func</span><span class="params">(*lexer)</span></span> stateFn</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(l *lexer)</span></span> run() {</span><br><span class="line">  <span class="keyword">for</span> state := lexStart; state != <span class="literal">nil</span>; {</span><br><span class="line">    state = state(l)</span><br><span class="line">  }</span><br><span class="line">  <span class="built_in">close</span>(l.items)</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+<p>其中 <code>stateFn</code> 就是状态转移方程，约定当
+<code>stateFn == nil</code> 时，状态机停止，即 <code>nil</code>
+就是结束状态的转移方程。接下来只需要定义各个状态转移方程即可：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexStart</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLabel</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexLeftParen</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexRightParen</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexEq</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexValue</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lexBinaryOp</span><span class="params">(l *lexer)</span></span> stateFn {}</span><br></pre></td></tr></table></figure>
+<p>每当状态即将转移时，<code>stateFn</code>
+内部就会将在本状态中扫描到的词语传给 <code>item channel</code>，这个
+channel 就是 lexer 与 parser 之间通信的媒介。</p>
+<p>值得一提的是，Go 的模板引擎
+template，就是按照上述方式构建的，感兴趣可以阅读<a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">源码</a>。</p>
 <h2 id="参考文献">参考文献</h2>
 <ul>
-<li>Compilers: Principles, Techniques, and Tools, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools">the dragon book</a></li>
-<li>GeeksforGeeks: <a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">Expression Evaluation Problem</a></li>
+<li>Compilers: Principles, Techniques, and Tools, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Compilers:_Principles,_Techniques,_and_Tools">the
+dragon book</a></li>
+<li>GeeksforGeeks: <a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/expression-evaluation/">Expression
+Evaluation Problem</a></li>
 <li>Lex &amp; Yacc, <a target="_blank" rel="noopener" href="http://dinosaur.compilertools.net/">website</a>, <a target="_blank" rel="noopener" href="http://www.ora.com/catalog/lex/index.html">book</a></li>
 <li>Lexical Scanning in Go by <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Rob_Pike">Rob Pike</a>, <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=HxaD_trXwRE">video</a>, <a target="_blank" rel="noopener" href="https://talks.golang.org/2011/lex.slide#1">slides</a>, <a target="_blank" rel="noopener" href="https://blog.golang.org/sydney-gtug">go blog</a></li>
-<li>Go Template, <a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">source code</a></li>
+<li>Go Template, <a target="_blank" rel="noopener" href="https://github.com/golang/go/tree/master/src/text/template/parse/lex.go">source
+code</a></li>
 </ul>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs></defs></svg>
+
     </div>
 
     
@@ -474,13 +562,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -490,13 +578,13 @@ mjx-container + br {
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="prev" title="What's Really New with NewSQL (2016)">
-                  <i class="fa fa-chevron-left"></i> What's Really New with NewSQL (2016)
+                <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="prev" title="What&#39;s Really New with NewSQL (2016)">
+                  <i class="fa fa-angle-left"></i> What's Really New with NewSQL (2016)
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2020/06/07/The-Most-Beautiful-Program-Ever-Written/" rel="next" title="最美的程序：用 Lisp 写的 Lisp 解释器">
-                  最美的程序：用 Lisp 写的 Lisp 解释器 <i class="fa fa-chevron-right"></i>
+                  最美的程序：用 Lisp 写的 Lisp 解释器 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -520,15 +608,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -536,28 +623,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

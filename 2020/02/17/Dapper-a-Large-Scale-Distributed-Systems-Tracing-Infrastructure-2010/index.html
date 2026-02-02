@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,29 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。 本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。 本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34">
-<meta property="og:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54">
-<meta property="article:published_time" content="2020-02-17T18:16:20.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.756Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/","path":"2020/02/17/Dapper-a-Large-Scale-Distributed-Systems-Tracing-Infrastructure-2010/","title":"Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010)"}</script>
@@ -47,141 +30,50 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
-<style>mjx-container[jax="SVG"] {
-  direction: ltr;
-}
-
-mjx-container[jax="SVG"] > svg {
-  overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
-}
-
-mjx-container[jax="SVG"][display="true"] {
-  display: block;
-  text-align: center;
-  margin: 1em 0;
-}
-
-mjx-container[jax="SVG"][justify="left"] {
-  text-align: left;
-}
-
-mjx-container[jax="SVG"][justify="right"] {
-  text-align: right;
-}
-
-g[data-mml-node="merror"] > g {
-  fill: red;
-  stroke: red;
-}
-
-g[data-mml-node="merror"] > rect[data-background] {
-  fill: yellow;
-  stroke: none;
-}
-
-g[data-mml-node="mtable"] > line[data-line] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > rect[data-frame] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > .mjx-dashed {
-  stroke-dasharray: 140;
-}
-
-g[data-mml-node="mtable"] > .mjx-dotted {
-  stroke-linecap: round;
-  stroke-dasharray: 0,140;
-}
-
-g[data-mml-node="mtable"] > svg {
-  overflow: visible;
-}
-
-[jax="SVG"] mjx-tool {
-  display: inline-block;
-  position: relative;
-  width: 0;
-  height: 0;
-}
-
-[jax="SVG"] mjx-tool > mjx-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-mjx-tool > mjx-tip {
-  display: inline-block;
-  padding: .2em;
-  border: 1px solid #888;
-  font-size: 70%;
-  background-color: #F8F8F8;
-  color: black;
-  box-shadow: 2px 2px 5px #AAAAAA;
-}
-
-g[data-mml-node="maction"][data-toggle] {
-  cursor: pointer;
-}
-
-mjx-status {
-  display: block;
-  position: fixed;
-  left: 1em;
-  bottom: 1em;
-  min-width: 25%;
-  padding: .2em .4em;
-  border: 1px solid #888;
-  font-size: 90%;
-  background-color: #F8F8F8;
-  color: black;
-}
-
-foreignObject[data-mjx-xml] {
-  font-family: initial;
-  line-height: normal;
-  overflow: visible;
-}
-
-.MathJax path {
-  stroke-width: 3;
-}
-
-mjx-container {
-  overflow: auto hidden;
-}
-
-mjx-container + br {
-  display: none;
-}
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -200,7 +92,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -208,32 +100,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -251,11 +126,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Dapper, a Large-Scale Distributed Systems Tracing Infrastructure (2010) | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -277,7 +157,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -312,8 +192,11 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>早在 2008 年，Google 就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper 系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper 并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin 等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
+    <div class="post-body" itemprop="articleBody"><p>早在 2008 年，Google
+就已开始分布式调用链追踪的工作，经过两年的打磨后，Dapper
+系统问世，并通过这篇文章将其设计公之于众。遗憾的是，Dapper
+并不是开源项目，但它的设计理念依然深刻影响到后来的 Jaeger、Zipkin
+等开源分布式追踪项目，以及相关的标准 Opentracing、OpenTelemetry。</p>
 <p>本文不是原文的精准翻译，而是一次重述和简述，旨在记录分布式调用链追踪要解决的核心问题和潜在解决方案。</p>
 <span id="more"></span>
 <h1 id="why-design-goals">Why &amp; Design Goals</h1>
@@ -327,9 +210,12 @@ mjx-container + br {
 <p>如果部署不完全或者监控有间断，就可能有一小部分历史无法被追踪到，从而影响到问题定位的准确度，使得追踪效果大打折扣。</p>
 <p>据此，我们提出追踪系统的 3 个主要设计目标：</p>
 <ol type="1">
-<li><strong>低成本 (Low overhead)</strong>：对服务的性能影响应该能够忽略不计</li>
-<li><strong>对应用透明 (Application-level transparency)</strong>：应用开发者对追踪系统无感知</li>
-<li><strong>扩展性好 (Scalability)</strong>：支持部署到所有服务的所有实例上</li>
+<li><strong>低成本 (Low
+overhead)</strong>：对服务的性能影响应该能够忽略不计</li>
+<li><strong>对应用透明 (Application-level
+transparency)</strong>：应用开发者对追踪系统无感知</li>
+<li><strong>扩展性好
+(Scalability)</strong>：支持部署到所有服务的所有实例上</li>
 </ol>
 <p>在此基础上，数据从采集到可以被查询、分析的延迟越小越好，起到的作用也越大、越及时。</p>
 <h1 id="how">How</h1>
@@ -339,43 +225,78 @@ mjx-container + br {
 <p>黑盒法无需任何侵入性代码，只通过统计回归等手段来推测服务之间的关系。它的优势在于无需修改代码，缺点在于记录不准确，且需要大量数据才能够推导出服务间的关系。</p>
 <h3 id="标记法">标记法</h3>
 <p>标记法需要为每个请求打标记，并通过一个全局标识符将请求途径的所有服务信息串联，复盘整个链路。标记法记录准确，但它的缺点也很明显，需要将标记代码注入到每个服务中。</p>
-<p>在 Google 内部，几乎所有应用都使用相同的 threading model、control flow 和 RPC systems，因此可以将打标记的工作集中在少量的公共库中，同样能够达到对应用透明的效果。</p>
+<p>在 Google 内部，几乎所有应用都使用相同的 threading model、control
+flow 和 RPC
+systems，因此可以将打标记的工作集中在少量的公共库中，同样能够达到对应用透明的效果。</p>
 <h2 id="data-models">Data Models</h2>
-<p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX 的处理过程如下图所示:：</p>
+<p>通常一个请求在微服务集群中的调用链可以被抽象成树形结构，假设 RequestX
+的处理过程如下图所示:：</p>
 <p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZohKpQwwXEAggeNnR%2FScreen%20Shot%202020-01-27%20at%2010.26.45%20AM.jpg?alt=media&amp;token=4abea3f6-a071-4078-8c2a-8d176fa17f35" style="zoom:40%;" /></p>
 <p>相应调用链追踪的树状结构为：</p>
 <p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZkDzl5FDpMB3N6FWj%2F-LzZpKdJRxQj9jYRwE2p%2FScreen%20Shot%202020-01-27%20at%2010.26.31%20AM.jpg?alt=media&amp;token=3fd0ff8b-3a5a-4f94-a53b-82b2c789e9f0" style="zoom:50%;" /></p>
-<p>整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span 称为 root span，root span 的 id 就是 trace id。</p>
-<p>每个 span 都需要记录其开始时间和结束时间，如果应用开发者有记录其它信息的需求，则可以手动增加相应的标记。</p>
+<p>整棵树称为一个 trace，树上的节点称为 span。每个 span 都记录着 parent
+id 和 trace id，表明其所属父节点和调用链，其中没有 parent id 的 span
+称为 root span，root span 的 id 就是 trace id。</p>
+<p>每个 span
+都需要记录其开始时间和结束时间，如果应用开发者有记录其它信息的需求，则可以手动增加相应的标记。</p>
 <h2 id="pipeline">Pipeline</h2>
 <p>Dapper 记录、收集调用链信息的流水线主要分成 3 个阶段：</p>
 <p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzZuNs2PN7fitdgKdSX%2F-LzZw7CCiTRmnBESMsKE%2FScreen%20Shot%202020-01-27%20at%2010.59.13%20AM.jpg?alt=media&amp;token=1251874d-8189-4591-b246-84cc36a4da34" style="zoom:67%;" /></p>
 <ol type="1">
 <li>span 数据写入本地日志文件</li>
 <li>dapper daemon 从本地日志文件中收集数据</li>
-<li>dapper collectors 将数据写入 Bigtable 的大区仓库 (regional repositories)</li>
+<li>dapper collectors 将数据写入 Bigtable 的大区仓库 (regional
+repositories)</li>
 </ol>
-<p>在 Bigtable 中，每行数据就是一个 trace，且每行可以有任意列，恰好方便存储不定长的 trace/span 数据。Dapper 向开发者提供相应的 API 和 SDK，方便 Google 的开发者能够据此搭建数据分析工具，定制化地辅助线上问题排查。</p>
+<p>在 Bigtable 中，每行数据就是一个
+trace，且每行可以有任意列，恰好方便存储不定长的 trace/span 数据。Dapper
+向开发者提供相应的 API 和 SDK，方便 Google
+的开发者能够据此搭建数据分析工具，定制化地辅助线上问题排查。</p>
 <h2 id="overhead">Overhead</h2>
 <p>调用链追踪的主要成本在于：trace generation 和 collection。</p>
 <h3 id="trace-generation">Trace generation</h3>
-<p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176 ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
-<p>在 Dapper 的 runtime library 中，最耗时的操作就是将 trace 信息写入本地磁盘，但考虑到使用批量和异步写入的方式优化，对被跟踪的服务本身的影响就相对削弱了。</p>
+<p>在 Dapper 中，生成 root span 需要 204 ns，生成 non-root span 需要 176
+ns。这里面相差的部分就是生成 全局唯一 trace id 的时间成本。</p>
+<p>在 Dapper 的 runtime library 中，最耗时的操作就是将 trace
+信息写入本地磁盘，但考虑到使用批量和异步写入的方式优化，对被跟踪的服务本身的影响就相对削弱了。</p>
 <h3 id="trace-collection">Trace collection</h3>
-<p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3% 的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在 kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
-<p>在实践中，平均每个 span 的大小约为 426 字节，经过计算，在生产环境中 Dapper 占用的网络带宽大约为总量的 0.01%。</p>
-<h3 id="effect-on-production-workloads">Effect on production workloads</h3>
-<p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing 数据，而这类服务通常又是对性能最敏感的。下表中以 Google 的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
+<p>Dapper daemon 需要从本地日志文件中读取 trace 信息，然后发送给 Dapper
+collectors。经过 benchmark 测试验证，Dapper daemon 从未使用超过单核 0.3%
+的计算资源，且使用的内存空间极小，可忽略不计。同时 Dapper daemon 在
+kernel scheduler 中的优先级被设置为最低，必要时会出让计算资源。</p>
+<p>在实践中，平均每个 span 的大小约为 426 字节，经过计算，在生产环境中
+Dapper 占用的网络带宽大约为总量的 0.01%。</p>
+<h3 id="effect-on-production-workloads">Effect on production
+workloads</h3>
+<p>高吞吐的服务随时都会接收大量的请求，产生大量的 tracing
+数据，而这类服务通常又是对性能最敏感的。下表中以 Google
+的网页搜索服务集群为例，测量了不同的 trace 采样率对服务本身的影响：</p>
 <p><img src="https://blobscdn.gitbook.com/v0/b/gitbook-28427.appspot.com/o/assets%2F-LMjQD5UezC9P8miypMG%2F-LzzYHlM85L3z5GmLl19%2F-Lzzi5vkmme-1FkOdHC7%2FScreen%20Shot%202020-02-01%20at%203.47.42%20PM.jpg?alt=media&amp;token=3d561901-dede-4f09-b268-87bec6607b54" style="zoom:50%;" /></p>
-<p>The experimental errors for these latency and throughput measurements are 2.5% and 0.15% respectively.</p>
-<p>从图中可以发现，尽管调用链追踪带来的性能影响不是很大，但并不能忽略不计，对 trace 数据进行抽样是很有必要的。当抽样率小于 1/16 时，影响范围已经小于误差范围。在实践中，我们设置 1/1024 的抽样率就能收集到足够多的 trace 数据。</p>
-<p>除此之外，使用更低的采样率可以让 trace 数据在本地磁盘存活更长的时间，为整个搜集框架争取更大的灵活度。</p>
+<p>The experimental errors for these latency and throughput measurements
+are 2.5% and 0.15% respectively.</p>
+<p>从图中可以发现，尽管调用链追踪带来的性能影响不是很大，但并不能忽略不计，对
+trace 数据进行抽样是很有必要的。当抽样率小于 1/16
+时，影响范围已经小于误差范围。在实践中，我们设置 1/1024
+的抽样率就能收集到足够多的 trace 数据。</p>
+<p>除此之外，使用更低的采样率可以让 trace
+数据在本地磁盘存活更长的时间，为整个搜集框架争取更大的灵活度。</p>
 <h3 id="adaptive-sampling">Adaptive Sampling</h3>
-<p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper 的首个生产版本中，采用了统一的采样率 1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
-<p>因此 Dapper 团队正在研发自适应采样率机制，针对不频繁的重要事件能提高采样率。实际被使用的抽样率会被记录在 trace/span 数据中，帮助后期工具分析。</p>
+<p>调用链追踪的成本与单位时间内收集的 trace 数量成正比。在 Dapper
+的首个生产版本中，采用了统一的采样率
+1/1024，这种固定采样率不会对高吞吐的在线服务产生不必要的影响。但在这样的采样率下，可能忽略掉一些发生不频繁的重要事件。</p>
+<p>因此 Dapper
+团队正在研发自适应采样率机制，针对不频繁的重要事件能提高采样率。实际被使用的抽样率会被记录在
+trace/span 数据中，帮助后期工具分析。</p>
 <h3 id="additional-sampling">Additional Sampling</h3>
-<p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但 Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper 在生产环境中每天将产生 1T 的追踪数据；同时 Dapper 的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升 Dapper collectors、Bigtable 的吞吐量。因此 Dapper 团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
-<p>实现的思路很简单，将每个 trace id 哈希到 [0, 1]，如果哈希值小于给定的抽样系数，则通过；大于则拦截。在实践中，额外的抽样给与 Dapper 团队更强的全局控制力。</p>
+<p>上面介绍的均匀抽样和自适应抽样都是为了减少对被追踪服务本身性能的影响。但
+Dapper 本身还需要控制整体抽样数据的规模，在论文发表时，Dapper
+在生产环境中每天将产生 1T 的追踪数据；同时 Dapper
+的用户希望追踪数据能够保持两周。因此这里存在着存储资源与追踪密度之间的权衡。除此之外，高抽样率也会提升
+Dapper collectors、Bigtable 的吞吐量。因此 Dapper
+团队引入了额外的一层抽样，来实现全局的、系统级的控制。</p>
+<p>实现的思路很简单，将每个 trace id 哈希到 [0,
+1]，如果哈希值小于给定的抽样系数，则通过；大于则拦截。在实践中，额外的抽样给与
+Dapper 团队更强的全局控制力。</p>
 <h1 id="where">Where</h1>
 <h2 id="general-purpose-tools">General-Purpose Tools</h2>
 <h3 id="dapper-depot-api">Dapper Depot API</h3>
@@ -385,28 +306,42 @@ mjx-container + br {
 <li>Bulk access</li>
 <li>Indexed access</li>
 </ul>
-<p>在实践中，Dapper 发现 (service_name, host_machine, timestamp) 的联合索引恰好能满足大部分开发者的需求。</p>
+<p>在实践中，Dapper 发现 (service_name, host_machine, timestamp)
+的联合索引恰好能满足大部分开发者的需求。</p>
 <h3 id="dapper-user-interface">Dapper user interface</h3>
-<p>dapper user interface 可以理解为 APM 系统，方便开发者快速对线上问题做根源分析。交互界面和 user story 详见论文。</p>
+<p>dapper user interface 可以理解为 APM
+系统，方便开发者快速对线上问题做根源分析。交互界面和 user story
+详见论文。</p>
 <h2 id="experiences">Experiences</h2>
-<h3 id="using-dapper-during-development">Using Dapper during development</h3>
+<h3 id="using-dapper-during-development">Using Dapper during
+development</h3>
 <p>Dapper 主要在以下几个方面帮助开发者改进服务：</p>
 <ul>
 <li>Performance：通过调用链示意图发现服务瓶颈</li>
-<li>Correctness：dapper 通过标签帮助开发者发现一些本该访问 master 节点的请求访问了 replicas</li>
-<li>Understanding：dapper 帮助开发者理解自身系统的依赖，增进对复杂系统的理解，为架构层面优化提供依据</li>
+<li>Correctness：dapper 通过标签帮助开发者发现一些本该访问 master
+节点的请求访问了 replicas</li>
+<li>Understanding：dapper
+帮助开发者理解自身系统的依赖，增进对复杂系统的理解，为架构层面优化提供依据</li>
 <li>Testing：开发者可以通过观察调用链信息测试系统的行为是否符合预期</li>
 </ul>
 <h3 id="addressing-long-tail-latency">Addressing long tail latency</h3>
-<p>Google 内部的一位工程师利用 Dapper 提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
-<h3 id="inferring-service-dependencies">Inferring service dependencies</h3>
-<p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。 Google 的 "Service Dependencies" 项目正是利用 Dapper 的近期数据来推断依赖关系。</p>
-<h3 id="network-usage-of-different-services">Network usage of different services</h3>
+<p>Google 内部的一位工程师利用 Dapper
+提供的接口来推断服务的关键路径，进而减少服务整体时延。</p>
+<h3 id="inferring-service-dependencies">Inferring service
+dependencies</h3>
+<p>服务之间的依赖关系常常是动态变化的，我们基本无法通过扫描配置信息、代码来确定服务之间的依赖关系。
+Google 的 “Service Dependencies” 项目正是利用 Dapper
+的近期数据来推断依赖关系。</p>
+<h3 id="network-usage-of-different-services">Network usage of different
+services</h3>
 <p>在发现网络带宽使用异常时，Dapper 可以辅助开发者锁定到具体的请求。</p>
-<h3 id="layered-and-shared-storage-systems">Layered and Shared Storage Systems</h3>
-<p>一些公共服务通常很难知道其调用方及各自调用量，Dapper 帮助这些公共服务的维护者更好地了解它们。</p>
+<h3 id="layered-and-shared-storage-systems">Layered and Shared Storage
+Systems</h3>
+<p>一些公共服务通常很难知道其调用方及各自调用量，Dapper
+帮助这些公共服务的维护者更好地了解它们。</p>
 <h1 id="references">References</h1>
-<p><a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf">Dapper</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//archive/papers/dapper-2010-1.pdf">Dapper</a></p>
 
     </div>
 
@@ -421,13 +356,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -438,12 +373,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/02/16/Gorilla-A-Fast-Scalable-In-Memory-Time-Series-Database-2015/" rel="prev" title="Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)">
-                  <i class="fa fa-chevron-left"></i> Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)
+                  <i class="fa fa-angle-left"></i> Gorilla: A Fast, Scalable, In-Memory Time Series Database (2015)
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2020/02/17/Time-Clocks-and-the-Ordering-of-Events-in-a-Distributed-System-1978/" rel="next" title="Time, Clocks, and the Ordering of Events in a Distributed System (1978)">
-                  Time, Clocks, and the Ordering of Events in a Distributed System (1978) <i class="fa fa-chevron-right"></i>
+                  Time, Clocks, and the Ordering of Events in a Distributed System (1978) <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -467,15 +402,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -483,28 +417,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

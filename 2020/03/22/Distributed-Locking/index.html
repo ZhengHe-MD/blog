@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,30 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？” 因此我决定深究这个话题。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="分布式锁方案：效率与正确的权衡">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="提到分布式锁，很多人也许会脱口而出 &quot;redis&quot;，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？” 因此我决定深究这个话题。">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/random-value.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/exactly-once.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/fencing-token.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/redlock-in-coord-1.jpg">
-<meta property="article:published_time" content="2020-03-22T14:26:51.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.756Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/03/22/Distributed-Locking/","path":"2020/03/22/Distributed-Locking/","title":"分布式锁方案：效率与正确的权衡"}</script>
@@ -48,141 +30,50 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
-<style>mjx-container[jax="SVG"] {
-  direction: ltr;
-}
-
-mjx-container[jax="SVG"] > svg {
-  overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
-}
-
-mjx-container[jax="SVG"][display="true"] {
-  display: block;
-  text-align: center;
-  margin: 1em 0;
-}
-
-mjx-container[jax="SVG"][justify="left"] {
-  text-align: left;
-}
-
-mjx-container[jax="SVG"][justify="right"] {
-  text-align: right;
-}
-
-g[data-mml-node="merror"] > g {
-  fill: red;
-  stroke: red;
-}
-
-g[data-mml-node="merror"] > rect[data-background] {
-  fill: yellow;
-  stroke: none;
-}
-
-g[data-mml-node="mtable"] > line[data-line] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > rect[data-frame] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > .mjx-dashed {
-  stroke-dasharray: 140;
-}
-
-g[data-mml-node="mtable"] > .mjx-dotted {
-  stroke-linecap: round;
-  stroke-dasharray: 0,140;
-}
-
-g[data-mml-node="mtable"] > svg {
-  overflow: visible;
-}
-
-[jax="SVG"] mjx-tool {
-  display: inline-block;
-  position: relative;
-  width: 0;
-  height: 0;
-}
-
-[jax="SVG"] mjx-tool > mjx-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-mjx-tool > mjx-tip {
-  display: inline-block;
-  padding: .2em;
-  border: 1px solid #888;
-  font-size: 70%;
-  background-color: #F8F8F8;
-  color: black;
-  box-shadow: 2px 2px 5px #AAAAAA;
-}
-
-g[data-mml-node="maction"][data-toggle] {
-  cursor: pointer;
-}
-
-mjx-status {
-  display: block;
-  position: fixed;
-  left: 1em;
-  bottom: 1em;
-  min-width: 25%;
-  padding: .2em .4em;
-  border: 1px solid #888;
-  font-size: 90%;
-  background-color: #F8F8F8;
-  color: black;
-}
-
-foreignObject[data-mjx-xml] {
-  font-family: initial;
-  line-height: normal;
-  overflow: visible;
-}
-
-.MathJax path {
-  stroke-width: 3;
-}
-
-mjx-container {
-  overflow: auto hidden;
-}
-
-mjx-container + br {
-  display: none;
-}
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -201,7 +92,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -209,32 +100,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -252,11 +126,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式锁方案：效率与正确的权衡 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -278,7 +157,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -313,18 +192,26 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>提到分布式锁，很多人也许会脱口而出 "redis"，可见利用 redis 实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis 实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync 可以吗？”</p>
+    <div class="post-body" itemprop="articleBody"><p>提到分布式锁，很多人也许会脱口而出 “redis”，可见利用 redis
+实现分布式锁已被认为是最佳实践。这两天有个同事问我一个问题：“如果某个服务拿着分布式锁的时候，redis
+实例挂了怎么办？重启以后锁丢了怎么办？利用主从可以吗？加 fsync
+可以吗？”</p>
 <p>因此我决定深究这个话题。</p>
 <span id="more"></span>
-<p><em>备注：本文中，因为信息源使用的术语不同，Correctness 与 Safety 分别翻译成正确性和安全性，实际上二者在分布式锁话题的范畴中意思相同。</em></p>
+<p><em>备注：本文中，因为信息源使用的术语不同，Correctness 与 Safety
+分别翻译成正确性和安全性，实际上二者在分布式锁话题的范畴中意思相同。</em></p>
 <h1 id="efficiency-correctness">Efficiency &amp; Correctness</h1>
-<p>如果想让单机/实例上的多个线程去执行同一组任务，为了避免任务被重复执行，使用本地环境提供的 Lock 原语即可实现；但如果想让单机/实例上，或多机/实例上的多个进程去抢同一组任务，就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：</p>
+<p>如果想让单机/实例上的多个线程去执行同一组任务，为了避免任务被重复执行，使用本地环境提供的
+Lock
+原语即可实现；但如果想让单机/实例上，或多机/实例上的多个进程去抢同一组任务，就需要分布式锁。总体来说，对分布式锁的要求可以从两个角度来考虑：</p>
 <ul>
-<li>效率 (Efficiency)：为了避免一个任务被执行多次，每个执行方在任务启动时先抢锁，在绝大多数情况下能避免重复工作。即便在极其偶然的情况下，分布式锁服务故障导致同一时刻有两个执行方抢到锁，使得某个任务被执行两次，总体看来依然无伤大雅。</li>
-<li>正确性 (Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。</li>
+<li>效率
+(Efficiency)：为了避免一个任务被执行多次，每个执行方在任务启动时先抢锁，在绝大多数情况下能避免重复工作。即便在极其偶然的情况下，分布式锁服务故障导致同一时刻有两个执行方抢到锁，使得某个任务被执行两次，总体看来依然无伤大雅。</li>
+<li>正确性
+(Correctness)：多个任务执行方仅能有一方成功获取锁，进而执行任务，否则系统的状态会被破坏。比如任务执行两次可能破坏文件结构、丢失数据、产生不一致数据或其它不可逆的问题。</li>
 </ul>
-<p>以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式) 锁解决方案就可以认为是这个坐标系中的一个点：</p>
+<p>以效率和正确性为横轴和纵轴，得到一个直角坐标系，那么任何一个 (分布式)
+锁解决方案就可以认为是这个坐标系中的一个点：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/correctness-and-efficiency.jpg" width="680px"></p>
 <h1 id="solutions">Solutions</h1>
 <p>在进入分布式锁解决方案之前，必须要明确：<strong>分布式锁只是某个特定业务需求解决方案的一部分</strong>，业务功能的真正实现是<strong>业务服务</strong>、<strong>分布式锁</strong>、<strong>存储服务</strong>以及<strong>其它有关各方</strong>共同努力的结果。</p>
@@ -334,87 +221,153 @@ mjx-container + br {
 <h3 id="design-requirements">Design Requirements</h3>
 <p>侧重效率解决方案的设计要求可以概括如下：</p>
 <ul>
-<li><strong>High Efficiency</strong>：抢锁、释放锁操作高效 (这里暂不设定具体的 QPS)</li>
-<li><strong>Weak Safety</strong>：在绝大多数时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁</li>
+<li><strong>High Efficiency</strong>：抢锁、释放锁操作高效
+(这里暂不设定具体的 QPS)</li>
+<li><strong>Weak Safety</strong>：在绝大多数时刻，只要持有时间不超过
+TTL，只能有一个 client 能取到锁</li>
 <li><strong>Liveness</strong>
 <ul>
-<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
-<li>No Fault tolerance/Availability：不需要容错机制，不需要高可用保证</li>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client
+不能永远等待下去</li>
+<li>No Fault
+tolerance/Availability：不需要容错机制，不需要高可用保证</li>
 </ul></li>
 </ul>
-<h3 id="implementation-single-redis-instance">Implementation: Single Redis Instance</h3>
-<p>如果你面对的业务场景侧重效率，那么基于单实例 redis 的解决方案就是你的菜。redis 是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis 官方提供的解决方案缩略版，你也可以<a target="_blank" rel="noopener" href="https://redis.io/topics/distlock">阅读原文</a>。</p>
+<h3 id="implementation-single-redis-instance">Implementation: Single
+Redis Instance</h3>
+<p>如果你面对的业务场景侧重效率，那么基于单实例 redis
+的解决方案就是你的菜。redis
+是内存数据库，请求的执行效率基本能满足要求。下面介绍的就是 redis
+官方提供的解决方案缩略版，你也可以<a
+target="_blank" rel="noopener" href="https://redis.io/topics/distlock">阅读原文</a>。</p>
 <h5 id="lockunlock">Lock/Unlock</h5>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Lock</span></span><br><span class="line">SET resource_name my_random_value NX PX <span class="number">30000</span></span><br></pre></td></tr></table></figure>
-<p>resource_name 是分布式锁的 id，它的唯一可以保证只有一个 client 可以 SET 成功；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证 Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock free；my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
+<p>resource_name 是分布式锁的 id，它的唯一可以保证只有一个 client 可以
+SET 成功；NX 表示仅在 resource_name 在 redis 中不存在时才执行，用于保证
+Week Safety；PX 30000 表示 30 秒超时，用来保证 Deadlock
+free；my_random_value 是每个取锁请求的 id，释放锁的逻辑如下：</p>
 <figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- Unlock.lua</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&quot;get&quot;</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&quot;del&quot;</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value 相等时才删除相应的键值对。my_random_valu 的唯一可以保证释放锁 (unlock) 操作的安全性，锁不会被误释放、获取、恶意释放。一种误释放的场景如下图所示：</p>
+<p>释放锁时，当且仅当入参与之前加锁时用的 my_random_value
+相等时才删除相应的键值对。my_random_valu 的唯一可以保证释放锁 (unlock)
+操作的安全性，锁不会被误释放、获取、恶意释放。一种误释放的场景如下图所示：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/random-value.jpg" width="600px"></p>
 <ol type="1">
-<li>client 1 获取锁成功。因为某种原因，如网络延迟、GC 导致 client 1 执行任务时间超过 TTL</li>
+<li>client 1 获取锁成功。因为某种原因，如网络延迟、GC 导致 client 1
+执行任务时间超过 TTL</li>
 <li>client 2 获取锁成功</li>
-<li>client 1 完成任务，执行释放锁操作，此时如果没有 my_random_value，client 2 获取的锁将被误释放</li>
+<li>client 1 完成任务，执行释放锁操作，此时如果没有
+my_random_value，client 2 获取的锁将被误释放</li>
 <li>client 3 获取锁成功</li>
 </ol>
 <p>此时，client 2 和 3 都认为自己取锁成功，违背了 safety。</p>
-<h5 id="fault-tolerance-availability">Fault Tolerance &amp; Availability</h5>
+<h5 id="fault-tolerance-availability">Fault Tolerance &amp;
+Availability</h5>
 <p>如果只有单实例，挂了以后锁服务就立即不可用。如果实例故障后立即重启，则锁可能立即被抢走，锁的安全性无法保证。</p>
 <h2 id="for-correctness">For Correctness</h2>
 <p>如果任务的执行不具备幂等性，且系统可能因为任务重复执行陷入麻烦，开发者就必须考虑侧重正确性的解决方案。</p>
 <h3 id="design-requirements-1">Design Requirements</h3>
 <p>侧重正确性解决方案的设计要求概括如下：</p>
 <ul>
-<li>Strong Safety: 在任意时刻，只要持有时间不超过 TTL，只能有一个 client 能取到锁</li>
+<li>Strong Safety: 在任意时刻，只要持有时间不超过 TTL，只能有一个 client
+能取到锁</li>
 <li>Liveness
 <ul>
-<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client 不能永远等待下去</li>
+<li>Deadlock free：如果 client 抢锁后崩溃或者出现网络分区，其它 client
+不能永远等待下去</li>
 <li>Strong Fault Tolerance &amp; Availability：高容错、高可用</li>
 </ul></li>
 </ul>
-<h3 id="implementation-concensus-service">Implementation: Concensus Service</h3>
-<p>在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版 redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure (SPOF) 就意味着失去 Single Source of Truth (SSOT)，详细讨论见 Redlock &amp; Debate 一节。在多实例环境下要实现 Strong Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped Replication、Zab 以及 Paxos，这些算法在 asynchronous model with unreliable failure detectors (翻译成人话就是<strong>算法的正确性不依赖系统中任何事件发生时间</strong>) 的故障模型下，依然能在一定故障 (少于半数节点故障) 存在的情况下保证系统对一些信息达成共识。</p>
-<p>本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service 的讨论，感兴趣的可以阅读 DDIA 的 Consistency &amp; Consensus 一节，或者翻阅相关论文。</p>
+<h3 id="implementation-concensus-service">Implementation: Concensus
+Service</h3>
+<p>在云原生环境下，一个系统要做到高容错、高可用，就必须能够横向扩容，横向扩容的结果就是任何在单机/实例下证明有效的算法都要能够合理地迁移到多实例中。以单实例版
+redis 分布式锁为例，要迁移到多实例上，拿掉 Single Point of Failure
+(SPOF) 就意味着失去 Single Source of Truth (SSOT)，详细讨论见 Redlock
+&amp; Debate 一节。在多实例环境下要实现 Strong
+Safety，就必须引入经过理论与实践检验的共识算法，如 Raft、Viewstamped
+Replication、Zab 以及 Paxos，这些算法在 asynchronous model with
+unreliable failure detectors
+(翻译成人话就是<strong>算法的正确性不依赖系统中任何事件发生时间</strong>)
+的故障模型下，依然能在一定故障 (少于半数节点故障)
+存在的情况下保证系统对一些信息达成共识。</p>
+<p>本节就不 (mei) 详 (neng) 细 (li) 展开对 Concensus Service
+的讨论，感兴趣的可以阅读 DDIA 的 Consistency &amp; Consensus
+一节，或者翻阅相关论文。</p>
 <h3 id="the-whole-story">The Whole Story</h3>
 <p>理想状况下，开发者利用侧重正确性解决方案的最终目的是：<strong>在任何情况下每个任务仅被执行一次</strong>。仅靠侧重正确性的分布式锁方案还不够。考虑这样一个场景：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/exactly-once.jpg" width="680px"></p>
 <ol type="1">
-<li>client 1 获取锁成功，但不巧遇到了 stop-the-world GC 暂停，导致锁过期</li>
+<li>client 1 获取锁成功，但不巧遇到了 stop-the-world GC
+暂停，导致锁过期</li>
 <li>client 2 获取锁成功，执行任务，并成功写入结果到 storage 中</li>
 <li>client 1 GC 结束后，执行任务，并成功写入结果到 storage 中</li>
 </ol>
-<p>同样的任务重复执行，client 2 写入的数据被 client 1 写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service 完全按照要求运行，但结局感人肺腑。</p>
+<p>同样的任务重复执行，client 2 写入的数据被 client 1
+写入的数据覆盖，出现更新丢失 (lost updates)。上述场景中，lock service
+完全按照要求运行，但结局感人肺腑。</p>
 <p>但如果 lock service 能和 storage 配合起来，就能解决更新丢失问题：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/fencing-token.jpg" width="680px"></p>
 <ol type="1">
-<li>client 1 获取锁成功，同时获得单调自增 token = 33，遇到 stop-the-world GC 暂停，导致锁过期</li>
-<li>client 2 获取锁成功，同时获得单调自增 token = 34，执行任务，并成功写入 storage</li>
-<li>client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token 比最新写入的 token 小，拒绝执行</li>
+<li>client 1 获取锁成功，同时获得单调自增 token = 33，遇到
+stop-the-world GC 暂停，导致锁过期</li>
+<li>client 2 获取锁成功，同时获得单调自增 token =
+34，执行任务，并成功写入 storage</li>
+<li>client 1 GC 结束后，执行任务，写入 storage 时，后者发现 token
+比最新写入的 token 小，拒绝执行</li>
 </ol>
-<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案<strong>必要条件</strong>。这与消息系统中的 exactly-once delivery guarantee 十分类似，exactly-once 语义的正确实现，需要参与各方的正确合作才可能实现。</p>
+<p>从上面这个例子可以看出，拥有一个侧重正确性的分布式锁解决方案仅仅是一个完整的任务执行去重方案<strong>必要条件</strong>。这与消息系统中的
+exactly-once delivery guarantee 十分类似，exactly-once
+语义的正确实现，需要参与各方的正确合作才可能实现。</p>
 <h1 id="redlock-debate">Redlock &amp; Debate</h1>
-<p>单实例 redis 架构上的明显缺陷就是存在单点故障 (SPOF)，即如果节点挂了锁也就丢了，节点重启后就会有别的 client 抢锁成功，从而出现两个 client 同时拥有锁，且锁都未过期的情况。我们可以做什么来改变这点？</p>
+<p>单实例 redis 架构上的明显缺陷就是存在单点故障
+(SPOF)，即如果节点挂了锁也就丢了，节点重启后就会有别的 client
+抢锁成功，从而出现两个 client
+同时拥有锁，且锁都未过期的情况。我们可以做什么来改变这点？</p>
 <h2 id="masterslave">Master/Slave</h2>
-<p>既然存在单点故障，那就增加节点吧！利用 master/slave 的部署形式，master 挂了就将 slave 升级为 master。但 master 到 slave 的数据同步是异步执行的，这意味着 race condition 可能出现：</p>
+<p>既然存在单点故障，那就增加节点吧！利用 master/slave
+的部署形式，master 挂了就将 slave 升级为 master。但 master 到 slave
+的数据同步是异步执行的，这意味着 race condition 可能出现：</p>
 <ol type="1">
 <li>client A 从 master 上获取锁</li>
 <li>master 在将 kv 同步到 slave 之前故障</li>
 <li>slave 称为 master</li>
 <li>client B 从新的 master 上获取锁，此时 A、B 都拥有锁</li>
 </ol>
-<p>如果 master 已经将 kv 同步到 slave，则 fail-over 能够有效避免 SPOF 遇到的问题，因此综合考虑 master/slave 能够在某种程度上提高锁服务的容错能力。</p>
-<p>也许我们可以使用 <a target="_blank" rel="noopener" href="https://redis.io/commands/wait">WAIT</a> 命令，WAIT 的语义是等待所有 replicas 返回 ack，或者超时，而并非实现共识。master 与 slave 之间的数据同步可能刚好遇到长时间的网络故障导致 WAIT 超时，因此使用 WAIT 同样可以提高锁服务的容错能力，但额外的等待时间会降低锁服务的效率，可能得不偿失。</p>
+<p>如果 master 已经将 kv 同步到 slave，则 fail-over 能够有效避免 SPOF
+遇到的问题，因此综合考虑 master/slave
+能够在某种程度上提高锁服务的容错能力。</p>
+<p>也许我们可以使用 <a target="_blank" rel="noopener" href="https://redis.io/commands/wait">WAIT</a>
+命令，WAIT 的语义是等待所有 replicas 返回
+ack，或者超时，而并非实现共识。master 与 slave
+之间的数据同步可能刚好遇到长时间的网络故障导致 WAIT 超时，因此使用 WAIT
+同样可以提高锁服务的容错能力，但额外的等待时间会降低锁服务的效率，可能得不偿失。</p>
 <h2 id="redlock">Redlock</h2>
-<p>Redlock 是 redis 的核心工程师 Salvatore Sanfilippo (antirez) 提出的基于多个 redis master 的分布式锁方案。假设整个系统中存在有 N (奇数，以 5 为例) 个相互独立的 master 节点，它们之间没有直接通信行为，一个 client 想要成功获取分布式锁，需要执行以下步骤：(详情请阅读 <a target="_blank" rel="noopener" href="https://redis.io/topics/distlock">原文</a>)</p>
+<p>Redlock 是 redis 的核心工程师 Salvatore Sanfilippo (antirez)
+提出的基于多个 redis master 的分布式锁方案。假设整个系统中存在有 N
+(奇数，以 5 为例) 个相互独立的 master
+节点，它们之间没有直接通信行为，一个 client
+想要成功获取分布式锁，需要执行以下步骤：(详情请阅读 <a
+target="_blank" rel="noopener" href="https://redis.io/topics/distlock">原文</a>)</p>
 <ol type="1">
 <li>计算当前时间，精确到毫秒</li>
-<li>顺序地向 N 个节点发送取锁请求 (单实例解决方案中的 Lock)，N 个请求使用相同的 key 和 random value。每个请求的超时时间应该远远小于锁的过期时间，如 5~50 milliseconds 之于 10 seconds。如果遇到某个节点宕机或者请求超时后，client 会立即跳过该节点向下一个节点发送请求。</li>
-<li>当且仅当 client 获得超过半数节点的 ack 后，同时取锁消耗的时间（利用步骤 1 的时间与当前时间对比）小于锁的过期时间，就认为取锁成功。</li>
-<li>如果取锁成功，那么锁的<strong>实际超时时间 (vt)</strong>为原始超时时间与取锁消耗时间的差值，即经过 vt 后，其它的 client 就有可能取锁成功。</li>
-<li>如果 client 未获得超过半数节点的 ack，则它会尝试向每个节点发送释放锁的请求。</li>
+<li>顺序地向 N 个节点发送取锁请求 (单实例解决方案中的 Lock)，N
+个请求使用相同的 key 和 random
+value。每个请求的超时时间应该远远小于锁的过期时间，如 5~50 milliseconds
+之于 10 seconds。如果遇到某个节点宕机或者请求超时后，client
+会立即跳过该节点向下一个节点发送请求。</li>
+<li>当且仅当 client 获得超过半数节点的 ack
+后，同时取锁消耗的时间（利用步骤 1
+的时间与当前时间对比）小于锁的过期时间，就认为取锁成功。</li>
+<li>如果取锁成功，那么锁的<strong>实际超时时间
+(vt)</strong>为原始超时时间与取锁消耗时间的差值，即经过 vt 后，其它的
+client 就有可能取锁成功。</li>
+<li>如果 client 未获得超过半数节点的
+ack，则它会尝试向每个节点发送释放锁的请求。</li>
 </ol>
-<p>为什么要按顺序取锁，而不并发取锁？<strong>并发取锁更容易触发脑裂 (split brain) </strong>。</p>
+<p>为什么要按顺序取锁，而不并发取锁？<strong>并发取锁更容易触发脑裂
+(split brain) </strong>。</p>
 <h5 id="asynchronous">Asynchronous</h5>
-<p>这个算法是否依赖于时钟同步？答案是<strong>一定程度上依赖</strong>。首先 client 上的时钟漂移可能导致 TTL 计算不准确，其次有一种极端场景：</p>
+<p>这个算法是否依赖于时钟同步？答案是<strong>一定程度上依赖</strong>。首先
+client 上的时钟漂移可能导致 TTL 计算不准确，其次有一种极端场景：</p>
 <ol type="1">
 <li>client 1 从 A、B、C 节点上分别取锁成功，D、E 访问超时</li>
 <li>C 节点上的时钟发生漂移，导致锁过期</li>
@@ -422,22 +375,38 @@ mjx-container + br {
 <li>client 1 和 client 2 都认为自己取锁成功，违背了 safety 要求</li>
 </ol>
 <h5 id="retry">Retry</h5>
-<p>取锁的过程可能出现 split brain，导致谁都抢不到锁，这时候如果所有 clients 都立即重试，split brain 很可能再次出现。解决方案也比较简单，使用随机退后的策略即可。</p>
+<p>取锁的过程可能出现 split brain，导致谁都抢不到锁，这时候如果所有
+clients 都立即重试，split brain
+很可能再次出现。解决方案也比较简单，使用随机退后的策略即可。</p>
 <h2 id="debate">Debate</h2>
-<p>Redlock 问世后，引起了 Martin Kleppman 的 <a target="_blank" rel="noopener" href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">异议</a>，而后 Salvatore Sanfilippo 又写了一篇 <a target="_blank" rel="noopener" href="http://antirez.com/news/101">文章</a> 反驳，可谓是理论与实践之间的一次碰撞，详情可点击链接查看原文，这里给出我的总结：</p>
-<p>回到本文开头中的坐标系，Redlock 实际上是用效率换取正确性的一种分布式锁方案，它与其它方案之间的关系大致如下图所示：</p>
+<p>Redlock 问世后，引起了 Martin Kleppman 的 <a
+target="_blank" rel="noopener" href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">异议</a>，而后
+Salvatore Sanfilippo 又写了一篇 <a
+target="_blank" rel="noopener" href="http://antirez.com/news/101">文章</a>
+反驳，可谓是理论与实践之间的一次碰撞，详情可点击链接查看原文，这里给出我的总结：</p>
+<p>回到本文开头中的坐标系，Redlock
+实际上是用效率换取正确性的一种分布式锁方案，它与其它方案之间的关系大致如下图所示：</p>
 <p><img src="/blog/2020/03/22/Distributed-Locking/redlock-in-coord-1.jpg" width="400px"></p>
-<p>它不能保证分布式锁的 safety 性质。在实践中，我们通常要么就侧重效率，做好幂等，放弃要求锁服务绝对正确；要么就要求锁服务能保证绝对正确，牺牲效率，很难说服自己去使用一种折衷的解决方案。</p>
+<p>它不能保证分布式锁的 safety
+性质。在实践中，我们通常要么就侧重效率，做好幂等，放弃要求锁服务绝对正确；要么就要求锁服务能保证绝对正确，牺牲效率，很难说服自己去使用一种折衷的解决方案。</p>
 <h1 id="back-to-the-question">Back to the Question</h1>
 <p>回到本文开篇的问题。</p>
 <p>问：“如果某个 client 拿着锁执行任务时，redis 挂了怎么办？”</p>
-<p>答："看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开 fsync 、使用 WAIT 命令、实现 Redlock，都可以有限地增加锁服务的容错能力和可用性，但因为没有共识算法的支持，分布式锁的绝对正确仍然无法保证。如果不能牺牲正确性，就采用基于共识算法的分布式锁服务，但<strong>请务必关注具体业务场景的完整解决方案</strong>。“</p>
+<p>答：“看业务要求，大部分场景下挂了就随它去吧，通过主从、集群部署、甚至打开
+fsync 、使用 WAIT 命令、实现
+Redlock，都可以有限地增加锁服务的容错能力和可用性，但因为没有共识算法的支持，分布式锁的绝对正确仍然无法保证。如果不能牺牲正确性，就采用基于共识算法的分布式锁服务，但<strong>请务必关注具体业务场景的完整解决方案</strong>。“</p>
 <h1 id="references">References</h1>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">Martin Kleppmann: How to do distributed locking</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://redis.io/topics/distlock">redis: Distributed locks with Redis</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="http://antirez.com/news/101">Is Redlock safe?</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="http://courses.csail.mit.edu/6.852/08/papers/CT96-JACM.pdf">Unreliable Failure Detectors for Reliable Distributed Systems</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">Martin
+Kleppmann: How to do distributed locking</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://redis.io/topics/distlock">redis: Distributed
+locks with Redis</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="http://antirez.com/news/101">Is Redlock
+safe?</a></p></li>
+<li><p><a
+target="_blank" rel="noopener" href="http://courses.csail.mit.edu/6.852/08/papers/CT96-JACM.pdf">Unreliable
+Failure Detectors for Reliable Distributed Systems</a></p></li>
 </ul>
 
     </div>
@@ -453,13 +422,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -470,12 +439,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/03/15/Kafka-a-Distributed-Messaging-System-for-Log-Processing-2011/" rel="prev" title="Kafka: a Distributed Messaging System for Log Processing (2011)">
-                  <i class="fa fa-chevron-left"></i> Kafka: a Distributed Messaging System for Log Processing (2011)
+                  <i class="fa fa-angle-left"></i> Kafka: a Distributed Messaging System for Log Processing (2011)
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="next" title="What's Really New with NewSQL (2016)">
-                  What's Really New with NewSQL (2016) <i class="fa fa-chevron-right"></i>
+                <a href="/blog/2020/04/05/What-s-Really-New-with-NewSQL-2016/" rel="next" title="What&#39;s Really New with NewSQL (2016)">
+                  What's Really New with NewSQL (2016) <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -499,15 +468,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -515,28 +483,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

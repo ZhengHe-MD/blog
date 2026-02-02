@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,38 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="I ❤ Logs 出版于 2014 年，是一本很短小的书，100 页不到，利用这周的零散时间就看完了。作者 Jay Kreps，是前 LinkedIn 的 Principal Staff Engineer，也是 LinkedIn 许多著名开源项目的负责人及联合作者，如 Kafka、Voldemort 等。他是现任 Confluent 的 CEO，主要工作在于围绕实时数据提供企业级服务支持。这本书算">
-<meta property="og:type" content="article">
-<meta property="og:title" content="I ❤ Logs - 以日志为中心的系统设计理念">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="I ❤ Logs 出版于 2014 年，是一本很短小的书，100 页不到，利用这周的零散时间就看完了。作者 Jay Kreps，是前 LinkedIn 的 Principal Staff Engineer，也是 LinkedIn 许多著名开源项目的负责人及联合作者，如 Kafka、Voldemort 等。他是现任 Confluent 的 CEO，主要工作在于围绕实时数据提供企业级服务支持。这本书算">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/a-structured-log.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/logic-centric-design.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/simplified-log-centric-data-system.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/log-centric-infra-stack.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/maslow-like-hierarchy.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/log-pub-sub.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/organizational-data-flow.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/lambda-architecture.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/lambda-alternative.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/who-viewed-your-profile.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/profile-from-db.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/profile-from-cache.jpg">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/profile-from-local-cache.jpg">
-<meta property="article:published_time" content="2020-07-12T18:06:15.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.760Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/07/12/I-❤-Logs-小结/a-structured-log.jpg">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/07/12/I-%E2%9D%A4-Logs-%E5%B0%8F%E7%BB%93/","path":"2020/07/12/I-❤-Logs-小结/","title":"I ❤ Logs - 以日志为中心的系统设计理念"}</script>
@@ -56,141 +30,50 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
-<style>mjx-container[jax="SVG"] {
-  direction: ltr;
-}
-
-mjx-container[jax="SVG"] > svg {
-  overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
-}
-
-mjx-container[jax="SVG"][display="true"] {
-  display: block;
-  text-align: center;
-  margin: 1em 0;
-}
-
-mjx-container[jax="SVG"][justify="left"] {
-  text-align: left;
-}
-
-mjx-container[jax="SVG"][justify="right"] {
-  text-align: right;
-}
-
-g[data-mml-node="merror"] > g {
-  fill: red;
-  stroke: red;
-}
-
-g[data-mml-node="merror"] > rect[data-background] {
-  fill: yellow;
-  stroke: none;
-}
-
-g[data-mml-node="mtable"] > line[data-line] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > rect[data-frame] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > .mjx-dashed {
-  stroke-dasharray: 140;
-}
-
-g[data-mml-node="mtable"] > .mjx-dotted {
-  stroke-linecap: round;
-  stroke-dasharray: 0,140;
-}
-
-g[data-mml-node="mtable"] > svg {
-  overflow: visible;
-}
-
-[jax="SVG"] mjx-tool {
-  display: inline-block;
-  position: relative;
-  width: 0;
-  height: 0;
-}
-
-[jax="SVG"] mjx-tool > mjx-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-mjx-tool > mjx-tip {
-  display: inline-block;
-  padding: .2em;
-  border: 1px solid #888;
-  font-size: 70%;
-  background-color: #F8F8F8;
-  color: black;
-  box-shadow: 2px 2px 5px #AAAAAA;
-}
-
-g[data-mml-node="maction"][data-toggle] {
-  cursor: pointer;
-}
-
-mjx-status {
-  display: block;
-  position: fixed;
-  left: 1em;
-  bottom: 1em;
-  min-width: 25%;
-  padding: .2em .4em;
-  border: 1px solid #888;
-  font-size: 90%;
-  background-color: #F8F8F8;
-  color: black;
-}
-
-foreignObject[data-mjx-xml] {
-  font-family: initial;
-  line-height: normal;
-  overflow: visible;
-}
-
-.MathJax path {
-  stroke-width: 3;
-}
-
-mjx-container {
-  overflow: auto hidden;
-}
-
-mjx-container + br {
-  display: none;
-}
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -209,7 +92,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -217,32 +100,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -260,11 +126,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="I ❤ Logs - 以日志为中心的系统设计理念 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -286,7 +157,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -321,32 +192,54 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p><em>I ❤ Logs</em> 出版于 2014 年，是一本很短小的书，100 页不到，利用这周的零散时间就看完了。作者 <a target="_blank" rel="noopener" href="https://www.linkedin.com/in/jaykreps/">Jay Kreps</a>，是前 LinkedIn 的 Principal Staff Engineer，也是 LinkedIn 许多著名开源项目的负责人及联合作者，如 Kafka、Voldemort 等。他是现任 <a target="_blank" rel="noopener" href="https://www.confluent.io/about/">Confluent</a> 的 CEO，主要工作在于围绕实时数据提供企业级服务支持。这本书算是 Jay Kreps 过去多年实践的思考结晶。</p>
+    <div class="post-body" itemprop="articleBody"><p><em>I ❤ Logs</em> 出版于 2014 年，是一本很短小的书，100
+页不到，利用这周的零散时间就看完了。作者 <a
+target="_blank" rel="noopener" href="https://www.linkedin.com/in/jaykreps/">Jay Kreps</a>，是前
+LinkedIn 的 Principal Staff Engineer，也是 LinkedIn
+许多著名开源项目的负责人及联合作者，如 Kafka、Voldemort 等。他是现任 <a
+target="_blank" rel="noopener" href="https://www.confluent.io/about/">Confluent</a> 的
+CEO，主要工作在于围绕实时数据提供企业级服务支持。这本书算是 Jay Kreps
+过去多年实践的思考结晶。</p>
 <span id="more"></span>
-<p>本文主要是对书中的一些看法、观点的个人化梳理，有兴趣可以阅读<a target="_blank" rel="noopener" href="https://www.confluent.io/ebook/i-heart-logs-event-data-stream-processing-and-data-integration/">原著</a>。</p>
+<p>本文主要是对书中的一些看法、观点的个人化梳理，有兴趣可以阅读<a
+target="_blank" rel="noopener" href="https://www.confluent.io/ebook/i-heart-logs-event-data-stream-processing-and-data-integration/">原著</a>。</p>
 <h2 id="日志即数据">日志即数据</h2>
-<p>在讨论日志之前，首先要明确日志的含义。这里的日志并非指我们常用的非结构化或半结构化的服务日志，而更接近数据库中常见的结构化的提交日志 (commit log/journal/WAL)，这些日志通常是只往后追加数据，这里的序号暗含着逻辑时间，标识着连续日志产生的逻辑先后顺序：</p>
+<p>在讨论日志之前，首先要明确日志的含义。这里的日志并非指我们常用的非结构化或半结构化的服务日志，而更接近数据库中常见的结构化的提交日志
+(commit
+log/journal/WAL)，这些日志通常是只往后追加数据，这里的序号暗含着逻辑时间，标识着连续日志产生的逻辑先后顺序：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/a-structured-log.jpg" alt="a-structured-log" /></p>
 <h3 id="数据库中的日志">数据库中的日志</h3>
-<p>日志在数据库中常常被用来实现故障恢复、数据复制、最终一致性等。一个事务提交成功与否在日志提交成功时就可以确定，只要 WAL 落盘，便可告诉客户端提交成功，即便数据库发生故障，也能从 WAL 日志中恢复数据；日志 (如 BinLog) 的 pub/sub 机制可以用来在主节点与复制节点之间同步数据，通过同步的进度可以知道不同复制节点的同步进度，此外日志的逻辑顺序保证了主节点与复制节点之间数据的一致性。</p>
+<p>日志在数据库中常常被用来实现故障恢复、数据复制、最终一致性等。一个事务提交成功与否在日志提交成功时就可以确定，只要
+WAL 落盘，便可告诉客户端提交成功，即便数据库发生故障，也能从 WAL
+日志中恢复数据；日志 (如 BinLog) 的 pub/sub
+机制可以用来在主节点与复制节点之间同步数据，通过同步的进度可以知道不同复制节点的同步进度，此外日志的逻辑顺序保证了主节点与复制节点之间数据的一致性。</p>
 <h3 id="分布式系统中的日志">分布式系统中的日志</h3>
-<p>数据库利用日志来解决的问题，也是所有分布式系统需要解决的根本问题，如刚才提到的故障恢复、数据同步、数据一致性等等，可以称之为以日志为中心 (log-centric) 的解决方案。更严谨地说：</p>
+<p>数据库利用日志来解决的问题，也是所有分布式系统需要解决的根本问题，如刚才提到的故障恢复、数据同步、数据一致性等等，可以称之为以日志为中心
+(log-centric) 的解决方案。更严谨地说：</p>
 <blockquote>
-<p>如果两个相同的 (identical)、确定 (deterministic) 的进程以相同的状态启动，按相同的顺序获取相同的输入，它们将最终达到相同的状态。</p>
+<p>如果两个相同的 (identical)、确定 (deterministic)
+的进程以相同的状态启动，按相同的顺序获取相同的输入，它们将最终达到相同的状态。</p>
 </blockquote>
-<p>这就是状态机复制原则 (state machine replication principle)。多个这样的进程，就组成了我们熟知的各种分布式系统。</p>
+<p>这就是状态机复制原则 (state machine replication
+principle)。多个这样的进程，就组成了我们熟知的各种分布式系统。</p>
 <h3 id="日志为中心的设计">日志为中心的设计</h3>
-<p>日志为中心的设计可以分为两种：主备 (primary backup) 和状态机复制 (state machine replication)，如下图所示：</p>
+<p>日志为中心的设计可以分为两种：主备 (primary backup) 和状态机复制
+(state machine replication)，如下图所示：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/logic-centric-design.jpg" alt="logic-centric-design" /></p>
 <p>在主备模式中，主节点接收所有的读写请求，每条写入的数据被记录到日志中，从节点通过订阅日志、执行操作来同步数据状态。如果主节点发生故障，就在从节点中选择一个作为新的主节点；在状态机复制中，不存在主节点，所有的写操作先进入日志，所有节点都通过订阅日志，执行操作来生成本地状态。</p>
 <h3 id="日志与共识">日志与共识</h3>
 <p>我们提到的日志与共识算法中的日志似乎也有些相似，但也有所不同。共识通常指系统中的所有节点连续达成共识，在每个时刻只能达成一个共识，这些共识是线性一致的；在实践中，系统通常需要同时做多个决定，这些决定之间并没有绝对的先后顺序或因果关系。因此相较于共识，日志的抽象对于常见的分布式系统来说更加自然。</p>
-<p>我们往往过于关注复杂的共识算法实现，而没有注意到日志抽象的实践意义，这一点比较反常。比如，当人们谈论 hash table 的时候，很少关注背后的实现是 murmur hash with linear probing 还是其它实现变种。未来，想必日志抽象会将更加常见，背后也将有很多算法和实现相互竞争，以提供最好的服务保证和最优的系统性能。</p>
+<p>我们往往过于关注复杂的共识算法实现，而没有注意到日志抽象的实践意义，这一点比较反常。比如，当人们谈论
+hash table 的时候，很少关注背后的实现是 murmur hash with linear probing
+还是其它实现变种。未来，想必日志抽象会将更加常见，背后也将有很多算法和实现相互竞争，以提供最好的服务保证和最优的系统性能。</p>
 <h3 id="数据表与日志的对偶性">数据表与日志的对偶性</h3>
 <p>日志记录着数据表的变化，数据表记录着数据的最新状态。完整的操作日志可以让我们做时空穿梭，回溯到数据的任何一个历史状态。这与代码的版本管理系统有些类似，实际上代码仓库本身就是一个可以回退到任何历史状态的数据库。</p>
 <h2 id="更大的分布式数据库">更大的分布式数据库</h2>
-<p>实际上，我们可以将企业中的所有数据、数据流以及数据系统合起来看作是一个巨型分布式数据库。所有原始数据表就是数据库中的基础数据；所有面向查询的系统都是基于这个数据库之上建立的索引，如 Redis、ElasticSearch、Hive tables 等等；流式处理系统，如 Flink、Storm、Samza，是这个数据库中基于触发器的实体化视图机制 (trigger-and-view materialization mechanism)；日志系统就是数据库的操作日志，记录数据的变化。</p>
+<p>实际上，我们可以将企业中的所有数据、数据流以及数据系统合起来看作是一个巨型分布式数据库。所有原始数据表就是数据库中的基础数据；所有面向查询的系统都是基于这个数据库之上建立的索引，如
+Redis、ElasticSearch、Hive tables 等等；流式处理系统，如
+Flink、Storm、Samza，是这个数据库中基于触发器的实体化视图机制
+(trigger-and-view materialization
+mechanism)；日志系统就是数据库的操作日志，记录数据的变化。</p>
 <p>实践中，为了解决特定领域问题的数据系统层出不穷，主要原因在于要构建一个通用的分布式数据库难度巨大，将问题投影到具体的某个场景上能减小系统设计的复杂度，使得系统的构建变得容易。</p>
 <h3 id="拆分还是合并">拆分还是合并？</h3>
 <p>这个巨型分布式数据库的未来会向什么方向发展？作者认为有 3 种可能：</p>
@@ -364,13 +257,23 @@ mjx-container + br {
 <li>向外部系统提供日志订阅功能</li>
 <li>向故障节点提供故障恢复能力</li>
 <li>解决数据负载在节点间的平衡问题</li>
-<li>...</li>
+<li>…</li>
 </ul>
-<p>解决了这些问题，巨型分布式数据库的查询层就只需要完成索引构建、暴露统一 API 的工作。抽象地思考，这个系统可以简单地分为两部分，Log 和 Serving Nodes：</p>
+<p>解决了这些问题，巨型分布式数据库的查询层就只需要完成索引构建、暴露统一
+API 的工作。抽象地思考，这个系统可以简单地分为两部分，Log 和 Serving
+Nodes：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/simplified-log-centric-data-system.jpg" alt="simplified-log-centric-data-system" /></p>
-<p>所有的数据直接写入 Log (或被 Serving Nodes 代理)，然后所有的 Serving Nodes 通过订阅 Log 来建立索引，向外提供数据服务。这种设计就是以日志为中心 (log-centric) 的设计：</p>
+<p>所有的数据直接写入 Log (或被 Serving Nodes 代理)，然后所有的 Serving
+Nodes 通过订阅 Log
+来建立索引，向外提供数据服务。这种设计就是以日志为中心 (log-centric)
+的设计：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/log-centric-infra-stack.jpg" alt="log-centric-infra-stack" /></p>
-<p>这个系统本身可以直接通过流处理器 (stream processor)，将日志流直接或与其它数据结合，一同提供给其它索引服务。尽管 Kafka、BookKeeper、Pulsar 这些都是日志服务的候选，但这里所述的以日志为中心的设计仅仅是一种思想，你甚至可以利用类似 DynamoDB 来构建这样的日志服务，只不过你可能需要做一些额外的工作来支持日志应该提供的功能和保证。</p>
+<p>这个系统本身可以直接通过流处理器 (stream
+processor)，将日志流直接或与其它数据结合，一同提供给其它索引服务。尽管
+Kafka、BookKeeper、Pulsar
+这些都是日志服务的候选，但这里所述的以日志为中心的设计仅仅是一种思想，你甚至可以利用类似
+DynamoDB
+来构建这样的日志服务，只不过你可能需要做一些额外的工作来支持日志应该提供的功能和保证。</p>
 <h2 id="日志与流处理批处理">日志与流处理、批处理</h2>
 <h3 id="数据集成">数据集成</h3>
 <p>数据集成 (Data Integration) 的意思是：</p>
@@ -391,16 +294,22 @@ mjx-container + br {
 <h3 id="批处理与流处理">批处理与流处理</h3>
 <p>书中提到一个很不错的例子：人口普查。人口普查的做法很像归并排序，先在最低级别的行政区域内挨家挨户搜集信息，聚合数据，然后逐层向上汇报，最终得到人口估计值。但这个过程通常十分漫长，每一层级人口数据的聚合都需要等待下级汇报的结果，等到最终得到人口普查结果时，其实又已经有很多人口出生了。这是典型的批处理场景。如果是流式处理该怎么做？每当有一个人出生或死亡，就直接上报到统计中心，由统计中心动态地聚合数据，理想情况下可以得到人口在每个时刻的规模。这就是典型的流处理场景。</p>
 <h3 id="日志与-etl数仓">日志与 ETL、数仓</h3>
-<p>数据仓库以适合离线数据分析的方式将企业内部的所有数据结构化地集成到一起，这是一个伟大的想法。数仓的建设需要周期性地从各种源数据库中抽取 (Extract) 数据，转化 (Transform) 成更好理解的形式，最后加载 (Load) 进中心化的数据仓库。一个存储所有企业数据的中心数据仓库内部拥有许多等待挖掘的价值。</p>
+<p>数据仓库以适合离线数据分析的方式将企业内部的所有数据结构化地集成到一起，这是一个伟大的想法。数仓的建设需要周期性地从各种源数据库中抽取
+(Extract) 数据，转化 (Transform) 成更好理解的形式，最后加载 (Load)
+进中心化的数据仓库。一个存储所有企业数据的中心数据仓库内部拥有许多等待挖掘的价值。</p>
 <p>然而，这种通过批处理的将数据整合到一起的方式并不能解决所有问题，其短板在于，一些消费数据的系统需要更加实时的反馈，比如搜索引擎建立索引、推荐系统持续优化、监控系统实时观察。将数据集成到一起的思想仍然是伟大的，但我们也许能够找到弥补批处理方案缺点的其它方案，来满足特点不同的数据需求，这就是日志为中心的方案。</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/organizational-data-flow.jpg" alt="organizational-data-flow" /></p>
-<p>在这样的设计中，原来在 ETL 中的数据转化的工作应该放到哪个位置？大致有以下几种选择：</p>
+<p>在这样的设计中，原来在 ETL
+中的数据转化的工作应该放到哪个位置？大致有以下几种选择：</p>
 <ul>
 <li>数据生产者在将数据写入日志系统前</li>
 <li>对原始日志进行实时流式处理</li>
 <li>在最终加载到数据消费系统时</li>
 </ul>
-<p>其实这里我们并不需要做三选一的决定，而是将 ETL 的工作分类后分别放入这三部分中。数据生产者在生产数据时，需将数据转化成与系统内部逻辑无关的数据结构；在实时流式处理的过程中，可以将数据补充 (如 join) 的工作放入其中；在数据消费系统可以做最终的数据聚合 (aggregation)。</p>
+<p>其实这里我们并不需要做三选一的决定，而是将 ETL
+的工作分类后分别放入这三部分中。数据生产者在生产数据时，需将数据转化成与系统内部逻辑无关的数据结构；在实时流式处理的过程中，可以将数据补充
+(如 join) 的工作放入其中；在数据消费系统可以做最终的数据聚合
+(aggregation)。</p>
 <h3 id="日志与流处理">日志与流处理</h3>
 <h4 id="为什么需要日志">为什么需要日志</h4>
 <p>日志与流处理是两个互相独立的概念。我们可以让分布式系统中的不同进程直接通信，直接实现流处理，那么我们为什么需要日志？有三个方面原因：</p>
@@ -410,40 +319,66 @@ mjx-container + br {
 <li>提供缓冲区，让生产和消费的过程解耦</li>
 </ul>
 <h4 id="the-lambda-architecture">The Lambda Architecture</h4>
-<p>Nathan Marz 基于以日志为中心的思想，提出了 Lambda Architecture，来同时满足流处理和批处理需求，如下图所示：</p>
+<p>Nathan Marz 基于以日志为中心的思想，提出了 Lambda
+Architecture，来同时满足流处理和批处理需求，如下图所示：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/lambda-architecture.jpg" alt="lambda-architecture" /></p>
-<p>数据流同时被打向两个系统，流处理系统和批处理系统。你需要分别在流处理系统和批处理系统实现两次相同的写入处理逻辑，两个系统处理后写入最终向外提供查询接口的数据库中 (可能是不同的数据库)。Lambda Architecture 的好处在于，原始的输入数据会被原封不动地保留，同时也为重处理 (reprocessing) 留下空间，重处理是很重要的的功能，逻辑会随着业务变化而变化，这时候就需要对历史数据重处理，解决存量问题。</p>
-<p>Lambda Architecture 的劣势在于需要维护两份类似的处理逻辑，一份用于流处理，一份用于批处理。当然也许你希望基于流处理和批处理再抽象出一层通用语言，就能复用逻辑。但这并不现实，即便是 ORM 的场景，将不同关系型数据库的接口聚合，都会遇到各种抽象泄漏的情况，就更不用说这种底层差异更大的数据系统场景了。</p>
+<p>数据流同时被打向两个系统，流处理系统和批处理系统。你需要分别在流处理系统和批处理系统实现两次相同的写入处理逻辑，两个系统处理后写入最终向外提供查询接口的数据库中
+(可能是不同的数据库)。Lambda Architecture
+的好处在于，原始的输入数据会被原封不动地保留，同时也为重处理
+(reprocessing)
+留下空间，重处理是很重要的的功能，逻辑会随着业务变化而变化，这时候就需要对历史数据重处理，解决存量问题。</p>
+<p>Lambda Architecture
+的劣势在于需要维护两份类似的处理逻辑，一份用于流处理，一份用于批处理。当然也许你希望基于流处理和批处理再抽象出一层通用语言，就能复用逻辑。但这并不现实，即便是
+ORM
+的场景，将不同关系型数据库的接口聚合，都会遇到各种抽象泄漏的情况，就更不用说这种底层差异更大的数据系统场景了。</p>
 <h4 id="用流处理代替批处理">用流处理代替批处理</h4>
 <p>如果我们能用流处理代替批处理，就能让架构更加简洁，设计更加统一，开发者也无须维护两份相似的处理逻辑：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/lambda-alternative.jpg" alt="lambda-alternative" /></p>
 <p>其实整个过程很简单：</p>
 <ol type="1">
-<li>使用类似 Kafka 的日志系统保存你需要重新处理的一段时间内的日志，订阅者就可以从任意时间点开始重处理数据。假如你希望提供重处理最近 30 天数据的能力，就将 Kafka 的留存策略设置成 30 天。</li>
-<li>当你想要重处理时，启动一个新的 job 从头开始消费数据，执行处理逻辑，并将结果写出到新表 (output_table_n+1)</li>
-<li>当新的 job 处理完成或追上旧的 job 时，就可以让应用从新的表中读取数据</li>
+<li>使用类似 Kafka
+的日志系统保存你需要重新处理的一段时间内的日志，订阅者就可以从任意时间点开始重处理数据。假如你希望提供重处理最近
+30 天数据的能力，就将 Kafka 的留存策略设置成 30 天。</li>
+<li>当你想要重处理时，启动一个新的 job
+从头开始消费数据，执行处理逻辑，并将结果写出到新表
+(output_table_n+1)</li>
+<li>当新的 job 处理完成或追上旧的 job
+时，就可以让应用从新的表中读取数据</li>
 <li>最后将旧的 job 停止，并删除旧表</li>
 </ol>
 <h4 id="有状态的流处理">有状态的流处理</h4>
-<p>有时在流处理的过程中我们还需要 join 其它数据来获取所需信息，如果处理每条数据都需要访问数据库，将使得整个过程变得缓慢。以 LinkedIn 的一个应用场景为例，Who viewed your profile，即查看谁访问过我的个人资料：</p>
+<p>有时在流处理的过程中我们还需要 join
+其它数据来获取所需信息，如果处理每条数据都需要访问数据库，将使得整个过程变得缓慢。以
+LinkedIn 的一个应用场景为例，Who viewed your
+profile，即查看谁访问过我的个人资料：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/who-viewed-your-profile.jpg" alt="who-viewed-your-profile" /></p>
 <p>原始数据就是用户访问的事件流，每个事件的数据结构大致如下：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;eventType&quot;</span>: <span class="string">&quot;PageViewEvent&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span>: <span class="number">1413215518</span>,</span><br><span class="line">  <span class="attr">&quot;viewerId&quot;</span>: <span class="string">&quot;1234&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;viewedProfileId&quot;</span>: <span class="string">&quot;4321&quot;</span>,</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这时在订阅并处理事件数据时，就需要将 viewer 的 profile 信息填充上：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;eventType&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PageViewEvent&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="number">1413215518</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;viewerId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1234&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;viewedProfileId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4321&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这时在订阅并处理事件数据时，就需要将 viewer 的 profile
+信息填充上：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/profile-from-db.jpg" alt="profile-from-db" /></p>
-<p>最简单的方法就是从数据库取，那么每次重新处理就是一次全量数据获取，可能还会影响线上 OLTP 服务的稳定性。自然而然地，我们又想到在数据库和流处理之间加一层缓存：</p>
+<p>最简单的方法就是从数据库取，那么每次重新处理就是一次全量数据获取，可能还会影响线上
+OLTP
+服务的稳定性。自然而然地，我们又想到在数据库和流处理之间加一层缓存：</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/profile-from-cache.jpg" alt="profile-from-cache" /></p>
 <p>那么我们何不将缓存做进流处理器中？</p>
 <p><img src="/blog/2020/07/12/I-❤-Logs-小结/profile-from-local-cache.jpg" alt="profile-from-local-cache" /></p>
-<p>然后订阅 profile 的修改事件 (ProfileEditEvent)，更新流处理器本地的数据库，这样还能保证数据的最终一致，避免访问线上 OLTP 服务。这就是有状态的流处理。</p>
+<p>然后订阅 profile 的修改事件
+(ProfileEditEvent)，更新流处理器本地的数据库，这样还能保证数据的最终一致，避免访问线上
+OLTP 服务。这就是有状态的流处理。</p>
 <h2 id="小结">小结</h2>
 <p>本书将企业中的数据、数据流、各种数据服务系统看作是一个巨型的分布式数据库，日志就是这个数据库系统的操作日志，记录着所有历史增量数据，并以此为基础，提出以日志为中心的设计思想，并讨论了许多数据处理场景的不同处理方案，确实耐人寻味。</p>
 <p>这是 2014 年的一本书 ：）。</p>
 <h2 id="参考文献">参考文献</h2>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://www.confluent.io/ebook/i-heart-logs-event-data-stream-processing-and-data-integration/">I ❤ Logs</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.manning.com/books/big-data">Big Data: Principles and best practices of scalable realtime data systems</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=yO3SBU6vVKA&amp;t=2233s">Building real-time data products at LinkedIn with Apache Samza</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.confluent.io/ebook/i-heart-logs-event-data-stream-processing-and-data-integration/">I
+❤ Logs</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.manning.com/books/big-data">Big Data:
+Principles and best practices of scalable realtime data systems</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=yO3SBU6vVKA&amp;t=2233s">Building
+real-time data products at LinkedIn with Apache Samza</a></li>
 </ul>
 
     </div>
@@ -459,13 +394,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -476,12 +411,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/06/21/Jaeger-Walkthrough-jaeger-client-go/" rel="prev" title="Jaeger 的 Go 客户端的源码导读">
-                  <i class="fa fa-chevron-left"></i> Jaeger 的 Go 客户端的源码导读
+                  <i class="fa fa-angle-left"></i> Jaeger 的 Go 客户端的源码导读
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2020/07/21/the-anatomy-of-a-large-scale-hypertextual-web-search-engine-1998/" rel="next" title="The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998)">
-                  The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998) <i class="fa fa-chevron-right"></i>
+                  The Anatomy of a Large-Scale Hypertextual Web Search Engine (1998) <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -505,15 +440,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -521,28 +455,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

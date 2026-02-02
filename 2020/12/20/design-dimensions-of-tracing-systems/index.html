@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,46 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 Database of Tracing Systems 项目中，一起调研市面上的项目，建立起调用链追踪系">
-<meta property="og:type" content="article">
-<meta property="og:title" content="调用链追踪系统的设计维度">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 Database of Tracing Systems 项目中，一起调研市面上的项目，建立起调用链追踪系">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/metadata-propagation.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/basic-architecture.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/span-model.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/diamond.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/event-model.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/submitter-and-trigger.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/sampling-methods.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/swimlane.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/flow-graph.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/flame-graph.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/use-case-dimension-matrix.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-1.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-2.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/data-model.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png">
-<meta property="article:published_time" content="2020-12-20T23:03:14.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.796Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2020/12/20/design-dimensions-of-tracing-systems/","path":"2020/12/20/design-dimensions-of-tracing-systems/","title":"调用链追踪系统的设计维度"}</script>
@@ -64,141 +30,50 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
-<style>mjx-container[jax="SVG"] {
-  direction: ltr;
-}
-
-mjx-container[jax="SVG"] > svg {
-  overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
-}
-
-mjx-container[jax="SVG"][display="true"] {
-  display: block;
-  text-align: center;
-  margin: 1em 0;
-}
-
-mjx-container[jax="SVG"][justify="left"] {
-  text-align: left;
-}
-
-mjx-container[jax="SVG"][justify="right"] {
-  text-align: right;
-}
-
-g[data-mml-node="merror"] > g {
-  fill: red;
-  stroke: red;
-}
-
-g[data-mml-node="merror"] > rect[data-background] {
-  fill: yellow;
-  stroke: none;
-}
-
-g[data-mml-node="mtable"] > line[data-line] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > rect[data-frame] {
-  stroke-width: 70px;
-  fill: none;
-}
-
-g[data-mml-node="mtable"] > .mjx-dashed {
-  stroke-dasharray: 140;
-}
-
-g[data-mml-node="mtable"] > .mjx-dotted {
-  stroke-linecap: round;
-  stroke-dasharray: 0,140;
-}
-
-g[data-mml-node="mtable"] > svg {
-  overflow: visible;
-}
-
-[jax="SVG"] mjx-tool {
-  display: inline-block;
-  position: relative;
-  width: 0;
-  height: 0;
-}
-
-[jax="SVG"] mjx-tool > mjx-tip {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-mjx-tool > mjx-tip {
-  display: inline-block;
-  padding: .2em;
-  border: 1px solid #888;
-  font-size: 70%;
-  background-color: #F8F8F8;
-  color: black;
-  box-shadow: 2px 2px 5px #AAAAAA;
-}
-
-g[data-mml-node="maction"][data-toggle] {
-  cursor: pointer;
-}
-
-mjx-status {
-  display: block;
-  position: fixed;
-  left: 1em;
-  bottom: 1em;
-  min-width: 25%;
-  padding: .2em .4em;
-  border: 1px solid #888;
-  font-size: 90%;
-  background-color: #F8F8F8;
-  color: black;
-}
-
-foreignObject[data-mjx-xml] {
-  font-family: initial;
-  line-height: normal;
-  overflow: visible;
-}
-
-.MathJax path {
-  stroke-width: 3;
-}
-
-mjx-container {
-  overflow: auto hidden;
-}
-
-mjx-container + br {
-  display: none;
-}
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -217,7 +92,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -225,32 +100,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -268,11 +126,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="调用链追踪系统的设计维度 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -294,7 +157,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -329,19 +192,31 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>本文将调用链追踪系统的设计维度归结于以下 5 个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这 5 个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database of Tracing Systems</a> 项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
+    <div class="post-body" itemprop="articleBody"><p>本文将调用链追踪系统的设计维度归结于以下 5
+个：调用链数据模型、元数据结构、因果关系、采样策略以及数据可视化。我们可以把这
+5
+个维度当作一个分析框架，用它帮助我们在理论上解构市面上任意一个调用链追踪系统，在实践中根据使用场景进行技术选型和系统设计。如果你对调研相关系统很感兴趣，也欢迎参与到
+<a
+target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database
+of Tracing Systems</a>
+项目中，一起调研市面上的项目，建立起调用链追踪系统的数据库。</p>
 <span id="more"></span>
 <h1 id="引言">引言</h1>
 <p>阅读本文并不要求读者具备任何调用链追踪系统相关的理论知识或实践经验，读者具备一定的微服务架构的概念或实践经验即可。期望读者看完这篇文章以后，能掌握调用链追踪系统的核心设计维度，理解其中的设计权衡，并能使用这些维度来分析市面上的新老调用链追踪系统实现，甚至帮助到自己在生产实践中根据使用场景进行技术选型和系统设计。</p>
 <h1 id="解决的问题">解决的问题</h1>
 <h2 id="微服务的可观测性">微服务的可观测性</h2>
 <blockquote>
-<p>Any organization that designs a system (defined broadly) will produce a design whose structure is a copy of the organization's communication structure.</p>
+<p>Any organization that designs a system (defined broadly) will produce
+a design whose structure is a copy of the organization’s communication
+structure.</p>
 <p>— Melvin E. Conway</p>
 </blockquote>
-<p>如果有一门学科叫软件社会学，那么康威定律 (Conway's law) 必定是其中的基本定律之一。如果把互联网公司内部的全体信息系统看作是一整个系统，那么这个系统模块结构会向公司的组织架构收敛。从组织架构层面看，公司结构从扁平向多层级演变，信息传递的环节增加，沟通效率随之下降，进而影响公司的行动效率。不论从组员之间的熟悉程度还是从部门目标一致性来看，部门内部的沟通效率要远远高于部门间的沟通效率。因此，如果系统模块结构与组织架构约趋近，公司的沟通效率就能接近极大值。团队的分化通常伴随着服务的拆分，这也是许多公司业务增长以后进行微服务化的动机。微服务化后，公司信息系统就被迫成为了分布式系统。尽管分布式系统带来了种种好处，如持续集成、增量部署、横向扩展、故障隔离，但系统可观测性比起单机系统下降了很多，甚至几乎没有人能够对公司信息系统有全局性的了解。</p>
-<p>任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心 (machine-centric) 走向以请求为中心 (workflow-centric)。调用链 (traces)、日志 (logs)、监控指标 (metrics)，三者合称 Telemetry，有了它们，微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。</p>
+<p>如果有一门学科叫软件社会学，那么康威定律 (Conway’s law)
+必定是其中的基本定律之一。如果把互联网公司内部的全体信息系统看作是一整个系统，那么这个系统模块结构会向公司的组织架构收敛。从组织架构层面看，公司结构从扁平向多层级演变，信息传递的环节增加，沟通效率随之下降，进而影响公司的行动效率。不论从组员之间的熟悉程度还是从部门目标一致性来看，部门内部的沟通效率要远远高于部门间的沟通效率。因此，如果系统模块结构与组织架构约趋近，公司的沟通效率就能接近极大值。团队的分化通常伴随着服务的拆分，这也是许多公司业务增长以后进行微服务化的动机。微服务化后，公司信息系统就被迫成为了分布式系统。尽管分布式系统带来了种种好处，如持续集成、增量部署、横向扩展、故障隔离，但系统可观测性比起单机系统下降了很多，甚至几乎没有人能够对公司信息系统有全局性的了解。</p>
+<p>任意一个分布式系统的终极理想是：“给开发者以分布式的能力，单机的感受”。而调用链追踪系统就是实现终极理想不可或缺的一部分。调用链追踪系统通过收集调用链数据，帮助开发者在观测分布式系统行为时，从以机器为中心
+(machine-centric) 走向以请求为中心 (workflow-centric)。调用链
+(traces)、日志 (logs)、监控指标 (metrics)，三者合称
+Telemetry，有了它们，微服务开发者既能通盘考虑，又能深入局部分析，在系统规模扩大的同时仍然能够掌控全局。</p>
 <h2 id="使用场景">使用场景</h2>
 <p>当系统的调用链信息被串联起来以后，开发者就能基于此展开各种形式的系统行为分析。常见的使用场景可以分为以下几类：</p>
 <h3 id="异常检测">异常检测</h3>
@@ -350,17 +225,25 @@ mjx-container + br {
 <p>稳态分析指的是分析微服务在正常流量下的各方面状态，分析粒度可能包括单个接口、单个服务、多个服务等等；分析范围可能是单个请求或多个请求；分析角度可能包括埋点指标、依赖关系、流量大小等等。稳态分析通常反映的是系统主要流程的健康状态，一些配置的改动，如存储节点修改、客户端日志上报频率，都可能反馈到系统稳态。稳态分析还可以有很多细分场景，如：</p>
 <ul>
 <li>稳态性能分析：定位和排查系统稳态中的性能问题，这些问题的起因通常与异常检测类似，只是其影响尚不足以触发报警。</li>
-<li>服务依赖分析：构建接口级别的依赖关系图，节点通常为接口或服务，边通常为接口或服务的调用关系，边的权重则为流量。构建方式可以分为离线构建和在线构建，对应的就是静态关系图和动态关系图。这些信息可以以基础 API 的方式提供给上游应用使用，如 APM。</li>
+<li>服务依赖分析：构建接口级别的依赖关系图，节点通常为接口或服务，边通常为接口或服务的调用关系，边的权重则为流量。构建方式可以分为离线构建和在线构建，对应的就是静态关系图和动态关系图。这些信息可以以基础
+API 的方式提供给上游应用使用，如 APM。</li>
 </ul>
 <h3 id="分布式侧写-profiling">分布式侧写 (profiling)</h3>
-<p>许多编程语言都提供侧写工具，如 go tool pprof，能通过采集不同资源的使用负载，如 CPU、内存、协程等，分析进程内部不同模块的资源使用模式，最后通过调用树或火焰图等可视化方式呈现给开发者。分布式侧写就是这类侧写工具的分布式版本，开发者通过打开侧写开关，采样分析一段时间，得到微服务之间的资源占用比例，如时延，然后通过类似单机的数据可视化方式分析接口或服务整体的性能瓶颈。</p>
+<p>许多编程语言都提供侧写工具，如 go tool
+pprof，能通过采集不同资源的使用负载，如
+CPU、内存、协程等，分析进程内部不同模块的资源使用模式，最后通过调用树或火焰图等可视化方式呈现给开发者。分布式侧写就是这类侧写工具的分布式版本，开发者通过打开侧写开关，采样分析一段时间，得到微服务之间的资源占用比例，如时延，然后通过类似单机的数据可视化方式分析接口或服务整体的性能瓶颈。</p>
 <h3 id="资源归因">资源归因</h3>
-<p>资源归因解答的主要问题是：“谁该为我的服务成本买单？” 它需要将资源消耗或占用与请求方关联，资源归因也是成本分析的基础。</p>
+<p>资源归因解答的主要问题是：“谁该为我的服务成本买单？”
+它需要将资源消耗或占用与请求方关联，资源归因也是成本分析的基础。</p>
 <h3 id="负载建模">负载建模</h3>
-<p>负载建模主要指分析和推测系统的行为表现，该场景解答的问题通常可以表述为 “如果出现 XX 变化，系统整体或关键链路状态会发生什么改变？” 常见应用如容量预估、全链路压测、混沌测试等等。</p>
+<p>负载建模主要指分析和推测系统的行为表现，该场景解答的问题通常可以表述为
+“如果出现 XX 变化，系统整体或关键链路状态会发生什么改变？”
+常见应用如容量预估、全链路压测、混沌测试等等。</p>
 <h1 id="基本实现方案">基本实现方案</h1>
 <h2 id="如何追踪调用链">如何追踪调用链</h2>
-<p>在微服务架构下，每个调用链的信息散落在请求经过的各个微服务中，这些信息需要通过某种技术手段收集并串联起来，重建出完整调用链。存在两种基本思路来解决问题，一种是无代码入侵的黑盒法 (blackbox)；另一种是有代码入侵的元数据传播法 (metadata propagation)。</p>
+<p>在微服务架构下，每个调用链的信息散落在请求经过的各个微服务中，这些信息需要通过某种技术手段收集并串联起来，重建出完整调用链。存在两种基本思路来解决问题，一种是无代码入侵的黑盒法
+(blackbox)；另一种是有代码入侵的元数据传播法 (metadata
+propagation)。</p>
 <h3 id="黑盒法">黑盒法</h3>
 <p>黑盒法，顾名思义，就是将整个微服务集合看作一个黑盒，把特定格式的日志收集到存储中心后，利用统计方法推断、重建调用链：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/blackbox.png" width="600px"/></p>
@@ -369,7 +252,7 @@ mjx-container + br {
 <li>难以推测异步计算任务关系</li>
 <li>统计分析需要一定量的数据以及计算资源，耗时长</li>
 <li>统计分析需要处理数据集不均衡的情况，如请求量很少的接口</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>黑盒法在生产实践中并未真正被使用，目前仅作为理论思路，提供参考。</p>
 <h3 id="元数据传播法">元数据传播法</h3>
@@ -386,53 +269,114 @@ mjx-container + br {
 <li>数据库查询</li>
 <li>缓存读写</li>
 <li>消息中间件的生产及消费</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>每个点上会记录跨进程操作的名称、开始时间、结束时间以及一些必要的标签键值对，这些信息是整个调用链拼图中的一片。</p>
 <h3 id="采样">采样</h3>
 <p>实践中无论从计算和存储资源成本消耗上分析，还是从具体使用场景出发，都不一定需要收集所有埋点数据。因此许多调用链追踪系统会要求按照一定的策略上报数据，目的是取得成本与收益之间的平衡，提高投入产出比。</p>
 <h3 id="上报">上报</h3>
-<p>数据可以从服务实例中直接发送到处理中心，或经由同一宿主机上的 agent 代理上报。使用 agent 上报的好处之一在于一些计算操作可以在 agent 中统一处理，一些逻辑如压缩、过滤、配置变更等可以集中到 agent 中实现，服务只需要实现很薄的一层埋点、采样逻辑即可，这也能使得调用链追踪方案对业务服务本身的影响降到最低；使用 agent 上报的另一好处是数据处理服务的发现机制对服务本身透明。因此在每台宿主机上部署 agent 是许多调用链追踪系统的推荐部署方案。</p>
+<p>数据可以从服务实例中直接发送到处理中心，或经由同一宿主机上的 agent
+代理上报。使用 agent 上报的好处之一在于一些计算操作可以在 agent
+中统一处理，一些逻辑如压缩、过滤、配置变更等可以集中到 agent
+中实现，服务只需要实现很薄的一层埋点、采样逻辑即可，这也能使得调用链追踪方案对业务服务本身的影响降到最低；使用
+agent
+上报的另一好处是数据处理服务的发现机制对服务本身透明。因此在每台宿主机上部署
+agent 是许多调用链追踪系统的推荐部署方案。</p>
 <h3 id="处理">处理</h3>
-<p>调用链数据上报到处理中心，通常称后者为收集器 (collector)，由收集器完成必要的后处理，如数据过滤、数据标记、尾部采样、数据建模等等，最后批量写到不同的存储服务中，并建立必要的索引。</p>
+<p>调用链数据上报到处理中心，通常称后者为收集器
+(collector)，由收集器完成必要的后处理，如数据过滤、数据标记、尾部采样、数据建模等等，最后批量写到不同的存储服务中，并建立必要的索引。</p>
 <h3 id="存储索引">存储/索引</h3>
-<p>调用链追踪数据主要有两个特点：体量大、价值随时间的推移而降低。因此存储服务的选型除了数据模型之外，还需要考虑可扩展性以及数据保留策略 (retention policy) 的支持。另外为了便于查询，我们还需要为数据的存储建立合适的索引。</p>
+<p>调用链追踪数据主要有两个特点：体量大、价值随时间的推移而降低。因此存储服务的选型除了数据模型之外，还需要考虑可扩展性以及数据保留策略
+(retention policy)
+的支持。另外为了便于查询，我们还需要为数据的存储建立合适的索引。</p>
 <h3 id="可视化">可视化</h3>
 <p>可视化是高效利用调用链数据的最重要一环，高质量的交互体验能帮助研发快速获取所需信息。通常我们可以将可视化分为两种粒度：单个调用链查看、多个调用链聚合分析，在每个粒度上都有许多可视化方案选择。</p>
 <h3 id="可扩展性">可扩展性</h3>
-<p>如果不做任何采样，调用链追踪系统需要处理的数据与全站的请求总量正相关。假如全站所有请求平均要经过 20 个服务处理，那么调用链追踪系统将需要承担全站请求总量 20 倍压力，因此其架构设计上的每一层都需要具备可扩展性。</p>
-<p>如果采用服务 SDK 直接上报，那么上报层的横向扩容就自动地通过实例的增加实现；如果采用 agent 代理的上报形式，那么横向扩容就可以通过增加宿主机来实现。数据处理层理论上应该是无状态的，支持横向扩容。由于许多调用链数据的处理逻辑需要获取同一调用链的所有数据，那么通过 TraceID 做负载均衡是天然的选择；数据的存储可扩展性会由所使用的存储服务保证。</p>
+<p>如果不做任何采样，调用链追踪系统需要处理的数据与全站的请求总量正相关。假如全站所有请求平均要经过
+20 个服务处理，那么调用链追踪系统将需要承担全站请求总量 20
+倍压力，因此其架构设计上的每一层都需要具备可扩展性。</p>
+<p>如果采用服务 SDK
+直接上报，那么上报层的横向扩容就自动地通过实例的增加实现；如果采用 agent
+代理的上报形式，那么横向扩容就可以通过增加宿主机来实现。数据处理层理论上应该是无状态的，支持横向扩容。由于许多调用链数据的处理逻辑需要获取同一调用链的所有数据，那么通过
+TraceID
+做负载均衡是天然的选择；数据的存储可扩展性会由所使用的存储服务保证。</p>
 <h3 id="过载控制">过载控制</h3>
 <p>瞬时高峰是常见的流量负载模式，因此调用链追踪系统的各个组件也需要考虑过载控制逻辑。既要防止在峰值流量下埋点及上报对在线服务的影响，也需要考虑调用链追踪后端各模块的承载能力。</p>
-<p>在数据上报和处理的过程中，agent 或 collector 可以通过维持本地队列来削峰，但如果超出局部队列的容量限制，就要考虑数据丢失与时效性之间的权衡。如果可以容忍数据丢失，就可以像路由器丢包似的直接丢掉无法处理的数据；如果可以放弃峰值时效性，则可以通过高吞吐、存储容量高的消息中间件，如 Kafka，来代替局部队列。</p>
+<p>在数据上报和处理的过程中，agent 或 collector
+可以通过维持本地队列来削峰，但如果超出局部队列的容量限制，就要考虑数据丢失与时效性之间的权衡。如果可以容忍数据丢失，就可以像路由器丢包似的直接丢掉无法处理的数据；如果可以放弃峰值时效性，则可以通过高吞吐、存储容量高的消息中间件，如
+Kafka，来代替局部队列。</p>
 <h1 id="设计维度">设计维度</h1>
-<p>在 2014 年的一篇<a target="_blank" rel="noopener" href="https://www.pdl.cmu.edu/PDL-FTP/SelfStar/CMU-PDL-14-102.pdf">论文</a>中，研究团队在分析多个当时的调用链追踪系统后，总结出 4 个设计维度：</p>
+<p>在 2014 年的一篇<a
+target="_blank" rel="noopener" href="https://www.pdl.cmu.edu/PDL-FTP/SelfStar/CMU-PDL-14-102.pdf">论文</a>中，研究团队在分析多个当时的调用链追踪系统后，总结出
+4 个设计维度：</p>
 <ul>
 <li>Which causal relationships should be reserved?</li>
 <li>How should causal relationships be tracked?</li>
 <li>How should sampling be used to reduce overhead?</li>
 <li>How should traces be visualized?</li>
 </ul>
-<p>本节，我们以这篇论文为起点，介绍调用链追踪系统的 5 个设计维度：调用链数据模型、元数据结构、因果关系、采样策略、数据可视化。</p>
+<p>本节，我们以这篇论文为起点，介绍调用链追踪系统的 5
+个设计维度：调用链数据模型、元数据结构、因果关系、采样策略、数据可视化。</p>
 <h2 id="调用链数据模型">1. 调用链数据模型</h2>
-<p>每个调用链追踪系统实现都需要为调用链数据合理建模，它们对数据模型的选择可能影响到埋点、收集、处理、查询等各个环节。其中最常见的数据模型就是 Span Model 和 Event Model。如果你对这个话题感兴趣可以阅读这篇<a target="_blank" rel="noopener" href="http://cs.brown.edu/~rfonseca/pubs/leavitt.pdf">文章</a>。</p>
+<p>每个调用链追踪系统实现都需要为调用链数据合理建模，它们对数据模型的选择可能影响到埋点、收集、处理、查询等各个环节。其中最常见的数据模型就是
+Span Model 和 Event Model。如果你对这个话题感兴趣可以阅读这篇<a
+target="_blank" rel="noopener" href="http://cs.brown.edu/~rfonseca/pubs/leavitt.pdf">文章</a>。</p>
 <h3 id="span-model">Span Model</h3>
-<p>Span Model 最早由 Google 在 <a target="_blank" rel="noopener" href="https://research.google/pubs/pub36356/">Dapper</a> 中提出，它将一次计算 (computation) 任务，如处理用户请求，表达成一组 spans 集合，其中每个 span 表示计算任务的一部分 (segment)，记录着开始时间和结束时间。其中每个 span 还记录着触发它的 span，即 parent span，标志着系统中的因果关系。假设 <code>SpanA</code> 触发了 <code>SpanB</code>，那么 <code>SpanA</code> 就是 <code>SpanB</code> 的父节点。由于父子关系意味着因果关系，那么 spans 之间组成的关系不会形成环，否则就会出现因果循环。因此通常同一个 trace 的 spans 关系可以使用一棵树表示，举例如下：</p>
-<p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/span-model.png" /></p>
-<p>需要注意的是：在 Span Model 中，每个 span 都只存在一个父节点，即导致某段计算发生的原因只有一个。使用 Span Model 的追踪系统在埋点时需要主动停止 span，停止之后该段计算的信息会被上报到处理中心。从逻辑上看，子节点完成上报后，父节点才会上报；从上报通路上看，二者都由本地线程上报，并无关系。</p>
-<p>Span Model 单因多果的关系与调用栈在概念上十分契合，很容易被工程师理解和掌握。然而它并不足以表达所有类型的计算依赖关系，如多因一果：</p>
-<p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/diamond.png" /></p>
+<p>Span Model 最早由 Google 在 <a
+target="_blank" rel="noopener" href="https://research.google/pubs/pub36356/">Dapper</a>
+中提出，它将一次计算 (computation) 任务，如处理用户请求，表达成一组
+spans 集合，其中每个 span 表示计算任务的一部分
+(segment)，记录着开始时间和结束时间。其中每个 span 还记录着触发它的
+span，即 parent span，标志着系统中的因果关系。假设 <code>SpanA</code>
+触发了 <code>SpanB</code>，那么 <code>SpanA</code> 就是
+<code>SpanB</code> 的父节点。由于父子关系意味着因果关系，那么 spans
+之间组成的关系不会形成环，否则就会出现因果循环。因此通常同一个 trace 的
+spans 关系可以使用一棵树表示，举例如下：</p>
+<p><img
+src="/blog/2020/12/20/design-dimensions-of-tracing-systems/span-model.png" /></p>
+<p>需要注意的是：在 Span Model 中，每个 span
+都只存在一个父节点，即导致某段计算发生的原因只有一个。使用 Span Model
+的追踪系统在埋点时需要主动停止
+span，停止之后该段计算的信息会被上报到处理中心。从逻辑上看，子节点完成上报后，父节点才会上报；从上报通路上看，二者都由本地线程上报，并无关系。</p>
+<p>Span Model
+单因多果的关系与调用栈在概念上十分契合，很容易被工程师理解和掌握。然而它并不足以表达所有类型的计算依赖关系，如多因一果：</p>
+<p><img
+src="/blog/2020/12/20/design-dimensions-of-tracing-systems/diamond.png" /></p>
 <h3 id="event-model">Event Model</h3>
-<p><a target="_blank" rel="noopener" href="http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf">X-Trace</a> 是最早使用 Event Model 的项目。在 X-Trace 中，一个事件 (event) 是计算任务中的一个时刻，计算任务中的因果关系由事件之间的边 (edges) 表示，任意两个事件都可以用一条边连接。值得注意的是，这里的 edge 表示的实际上是 <a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">Lamport (1978)</a> 中提到的 "happens-before" 关系，假设有一条边从 EventA 连到 EventB，那么 "happens-before" 表示 EventA 可能对 EventB 产生影响。但在简单场景下，我们可以直接认为边指代激活关系 (activation relationship) 或依赖关系 (dependency relationships)，二者都是 "happens-before" 关系的子集。与 Span Model 不同的是，Event Model 中每个事件可以有多条入边 (incoming edges)，这让 Event Model 可以轻松表达复杂关系，如 fork/join 或 fan-ins/fan-outs 关系。Event Model 支持更精细化的调用链数据展示，举例如下：</p>
-<p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/event-model.png" /></p>
-<p>其中虚线框表示某个执行线程；圆点表示事件；箭头表示边。为了便于理解和对比，图中也用实线方框表示 span。</p>
-<p>Event Model 的优势在于表达力强，但缺点是相比 Span Model 更加复杂，对工程师来说更不易接受和上手，同时 Span Model 的类似调用栈的可视化也更加简洁。</p>
+<p><a
+target="_blank" rel="noopener" href="http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf">X-Trace</a>
+是最早使用 Event Model 的项目。在 X-Trace 中，一个事件 (event)
+是计算任务中的一个时刻，计算任务中的因果关系由事件之间的边 (edges)
+表示，任意两个事件都可以用一条边连接。值得注意的是，这里的 edge
+表示的实际上是 <a
+target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">Lamport
+(1978)</a> 中提到的 “happens-before” 关系，假设有一条边从 EventA 连到
+EventB，那么 “happens-before” 表示 EventA 可能对 EventB
+产生影响。但在简单场景下，我们可以直接认为边指代激活关系 (activation
+relationship) 或依赖关系 (dependency relationships)，二者都是
+“happens-before” 关系的子集。与 Span Model 不同的是，Event Model
+中每个事件可以有多条入边 (incoming edges)，这让 Event Model
+可以轻松表达复杂关系，如 fork/join 或 fan-ins/fan-outs 关系。Event Model
+支持更精细化的调用链数据展示，举例如下：</p>
+<p><img
+src="/blog/2020/12/20/design-dimensions-of-tracing-systems/event-model.png" /></p>
+<p>其中虚线框表示某个执行线程；圆点表示事件；箭头表示边。为了便于理解和对比，图中也用实线方框表示
+span。</p>
+<p>Event Model 的优势在于表达力强，但缺点是相比 Span Model
+更加复杂，对工程师来说更不易接受和上手，同时 Span Model
+的类似调用栈的可视化也更加简洁。</p>
 <h2 id="元数据结构">2. 元数据结构</h2>
 <p>首先，为了防止歧义，这里特别指出：<strong>元数据指的是在进程间传递的调用链追踪相关的数据</strong>。几乎所有调用链追踪系统都采用元数据传播的方式来追踪跨进程的调用链。那么我们应该如何设计进程间传递的元数据结构？从元数据结构的内容可变性和长度限制两个维度可以将元数据结构划分为三种：静态定长、动态定长和动态变长。</p>
 <h3 id="静态定长">静态定长</h3>
-<p>静态定长元数据，即数据的长度固定且在传播过程中不发生变化。静态定长元数据中只包含一个请求级别的唯一固定 ID，即 TraceID。调用链追踪系统可以通过 TraceID 获取所有与同一个请求相关的信息，然后再建立因果关系。由于元数据中只有 TraceID，系统只能借助一些外部信息，如 threadID、宿主机的墙上时钟，来推测因果关系。</p>
+<p>静态定长元数据，即数据的长度固定且在传播过程中不发生变化。静态定长元数据中只包含一个请求级别的唯一固定
+ID，即 TraceID。调用链追踪系统可以通过 TraceID
+获取所有与同一个请求相关的信息，然后再建立因果关系。由于元数据中只有
+TraceID，系统只能借助一些外部信息，如
+threadID、宿主机的墙上时钟，来推测因果关系。</p>
 <h3 id="动态定长">动态定长</h3>
-<p>动态定长元数据，即数据的长度固定但在传播过程中可能发生变化。动态定长元数据中除包含 TraceID 之外，还会传递请求来源标识，如 SpanID 或 EventID，其中来源标识可以建立两两节点之间的上下游关系。</p>
+<p>动态定长元数据，即数据的长度固定但在传播过程中可能发生变化。动态定长元数据中除包含
+TraceID 之外，还会传递请求来源标识，如 SpanID 或
+EventID，其中来源标识可以建立两两节点之间的上下游关系。</p>
 <h3 id="动态变长">动态变长</h3>
 <p>动态变长元数据，即数据的长度和内容都会在传播过程中发生变化。动态变长元数据中通常包含上游所有节点的全量或部分信息，当前节点处理完毕后，会将当前节点信息及上游信息一同往下游传递。每个节点都能获取调用链到当前节点为止的所有信息，因此无需通过额外的组件重建调用链。</p>
 <h2 id="因果关系">3. 因果关系</h2>
@@ -441,22 +385,34 @@ mjx-container + br {
 <li>进程 P1 通过 HTTP 或 RPC 调用进程 P2</li>
 <li>进程 P1 或 P2 写入数据到存储服务中，或从存储服务中读取数据</li>
 <li>进程 P1 生产消息到 MQ 中，进程 P2 消费到消息并处理</li>
-<li>...</li>
+<li>…</li>
 </ul>
 <p>不同请求 (inter-request) 的计算任务之间也可能存在因果关系，如：</p>
 <ul>
 <li>请求 R1 和 R2 同时获取某分布式锁，R1 成功，R2 失败</li>
 <li>请求 R1 写入数据到本地缓存后请求 R2 也写入数据，同时触发批处理</li>
 <li>请求 R1 写入数据到存储系统后请求 R2 读出对应数据进行处理</li>
-<li>...</li>
+<li>…</li>
 </ul>
-<p>在实践中，开发者习惯以单个请求的视角分析问题，因此调用链追踪系统通常不会关注不同请求之间的因果关系，但会在数据模型上保持对应的表达能力。对于同一请求的计算任务之间的因果关系，通常 SDK 提供方会尽可能地帮助开发者在所有跨进程的连接点上埋点，以此达到追踪目的，如 HTTP/RPC 调用、数据库访问、消息生产和消费等。但有时候源自于 A 请求的计算任务会被 B 请求触发，如下图中的例子所示：</p>
+<p>在实践中，开发者习惯以单个请求的视角分析问题，因此调用链追踪系统通常不会关注不同请求之间的因果关系，但会在数据模型上保持对应的表达能力。对于同一请求的计算任务之间的因果关系，通常
+SDK
+提供方会尽可能地帮助开发者在所有跨进程的连接点上埋点，以此达到追踪目的，如
+HTTP/RPC 调用、数据库访问、消息生产和消费等。但有时候源自于 A
+请求的计算任务会被 B 请求触发，如下图中的例子所示：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/submitter-and-trigger.png" width="600px" /></p>
-<p>Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Request two 将数据 d2 提交到同一个缓存中，触发 d1 被写出到持久化存储中。这时如何归属 d1 的写出操作就决定了调用链追踪系统是选择提交者角度 (submitter-preserving) 还是触发者角度 (trigger-preserving)。</p>
+<p>Request one 将数据 d1 提交到局部写回缓存 (write-back cache)，Request
+two 将数据 d2 提交到同一个缓存中，触发 d1
+被写出到持久化存储中。这时如何归属 d1
+的写出操作就决定了调用链追踪系统是选择提交者角度 (submitter-preserving)
+还是触发者角度 (trigger-preserving)。</p>
 <h3 id="提交者角度">提交者角度</h3>
-<p>提交者角度意味着，当聚合或批处理操作被另一个请求触发时，该操作将被归属于提交者。如上方左图所示：Request one 留存在写回缓存中的数据因为 Request two 写入数据而最终被清出，此时清出数据的操作归属于 Request one。</p>
+<p>提交者角度意味着，当聚合或批处理操作被另一个请求触发时，该操作将被归属于提交者。如上方左图所示：Request
+one 留存在写回缓存中的数据因为 Request two
+写入数据而最终被清出，此时清出数据的操作归属于 Request one。</p>
 <h3 id="触发者角度">触发者角度</h3>
-<p>触发者角度意味着，当聚合或批处理操作被另一个请求触发时，该操作将被归属于触发者。如上方右图所示：Request one 留存在写回缓存中的数据因为 Request two 写入数据而最终被清出，此时清出数据的操作归属于 Request two。</p>
+<p>触发者角度意味着，当聚合或批处理操作被另一个请求触发时，该操作将被归属于触发者。如上方右图所示：Request
+one 留存在写回缓存中的数据因为 Request two
+写入数据而最终被清出，此时清出数据的操作归属于 Request two。</p>
 <h2 id="采样策略">4. 采样策略</h2>
 <p>调用链数据总体体量与业务体量正相关，全量采集调用链数据将会给公司系统整体带来两方面压力：</p>
 <ul>
@@ -472,7 +428,9 @@ mjx-container + br {
 <p>它们的示意图如下所示：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/sampling-methods.png" width="600px" /></p>
 <h3 id="头部连贯采样">头部连贯采样</h3>
-<p>头部连贯采样指的是请求进入系统时就立即决定是否采样，并且这个决定会随着元数据被传递到下游服务，保证采样的连贯性。由于采样决定做得早，对系统整体带来的压力较小。但也正因为决定做得早，采样的准确度也最低，很难保证采集到的调用链有价值。头部连贯采样还有一种变体，即头部连贯采样配合异常回溯上报：在头部连贯采样的同时，于每个服务节点缓存最近的若干 spans 信息，一旦下游调用出现异常，则可在微服务框架中感知同时回溯到上游节点，保证出现异常的调用链数据能被上报。</p>
+<p>头部连贯采样指的是请求进入系统时就立即决定是否采样，并且这个决定会随着元数据被传递到下游服务，保证采样的连贯性。由于采样决定做得早，对系统整体带来的压力较小。但也正因为决定做得早，采样的准确度也最低，很难保证采集到的调用链有价值。头部连贯采样还有一种变体，即头部连贯采样配合异常回溯上报：在头部连贯采样的同时，于每个服务节点缓存最近的若干
+spans
+信息，一旦下游调用出现异常，则可在微服务框架中感知同时回溯到上游节点，保证出现异常的调用链数据能被上报。</p>
 <h3 id="尾部连贯采样">尾部连贯采样</h3>
 <p>尾部连贯采样指的是在请求完成时才决定是否采样。在决定之前，系统需要将数据缓存起来，以保证采样的连贯性。由于采样决定做得晚，数据需要全量上报并临时存储一段时间，这将加重上文提到的两方面压力。但也正因为决定做得晚，获取的信息更全，尾部连贯采样能利用一些经验性的规则保证重要的调用链被采集。</p>
 <h3 id="单元采样">单元采样</h3>
@@ -484,36 +442,52 @@ mjx-container + br {
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png" width="480px" /></p>
 <p>图的左边通常组织为树状结构，通常父节点表示调用方，子节点表示被调方，兄弟节点之间为并发关系，且从上至下时间单调递增；图的右边展示的是与标准甘特图类似的条状结构。</p>
 <h3 id="泳道图-swimlane">泳道图 (Swimlane)</h3>
-<p>泳道图可以被用于展示单个请求的调用链数据，相比甘特图更加精细，常用于 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems/blob/main/dimensions/design/tracing-model/README.md#event-model">Event Model</a> 展示更复杂的计算关系，举例如下：</p>
-<p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/swimlane.png" /></p>
+<p>泳道图可以被用于展示单个请求的调用链数据，相比甘特图更加精细，常用于
+<a
+target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems/blob/main/dimensions/design/tracing-model/README.md#event-model">Event
+Model</a> 展示更复杂的计算关系，举例如下：</p>
+<p><img
+src="/blog/2020/12/20/design-dimensions-of-tracing-systems/swimlane.png" /></p>
 <p>其中泳道，即虚线框，用于表示计算执行单元；圆点展示某时刻发生的事件；箭头表示事件之间的关系。</p>
 <h3 id="流程图-flow-graphs">流程图 (Flow graphs)</h3>
 <p>流程图常被用于展示多个相似请求调用链数据的聚合信息，这些请求的调用链结构应该完全一致。举例如下：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flow-graph.png" alt="" style="zoom:50%;" /></p>
-<p>图中的节点表示系统中发生的事件，边表示因果关系，权重可以表示事件发生的时间差，它们共同组成一个有向无环图。流程图甚至可以表达 fan-outs 和 fan-ins，即 forks 和 joins 的因果关系，能保留更多的调用链细节信息。</p>
+<p>图中的节点表示系统中发生的事件，边表示因果关系，权重可以表示事件发生的时间差，它们共同组成一个有向无环图。流程图甚至可以表达
+fan-outs 和 fan-ins，即 forks 和 joins
+的因果关系，能保留更多的调用链细节信息。</p>
 <h3 id="调用图-call-graphs">调用图 (Call graphs)</h3>
 <p>调用图被用于展示多个请求的聚合信息，这些请求的调用链结构无需完全一致。调用图上的节点表示系统中的服务、模块或接口，边表示因果关系，权重则可以表示流量、资源占用等自定义信息。调用图中可能出现环，意味着系统中存在环形依赖。调用图示例如下：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png" width="480px" /></p>
-<h3 id="调用树-calling-context-trees">调用树 (Calling Context Trees)</h3>
+<h3 id="调用树-calling-context-trees">调用树 (Calling Context
+Trees)</h3>
 <p>调用树被用于展示多个请求的聚合信息，这些请求的调用链结构通常不同。调用树根节点到任意叶子节点的路径都是分布式系统中真实存在的调用路径，举例如下：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/cct.png" width="480px" /></p>
 <h2 id="火焰图-flame-graph">火焰图 (Flame graph)</h2>
-<p>火焰图常被用于展示单机程序调用栈耗时信息，如 Go 中的 pprof。它与调用树的结构类似，常被用于展示多个请求的聚合信息，但展示形式不同，能更直观地展示各个组件的耗时信息，举例如下：</p>
+<p>火焰图常被用于展示单机程序调用栈耗时信息，如 Go 中的
+pprof。它与调用树的结构类似，常被用于展示多个请求的聚合信息，但展示形式不同，能更直观地展示各个组件的耗时信息，举例如下：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/flame-graph.png" width="480px" /></p>
 <h2 id="从维度到场景">从维度到场景</h2>
 <p>了解各个设计维度之后，我们一起回顾本文开头提到的场景，试着分析在这些维度上该如何选择。下面以异常检测和分布式侧写为例：</p>
-<p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/use-case-dimension-matrix.png" /></p>
+<p><img
+src="/blog/2020/12/20/design-dimensions-of-tracing-systems/use-case-dimension-matrix.png" /></p>
 <p><strong>异常检测</strong>：某个请求出问题开发者需要查看完整调用链信息，因此需要连贯采样，又由于问题请求的发生是小概率事件，只能通过尾部连贯采样来保证数据都能被捕获。开发者习惯以从每个请求造成的影响分析问题，因此请求内部的因果关系应该选择触发者视角。甘特图、流程图都是适用单个调用链的可视化方案。元数据结构中，动态定长相对静态定长能更准确地采集上下游关系，相对动态变长能节省网络成本，且后者带来的实时性上的优化对异常检测并不重要，因此动态定长元数据是更合适的选择。</p>
 <p><strong>分布式侧写</strong>：侧写能够帮助开发者查看调用链级别的性能瓶颈问题，但分析对象是聚合的数据，对单个调用链的完整性并无要求，单元采样是成本最低的采样方案。与异常检测类似，触发者视角更符合开发者直觉，且没有额外开销，因此选择触发者视角。侧写的可视化选择毫无悬念：调用树和火焰图。元数据结构中，如果调用链深度可控，动态变长能帮助开发者更快地看到侧写数据；如果深度不可控，动态定长同样满足需求，只是在数据处理环节需要消耗计算资源。</p>
 <p>调用链数据模型会影响各个场景的最终实现效果和能力边界，但不影响场景解决方案的有效性，因此这里没有专门讨论。如果在实践中你需要同时解决多个场景，就需要考虑在各个设计维度上取一个包集。</p>
 <h1 id="案例分析-jaeger">案例分析: Jaeger</h1>
 <h2 id="项目历史">项目历史</h2>
-<p>Jaeger 的名字源于德语中的猎人，是由 Uber 内部 Observability 团队开发，集成埋点、收集到可视化的完整调用链追踪解决方案。2017 年 4 月 Jaeger 正式开源；2017 年 9 月进入 CNCF 孵化；2019 年 10 月正式从 CNCF 毕业，成为 CNCF 顶级项目。</p>
+<p>Jaeger 的名字源于德语中的猎人，是由 Uber 内部 Observability
+团队开发，集成埋点、收集到可视化的完整调用链追踪解决方案。2017 年 4 月
+Jaeger 正式开源；2017 年 9 月进入 CNCF 孵化；2019 年 10 月正式从 CNCF
+毕业，成为 CNCF 顶级项目。</p>
 <h2 id="基本架构">基本架构</h2>
-<p>Jaeger 的架构与上文提到的调用链追踪系统的基本架构十分类似，它有两种部署架构选择，分别如下面两张图所示：</p>
+<p>Jaeger
+的架构与上文提到的调用链追踪系统的基本架构十分类似，它有两种部署架构选择，分别如下面两张图所示：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-1.png" width="600px" /></p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/jaeger-architecture-2.png" width="600px" /></p>
-<p>二者结构大致相同，主要区别在于 jaeger-collector 与 DB 之间加了 Kafka 做缓冲，解决峰值流量过载问题。整个 Jaeger 后端不存在单点故障，Jaeger-collector、Kafka、DB (Cassandra 和 ElasticSearch) 都支持横向扩展。</p>
+<p>二者结构大致相同，主要区别在于 jaeger-collector 与 DB 之间加了 Kafka
+做缓冲，解决峰值流量过载问题。整个 Jaeger
+后端不存在单点故障，Jaeger-collector、Kafka、DB (Cassandra 和
+ElasticSearch) 都支持横向扩展。</p>
 <h2 id="使用场景-稳态分析">使用场景: 稳态分析</h2>
 <p>Jaeger 在官网上介绍自己的主要功能如下：</p>
 <ul>
@@ -523,19 +497,31 @@ mjx-container + br {
 <li>服务依赖分析 (Service dependency analysis)</li>
 <li>性能/时延优化 (Performance/latency optimization)</li>
 </ul>
-<p>重建调用链关系需要在进程间传播元数据，因此分布式上下文传播其实是实现调用链追踪数据建模的基础，我们通常不会使用它来传播非调用链追踪相关的数据，如 uid、did 等等。这些数据一般会通过微服务治理框架来传播。后面的分布式事务监控、根因分析、服务依赖分析、性能/时延优化，主要是通过采集侧收集上来的调用链数据及服务 (service)、操作 (operation) 的依赖关系，分析系统行为。</p>
+<p>重建调用链关系需要在进程间传播元数据，因此分布式上下文传播其实是实现调用链追踪数据建模的基础，我们通常不会使用它来传播非调用链追踪相关的数据，如
+uid、did
+等等。这些数据一般会通过微服务治理框架来传播。后面的分布式事务监控、根因分析、服务依赖分析、性能/时延优化，主要是通过采集侧收集上来的调用链数据及服务
+(service)、操作 (operation) 的依赖关系，分析系统行为。</p>
 <h2 id="调用链数据模型-span-model">调用链数据模型: Span Model</h2>
-<p>Jaeger 中调用链数据模型遵守了 opentracing 标准，使用的是典型的 Span Model，其核心数据结构如下图所示：</p>
+<p>Jaeger 中调用链数据模型遵守了 opentracing 标准，使用的是典型的 Span
+Model，其核心数据结构如下图所示：</p>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/data-model.png" width="780px" /></p>
 <p>下面是一个具体的例子：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># source: https://github.com/opentracing/specification/blob/master/specification.md</span><br><span class="line">Causal relationships between Spans in a single Trace</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        [Span A]  ←←←(the root span)</span><br><span class="line">            |</span><br><span class="line">     +------+------+</span><br><span class="line">     |             |</span><br><span class="line"> [Span B]      [Span C] ←←←(Span C is a `ChildOf` Span A)</span><br><span class="line">     |             |</span><br><span class="line"> [Span D]      +---+-------+</span><br><span class="line">               |           |</span><br><span class="line">           [Span E]    [Span F] &gt;&gt;&gt; [Span G] &gt;&gt;&gt; [Span H]</span><br><span class="line">                                       ↑</span><br><span class="line">                                       ↑</span><br><span class="line">                                       ↑</span><br><span class="line">                         (Span G `FollowsFrom` Span F)</span><br></pre></td></tr></table></figure>
-<p>其中 Span 与 Span 之间存在两种因果关系，ChildOf 和 FollowsFrom。ChildOf 关系中，父节点依赖于子节点执行的结果；FollowsFrom 关系中，父节点不依赖于子节点执行的结果，但与之存在因果关系。</p>
-<h2 id="因果关系-用户决定触发者视角为主">因果关系: 用户决定，触发者视角为主</h2>
-<p>Jaeger 采用的调用链数据模型完全能够关联同一个请求中的不同进程，是提交者视角还是触发者视角则取决于 Jaeger 的接入方，选择触发者视角对接入方不存在额外的成本，而选择提交者视角则需要接入方投入额外的精力做定制化开发。因此在绝大多数情况下使用的是触发者视角。</p>
+<p>其中 Span 与 Span 之间存在两种因果关系，ChildOf 和
+FollowsFrom。ChildOf 关系中，父节点依赖于子节点执行的结果；FollowsFrom
+关系中，父节点不依赖于子节点执行的结果，但与之存在因果关系。</p>
+<h2 id="因果关系-用户决定触发者视角为主">因果关系:
+用户决定，触发者视角为主</h2>
+<p>Jaeger
+采用的调用链数据模型完全能够关联同一个请求中的不同进程，是提交者视角还是触发者视角则取决于
+Jaeger
+的接入方，选择触发者视角对接入方不存在额外的成本，而选择提交者视角则需要接入方投入额外的精力做定制化开发。因此在绝大多数情况下使用的是触发者视角。</p>
 <h2 id="元数据结构-动态定长">元数据结构: 动态定长</h2>
 <p>Jaeger 在进程间传递的元数据结构如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// source: https://github.com/jaegertracing/jaeger-client-go/blob/master/span_context.go</span></span><br><span class="line"><span class="comment">// SpanContext represents propagated span identity and state</span></span><br><span class="line"><span class="keyword">type</span> SpanContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// traceID represents globally unique ID of the trace.</span></span><br><span class="line">	<span class="comment">// Usually generated as a random number.</span></span><br><span class="line">	traceID TraceID</span><br><span class="line">	<span class="comment">// spanID represents span ID that must be unique within its trace,</span></span><br><span class="line">	<span class="comment">// but does not have to be globally unique.</span></span><br><span class="line">	spanID SpanID</span><br><span class="line">	<span class="comment">// parentID refers to the ID of the parent span.</span></span><br><span class="line">	<span class="comment">// Should be 0 if the current span is a root span.</span></span><br><span class="line">	parentID SpanID</span><br><span class="line">	<span class="comment">// Distributed Context baggage. The is a snapshot in time.</span></span><br><span class="line">	baggage <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">	<span class="comment">// debugID can be set to some correlation ID when the context is being</span></span><br><span class="line">	<span class="comment">// extracted from a TextMap carrier.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// See JaegerDebugHeader in constants.go</span></span><br><span class="line">	debugID <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// samplingState is shared across all spans</span></span><br><span class="line">	samplingState *samplingState</span><br><span class="line">	<span class="comment">// remote indicates that span context represents a remote parent</span></span><br><span class="line">	remote <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>利用 traceID 可以确认当前 span 的归属关系；利用 spanID 和 parentID 可以建立上下游进程的父子关系。通常 baggage 中的数据量不会变化。综合考虑：Jaeger 的元数据结构属于动态定长。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// source: https://github.com/jaegertracing/jaeger-client-go/blob/master/span_context.go</span></span><br><span class="line"><span class="comment">// SpanContext represents propagated span identity and state</span></span><br><span class="line"><span class="keyword">type</span> SpanContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// traceID represents globally unique ID of the trace.</span></span><br><span class="line">	<span class="comment">// Usually generated as a random number.</span></span><br><span class="line">	traceID TraceID</span><br><span class="line">	<span class="comment">// spanID represents span ID that must be unique within its trace,</span></span><br><span class="line">	<span class="comment">// but does not have to be globally unique.</span></span><br><span class="line">	spanID SpanID</span><br><span class="line">	<span class="comment">// parentID refers to the ID of the parent span.</span></span><br><span class="line">	<span class="comment">// Should be 0 if the current span is a root span.</span></span><br><span class="line">	parentID SpanID</span><br><span class="line">	<span class="comment">// Distributed Context baggage. The is a snapshot in time.</span></span><br><span class="line">	baggage <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">string</span></span><br><span class="line">	<span class="comment">// debugID can be set to some correlation ID when the context is being</span></span><br><span class="line">	<span class="comment">// extracted from a TextMap carrier.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// See JaegerDebugHeader in constants.go</span></span><br><span class="line">	debugID <span class="type">string</span></span><br><span class="line">	<span class="comment">// samplingState is shared across all spans</span></span><br><span class="line">	samplingState *samplingState</span><br><span class="line">	<span class="comment">// remote indicates that span context represents a remote parent</span></span><br><span class="line">	remote <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>利用 traceID 可以确认当前 span 的归属关系；利用 spanID 和 parentID
+可以建立上下游进程的父子关系。通常 baggage
+中的数据量不会变化。综合考虑：Jaeger 的元数据结构属于动态定长。</p>
 <h2 id="采样策略-头部连贯采样">采样策略: 头部连贯采样</h2>
 <p>目前 Jaeger 支持三种采样方式：</p>
 <ul>
@@ -543,10 +529,17 @@ mjx-container + br {
 <li>Probabilistic：按固定概率采样</li>
 <li>Rate Limiting：限流采样，即保证每个进程每隔一段时间最多采 k 个</li>
 </ul>
-<p>除了在 sdk 初始化时直接写死采样配置外，Jaeger 还支持远程动态调整采样方式，但调整的选择范围仍然必须为上面三种之一。为了防止一些调用量小的请求因为出现概率低而无法获得调用链信息，Jaeger 团队也提出了适应性采样 (Adaptive Sampling) ，但这个提议从 2017 年至今仍然未有推进。</p>
-<p>无论是上述哪种方式，是否采样这一决定都是在请求进入系统之时决定，因此结论是：目前 Jaeger 支持头部连贯采样。值得一提的是，Jaeger 团队也在讨论<a target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger/issues/425">引入尾部连贯采样的可能性</a>，但尚未有实质性的进展。</p>
-<h2 id="数据可视化-甘特图调用树调用图">数据可视化: 甘特图、调用树、调用图</h2>
-<p>jaeger-ui 项目提供了丰富的调用链数据可视化支持，包括针对单个请求的甘特图、调用树，以及全局服务的调用图。</p>
+<p>除了在 sdk 初始化时直接写死采样配置外，Jaeger
+还支持远程动态调整采样方式，但调整的选择范围仍然必须为上面三种之一。为了防止一些调用量小的请求因为出现概率低而无法获得调用链信息，Jaeger
+团队也提出了适应性采样 (Adaptive Sampling) ，但这个提议从 2017
+年至今仍然未有推进。</p>
+<p>无论是上述哪种方式，是否采样这一决定都是在请求进入系统之时决定，因此结论是：目前
+Jaeger 支持头部连贯采样。值得一提的是，Jaeger 团队也在讨论<a
+target="_blank" rel="noopener" href="https://github.com/jaegertracing/jaeger/issues/425">引入尾部连贯采样的可能性</a>，但尚未有实质性的进展。</p>
+<h2 id="数据可视化-甘特图调用树调用图">数据可视化:
+甘特图、调用树、调用图</h2>
+<p>jaeger-ui
+项目提供了丰富的调用链数据可视化支持，包括针对单个请求的甘特图、调用树，以及全局服务的调用图。</p>
 <h3 id="甘特图">甘特图</h3>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/gantt.png" width="480px" /></p>
 <h3 id="调用树">调用树</h3>
@@ -554,23 +547,48 @@ mjx-container + br {
 <p>调用树目前仍在实验阶段，暂时还不是正式功能。</p>
 <h3 id="调用图">调用图</h3>
 <p><img src="/blog/2020/12/20/design-dimensions-of-tracing-systems/call-graph.png" width="480px" /></p>
-<p>同时还可以聚焦到某个节点，让调用图只显示与该节点相关的服务，即焦点图 (focus graph)。</p>
+<p>同时还可以聚焦到某个节点，让调用图只显示与该节点相关的服务，即焦点图
+(focus graph)。</p>
 <h1 id="调用链追踪系统数据库">调用链追踪系统数据库</h1>
-<p><a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~pavlo/">AP</a> 在 2014 年建立了网站 <a target="_blank" rel="noopener" href="https://dbdb.io/">dbdb.io</a>，即 Database of Databases，从一些固定的维度来分析市面上琳琅满目的数据库系统。受这个项目启发，我们也可以用本文提到的设计维度，来分析市面上的调用链追踪系统，从而获得更加系统化的理解，并将分析调研的结果沉淀下来。于是我就建立了这个项目 <a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database of Tracing Systems</a>，如果你对此感兴趣，欢迎参与调研，共同建立调用链追踪系统的数据库。</p>
+<p><a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~pavlo/">AP</a> 在 2014 年建立了网站
+<a target="_blank" rel="noopener" href="https://dbdb.io/">dbdb.io</a>，即 Database of
+Databases，从一些固定的维度来分析市面上琳琅满目的数据库系统。受这个项目启发，我们也可以用本文提到的设计维度，来分析市面上的调用链追踪系统，从而获得更加系统化的理解，并将分析调研的结果沉淀下来。于是我就建立了这个项目
+<a
+target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Database
+of Tracing
+Systems</a>，如果你对此感兴趣，欢迎参与调研，共同建立调用链追踪系统的数据库。</p>
 <h1 id="参考资料">参考资料</h1>
 <ul>
-<li><a target="_blank" rel="noopener" href="https://research.google/pubs/pub36356/">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.pdl.cmu.edu/PDL-FTP/SelfStar/CMU-PDL-14-102.pdf">So, you want to trace your distributed system? Key design insights from years of practical experience</a></li>
-<li><a target="_blank" rel="noopener" href="https://research.fb.com/wp-content/uploads/2017/10/sosp17-final14.pdf">Canopy: An End-to-End Performance Tracing And Analysis System</a></li>
-<li><a target="_blank" rel="noopener" href="http://cs.brown.edu/~rfonseca/pubs/leavitt.pdf">End-to-End Tracing Models: Analysis and Unification</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.roguelynn.com/words/tracing-fast-and-slow/">Tracing, Fast and Slow</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Github: Database of tracing systems</a></li>
+<li><a target="_blank" rel="noopener" href="https://research.google/pubs/pub36356/">Dapper, a
+Large-Scale Distributed Systems Tracing Infrastructure</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.pdl.cmu.edu/PDL-FTP/SelfStar/CMU-PDL-14-102.pdf">So,
+you want to trace your distributed system? Key design insights from
+years of practical experience</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://research.fb.com/wp-content/uploads/2017/10/sosp17-final14.pdf">Canopy:
+An End-to-End Performance Tracing And Analysis System</a></li>
+<li><a target="_blank" rel="noopener" href="http://cs.brown.edu/~rfonseca/pubs/leavitt.pdf">End-to-End
+Tracing Models: Analysis and Unification</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://www.roguelynn.com/words/tracing-fast-and-slow/">Tracing,
+Fast and Slow</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/database-of-tracing-systems">Github:
+Database of tracing systems</a></li>
 <li><a target="_blank" rel="noopener" href="https://dbdb.io/">Database of Databases</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf">X-Trace: A Pervasive Network Tracing Framework</a></li>
-<li><a target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">Time, Clocks, and the Ordering of Events in a Distributed System</a></li>
-<li><a target="_blank" rel="noopener" href="https://eng.uber.com/distributed-tracing/">Evolving Distributed Tracing at Uber Engineering</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://www.icsi.berkeley.edu/pubs/networking/xtrace07.pdf">X-Trace:
+A Pervasive Network Tracing Framework</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf">Time,
+Clocks, and the Ordering of Events in a Distributed System</a></li>
+<li><a target="_blank" rel="noopener" href="https://eng.uber.com/distributed-tracing/">Evolving
+Distributed Tracing at Uber Engineering</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.jaegertracing.io/docs/">Jaeger Docs</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/opentracing/specification/blob/master/specification.md">OpenTracing Specification</a></li>
+<li><a
+target="_blank" rel="noopener" href="https://github.com/opentracing/specification/blob/master/specification.md">OpenTracing
+Specification</a></li>
 </ul>
 
     </div>
@@ -586,13 +604,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -603,12 +621,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2020/11/29/so-you-want-to-trace-your-distributed-system-key-design-insights-from-years-of-practical-experience/" rel="prev" title="So, you want to trace your distributed system? Key design insights from years of practical experience (2014)">
-                  <i class="fa fa-chevron-left"></i> So, you want to trace your distributed system? Key design insights from years of practical experience (2014)
+                  <i class="fa fa-angle-left"></i> So, you want to trace your distributed system? Key design insights from years of practical experience (2014)
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2021/03/04/implementing-tail-based-sampling/" rel="next" title="调用链追踪系统在伴鱼：实践篇">
-                  调用链追踪系统在伴鱼：实践篇 <i class="fa fa-chevron-right"></i>
+                  调用链追踪系统在伴鱼：实践篇 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -632,15 +650,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -648,28 +665,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>

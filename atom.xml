@@ -6,7 +6,7 @@
   <link href="https://zhenghe-md.github.io/blog/atom.xml" rel="self"/>
   
   <link href="https://zhenghe-md.github.io/blog/"/>
-  <updated>2024-10-11T13:53:07.860Z</updated>
+  <updated>2026-02-02T13:49:31.422Z</updated>
   <id>https://zhenghe-md.github.io/blog/</id>
   
   <author>
@@ -21,12 +21,21 @@
     <link href="https://zhenghe-md.github.io/blog/2024/10/06/rubiks-cube/"/>
     <id>https://zhenghe-md.github.io/blog/2024/10/06/rubiks-cube/</id>
     <published>2024-10-06T10:14:15.000Z</published>
-    <updated>2024-10-11T13:53:07.860Z</updated>
+    <updated>2026-02-02T13:49:31.422Z</updated>
     
     
     <summary type="html">&lt;h1 id=&quot;魔方速拧之路&quot;&gt;魔方速拧之路&lt;/h1&gt;
-&lt;p&gt;走上魔方速拧路既是机缘巧合，也是冥冥之中天意使然。2022 年 8 月 28 日，我见到郑天晴坐在地上摔打奶奶给她买的玩具魔方，忽然回忆起高中班上有个小伙子能在 3 分钟内复原一个魔方，令同学们既赞叹又羡慕，我心中的少年之火在这一瞬间被点燃，决定也试上一试。于是我找到了博主 &lt;a href=&quot;https://www.youtube.com/@LeesRandomVids&quot;&gt;LeesRandomVids&lt;/a&gt; 制作的保姆级教学视频「&lt;a href=&quot;https://www.youtube.com/watch?v=oBhI3yfEn4g&quot;&gt;How to Solve a Rubik&#39;s Cube, Step by Step Beginners Tutorial on Solving a 3x3 Rubik‘s Cube&lt;/a&gt;」，边看边学，很快便完成了人生首次三阶魔方复原！&lt;/p&gt;
-&lt;p&gt;在实现了大众最朴素的魔方复原梦后，我有些意犹未尽。首先，我真的很好奇像我这样的普通中年大叔经过刻意练习后能在多短的时间内复原一个魔方？其次，平时带娃的时间太琐碎，如何在这琐碎的时间中不靠手机来持续获得一点点满足感？魔方速拧一把不过数分钟，恰好能填补这些时光缝隙。于是我在 2022 年 8 月 22 日录下了第一个魔方复原视频，复原用时 2 分 34 秒。&lt;/p&gt;
+&lt;p&gt;走上魔方速拧路既是机缘巧合，也是冥冥之中天意使然。2022 年 8 月 28
+日，我见到郑天晴坐在地上摔打奶奶给她买的玩具魔方，忽然回忆起高中班上有个小伙子能在
+3
+分钟内复原一个魔方，令同学们既赞叹又羡慕，我心中的少年之火在这一瞬间被点燃，决定也试上一试。于是我找到了博主
+&lt;a href=&quot;https://www.youtube.com/@LeesRandomVids&quot;&gt;LeesRandomVids&lt;/a&gt;
+制作的保姆级教学视频「&lt;a
+href=&quot;https://www.youtube.com/watch?v=oBhI3yfEn4g&quot;&gt;How to Solve a
+Rubik’s Cube, Step by Step Beginners Tutorial on Solving a 3x3 Rubik‘s
+Cube&lt;/a&gt;」，边看边学，很快便完成了人生首次三阶魔方复原！&lt;/p&gt;
+&lt;p&gt;在实现了大众最朴素的魔方复原梦后，我有些意犹未尽。首先，我真的很好奇像我这样的普通中年大叔经过刻意练习后能在多短的时间内复原一个魔方？其次，平时带娃的时间太琐碎，如何在这琐碎的时间中不靠手机来持续获得一点点满足感？魔方速拧一把不过数分钟，恰好能填补这些时光缝隙。于是我在
+2022 年 8 月 22 日录下了第一个魔方复原视频，复原用时 2 分 34 秒。&lt;/p&gt;
 &lt;iframe src=&quot;//player.bilibili.com/player.html?isOutside=true&amp;amp;aid=113277950498917&amp;amp;bvid=BV1hx2NYWEVG&amp;amp;cid=26217874529&amp;amp;p=1&amp;amp;autoPlay=false&quot; scrolling=&quot;no&quot; border=&quot;0&quot; frameborder=&quot;no&quot; framespacing=&quot;0&quot; allowfullscreen=&quot;true&quot;&gt;
 &lt;/iframe&gt;</summary>
     
@@ -42,10 +51,12 @@
     <link href="https://zhenghe-md.github.io/blog/2023/10/27/juan/"/>
     <id>https://zhenghe-md.github.io/blog/2023/10/27/juan/</id>
     <published>2023-10-27T15:42:23.000Z</published>
-    <updated>2024-10-11T13:53:07.820Z</updated>
+    <updated>2026-02-02T13:49:31.390Z</updated>
     
     
-    <summary type="html">&lt;p&gt;有一个问题困扰了我很久：&lt;strong&gt;为什么公司里的团队要互相卷？&lt;/strong&gt; 明明 X 团队已经造了轮子，为什么 Y 团队常常视而不见，吭哧吭哧地继续造？而且领导似乎也默许这种游戏规则？本来产研资源就贵，为什么要浪费在相似的工作上，而不节省资源去专心做业务？最近在这个问题上稍微有点心得，就先记录于此。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;有一个问题困扰了我很久：&lt;strong&gt;为什么公司里的团队要互相卷？&lt;/strong&gt;
+明明 X 团队已经造了轮子，为什么 Y
+团队常常视而不见，吭哧吭哧地继续造？而且领导似乎也默许这种游戏规则？本来产研资源就贵，为什么要浪费在相似的工作上，而不节省资源去专心做业务？最近在这个问题上稍微有点心得，就先记录于此。&lt;/p&gt;</summary>
     
     
     
@@ -59,13 +70,17 @@
     <link href="https://zhenghe-md.github.io/blog/2023/10/04/the-equator/"/>
     <id>https://zhenghe-md.github.io/blog/2023/10/04/the-equator/</id>
     <published>2023-10-04T10:35:04.000Z</published>
-    <updated>2024-10-11T13:53:07.876Z</updated>
+    <updated>2026-02-02T13:49:31.436Z</updated>
     
     
     <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;多数人高估他们一年能做的事，却低估他们十年能的事（Most people overestimate what they can do in one year and underestimate what they can do in ten years）。&lt;/p&gt;
+&lt;p&gt;多数人高估他们一年能做的事，却低估他们十年能的事（Most people
+overestimate what they can do in one year and underestimate what they
+can do in ten years）。&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;大概在两年前，我开始酝酿「赤道计划」：在人生结束之前跑完 40075 公里，这个距离正是赤道的周长。毛主席的「坐地日行八万里，巡天遥看一千河」也来源于它。如果每两天跑一次 5 公里，大约需要 44 年。&lt;/p&gt;</summary>
+&lt;p&gt;大概在两年前，我开始酝酿「赤道计划」：在人生结束之前跑完 40075
+公里，这个距离正是赤道的周长。毛主席的「坐地日行八万里，巡天遥看一千河」也来源于它。如果每两天跑一次
+5 公里，大约需要 44 年。&lt;/p&gt;</summary>
     
     
     
@@ -79,10 +94,11 @@
     <link href="https://zhenghe-md.github.io/blog/2023/04/06/no-admin-ui/"/>
     <id>https://zhenghe-md.github.io/blog/2023/04/06/no-admin-ui/</id>
     <published>2023-04-06T20:51:28.000Z</published>
-    <updated>2024-10-11T13:53:07.824Z</updated>
+    <updated>2026-02-02T13:49:31.392Z</updated>
     
     
-    <summary type="html">&lt;p&gt;每个互联网公司内部都有一些 Web 界面是为工程师开发，比如 CMDB、容器平台、应用发布系统、可观测性平台、配置中心、数据库管理平台等等。这些界面往往设计风格不一致，功能简陋，易用性差强人意，简单概括就是「能用，但既不好看，也不好用」。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;每个互联网公司内部都有一些 Web 界面是为工程师开发，比如
+CMDB、容器平台、应用发布系统、可观测性平台、配置中心、数据库管理平台等等。这些界面往往设计风格不一致，功能简陋，易用性差强人意，简单概括就是「能用，但既不好看，也不好用」。&lt;/p&gt;</summary>
     
     
     
@@ -96,7 +112,7 @@
     <link href="https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/"/>
     <id>https://zhenghe-md.github.io/blog/2023/01/07/repeat-after-me/</id>
     <published>2023-01-07T18:33:26.000Z</published>
-    <updated>2024-10-11T13:53:07.824Z</updated>
+    <updated>2026-02-02T13:49:31.394Z</updated>
     
     
     <summary type="html">&lt;p&gt;平时，我习惯在跑步、散步或通勤时做一些口语跟读练习。散步或通勤时还好，在手机上来回播放、暂停音频即可，但这种方法不适合在跑步中使用。另外，北京入冬后，在室外这么干容易生冻疮。于是我就想：能不能让音频自动地播放一句，停留一段时间让我跟读，然后再播下一句？&lt;/p&gt;</summary>
@@ -113,11 +129,14 @@
     <link href="https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/"/>
     <id>https://zhenghe-md.github.io/blog/2023/01/02/danger-thoughts/</id>
     <published>2023-01-02T19:49:29.000Z</published>
-    <updated>2024-10-11T13:53:07.796Z</updated>
+    <updated>2026-02-02T13:49:31.367Z</updated>
     
     
     <summary type="html">&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
-&lt;p&gt;从 2022 年 10 月中旬开始到 12 月中旬，日拱一卒，终于把「Software Engineering at Google」通读了一遍。书中介绍的是每个软件公司都会遇到的问题：如何培养好的工程师文化？如何共享知识？如何组建和带领工程师团队？如何长期维持软件质量？等等。同样的问题，在不同的规模、时间范围下的挑战不同，思考角度、解决方案、落地周期也都不同。这本书介绍的正是这家拥有&lt;a href=&quot;https://increditools.com/how-many-software-engineers-does-google-have/&quot;&gt;超过两万名工程师&lt;/a&gt;的软件公司在这些问题上的思考。&lt;/p&gt;
+&lt;p&gt;从 2022 年 10 月中旬开始到 12 月中旬，日拱一卒，终于把「Software
+Engineering at
+Google」通读了一遍。书中介绍的是每个软件公司都会遇到的问题：如何培养好的工程师文化？如何共享知识？如何组建和带领工程师团队？如何长期维持软件质量？等等。同样的问题，在不同的规模、时间范围下的挑战不同，思考角度、解决方案、落地周期也都不同。这本书介绍的正是这家拥有&lt;a
+href=&quot;https://increditools.com/how-many-software-engineers-does-google-have/&quot;&gt;超过两万名工程师&lt;/a&gt;的软件公司在这些问题上的思考。&lt;/p&gt;
 &lt;p&gt;在过去的工作经历中，我作为新人、下属、导师与不同类型的工程师有过不同程度的合作，他们之中既有顶尖的工程师，也有敬业的技术经理；既有人菜瘾大的码农、也有性格孤僻的极客；既有刚毕业就躺平的新人、也有工作十多年依然精力充沛的老兵。在这些合作经历中，我最大的感触就是：一名优秀的工程师，在技术层面外，还得是半个心理学家，既要熟练控制计算机、也要擅长与人合作。书中多处阐述工程师容易陷入的思想误区，它们或多或少地会阻碍工程师们成长，我也是其中之一。今天恰好借着看完这本书的契机将关于它们的思考记录下来。&lt;/p&gt;</summary>
     
     
@@ -132,10 +151,11 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/30/24/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/30/24/</id>
     <published>2022-10-30T21:21:09.000Z</published>
-    <updated>2024-10-11T13:53:07.712Z</updated>
+    <updated>2026-02-02T13:49:31.295Z</updated>
     
     
-    <summary type="html">&lt;p&gt;可能是太想排到车号了，最近上下班路上总是盯着过往车辆的号牌。盯着盯着就会下意识地思考：「怎么用上面的数字经过加、减、乘、除得到 24」，比如下面这个车牌：&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;可能是太想排到车号了，最近上下班路上总是盯着过往车辆的号牌。盯着盯着就会下意识地思考：「怎么用上面的数字经过加、减、乘、除得到
+24」，比如下面这个车牌：&lt;/p&gt;</summary>
     
     
     
@@ -149,10 +169,12 @@
     <link href="https://zhenghe-md.github.io/blog/2022/10/09/relationship/"/>
     <id>https://zhenghe-md.github.io/blog/2022/10/09/relationship/</id>
     <published>2022-10-09T17:06:43.000Z</published>
-    <updated>2024-10-11T13:53:07.824Z</updated>
+    <updated>2026-02-02T13:49:31.394Z</updated>
     
     
-    <summary type="html">&lt;p&gt;没有屏蔽我朋友圈的人估计都知道，我有一只帅气的猫叫郑小钱，一个可爱的女儿叫郑天晴。小钱已经快 5 岁了，天晴刚刚 1 岁 3 个月，她们和我 (爸爸)、我媳妇 (妈妈) 以及我妈妈 (奶奶)，4 人 1 猫生活在北京租住的一套小房子里。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;没有屏蔽我朋友圈的人估计都知道，我有一只帅气的猫叫郑小钱，一个可爱的女儿叫郑天晴。小钱已经快
+5 岁了，天晴刚刚 1 岁 3 个月，她们和我 (爸爸)、我媳妇 (妈妈) 以及我妈妈
+(奶奶)，4 人 1 猫生活在北京租住的一套小房子里。&lt;/p&gt;
 &lt;p&gt;都说养猫是养娃的演习，这话颇有道理。二者的确有很多相似的地方，比如我们会忍不住给她们买玩具，花时间陪她们玩耍，给她们准备饭菜与零食，管她们拉屎撒尿。最有意思的，也是我和媳妇经常讨论的一点就是「她们跟谁关系最好。」她们不懂任何人情世故，却好像知道所有人情世故。&lt;/p&gt;</summary>
     
     
@@ -167,10 +189,13 @@
     <link href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/"/>
     <id>https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/</id>
     <published>2022-09-29T08:36:28.000Z</published>
-    <updated>2024-10-11T13:53:07.824Z</updated>
+    <updated>2026-02-02T13:49:31.392Z</updated>
     
     
-    <summary type="html">&lt;p&gt;在伴鱼的三年，我作为面试官参与超过 100 场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近 30 轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;在伴鱼的三年，我作为面试官参与超过 100
+场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近
+30
+轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。&lt;/p&gt;</summary>
     
     
     
@@ -184,17 +209,22 @@
     <link href="https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/"/>
     <id>https://zhenghe-md.github.io/blog/2022/08/06/map-reduce-from-scratch/</id>
     <published>2022-08-06T22:16:08.000Z</published>
-    <updated>2024-10-11T13:53:07.820Z</updated>
+    <updated>2026-02-02T13:49:31.390Z</updated>
     
     
-    <summary type="html">&lt;p&gt;在最近的工作中，为了做数据分析，我开始写一些复杂的 HiveSQL。每次执行 HiveSQL 时，都会看到 Map/Reduce jobs 被调度、执行，直到最后展示出数据。渐渐地我心中多了两个疑问：&lt;/p&gt;
+    <summary type="html">&lt;p&gt;在最近的工作中，为了做数据分析，我开始写一些复杂的 HiveSQL。每次执行
+HiveSQL 时，都会看到 Map/Reduce jobs
+被调度、执行，直到最后展示出数据。渐渐地我心中多了两个疑问：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;&lt;p&gt;MapReduce 引擎如何工作？&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;SQL 是如何被翻译成 MapReduce job 的？&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;为了解决这两个疑问，我用比较熟悉的 Go 语言实现了一个玩具版本的 MapReduce 引擎，然后基于此实现基本的 select，join。&lt;/p&gt;
+&lt;p&gt;为了解决这两个疑问，我用比较熟悉的 Go 语言实现了一个玩具版本的
+MapReduce 引擎，然后基于此实现基本的 select，join。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;本文相关的源码放在仓库 &lt;a href=&quot;https://github.com/ZhengHe-MD/pset/tree/main/map-reduce/go/mapreduce&quot;&gt;ZhengHe-MD/pset · GitHub&lt;/a&gt; 中，欢迎查阅。&lt;/p&gt;
+&lt;p&gt;本文相关的源码放在仓库 &lt;a
+href=&quot;https://github.com/ZhengHe-MD/pset/tree/main/map-reduce/go/mapreduce&quot;&gt;ZhengHe-MD/pset
+· GitHub&lt;/a&gt; 中，欢迎查阅。&lt;/p&gt;
 &lt;/blockquote&gt;</summary>
     
     
@@ -209,51 +239,13 @@
     <link href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/"/>
     <id>https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/</id>
     <published>2022-07-04T19:50:21.000Z</published>
-    <updated>2024-10-11T13:53:07.736Z</updated>
+    <updated>2026-02-02T13:49:31.318Z</updated>
     
     
-    <summary type="html">&lt;p&gt;最近，我们在公司内部做了一些 &lt;a href=&quot;https://www.goodreads.com/book/show/31625067-hacking-growth&quot;&gt;Hacking Growth&lt;/a&gt; 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。&lt;/p&gt;
-
-&lt;p&gt;对于一名工程师，我认为 A/B 测试有两个角度值得了解：&lt;/p&gt;
-&lt;ol type=&quot;1&quot;&gt;
-&lt;li&gt;&lt;p&gt;如何搭建一个 A/B 测试平台，支持流量分层、转发，让不同实验共享流量；&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;如何动手做一个 A/B 测试，并能合理地解读统计结论，指导后续生产实践；&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 &lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf&quot;&gt;Overlapping Experiment Infrastructure&lt;/a&gt;，以及伴鱼的小伙伴们写的两篇实践总结 [&lt;a href=&quot;https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79&quot;&gt;1&lt;/a&gt;]、[&lt;a href=&quot;https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/&quot;&gt;2&lt;/a&gt;]；本文想聊的是后者。&lt;/p&gt;
-
-&lt;h2 id=&quot;一次实验&quot;&gt;1. 一次实验&lt;/h2&gt;
-&lt;p&gt;在互联网场景中，无论是拉新、激活、留存、促活还是商业化，所有的 A/B 测试都可以用一个公式来概括：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;💡 方案 A 的转化率比方案 B 的更高吗？&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;为了后续的讨论能更具体一些，我们先看一个实际的测试场景：假设我们需要给某个用户群体拨打 AI 电话，之前一直在使用家琪的声音拨打电话，现在供应商新推出了小红的声音，我们想知道小红的声音是否有更好的表现。于是，在其它条件相同的情况下，我们分别用小红和家琪的声音给若干用户打了电话，这次的实验现象如下表所示：&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr class=&quot;header&quot;&gt;
-&lt;th&gt;实验现象&lt;/th&gt;
-&lt;th&gt;小红&lt;/th&gt;
-&lt;th&gt;家琪&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr class=&quot;odd&quot;&gt;
-&lt;td&gt;接通&lt;/td&gt;
-&lt;td&gt;3469&lt;/td&gt;
-&lt;td&gt;2798&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&quot;even&quot;&gt;
-&lt;td&gt;意向&lt;/td&gt;
-&lt;td&gt;98&lt;/td&gt;
-&lt;td&gt;43&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr class=&quot;odd&quot;&gt;
-&lt;td&gt;意向率&lt;/td&gt;
-&lt;td&gt;2.83%&lt;/td&gt;
-&lt;td&gt;1.54%&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;套用刚才的公式，这个 A/B 测试就是：&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;最近，我们在公司内部做了一些 &lt;a href=&quot;https://www.goodreads.com/book/show/31625067-hacking-growth&quot;&gt;Hacking
+Growth&lt;/a&gt;
+方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开
+A/B 测试。&lt;/p&gt;</summary>
     
     
     
@@ -267,10 +259,11 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/23/accuracy-and-precision/</id>
     <published>2022-05-23T07:39:41.000Z</published>
-    <updated>2024-10-11T13:53:07.792Z</updated>
+    <updated>2026-02-02T13:49:31.363Z</updated>
     
     
-    <summary type="html">&lt;p&gt;Accuracy 和 Precision 是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;Accuracy 和 Precision
+是在科学技术领域中经常出现的两个概念，本文将通过一张图来捋一捋二者之间的区别与联系。&lt;/p&gt;</summary>
     
     
     
@@ -284,10 +277,14 @@
     <link href="https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/"/>
     <id>https://zhenghe-md.github.io/blog/2022/05/15/x-and-y-sounds-in-language/</id>
     <published>2022-05-15T21:19:18.000Z</published>
-    <updated>2024-10-11T13:53:07.884Z</updated>
+    <updated>2026-02-02T13:49:31.443Z</updated>
     
     
-    <summary type="html">&lt;p&gt;在和不同地区的人聊天时，我们常常会有疑惑：为什么有些人说话时分不清 x 和 y？这里的 x 和 y 可能是拼音中的 f 和 h，l 和 n，l 和 r，z 和 zh，ang 和 an。比如，我明明是福建人，为什么别人以为我是胡建人？在最近刚刚读完的一本书《Fluent Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;在和不同地区的人聊天时，我们常常会有疑惑：为什么有些人说话时分不清 x
+和 y？这里的 x 和 y 可能是拼音中的 f 和 h，l 和 n，l 和 r，z 和 zh，ang
+和
+an。比如，我明明是福建人，为什么别人以为我是胡建人？在最近刚刚读完的一本书《Fluent
+Forever》中，有两张图片正好能解释这个问题。&lt;/p&gt;</summary>
     
     
     
@@ -301,7 +298,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/"/>
     <id>https://zhenghe-md.github.io/blog/2022/04/13/go-project-layout/</id>
     <published>2022-04-13T11:18:50.000Z</published>
-    <updated>2024-10-11T13:53:07.816Z</updated>
+    <updated>2026-02-02T13:49:31.385Z</updated>
     
     
     <summary type="html">&lt;p&gt;每个工程师来到新环境，大概率需要从维护老项目开始切入，逐渐熟悉公司的技术栈和效率工具。这时候，老项目的一些习惯，如命名、布局、错误处理等等，不论好坏，都会不自觉地影响新人，形成路径依赖。在这个过程中，如果没有人主动去思考为什么，这些习惯也将被无理由地继承下去。&lt;/p&gt;</summary>
@@ -318,7 +315,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/26/compound-interest-in-life/</id>
     <published>2022-02-26T21:05:50.000Z</published>
-    <updated>2024-10-11T13:53:07.796Z</updated>
+    <updated>2026-02-02T13:49:31.367Z</updated>
     
     
     <summary type="html">&lt;blockquote&gt;
@@ -339,13 +336,20 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/20/rnn/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/20/rnn/</id>
     <published>2022-02-20T15:03:20.000Z</published>
-    <updated>2024-10-11T13:53:07.856Z</updated>
+    <updated>2026-02-02T13:49:31.421Z</updated>
     
     
     <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;What I cannot create, I do not understand. -- Richard Feynman&lt;/p&gt;
+&lt;p&gt;What I cannot create, I do not understand. – Richard Feynman&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;Andrej Karpathy 在 2015 年发表了题为 &lt;a href=&quot;https://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt; 的博客，并配套开源了其中实验所用的 &lt;a href=&quot;https://github.com/karpathy/char-rnn&quot;&gt;char-rnn 代码仓库&lt;/a&gt;，以及用 numpy 手写的 &lt;a href=&quot;https://gist.github.com/karpathy/d4dee566867f8291f086&quot;&gt;gist: min-char-rnn&lt;/a&gt;，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：&lt;/p&gt;
+&lt;p&gt;Andrej Karpathy 在 2015 年发表了题为 &lt;a
+href=&quot;https://karpathy.github.io/2015/05/21/rnn-effectiveness/&quot;&gt;The
+Unreasonable Effectiveness of Recurrent Neural Networks&lt;/a&gt;
+的博客，并配套开源了其中实验所用的 &lt;a
+href=&quot;https://github.com/karpathy/char-rnn&quot;&gt;char-rnn
+代码仓库&lt;/a&gt;，以及用 numpy 手写的 &lt;a
+href=&quot;https://gist.github.com/karpathy/d4dee566867f8291f086&quot;&gt;gist:
+min-char-rnn&lt;/a&gt;，阅读过后受益良多。于是最近花了一些时间做了下面这些事情：&lt;/p&gt;
 &lt;ol type=&quot;1&quot;&gt;
 &lt;li&gt;&lt;p&gt;逐行理解 min-char-rnn，即 vanilla RNN&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;实现 N 层 vanilla RNN&lt;/p&gt;&lt;/li&gt;
@@ -373,7 +377,7 @@
     <link href="https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/"/>
     <id>https://zhenghe-md.github.io/blog/2022/02/07/quick-translate/</id>
     <published>2022-02-07T20:44:52.000Z</published>
-    <updated>2024-10-11T13:53:07.824Z</updated>
+    <updated>2026-02-02T13:49:31.392Z</updated>
     
     
     <summary type="html">&lt;p&gt;因为平时需要阅读大量的英文资料，翻译对我来说是一个高频需求，但我一直没能找到一个足够趁手的工具。对于一个理想的翻译工具，我有三点期望：&lt;/p&gt;
@@ -395,10 +399,15 @@
     <link href="https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/"/>
     <id>https://zhenghe-md.github.io/blog/2022/01/03/On-Let-s-Build-A-Simple-Interpreter/</id>
     <published>2022-01-03T19:43:37.000Z</published>
-    <updated>2024-10-11T13:53:07.776Z</updated>
+    <updated>2026-02-02T13:49:31.351Z</updated>
     
     
-    <summary type="html">&lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let&#39;s Build A Simple Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1 就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan Spivak&lt;/a&gt; 不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;前阵子无意中发现了一个系列教程：「&lt;a
+href=&quot;https://github.com/rspivak/lsbasi&quot;&gt;Let’s Build A Simple
+Interpreter&lt;/a&gt; 」，简称 lsbasi。本来只是随便翻翻，但刚看完 Part-1
+就发现作者 &lt;a href=&quot;https://ruslanspivak.com/pages/about/&quot;&gt;Ruslan
+Spivak&lt;/a&gt;
+不仅是一个出色的软件工程师，文笔也相当不错，更难得的是他对学习这件事本身有着很深入的理解，这些见解甚至反馈到了这套教程的设计上。&lt;/p&gt;</summary>
     
     
     
@@ -412,10 +421,13 @@
     <link href="https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/"/>
     <id>https://zhenghe-md.github.io/blog/2021/11/28/Make-It-Stick-Digest/</id>
     <published>2021-11-28T20:54:58.000Z</published>
-    <updated>2024-10-11T13:53:07.776Z</updated>
+    <updated>2026-02-02T13:49:31.351Z</updated>
     
     
-    <summary type="html">&lt;p&gt;前段时间，我的朋友「肚子」向我推荐了 &lt;a href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称 MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：&lt;strong&gt;学习本身是一件值得思考的事情&lt;/strong&gt;。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;前段时间，我的朋友「肚子」向我推荐了 &lt;a
+href=&quot;https://www.goodreads.com/book/show/18770267-make-it-stick&quot;&gt;Make
+It Stick: The Science of Successful Learning&lt;/a&gt; 这本书 (以下简称
+MIS)，读毕感觉相见恨晚。该书的讨论主题是学习这件事情本身，即研究人类学习的特点，找到适合人类的高效学习策略。如果用一句话向其它朋友推荐这本书，我想这句话一定是：&lt;strong&gt;学习本身是一件值得思考的事情&lt;/strong&gt;。&lt;/p&gt;</summary>
     
     
     
@@ -429,10 +441,11 @@
     <link href="https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/"/>
     <id>https://zhenghe-md.github.io/blog/2021/07/24/dialogue-system-research/</id>
     <published>2021-07-24T09:37:30.000Z</published>
-    <updated>2024-10-11T13:53:07.812Z</updated>
+    <updated>2026-02-02T13:49:31.382Z</updated>
     
     
-    <summary type="html">&lt;p&gt;今年 6 月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。&lt;/p&gt;</summary>
+    <summary type="html">&lt;p&gt;今年 6
+月底，由于工作需要，花了两周时间调研对话系统，并在公司内部做了一次调研报告。本文意在将此报告整理成文字版，算是对这段时间付出的一个交代。&lt;/p&gt;</summary>
     
     
     

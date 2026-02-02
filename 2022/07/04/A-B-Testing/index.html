@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/blog/images/favicon-32x32-next.png">
@@ -15,34 +14,13 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
-<meta name="description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试">
-<meta property="og:type" content="article">
-<meta property="og:title" content="一次实验、两种错误、三个直觉">
-<meta property="og:url" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/index.html">
-<meta property="og:site_name" content="ZhengHe">
-<meta property="og:description" content="最近，我们在公司内部做了一些 Hacking Growth 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A&#x2F;B 测试。  对于一名工程师，我认为 A&#x2F;B 测试有两个角度值得了解：  如何搭建一个 A&#x2F;B 测试">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-1-error.gif">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-2-error-1.gif">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/type-2-error-2.gif">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/calculate-min-sample-size.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/permutation-test.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/permutation-test-2.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x.png">
-<meta property="og:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/freq-x-with-mark.png">
-<meta property="article:published_time" content="2022-07-04T19:50:21.000Z">
-<meta property="article:modified_time" content="2024-10-11T13:53:07.736Z">
-<meta property="article:author" content="ZhengHe">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/polulation-sample.png">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhenghe-md.github.io","root":"/blog/","images":"/blog/images","scheme":"Mist","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"tomorrow-night"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null}},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js" defer></script>
+
 
 
 <link rel="canonical" href="https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://zhenghe-md.github.io/blog/2022/07/04/A-B-Testing/","path":"2022/07/04/A-B-Testing/","title":"一次实验、两种错误、三个直觉"}</script>
@@ -52,9 +30,35 @@
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172943223-1"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-172943223-1","only_pageview":false}</script>
-  <script src="/blog/js/third-party/analytics/google-analytics.js"></script>
+  <script src="/blog/js/third-party/analytics/google-analytics.js" defer></script>
 
 
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/blog/js/utils.js" defer></script><script src="/blog/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/blog/js/third-party/math/mathjax.js" defer></script>
 
 
 
@@ -67,11 +71,6 @@
 
 mjx-container[jax="SVG"] > svg {
   overflow: visible;
-}
-
-mjx-container[jax="SVG"] > svg a {
-  fill: blue;
-  stroke: blue;
 }
 
 mjx-container[jax="SVG"][display="true"] {
@@ -171,11 +170,11 @@ foreignObject[data-mjx-xml] {
   stroke-width: 3;
 }
 
-mjx-container {
+mjx-container[display="true"] {
   overflow: auto hidden;
 }
 
-mjx-container + br {
+mjx-container[display="true"] + br {
   display: none;
 }
 </style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
@@ -185,8 +184,8 @@ mjx-container + br {
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -205,7 +204,7 @@ mjx-container + br {
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
     </div>
   </div>
 </div>
@@ -213,32 +212,15 @@ mjx-container + br {
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-categories"><a href="/blog/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/blog/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/blog/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
+</header>
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -256,11 +238,16 @@ mjx-container + br {
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
       <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="一次实验、两种错误、三个直觉 | ZhengHe">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -282,7 +269,7 @@ mjx-container + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-10-11 13:53:07" itemprop="dateModified" datetime="2024-10-11T13:53:07+00:00">2024-10-11</time>
+      <time title="修改时间：2026-02-02 13:49:31" itemprop="dateModified" datetime="2026-02-02T13:49:31+00:00">2026-02-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -317,22 +304,30 @@ mjx-container + br {
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <p>最近，我们在公司内部做了一些 <a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking Growth</a> 方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开 A/B 测试。</p>
-
+    <div class="post-body" itemprop="articleBody"><p>最近，我们在公司内部做了一些 <a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking
+Growth</a>
+方向的探索，我们团队俨然成了增长团队，从用户增长、转化的各个环节上尝试不同的策略，拉新、激活、留存、促活、商业化，整个核心流程是一个大漏斗，不同的阶段和渠道又可以拆分成不同的小漏斗，哪个环节损失大就优化哪个。但无论做何种尝试，都绕不开
+A/B 测试。</p>
+<span id="more"></span>
 <p>对于一名工程师，我认为 A/B 测试有两个角度值得了解：</p>
 <ol type="1">
-<li><p>如何搭建一个 A/B 测试平台，支持流量分层、转发，让不同实验共享流量；</p></li>
-<li><p>如何动手做一个 A/B 测试，并能合理地解读统计结论，指导后续生产实践；</p></li>
+<li><p>如何搭建一个 A/B
+测试平台，支持流量分层、转发，让不同实验共享流量；</p></li>
+<li><p>如何动手做一个 A/B
+测试，并能合理地解读统计结论，指导后续生产实践；</p></li>
 </ol>
-<p>对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf">Overlapping Experiment Infrastructure</a>，以及伴鱼的小伙伴们写的两篇实践总结 [<a target="_blank" rel="noopener" href="https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79">1</a>]、[<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/">2</a>]；本文想聊的是后者。</p>
-
+<p>对于前者，业界已经有许多最佳实践，比如之前引我入门的这篇论文 <a target="_blank" rel="noopener" href="https://static.googleusercontent.com/media/research.google.com/zh-CN//pubs/archive/36500.pdf">Overlapping
+Experiment Infrastructure</a>，以及伴鱼的小伙伴们写的两篇实践总结 [<a target="_blank" rel="noopener" href="https://xie.infoq.cn/article/d62fed8fdfdf87ec1d9779f79">1</a>]、[<a target="_blank" rel="noopener" href="https://tech.ipalfish.com/blog/2020/06/25/ab_test_evolu/">2</a>]；本文想聊的是后者。</p>
+<!--more-->
 <h2 id="一次实验">1. 一次实验</h2>
-<p>在互联网场景中，无论是拉新、激活、留存、促活还是商业化，所有的 A/B 测试都可以用一个公式来概括：</p>
+<p>在互联网场景中，无论是拉新、激活、留存、促活还是商业化，所有的 A/B
+测试都可以用一个公式来概括：</p>
 <blockquote>
 <p>💡 方案 A 的转化率比方案 B 的更高吗？</p>
 </blockquote>
-<p>为了后续的讨论能更具体一些，我们先看一个实际的测试场景：假设我们需要给某个用户群体拨打 AI 电话，之前一直在使用家琪的声音拨打电话，现在供应商新推出了小红的声音，我们想知道小红的声音是否有更好的表现。于是，在其它条件相同的情况下，我们分别用小红和家琪的声音给若干用户打了电话，这次的实验现象如下表所示：</p>
+<p>为了后续的讨论能更具体一些，我们先看一个实际的测试场景：假设我们需要给某个用户群体拨打
+AI
+电话，之前一直在使用家琪的声音拨打电话，现在供应商新推出了小红的声音，我们想知道小红的声音是否有更好的表现。于是，在其它条件相同的情况下，我们分别用小红和家琪的声音给若干用户打了电话，这次的实验现象如下表所示：</p>
 <table>
 <thead>
 <tr class="header">
@@ -369,9 +364,11 @@ mjx-container + br {
 <li><p>小红声音的意向率比家琪声音的更高</p></li>
 <li><p>小红声音的意向率没有比家琪声音的更高</p></li>
 </ul>
-<p>由于是第一次使用 AI 电话触达用户，过往的经验对我们帮助不大，因此统计分析就是唯一的依靠。</p>
+<p>由于是第一次使用 AI
+电话触达用户，过往的经验对我们帮助不大，因此统计分析就是唯一的依靠。</p>
 <h3 id="从结论到事实">1.2 从结论到事实</h3>
-<p>结论和事实可能一致，也可能不一致，还是以刚才的 AI 电话为例，我们可以将结论和事实的关系整理成下表：</p>
+<p>结论和事实可能一致，也可能不一致，还是以刚才的 AI
+电话为例，我们可以将结论和事实的关系整理成下表：</p>
 <table>
 <thead>
 <tr class="header">
@@ -420,9 +417,12 @@ mjx-container + br {
 </table>
 <p>它们分别是「误以为发现更好的方案」和「错过更好的方案」。从可能的结果上看，前者可能导致系统设计者在错误的方向上推进，对业务直接造成负面影响；后者则不会产生任何影响，但业务在增长上错过了一个发力点。从危险程度上看，前者更大，后者更小，也受此影响，实际工作中人们往往会更关注第一类错误。</p>
 <p>两种错误之间存在此消彼长的关系：如果我们过分强调避免第一类错误，判断时就倾向于使用更保守的策略，过于保守就容易犯第二类错误；反之，如果我们过分强调避免第二类错误，判断时就倾向于使用更激进的策略，过于激进就容易犯第一类错误。</p>
-<p>两种错误之间存在互斥关系：在实际的一次结论判断中，如果结论是 A 方案比 B 方案好，就只可能犯第一类错误；如果结论是 A 方案没有比 B 方案好，就只可能犯第二类错误。一个结论不会同时犯两类错误。</p>
+<p>两种错误之间存在互斥关系：在实际的一次结论判断中，如果结论是 A 方案比
+B 方案好，就只可能犯第一类错误；如果结论是 A 方案没有比 B
+方案好，就只可能犯第二类错误。一个结论不会同时犯两类错误。</p>
 <h2 id="三个直觉">3. 三个直觉</h2>
-<h3 id="统计分析也是在猜只是猜得更有章法">3.1 统计分析也是在猜，只是猜得更有章法</h3>
+<h3 id="统计分析也是在猜只是猜得更有章法">3.1
+统计分析也是在猜，只是猜得更有章法</h3>
 <p>在做任何统计分析之前，我们需要先设定自己的信仰 — α 和 β。</p>
 <table>
 <thead>
@@ -445,9 +445,14 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>α 就是犯第一类错误的概率；β 就是犯第二类错误的概率，这两个值确定了我们的风险偏好。假设 α = 5%，意味着如果结论是 A 方案比 B 方案好，我们有 5% 的概率会误以为发现更好的方案；假设 β = 20%，意味着如果结论是 A 方案没有 B 方案好，我们有 20% 的概率会错过更好的方案。</p>
+<p>α 就是犯第一类错误的概率；β
+就是犯第二类错误的概率，这两个值确定了我们的风险偏好。假设 α =
+5%，意味着如果结论是 A 方案比 B 方案好，我们有 5%
+的概率会误以为发现更好的方案；假设 β = 20%，意味着如果结论是 A 方案没有
+B 方案好，我们有 20% 的概率会错过更好的方案。</p>
 <p>之后统计分析的工作就是通过对人群分布的理解来构建概率模型，然后按照我们设定的信仰来作出判断。所以统计分析也是在猜，只是猜的时候，我们知道自己犯错的概率，采用激进的策略时也能对犯错的结果有心理预期。</p>
-<h3 id="假设检验就是在确认现象是否是巧合">3.2 假设检验就是在确认现象是否是巧合</h3>
+<h3 id="假设检验就是在确认现象是否是巧合">3.2
+假设检验就是在确认现象是否是巧合</h3>
 <p>假设检验的基本过程是：</p>
 <ol type="1">
 <li><p>假设我们不相信的结论正确</p></li>
@@ -460,23 +465,36 @@ mjx-container + br {
 <li><p>证明观测到的数据出现的概率小于 5%</p></li>
 <li><p>拒绝假设，认为小红声音的意向率比家琪的声音更高</p></li>
 </ol>
-<p>一个具体的证明过程可以以附录中的 Permutation Test 为参考，本节不深入讨论。</p>
-<h3 id="成本不是问题之前样本量越大越好">3.3 成本不是问题之前，样本量越大越好</h3>
+<p>一个具体的证明过程可以以附录中的 Permutation Test
+为参考，本节不深入讨论。</p>
+<h3 id="成本不是问题之前样本量越大越好">3.3
+成本不是问题之前，样本量越大越好</h3>
 <h4 id="样本量对第一类错误的影响">3.3.1 样本量对第一类错误的影响</h4>
-<p>下面这张 GIF 图是从同一个总体中多次采样的分布结果，左图的样本量为 20，右图的样本量为 500。</p>
+<p>下面这张 GIF 图是从同一个总体中多次采样的分布结果，左图的样本量为
+20，右图的样本量为 500。</p>
 <p><img src="./type-1-error.gif"></p>
-<p>左图中，A、B 两组采样的结果差异变化很大，有时候 A 看起来比 B 好，有时候看起来一样好，有时候看起来比 B 查；右图中，A、B 两组采样的结果差异变化很小，看起来两组采样的分布总是比较类似。即样本量较小时，A 更容易被误判为更好的方案，而<strong>样本量的增加可以降低第一类错误的发生概率</strong>。</p>
+<p>左图中，A、B 两组采样的结果差异变化很大，有时候 A 看起来比 B
+好，有时候看起来一样好，有时候看起来比 B 查；右图中，A、B
+两组采样的结果差异变化很小，看起来两组采样的分布总是比较类似。即样本量较小时，A
+更容易被误判为更好的方案，而<strong>样本量的增加可以降低第一类错误的发生概率</strong>。</p>
 <h4 id="样本量对第二类错误的影响">3.3.2 样本量对第二类错误的影响</h4>
-<p>下面的两张 GIF 图是从两个不同的总体中多次采样的分布结果，样本量分别为 10 和 100。</p>
+<p>下面的两张 GIF 图是从两个不同的总体中多次采样的分布结果，样本量分别为
+10 和 100。</p>
 <p><img src="./type-2-error-1.gif"></p>
 <p><img src="./type-2-error-2.gif"></p>
-<p>样本量为 10 时，B 的分布有时候会跑到 A 的左边，即犯第二类错误；样本量为 100 时，B 的分布总是在 A 的右边，符合预期。因此<strong>样本量的增加可以降低第二类错误的发生概率</strong>。</p>
+<p>样本量为 10 时，B 的分布有时候会跑到 A
+的左边，即犯第二类错误；样本量为 100 时，B 的分布总是在 A
+的右边，符合预期。因此<strong>样本量的增加可以降低第二类错误的发生概率</strong>。</p>
 <h4 id="样本量越大越好">3.3.3 样本量越大越好</h4>
-<p>从上面两组 GIF 图中，可以直观地看出，增加样本量可以同时降低第一类和第二类错误发生的概率。</p>
+<p>从上面两组 GIF
+图中，可以直观地看出，增加样本量可以同时降低第一类和第二类错误发生的概率。</p>
 <h2 id="尝试做一个-ab-测试">4. 尝试做一个 A/B 测试</h2>
-<p>了解了「一次实验、两种错误、三个直觉」之后，我们就来尝试做一个完整的 A/B 实验。</p>
+<p>了解了「一次实验、两种错误、三个直觉」之后，我们就来尝试做一个完整的
+A/B 实验。</p>
 <h3 id="计算最小样本量">4.1 计算最小样本量</h3>
-<p>尽管直觉说样本量越大越好，但实际情况下流量资源即非无限、也非召之即来，我们需要计算一个最小的样本量。网上可以找到一些开箱即用的最小样本量计算器，这里以 <a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample Size Calculator (Evan’s Awesome A/B Tools)</a> 为例：</p>
+<p>尽管直觉说样本量越大越好，但实际情况下流量资源即非无限、也非召之即来，我们需要计算一个最小的样本量。网上可以找到一些开箱即用的最小样本量计算器，这里以
+<a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample
+Size Calculator (Evan’s Awesome A/B Tools)</a> 为例：</p>
 <p><img src="./calculate-min-sample-size.png"></p>
 <p>图中有 4 个参数，分别是：</p>
 <table>
@@ -505,12 +523,21 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择 2%；我们预估小红比家琪能带来 1% 以上的意向率改进，因此最小可发现效果选择 1%，如果后续发现这个改进并没有 1% 可以再回来调整。最后 α 和 β 的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α = 5%，β = 20%。</p>
+<p>由于之前使用的是家琪，家琪的意向率在 2% 左右，因此基准转化率选择
+2%；我们预估小红比家琪能带来 1% 以上的意向率改进，因此最小可发现效果选择
+1%，如果后续发现这个改进并没有 1% 可以再回来调整。最后 α 和 β
+的选择就是我们的信仰 — 风险偏好，如果你不知道该选什么，最佳实践就是 α =
+5%，β = 20%。</p>
 <p>一通操作下来后，我们可以看到每个方案的样本数最小值为 3292。</p>
 <h3 id="线上执行-ab-分流">4.2 线上执行 A/B 分流</h3>
-<p>各大公司都有自己的 A/B 平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。本文开头给出的实验现象中，家琪声音对应的样本数量只有 2798，小于最小样本数量，因此还需要补充一部分家琪声音的实验数据。</p>
+<p>各大公司都有自己的 A/B
+平台实现，这里按住不表。执行时务必保证每个方案的样本数量大于最小值。本文开头给出的实验现象中，家琪声音对应的样本数量只有
+2798，小于最小样本数量，因此还需要补充一部分家琪声音的实验数据。</p>
 <h3 id="运行假设检验">4.3 运行假设检验</h3>
-<p>这里我推荐的是 Permutation Test，详细原理请看附录。我利用 Google 的 Colab 做了一个在线可执行的<a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=nPZQhldee09R">假设检验程序</a>，打开以后将实验数据分别填入 <code>total_A</code>、<code>succ_A</code>、<code>total_B</code> 和 <code>succ_B</code> 中，假设实验现象是：</p>
+<p>这里我推荐的是 Permutation Test，详细原理请看附录。我利用 Google 的
+Colab 做了一个在线可执行的<a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=nPZQhldee09R">假设检验程序</a>，打开以后将实验数据分别填入
+<code>total_A</code>、<code>succ_A</code>、<code>total_B</code> 和
+<code>succ_B</code> 中，假设实验现象是：</p>
 <table>
 <thead>
 <tr class="header">
@@ -534,7 +561,8 @@ mjx-container + br {
 </table>
 <p>那么填入的值分别为 3469、98、3357、52。执行的结果如下图所示：</p>
 <p><img src="./permutation-test.png"></p>
-<p>这里得到的 p 只要小于我们信仰中的 α，就可以认为小红声音的意向率高于家琪，且该结论错误的概率为万分之一。即便你是一位风险厌恶者，面对这样的错误率应该也可以放宽心了。</p>
+<p>这里得到的 p 只要小于我们信仰中的
+α，就可以认为小红声音的意向率高于家琪，且该结论错误的概率为万分之一。即便你是一位风险厌恶者，面对这样的错误率应该也可以放宽心了。</p>
 <p>假设实验现象是：</p>
 <table>
 <thead>
@@ -559,9 +587,12 @@ mjx-container + br {
 </table>
 <p>执行结果如下图所示：</p>
 <p><img src="./permutation-test-2.png"></p>
-<p>这里得到的 p 大于 α，就应该认为小红声音的意向率没有比家琪更高，该结论的错误率最大为 β，即 20%。</p>
+<p>这里得到的 p 大于
+α，就应该认为小红声音的意向率没有比家琪更高，该结论的错误率最大为 β，即
+20%。</p>
 <h2 id="附录">5. 附录</h2>
-<h3 id="基于-permutation-test-的假设检验">5.1 基于 Permutation Test 的假设检验</h3>
+<h3 id="基于-permutation-test-的假设检验">5.1 基于 Permutation Test
+的假设检验</h3>
 <p>以下面的实验现象为例：</p>
 <table>
 <thead>
@@ -589,33 +620,64 @@ mjx-container + br {
 </tr>
 </tbody>
 </table>
-<p>从绝对数值上看，A 方案的意向率要高于 B 方案，似乎意味着 A 方案更好。方案 A 真的更好吗？这次实验的结果有可能只是个巧合吗？基于此，我们的假设如下：</p>
+<p>从绝对数值上看，A 方案的意向率要高于 B 方案，似乎意味着 A
+方案更好。方案 A
+真的更好吗？这次实验的结果有可能只是个巧合吗？基于此，我们的假设如下：</p>
 <ul>
 <li><p>零假设：方案 A 和方案 B 没有差别</p></li>
 <li><p>备择假设：方案 A 比方案 B 更好</p></li>
 </ul>
-<p>下面使用的假设检验方法叫 Permutation Test，主要因为它<a target="_blank" rel="noopener" href="https://www.jwilber.me/permutationtest/">很符合直觉，没有参数，无数学公式</a>。Permutation Test 做的事情很简单，就是把当前的意向用户 (98+43=141) 重新随机打散分配到池子 (3469+2798 = 6267) 中，然后从池子中随机取 3469 个用户归属于 A 方案，剩下的归属于 B 方案。以上就是一次随机分配的模拟实验。假设单次模拟实验后有 X 个用户归属于 A 方案，Y 个用户归属于 B 方案，那么 X、Y 取值范围就是满足下列条件的任意组合：</p>
-<p><span class="math display"><mjx-container class="MathJax" jax="SVG" display="true"><svg style="vertical-align: -0.439ex" xmlns="http://www.w3.org/2000/svg" width="26.793ex" height="1.984ex" role="img" focusable="false" viewBox="0 -683 11842.4 877" xmlns:xlink="http://www.w3.org/1999/xlink"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><g data-mml-node="math"><g data-mml-node="mi"><use xlink:href="#MJX-TEX-I-58"></use></g><g data-mml-node="mo" transform="translate(1074.2, 0)"><use xlink:href="#MJX-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(2074.4, 0)"><use xlink:href="#MJX-TEX-I-59"></use></g><g data-mml-node="mo" transform="translate(3115.2, 0)"><use xlink:href="#MJX-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(4171, 0)"><use xlink:href="#MJX-TEX-N-31"></use><use xlink:href="#MJX-TEX-N-34" transform="translate(500, 0)"></use><use xlink:href="#MJX-TEX-N-31" transform="translate(1000, 0)"></use></g><g data-mml-node="mo" transform="translate(5671, 0)"><use xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(6115.7, 0)"><use xlink:href="#MJX-TEX-I-58"></use></g><g data-mml-node="mo" transform="translate(7245.4, 0)"><use xlink:href="#MJX-TEX-N-2265"></use></g><g data-mml-node="mn" transform="translate(8301.2, 0)"><use xlink:href="#MJX-TEX-N-30"></use></g><g data-mml-node="mo" transform="translate(8801.2, 0)"><use xlink:href="#MJX-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(9245.9, 0)"><use xlink:href="#MJX-TEX-I-59"></use></g><g data-mml-node="mo" transform="translate(10286.7, 0)"><use xlink:href="#MJX-TEX-N-2265"></use></g><g data-mml-node="mn" transform="translate(11342.4, 0)"><use xlink:href="#MJX-TEX-N-30"></use></g></g></g></svg></mjx-container></span></p>
-<p>如果重复做 10000 次这样的模拟实验，并以 X-Y (这里以 X-Y、Y-X、X 或者 Y 为例皆可) 的值为横坐标，取值范围为 <code>[-141, 141]</code>，其各个取值的出现频次 <code>Freq(X-Y)</code> 为纵坐标，就很容易得到一个钟型曲线：</p>
+<p>下面使用的假设检验方法叫 Permutation Test，主要因为它<a target="_blank" rel="noopener" href="https://www.jwilber.me/permutationtest/">很符合直觉，没有参数，无数学公式</a>。Permutation
+Test 做的事情很简单，就是把当前的意向用户 (98+43=141)
+重新随机打散分配到池子 (3469+2798 = 6267) 中，然后从池子中随机取 3469
+个用户归属于 A 方案，剩下的归属于 B
+方案。以上就是一次随机分配的模拟实验。假设单次模拟实验后有 X
+个用户归属于 A 方案，Y 个用户归属于 B 方案，那么 X、Y
+取值范围就是满足下列条件的任意组合：</p>
+<p><span class="math display"><em>X</em> + <em>Y</em> = 141, <em>X</em> ≥ 0, <em>Y</em> ≥ 0</span></p>
+<p>如果重复做 10000 次这样的模拟实验，并以 X-Y (这里以 X-Y、Y-X、X 或者
+Y 为例皆可) 的值为横坐标，取值范围为
+<code>[-141, 141]</code>，其各个取值的出现频次 <code>Freq(X-Y)</code>
+为纵坐标，就很容易得到一个钟型曲线：</p>
 <figure>
-<img src="./freq-x.png" alt="随机变量 X-Y 的频率直方图"><figcaption aria-hidden="true">随机变量 X-Y 的频率直方图</figcaption>
+<img src="./freq-x.png" alt="随机变量 X-Y 的频率直方图">
+<figcaption aria-hidden="true">随机变量 X-Y 的频率直方图</figcaption>
 </figure>
-<p>它就是随机变量 X-Y 的频度直方图，理论上它的形状应该趋近于变量 X-Y 的概率密度函数。有了 X-Y 的频度直方图，我们就可以找到本节初提到的实验结果 (x-y = 55) 在直方图中的位置：</p>
+<p>它就是随机变量 X-Y 的频度直方图，理论上它的形状应该趋近于变量 X-Y
+的概率密度函数。有了 X-Y
+的频度直方图，我们就可以找到本节初提到的实验结果 (x-y = 55)
+在直方图中的位置：</p>
 <figure>
-<img src="./freq-x-with-mark.png" alt="加上标记频率直方图"><figcaption aria-hidden="true">加上标记频率直方图</figcaption>
+<img src="./freq-x-with-mark.png" alt="加上标记频率直方图">
+<figcaption aria-hidden="true">加上标记频率直方图</figcaption>
 </figure>
-<p>利用 x-y 在频度直方图中的位置，我们就能估算出 x-y 在随机变量 X-Y 概率密度函数上的分位点。在一次模拟实验中，我们算得的分位点为 99.95%，这意味着「如果零假设成立，观测到 x-y &gt;= 55 的概率为 0.05% (1-99.95%)」，即做一万次实验，只有五次能观测到 x-y &gt;= 55。这是个小概率事件，我们有充足的信心选择拒绝零假设，相信备择假设，如果一定要给这个信心加一个数字，那么它就是 99.95%。</p>
-<p>如果你听过蒙特卡洛方法 (Monte Carlo Method)，刚才这个过程就是蒙特卡洛模拟。实现逻辑可以参考我的这篇 gist <a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test · GitHub</a>。</p>
+<p>利用 x-y 在频度直方图中的位置，我们就能估算出 x-y 在随机变量 X-Y
+概率密度函数上的分位点。在一次模拟实验中，我们算得的分位点为
+99.95%，这意味着「如果零假设成立，观测到 x-y &gt;= 55 的概率为 0.05%
+(1-99.95%)」，即做一万次实验，只有五次能观测到 x-y &gt;=
+55。这是个小概率事件，我们有充足的信心选择拒绝零假设，相信备择假设，如果一定要给这个信心加一个数字，那么它就是
+99.95%。</p>
+<p>如果你听过蒙特卡洛方法 (Monte Carlo
+Method)，刚才这个过程就是蒙特卡洛模拟。实现逻辑可以参考我的这篇 gist <a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test
+· GitHub</a>。</p>
 <h2 id="参考">参考</h2>
 <ul>
-<li><p><a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking Growth</a></p></li>
-<li><p><a href="%5BPermutation%20Test:%20Visual%20Explanation%5D(https://www.jwilber.me/permutationtest/)">The Permutation Test</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://data36.com/statistical-significance-in-ab-testing/">Statistical Significance in A/B testing (Calculation, p-value and the Math)</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test · GitHub</a>, <a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=JJ73psUwe9GF">Colab</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample Size Calculator (Evan’s Awesome A/B Tools)</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://paulvanderlaken.com/2019/06/12/gif-visualizations-of-type-1-and-type-2-error-in-relation-to-sample-size/">GIF visualizations of Type 1 and Type 2 error in relation to sample size – paulvanderlaken.com</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/31625067-hacking-growth">Hacking
+Growth</a></p></li>
+<li><p><a href="%5BPermutation%20Test:%20Visual%20Explanation%5D(https://www.jwilber.me/permutationtest/)">The
+Permutation Test</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://data36.com/statistical-significance-in-ab-testing/">Statistical
+Significance in A/B testing (Calculation, p-value and the
+Math)</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://gist.github.com/ZhengHe-MD/48e633ec49a35b5259908cf468dc073b">AB-Permutation-Test
+· GitHub</a>, <a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16E9Zk0BhLmKb_nuiPMRgzhnvgZWJCyxG#scrollTo=JJ73psUwe9GF">Colab</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.evanmiller.org/ab-testing/sample-size.html">Sample
+Size Calculator (Evan’s Awesome A/B Tools)</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://paulvanderlaken.com/2019/06/12/gif-visualizations-of-type-1-and-type-2-error-in-relation-to-sample-size/">GIF
+visualizations of Type 1 and Type 2 error in relation to sample size –
+paulvanderlaken.com</a></p></li>
 </ul>
-<svg style="display: none" id="MJX-SVG-global-cache"><defs><path id="MJX-TEX-I-58" d="M42 0H40Q26 0 26 11Q26 15 29 27Q33 41 36 43T55 46Q141 49 190 98Q200 108 306 224T411 342Q302 620 297 625Q288 636 234 637H206Q200 643 200 645T202 664Q206 677 212 683H226Q260 681 347 681Q380 681 408 681T453 682T473 682Q490 682 490 671Q490 670 488 658Q484 643 481 640T465 637Q434 634 411 620L488 426L541 485Q646 598 646 610Q646 628 622 635Q617 635 609 637Q594 637 594 648Q594 650 596 664Q600 677 606 683H618Q619 683 643 683T697 681T738 680Q828 680 837 683H845Q852 676 852 672Q850 647 840 637H824Q790 636 763 628T722 611T698 593L687 584Q687 585 592 480L505 384Q505 383 536 304T601 142T638 56Q648 47 699 46Q734 46 734 37Q734 35 732 23Q728 7 725 4T711 1Q708 1 678 1T589 2Q528 2 496 2T461 1Q444 1 444 10Q444 11 446 25Q448 35 450 39T455 44T464 46T480 47T506 54Q523 62 523 64Q522 64 476 181L429 299Q241 95 236 84Q232 76 232 72Q232 53 261 47Q262 47 267 47T273 46Q276 46 277 46T280 45T283 42T284 35Q284 26 282 19Q279 6 276 4T261 1Q258 1 243 1T201 2T142 2Q64 2 42 0Z"></path><path id="MJX-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-TEX-I-59" d="M66 637Q54 637 49 637T39 638T32 641T30 647T33 664T42 682Q44 683 56 683Q104 680 165 680Q288 680 306 683H316Q322 677 322 674T320 656Q316 643 310 637H298Q242 637 242 624Q242 619 292 477T343 333L346 336Q350 340 358 349T379 373T411 410T454 461Q546 568 561 587T577 618Q577 634 545 637Q528 637 528 647Q528 649 530 661Q533 676 535 679T549 683Q551 683 578 682T657 680Q684 680 713 681T746 682Q763 682 763 673Q763 669 760 657T755 643Q753 637 734 637Q662 632 617 587Q608 578 477 424L348 273L322 169Q295 62 295 57Q295 46 363 46Q379 46 384 45T390 35Q390 33 388 23Q384 6 382 4T366 1Q361 1 324 1T232 2Q170 2 138 2T102 1Q84 1 84 9Q84 14 87 24Q88 27 89 30T90 35T91 39T93 42T96 44T101 45T107 45T116 46T129 46Q168 47 180 50T198 63Q201 68 227 171L252 274L129 623Q128 624 127 625T125 627T122 629T118 631T113 633T105 634T96 635T83 636T66 637Z"></path><path id="MJX-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-TEX-N-34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path><path id="MJX-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-TEX-N-2265" d="M83 616Q83 624 89 630T99 636Q107 636 253 568T543 431T687 361Q694 356 694 346T687 331Q685 329 395 192L107 56H101Q83 58 83 76Q83 77 83 79Q82 86 98 95Q117 105 248 167Q326 204 378 228L626 346L360 472Q291 505 200 548Q112 589 98 597T83 616ZM84 -118Q84 -108 99 -98H678Q694 -104 694 -118Q694 -130 679 -138H98Q84 -131 84 -118Z"></path><path id="MJX-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs></svg>
+
     </div>
 
     
@@ -629,13 +691,13 @@ mjx-container + br {
   <div class="social-list">
 
       <div class="social-item">
-        <a target="_blank" class="social-link" href="/blog/atom.xml">
-          <span class="icon">
-            <i class="fa fa-rss"></i>
-          </span>
+          <a target="_blank" class="social-link" href="/blog/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
 
-          <span class="label">RSS</span>
-        </a>
+            <span class="label">RSS</span>
+          </a>
       </div>
   </div>
 </div>
@@ -646,12 +708,12 @@ mjx-container + br {
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/blog/2022/05/23/accuracy-and-precision/" rel="prev" title="捋一捋 Accuracy 与 Precision 间的区别和联系">
-                  <i class="fa fa-chevron-left"></i> 捋一捋 Accuracy 与 Precision 间的区别和联系
+                  <i class="fa fa-angle-left"></i> 捋一捋 Accuracy 与 Precision 间的区别和联系
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/blog/2022/08/06/map-reduce-from-scratch/" rel="next" title="从 MapReduce 到 SQL">
-                  从 MapReduce 到 SQL <i class="fa fa-chevron-right"></i>
+                  从 MapReduce 到 SQL <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -675,15 +737,14 @@ mjx-container + br {
   <footer class="footer">
     <div class="footer-inner">
 
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">ZhengHe</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">ZhengHe</span>
+  </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
   </div>
 
@@ -691,28 +752,18 @@ mjx-container + br {
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/blog/js/comments.js"></script><script src="/blog/js/utils.js"></script><script src="/blog/js/schemes/muse.js"></script><script src="/blog/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
 
-  
+  <a href="https://github.com/ZhengHe-MD" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
 
-
-
-
-
-  
-
-
-
-
-  
-
-  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
-<script src="/blog/js/third-party/math/mathjax.js"></script>
-
-
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 <script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"zhenghe-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
-<script src="/blog/js/third-party/comments/disqus.js"></script>
+<script src="/blog/js/third-party/comments/disqus.js" defer></script>
 
 </body>
 </html>
