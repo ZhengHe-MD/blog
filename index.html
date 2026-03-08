@@ -65,6 +65,7 @@
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -177,8 +178,7 @@ mjx-container[display="true"] {
 mjx-container[display="true"] + br {
   display: none;
 }
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
-</head>
+</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
@@ -232,6 +232,141 @@ mjx-container[display="true"] + br {
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2026/03/02/my-first-agent-skill/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | ZhengHe">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2026/03/02/my-first-agent-skill/" class="post-title-link" itemprop="url">我的第一个 AgentSkill</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-03-02 21:32:07" itemprop="dateCreated datePublished" datetime="2026-03-02T21:32:07+00:00">2026-03-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E5%AE%9E%E8%B7%B5/" itemprop="url" rel="index"><span itemprop="name">实践</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2026/03/02/my-first-agent-skill/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2026/03/02/my-first-agent-skill/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>我在 Cambly 和外教上课时，多数时候用的是 <a target="_blank" rel="noopener" href="https://engoo.com/app/daily-news">Engoo Daily News</a>
+中的课程（<a href="./engoo-daily-news.png">网站截图</a>、<a href="./engoo-daily-news-lesson-example.png">课程示例</a>）。每节课程对应一篇英文时事新闻，上课的一般流程就是：学习准备
+→ 文章阅读 → 问题讨论，同时每节课程都标记有难度，从 Intermediate (Level
+4-6)、Advanced (Level 7-8) 到 Proficient (Level
+9)，课程内容难度依次递增，具体体现在词汇难度、句子复杂度、讨论题型的设计和问题的抽象程度等等。</p>
+<p><a target="_blank" rel="noopener" href="https://engoo.com/app/daily-news">Engoo Daily News</a>
+的材料很好，但是许多文章内容我并不感兴趣，讨论起来稍显无趣，于是我萌生了一个想法：能不能我自己选一篇文章，让
+AI Agent 帮我生成指定难度的课程，在外教课上使用？</p>
+<h1 id="第一版agentic-workflow">第一版：Agentic Workflow</h1>
+<p>最早我用 Claude Code 基于 LangGraph vibe-code 了一个生成课程的
+Agentic Workflow (<a target="_blank" rel="noopener" href="https://github.com/eslsoft/engoo-daily-news-writer">eslsoft/engoo-daily-news-writer</a>)，生成的产物是
+GitHub 上的 gist 文件，然后再用 <a target="_blank" rel="noopener" href="https://gistpreview.github.io">gistpreview</a>
+渲染，就能上课在线使用了，示例见 <a href="./agentic-workflow-version.html">agentic-workflow-version</a>。这个版本看起来已经像那么一回事，但是有几个缺点：</p>
+<ol type="1">
+<li>上手门槛很高，只有「上外教课的程序员」能用起来，独乐不如众乐乐；</li>
+<li>项目可维护性差，过一段时间就忘了代码结构，只能强行
+vibe-code，心虚；</li>
+</ol>
+<h1 id="第二版agentskill">第二版：AgentSkill</h1>
+<p>在春节期间，我在空余时间重新思考后认为 AgentSkill
+应该能解决上述的问题，便开始动手撰写「我人生的第一个
+AgentSkill」，名字不变：<a target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/ZhengHe-MD/tree/main/skills/engoo-daily-news-writer">engoo-daily-news-writer</a>。</p>
+<p>把初始的想法和计划告诉 <a target="_blank" rel="noopener" href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">skill-creator</a>
+后，就有了个像模像样的形式。真正的难点在于：</p>
+<ol type="1">
+<li>如何拿到 Engoo Daily News 的课程设计规范</li>
+<li>如何验证这个 AgentSkill 设计出来的课程质量</li>
+</ol>
+<p>我将问题 1 交给了 <a href="manus.im/app">Manus</a>，当时使用的是
+Manus 免费套餐中的 1.6 Lite，我在一段会话中循序渐进地问了这些问题：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2026/03/02/my-first-agent-skill/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2026/02/02/ai-augmented-engineer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -268,7 +403,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -376,7 +511,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -495,7 +630,7 @@ Cube</a>」，边看边学，很快便完成了人生首次三阶魔方复原！
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -603,7 +738,7 @@ Cube</a>」，边看边学，很快便完成了人生首次三阶魔方复原！
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -716,7 +851,7 @@ can do in ten years）。</p>
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
 
   
@@ -814,7 +949,7 @@ CMDB、容器平台、应用发布系统、可观测性平台、配置中心、�
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -920,7 +1055,7 @@ CMDB、容器平台、应用发布系统、可观测性平台、配置中心、�
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1031,7 +1166,7 @@ target="_blank" rel="noopener" href="https://increditools.com/how-many-software-
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1138,7 +1273,7 @@ target="_blank" rel="noopener" href="https://increditools.com/how-many-software-
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
+      <time title="修改时间：2026-03-08 02:33:02" itemprop="dateModified" datetime="2026-03-08T02:33:02+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1181,115 +1316,6 @@ target="_blank" rel="noopener" href="https://increditools.com/how-many-software-
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/blog/2022/10/09/relationship/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2022/09/29/my-takes-on-interviews/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-      <meta itemprop="name" content="ZhengHe">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ZhengHe">
-      <meta itemprop="description" content="郑鹤的博客">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | ZhengHe">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2022/09/29/my-takes-on-interviews/" class="post-title-link" itemprop="url">面试官毁掉技术面试的三大法宝</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-09-29 08:36:28" itemprop="dateCreated datePublished" datetime="2022-09-29T08:36:28+00:00">2022-09-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-01 13:26:32" itemprop="dateModified" datetime="2026-03-01T13:26:32+00:00">2026-03-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/blog/categories/%E6%80%9D%E8%80%83/" itemprop="url" rel="index"><span itemprop="name">思考</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/blog/2022/09/29/my-takes-on-interviews/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/09/29/my-takes-on-interviews/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在伴鱼的三年，我作为面试官参与超过 100
-场面试，遇到许多风格各异的候选人；最近的两个月里，我也作为候选人参与将近
-30
-轮面试，见过不少形形色色的面试官。在参与这些面试的过程中，我心中逐渐累积了一些对面试的看法，本文我想站在面试官的角度，谈一谈面试官毁掉技术面试的三大法宝。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/2022/09/29/my-takes-on-interviews/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
