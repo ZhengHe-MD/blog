@@ -50,7 +50,7 @@ category: 实践
 
 ![我的 GitHub 主页](./github-profile.png)
 
-找到了 AgentSkill 合适的归宿后，分发问题也就迎刃而解 --- 利用  GitHub Actions 在项目 [Releases](https://github.com/ZhengHe-MD/ZhengHe-MD/releases) 中放入 AgentSkills 的 zip。
+找到了 AgentSkill 合适的归宿后，分发问题也就迎刃而解 --- 利用  GitHub Actions 在项目 [Releases](https://github.com/ZhengHe-MD/ZhengHe-MD/releases) 中放入 AgentSkills 的 zip，使用者下载后直接加载到 Claude Code、OpenClaw、Manus 等各种通用型 Agent 中即可。
 
 # 尾声
 
