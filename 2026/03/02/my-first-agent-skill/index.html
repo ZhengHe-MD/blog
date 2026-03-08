@@ -157,7 +157,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-08 02:37:18" itemprop="dateModified" datetime="2026-03-08T02:37:18+00:00">2026-03-08</time>
+      <time title="修改时间：2026-03-08 08:08:55" itemprop="dateModified" datetime="2026-03-08T08:08:55+00:00">2026-03-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -194,14 +194,14 @@
     
     <div class="post-body" itemprop="articleBody"><p>我在 Cambly 和外教上课时，多数时候用的是 <a
 target="_blank" rel="noopener" href="https://engoo.com/app/daily-news">Engoo Daily News</a>
-中的课程（<a href="./engoo-daily-news.png">网站截图</a>、<a
-href="./engoo-daily-news-lesson-example.png">课程示例</a>）。每节课程对应一篇英文时事新闻，上课的一般流程就是：学习准备
+中的课程（<a href="./engoo-daily-news.png">网站示例</a>、<a
+href="./engoo-daily-news-lesson-example.png">课程示例</a>）。每节课程对应一篇英文时事新闻，上课的一般流程就是：课前准备
 → 文章阅读 → 问题讨论，同时每节课程都标记有难度，从 Intermediate (Level
 4-6)、Advanced (Level 7-8) 到 Proficient (Level
 9)，课程内容难度依次递增，具体体现在词汇难度、句子复杂度、讨论题型的设计和问题的抽象程度等等。</p>
 <p><a target="_blank" rel="noopener" href="https://engoo.com/app/daily-news">Engoo Daily News</a>
-的材料很好，但是许多文章内容我并不感兴趣，讨论起来稍显无趣，于是我萌生了一个想法：能不能我自己选一篇文章，让
-AI Agent 帮我生成指定难度的课程，在外教课上使用？</p>
+的课程很好，但是许多文章内容我并不感兴趣，讨论起来稍显无趣，于是我萌生了一个想法：能不能我自己选一篇文章，让
+AI 帮我生成指定难度的课程？</p>
 <span id="more"></span>
 <h1 id="第一版agentic-workflow">第一版：Agentic Workflow</h1>
 <p>最早我用 Claude Code 基于 LangGraph vibe-code 了一个生成课程的
@@ -210,20 +210,26 @@ target="_blank" rel="noopener" href="https://github.com/eslsoft/engoo-daily-news
 GitHub 上的 gist 文件，然后再用 <a
 target="_blank" rel="noopener" href="https://gistpreview.github.io">gistpreview</a>
 渲染，就能上课在线使用了，示例见 <a
-href="./agentic-workflow-version.html">agentic-workflow-version</a>。这个版本看起来已经像那么一回事，但是有几个缺点：</p>
+href="./agentic-workflow-version.html">agentic-workflow-version</a>。这个版本看起来已经可以使用，但是有两个主要缺点：</p>
 <ol type="1">
-<li>上手门槛很高，只有「上外教课的程序员」能用起来，独乐不如众乐乐；</li>
-<li>项目可维护性差，过一段时间就忘了代码结构，只能强行
+<li><strong>上手门槛很高</strong>，只有「上外教课的程序员」能用起来，独乐不如众乐乐；</li>
+<li><strong>项目可维护性差</strong>，过一段时间就忘了代码结构，只能强行
 vibe-code，心虚；</li>
 </ol>
 <h1 id="第二版agentskill">第二版：AgentSkill</h1>
-<p>在春节期间，我在空余时间重新思考后认为 AgentSkill
-应该能解决上述的问题，便开始动手撰写「我人生的第一个
+<p>第一版的问题一直萦绕在我心里，在春节期间终于得空思考。
+降低上手门槛需要更通用的分发方案支撑，那基本逃不过 MCP 和
+AgentSkill，甚至后者已经借着 OpenClaw
+的爆火开始出圈。既然要降门槛，不如降到最低，于是我就选择了
+AgentSkill。这时候发现，第二个问题也就迎刃而解了，项目的维护变成了
+AgentSkill 的维护，作为作者的我不必再关心 LangGraph
+会如何变化与演进。</p>
+<p>基于上述思考，我便开始动手撰写「人生的第一个
 AgentSkill」，名字不变：<a
-target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/ZhengHe-MD/tree/main/skills/engoo-daily-news-writer">engoo-daily-news-writer</a>。</p>
-<p>把初始的想法和计划告诉 <a
+target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/ZhengHe-MD/tree/main/skills/engoo-daily-news-writer">engoo-daily-news-writer</a>。把初始的想法和计划告诉
+<a
 target="_blank" rel="noopener" href="https://github.com/anthropics/skills/tree/main/skills/skill-creator">skill-creator</a>
-后，就有了个像模像样的形式。真正的难点在于：</p>
+后，我便有了一个 AgentSkill 的外壳，但要把它变得靠谱好用，难点在于：</p>
 <ol type="1">
 <li>如何拿到 Engoo Daily News 的课程设计规范</li>
 <li>如何验证这个 AgentSkill 设计出来的课程质量</li>
@@ -242,45 +248,47 @@ daily-news like articles.”</li>
 those lessons. And refine our current report. for each type of section,
 you should provide concrete examples”</li>
 </ol>
-<p>于是就得到了一份<a
-href="./engoo-daily-news-lesson-spec.txt">课程设计规范</a>。于是生成课程的「形式」问题基本已经解决，于是就有了我们的
-<a
+<p>花了几分钟时间，Manus 就给了我一份<a
+href="./engoo-daily-news-lesson-spec.txt">课程设计规范调研报告</a>。于是生成课程的「形式」问题基本已经解决，
+将报告发给 Claude Code，就得到了 <a
 target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/ZhengHe-MD/blob/main/skills/engoo-daily-news-writer/SKILL.md">SKILL.md</a>
-的雏形。</p>
+的主体内容。</p>
 <p>问题 2 就得靠我这个作者的品味。我拿了一篇 Paul Graham 的 essay：<a
 target="_blank" rel="noopener" href="https://www.paulgraham.com/goodwriting.html">Good Writings</a>,
 在通读一遍确保自己已了解文章的核心观点和表达细节后，开始让 Claude Code
 依次生成 Level 4-9
-的课程，然后一一阅读，确认文章大意在不同难度的课程中是否不变，行文的阅读难度是否符合我平时上课的大致感受等等。示例详见
-<a
-href="./good-writings-lesson-level-7.html">good-writings-lesson-level-7</a>。</p>
-<p>再经过少量细节微调后，我的第一个 AgentSkill
-就问世了。接下来就需要解决它的分发问题，但在讨论分发前，我想聊聊最近经常和同事探讨的一个话题：「<strong>AgentSkill
-究竟是跟着人走还是跟着角色走</strong>」。</p>
-<p>我的个人判断是，AgentSkill 一定会「<strong>跟着人走</strong>」，每个
-AgentSkill 都或多或少地有作者本人品味的投影。比如，一个 markdown
-文件生成飞书文档的 AgentSkill 中，就有很多无关正确性的设计选择：</p>
+的课程，然后逐个阅读，确认文章大意在不同难度的课程中是否不变，行文的阅读难度是否符合我平时上课的大致感受等等
+（示例详见 <a
+href="./good-writings-lesson-level-7.html">good-writings-lesson-level-7</a>)。我将一些建议给到
+Claude Code，经过它的调整后，我的第一个 AgentSkill 就问世了。</p>
+<p>接下来就需要解决它的分发问题，但在讨论分发前，我想聊聊最近经常和同事探讨的一个话题：「<strong>AgentSkill
+究竟是跟着人走还是跟着角色走</strong>」。我的个人判断是，AgentSkill
+一定会「<strong>跟着人走</strong>」，每个 AgentSkill
+都或多或少地有作者本人品味的投影。比如，一个「Markdown
+文件生成飞书文档」的 AgentSkill 中，就有很多无关正确性的设计选择：</p>
 <ul>
-<li>类似 “&gt; xxx”
+<li>类似 “&gt; xxxx”
 这样的引用语法应该转化成飞书文档中的引用块还是高亮块？</li>
 <li>哪些类型的内容应该加粗加黑？</li>
 <li>图片应该居中还是左对齐？</li>
 <li>排版应该遵循什么样的原则？</li>
 </ul>
-<p>它也许能够被那些还未锻炼出品味的人直接使用，但品味相当时，不同的使用者不可避免的会想去做微调。</p>
-<p>我把本文的 AgentSkill 放在了我的 GitHub
-主页上，我并不指望有多少人使用它，就像我主页上的代码仓库、分享、随笔一样，它体现的是我在软件工程世界中游历多年积累下来的品味，仅此而已。</p>
+<p>它也许能够被那些还未锻炼出品味的人直接使用，但品味相当时，不同的使用者不可避免的会想去根据自己的喜好做一些微调。</p>
+<p>既然是「跟着人走」，我就应该把具备我个人特色的 AgentSkill 放在 GitHub
+主页上。我并不指望有多少人使用它，就像我主页上的代码仓库、分享、随笔一样，它体现的是我在这个世界中游历多年积累下来的品味，仅此而已。</p>
 <figure>
 <img src="./github-profile.png" alt="我的 GitHub 主页" />
 <figcaption aria-hidden="true">我的 GitHub 主页</figcaption>
 </figure>
-<p>找到了 AgentSkill 合适的归宿后，分发的解决方案就变得水到渠成 — 利用
-GitHub Actions 在项目 <a
+<p>找到了 AgentSkill 合适的归宿后，分发问题也就迎刃而解 — 利用 GitHub
+Actions 在项目 <a
 target="_blank" rel="noopener" href="https://github.com/ZhengHe-MD/ZhengHe-MD/releases">Releases</a>
 中放入 AgentSkills 的 zip。</p>
 <h1 id="尾声">尾声</h1>
 <p>完成 AgentSkill 的版本后，我在课上引导我的英语老师用 Manus 生成一份
-Engoo 课程，当他看到结果后说：「<strong>你应该创业</strong>」。</p>
+Engoo Daily News 课程，当他看到结果后，说：「<strong>You should start
+your own Engoo business</strong>」。</p>
+<p>LOL~</p>
 
     </div>
 
