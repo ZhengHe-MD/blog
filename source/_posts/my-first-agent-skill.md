@@ -8,6 +8,8 @@ category: 实践
 
 [Engoo Daily News](https://engoo.com/app/daily-news) 的材料很好，但是许多文章内容我并不感兴趣，讨论起来稍显无趣，于是我萌生了一个想法：能不能我自己选一篇文章，让 AI Agent 帮我生成指定难度的课程，在外教课上使用？
 
+<!--more-->
+
 # 第一版：Agentic Workflow
 
 最早我用 Claude Code 基于 LangGraph vibe-code 了一个生成课程的 Agentic Workflow ([eslsoft/engoo-daily-news-writer](https://github.com/eslsoft/engoo-daily-news-writer))，生成的产物是 GitHub 上的 gist 文件，然后再用 [gistpreview](https://gistpreview.github.io) 渲染，就能上课在线使用了，示例见 [agentic-workflow-version](./agentic-workflow-version.html)。这个版本看起来已经像那么一回事，但是有几个缺点：
