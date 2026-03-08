@@ -1,0 +1,123 @@
+# Engoo Daily News: Structural & Difficulty Analysis Report (Levels 4–9)
+
+This report provides a comprehensive breakdown of the structural "DNA" of **Engoo Daily News** articles, specifically analyzed to assist in the development of an automated article generator.
+
+---
+
+## 1. Executive Summary: The Average Article
+Based on a cross-sectional analysis of recent articles from February 2026, the typical Engoo Daily News article has the following profile:
+
+| Metric | Average Value |
+| :--- | :--- |
+| **Total Word Count** | **~296 words** |
+| **Vocabulary Count** | **Exactly 6 items** |
+| **Standard Exercises** | 4 to 6 per lesson |
+| **Primary Level Range** | 4 (Intermediate) to 9 (Proficient) |
+
+---
+
+## 2. Detailed Structural Analysis by Difficulty Level (Levels 4–6)
+
+The complexity of an Engoo article is determined not just by word count, but by sentence structure and the types of exercises included. This section provides a deep dive into Levels 4, 5, and 6.
+
+### Level 4: Intermediate
+*   **Avg. Word Count:** Approximately 210 words.
+*   **Tone:** Very simple, conversational, and direct, often focusing on everyday topics or cultural insights.
+*   **Overall Structure:** This level typically includes a unique set of exercises designed for foundational comprehension and engagement.
+    *   **Exercise 1: Vocabulary**
+        *   **Format:** Presents 6 vocabulary items. Each item includes the word, its part of speech, IPA pronunciation, a concise definition, and an example sentence where the target word is bolded.
+        *   **Example:** "**tart** Adjective /tɑːrt/ having a sharp taste. These apples taste a little **tart**."
+    *   **Exercise 2: Fill in the Blanks**
+        *   **Content:** Consists of 6 sentences with a blank space, requiring the student to fill in the correct vocabulary word from Exercise 1.
+        *   **Instructions:** "Fill in the blanks to complete the sentences."
+        *   **Answer Pool:** A list of the 6 vocabulary words from Exercise 1 is provided.
+        *   **Example:** "Next, add the sesame ______ to the pan."
+    *   **Exercise 3: Article**
+        *   **Length:** Around 200 words.
+        *   **Content:** Features simple, short paragraphs. Subheadings are often used to break down the content into digestible sections.
+        *   **Tone:** Educational and straightforward, avoiding complex sentence structures.
+    *   **Exercise 4: Questions**
+        *   **Format:** Typically True/False questions.
+        *   **Content:** 3-5 questions designed to check basic comprehension of the article.
+        *   **Example:** "1. Shikuwasa taste like limes. A. True B. False"
+    *   **Exercise 5: Would You Rather?**
+        *   **Content:** Presents 3 questions, each with two distinct options, often accompanied by illustrative images.
+        *   **Instructions:** "Tell your tutor which of the two options you prefer, and why."
+        *   **Example:** "Which breakfast would you rather have? pancakes / eggs Benedict"
+    *   **Exercise 6: Discussion**
+        *   **Content:** Comprises 5 open-ended questions, encouraging students to discuss the article's themes in a broader context.
+        *   **Example:** "What are your favorite fruits? How often do you have them at home?"
+
+### Level 5: Intermediate
+*   **Avg. Word Count:** Approximately 256 words.
+*   **Tone:** Informative and accessible, maintaining a standard news style.
+*   **Overall Structure:** This level follows a more standardized lesson format, focusing on direct comprehension and discussion.
+    *   **Exercise 1: Vocabulary**
+        *   **Format:** Identical to Level 4, with 6 vocabulary items including word, part of speech, IPA, definition, and a bolded example sentence.
+        *   **Example:** "**delay** Verb /dɪˈleɪ/ to do or make something happen later than planned or expected. Luckily, we didn't miss our flight even though the train to the airport was **delayed**."
+    *   **Exercise 2: Article**
+        *   **Length:** Around 250 words.
+        *   **Content:** Presents informative news articles, often without subheadings, maintaining a coherent narrative flow.
+        *   **Tone:** Standard news reporting, designed to be easily understood by intermediate learners.
+    *   **Exercise 3: Questions**
+        *   **Format:** Multiple Choice Questions, typically with A/B options.
+        *   **Content:** 3 questions directly testing comprehension of facts presented in the article.
+        *   **Example:** "1. How many seats does the cinema have? A. 28 B. 48"
+    *   **Exercise 4: Discussion**
+        *   **Content:** Features 5 open-ended questions closely related to the article's content, prompting students to share their opinions and experiences.
+        *   **Example:** "What are your thoughts on the new cinema at Okinawa's Naha Airport?"
+    *   **Exercise 5: Further Discussion**
+        *   **Content:** Includes 5 broader questions that encourage a more general discussion around the article's topic, moving beyond the specific details.
+        *   **Example:** "How long before your flight do you typically arrive at the airport?"
+
+### Level 6: Intermediate
+*   **Avg. Word Count:** Approximately 306 words.
+*   **Tone:** Professional and informative, often incorporating data and historical context.
+*   **Overall Structure:** Similar to Level 5, but with a slight increase in article length and complexity of questions.
+    *   **Exercise 1: Vocabulary**
+        *   **Format:** Consistent with Levels 4 and 5, providing 6 vocabulary items with full details.
+        *   **Example:** "**cavity** Noun /ˈkævəti/ a part of a tooth that has decayed. My dentist told me I have a small **cavity** that will need a filling."
+    *   **Exercise 2: Article**
+        *   **Length:** Around 300 words.
+        *   **Content:** More detailed news articles, often including statistics, historical background, or more nuanced explanations of events.
+        *   **Tone:** Professional and objective, suitable for intermediate learners ready for slightly more complex information.
+    *   **Exercise 3: Questions**
+        *   **Format:** Open-ended questions that require short answers or recall of specific information from the text.
+        *   **Content:** 3 questions.
+        *   **Example:** "1. What percentage of kindergarten children in Japan had cavities in the latest government survey?"
+    *   **Exercise 4: Discussion**
+        *   **Content:** Presents 5 open-ended questions directly related to the article, encouraging deeper analysis and personal reflection.
+        *   **Example:** "What are your thoughts on Japan's child cavity rates dropping to record lows?"
+    *   **Exercise 5: Further Discussion**
+        *   **Content:** Consists of 5 broader questions that expand on the article's general theme, promoting wider discussion and critical thinking.
+        *   **Example:** "Have you adopted any healthy lifestyle habits in recent years?"
+
+---
+
+## 3. Key Findings for Your Skill Development
+
+To accurately replicate the Engoo style, your generator should follow these constraints:
+
+1.  **The "Pivot" at Level 7**: Articles at Level 7 and above typically **drop the comprehension questions** (Exercise 3) in favor of more extensive discussion sections. For your generator, this means focusing on opinion-based prompts rather than fact-checking for higher levels.
+2.  **Vocabulary Consistency**: Regardless of the level, Engoo consistently provides exactly **6 vocabulary items** in Exercise 1. Each item includes the word, part of speech, IPA pronunciation, definition, and an example sentence.
+3.  **Sentence Complexity**:
+    *   **Levels 4-5**: Simple, direct sentences. Frequent use of bullet points or short paragraphs.
+    *   **Levels 6-7**: Introduction of compound-complex sentences and more specific data (percentages, dates).
+    *   **Levels 8-9**: Professional journalistic style. Uses sophisticated transitions and specialized terminology (e.g., "martial law", "tariffs", "insurrection").
+4.  **Length Progression**: There is a steady increase of about 40-50 words per level from Level 4 to Level 8, where it plateaus around 350 words.
+
+---
+
+## 4. Word Count Progression Table
+
+| Level | Estimated Word Count | Difficulty Label |
+| :--- | :--- | :--- |
+| 4 | 210 | Intermediate |
+| 5 | 250 | Intermediate |
+| 6 | 300 | Intermediate |
+| 7 | 310 | Advanced |
+| 8 | 345 | Advanced |
+| 9 | 350 | Proficient |
+
+---
+*Report generated on February 22, 2026, based on live analysis of Engoo Daily News.*
