@@ -65,6 +65,7 @@
   <noscript>
     <link rel="stylesheet" href="/blog/css/noscript.css">
   </noscript>
+<link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
 <style>mjx-container[jax="SVG"] {
   direction: ltr;
 }
@@ -177,8 +178,7 @@ mjx-container[display="true"] {
 mjx-container[display="true"] + br {
   display: none;
 }
-</style><link rel="alternate" href="/blog/atom.xml" title="ZhengHe" type="application/atom+xml">
-</head>
+</style></head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
   <div class="headband"></div>
@@ -232,6 +232,120 @@ mjx-container[display="true"] + br {
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="ZhengHe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhengHe">
+      <meta itemprop="description" content="郑鹤的博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | ZhengHe">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/" class="post-title-link" itemprop="url">Prometheus TSDB 的存储层演进 —— PromConf 演讲笔记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-27 09:50:01" itemprop="dateCreated datePublished" datetime="2020-02-27T09:50:01+00:00">2020-02-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/blog/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>注：如果只想了解 Prometheus TSDB 的存储层现状，可以直接移步<a
+target="_blank" rel="noopener" href="https://ganeshvernekar.com/blog/">Ganesh Vernekar
+的博客</a>，他写了 7 篇系列文章介绍这个主题。</p>
+</blockquote>
+<p>Prometheus
+无疑是时下最流行的监控平台，它负责定期从不同的采集目标拉取样本数据，然后持久化到内建的时序数据库中，向外部提供便捷的查询接口。本文主要探讨的是
+Prometheus 存储层的演进过程，整理自 Prometheus 团队在历届 PromConf
+上的分享以及相应的文档。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/2020/02/27/The-Evolution-of-Prometheus-Storage-Layer/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://zhenghe-md.github.io/blog/2020/02/26/Log-Structured-Merge-LSM-Tree-Usages-in-KV-Stores/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -268,7 +382,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -376,7 +490,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -484,7 +598,7 @@ mjx-container[display="true"] + br {
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -594,7 +708,7 @@ Hashing。下文主要关注 Consistent Hashing。</p>
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -711,7 +825,7 @@ Hashing 是一个简单、高效的动态哈希算法，非常适用于键空间
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -831,7 +945,7 @@ LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloa
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -948,7 +1062,7 @@ LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloa
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1059,7 +1173,7 @@ LRU，主要原因在于 LRU 贴近大多数应用的实际负载模式 (workloa
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-04-23 02:28:08" itemprop="dateModified" datetime="2026-04-23T02:28:08+00:00">2026-04-23</time>
+      <time title="修改时间：2026-06-17 14:00:39" itemprop="dateModified" datetime="2026-06-17T14:00:39+00:00">2026-06-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
